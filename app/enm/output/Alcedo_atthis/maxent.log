@@ -1,0 +1,43 @@
+Tue Mar 31 08:58:48 UTC 2026
+MaxEnt version 3.4.4
+Checking header of /app/enm/env_layers/Conductivity_EPSG4326_50m_y2002.asc
+Checking header of /app/enm/env_layers/Precipitation_proj_2050_rcp45.asc
+Checking header of /app/enm/env_layers/Temperature_proj_2050_rcp45.asc
+Reading samples from Presence_Alcedo_atthis.csv
+Read samples: max memory 1073741824, total allocated 262144000, free 240106744, used 22037256, increment 22037256
+Extractor: max memory 1073741824, total allocated 262144000, free 239590576, used 22553424, increment 516168
+Extracting random background and sample data
+Warning: Sample at 10.35393, 43.83826 in Presence_Alcedo_atthis.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.35393, 43.83826
+57224 points with values for all grids
+Adding samples to background in feature space
+Command line used:  environmentallayers=/app/enm/env_layers samplesfile=/app/enm/presence/uccelli/Presence_Alcedo_atthis.csv outputdirectory=/app/enm/output/Alcedo_atthis autorun nowarnings
+Command line to repeat: java density.MaxEnt nowarnings noprefixes outputdirectory=/app/enm/output/Alcedo_atthis samplesfile=/app/enm/presence/uccelli/Presence_Alcedo_atthis.csv environmentallayers=/app/enm/env_layers nowarnings autorun
+Species: Alcedo_atthis
+Layers: Conductivity_EPSG4326_50m_y2002 Precipitation_proj_2050_rcp45 Temperature_proj_2050_rcp45
+Layertypes: Continuous Continuous Continuous
+outputdirectory: /app/enm/output/Alcedo_atthis
+samplesfile: /app/enm/presence/uccelli/Presence_Alcedo_atthis.csv
+environmentallayers: /app/enm/env_layers
+warnings: false
+autorun: true
+
+getSamples: max memory 1073741824, total allocated 262144000, free 253339272, used 8804728, increment -13748696
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 252455608, used 9688392, increment 883664
+Alcedo_atthis: 
+Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
+35 samples
+Density: max memory 1073741824, total allocated 262144000, free 245929912, used 16214088, increment 6525696
+linearPredictor: max memory 1073741824, total allocated 262144000, free 245849664, used 16294336, increment 80248
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 245849664, used 16294336, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 245836728, used 16307272, increment 12936
+Initial loss: 9.213236175088209
+Time since start: 1.729
+500: time = 1.128000 loss = 8.319844
+Resulting gain: 0.8933923507332491
+Projecting...
+Writing file /app/enm/output/Alcedo_atthis/Alcedo_atthis.asc
+Time since start: 2.797
+Writing /app/enm/output/Alcedo_atthis/plots/Alcedo_atthis.png
+Ending

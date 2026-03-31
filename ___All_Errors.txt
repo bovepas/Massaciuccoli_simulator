@@ -1,0 +1,8 @@
+CorrelationId: c113e541-7a26-4c03-807f-651ea79a6399
+UTC DateTime: 02/13/2026 08:40:03
+
+The following files/folders have not been downloaded
+0. Massaciuccoli_simulator/app/chroma_db/4af9e847-1b99-48c2-9cd0-fb2413f8220a/link_lists.bin
+1. Massaciuccoli_simulator/app/knowledge/__init__.py
+2. Massaciuccoli_simulator/app/knowledge/curl
+3. Massaciuccoli_simulator/app/versions/__init__.py

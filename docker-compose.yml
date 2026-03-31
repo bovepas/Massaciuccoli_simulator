@@ -1,0 +1,36 @@
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    restart: unless-stopped
+    entrypoint: >
+      sh -c "
+      ollama serve &
+      sleep 5 &&
+      ollama pull llama3:8b &&
+      ollama pull nomic-embed-text &&
+      wait
+      "
+
+  app:
+    build: ./app
+    container_name: massaciuccoli_app
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    stdin_open: true
+    tty: true
+    restart: "no"
+
+    volumes:
+      - ./app:/app   # 🔥 IMPORTANTISSIMO
+
+    command: ["sleep", "infinity"]
+
+volumes:
+  ollama_models:
