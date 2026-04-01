@@ -1,20 +1,13 @@
 """
 Massaciuccoli Digital Twin
-Orchestrator v11.8 — FINAL DEMO (Interpretation upgraded)
+Orchestrator v22 — Safe Hybrid Explanation
 """
 
-import pandas as pd
 import re
 
 from versions.v6_main import route_question
-from versions.v6_2_basin_engine import (
-    load_dataset,
-    predict_risk,
-    compute_basin_statistics,
-    run_basin_simulation
-)
-from versions.v6_1_main import MODEL, NUM_FEATURES, CAT_FEATURES
-from knowledge.rag_pipeline import generate_answer, call_llm
+from versions.v7_dynamic_model import run_temporal_simulation
+from knowledge.rag_pipeline import call_llm, generate_answer
 
 
 # ======================================================
@@ -26,173 +19,69 @@ def clean_question(q: str) -> str:
 
 
 # ======================================================
-# KEYWORDS
+# SCIENTIFIC CORE (NUMBERS LOCKED)
 # ======================================================
 
-STATUS_KEYWORDS = ["status", "state", "condition", "overview", "current"]
-ASSET_KEYWORDS = ["assets", "drivers", "factors", "determinants"]
+def build_scientific_summary(delta, high_share, hotspot_share):
 
+    trend = "increases" if delta > 0 else "decreases"
 
-def is_status_query(q):
-    return any(k in q for k in STATUS_KEYWORDS)
-
-def is_asset_query(q):
-    return any(k in q for k in ASSET_KEYWORDS)
-
-
-# ======================================================
-# STATUS
-# ======================================================
-
-def compute_current_status():
-    df = load_dataset()
-    df_pred = predict_risk(df)
-    return compute_basin_statistics(df_pred)
-
-
-def is_low_quality_rag(text: str) -> bool:
-    bad_patterns = [
-        "no specific information",
-        "the study area includes",
-        "datasets",
-        "metadata",
-        "no information is provided"
-    ]
-    t = text.lower()
-    return any(p in t for p in bad_patterns)
-
-
-# ======================================================
-# FEATURE IMPORTANCE
-# ======================================================
-
-def compute_feature_importance():
-
-    rf = MODEL.named_steps["rf"]
-    preprocessor = MODEL.named_steps["preprocessor"]
-
-    cat_encoder = preprocessor.named_transformers_["cat"].named_steps["onehot"]
-    cat_names = cat_encoder.get_feature_names_out(CAT_FEATURES)
-
-    all_names = NUM_FEATURES + list(cat_names)
-    importances = rf.feature_importances_
-
-    df = pd.DataFrame({
-        "feature": all_names,
-        "importance": importances
-    })
-
-    def collapse(name):
-        for c in CAT_FEATURES:
-            if name.startswith(c + "_"):
-                return c
-        return name
-
-    df["original"] = df["feature"].apply(collapse)
-
-    grouped = (
-        df.groupby("original")["importance"]
-        .sum()
-        .sort_values(ascending=False)
+    return (
+        f"Risk {trend} by {delta}, "
+        f"with high-risk areas reaching {high_share*100:.1f}% "
+        f"and hotspots covering {hotspot_share*100:.1f}%."
     )
 
-    return grouped.head(5)
 
+# ======================================================
+# SAFE NARRATIVE (NO NUMBERS)
+# ======================================================
 
-def explain_drivers_with_llm(drivers):
+def generate_narrative_safe(delta):
 
-    driver_list = "\n".join([f"- {d}" for d in drivers])
+    trend = "increasing" if delta > 0 else "decreasing"
 
     prompt = f"""
-Explain briefly how each variable influences ecosystem risk.
+Write a short scientific interpretation.
 
-{driver_list}
+CONTEXT:
+- ecosystem risk is {trend}
+- drivers: temperature increase and precipitation change
+- risk is spatially concentrated (hotspots exist)
 
-Rules:
-- Max 1 short sentence per variable
-- No extra text
+RULES:
+- Do NOT use numbers
+- Do NOT quantify anything
+- Do NOT introduce new variables
+- Do NOT add recommendations
+- Max 3 sentences
+- Explain:
+  1. what is happening
+  2. why (climate drivers)
+  3. spatial concentration
 """
 
-    return call_llm(prompt)
-
-
-# ======================================================
-# SCENARIO INTERPRETATION (UPGRADED)
-# ======================================================
-
-def interpret_scenario(delta_mean, delta_high):
-
-    if delta_mean > 0:
-        trend = "increase"
-    elif delta_mean < 0:
-        trend = "decrease"
-    else:
-        trend = "no significant change"
-
-    magnitude = abs(delta_mean)
-
-    if magnitude < 0.02:
-        intensity = "slight"
-    elif magnitude < 0.1:
-        intensity = "moderate"
-    else:
-        intensity = "strong"
-
-    explanation = f"""
-🧠 Interpretation:
-The simulated scenario leads to a {intensity} {trend} in ecosystem risk according to the model.
-"""
-
-    explanation += """
-This result reflects how the model has learned relationships between environmental variables and ecosystem risk.
-
-Note: some effects may appear counterintuitive, as the model captures complex interactions between biodiversity, productivity, and ecosystem stability.
-"""
-
-    return explanation
+    return call_llm(prompt).strip()
 
 
 # ======================================================
 # SCENARIO PARSER
 # ======================================================
 
-def extract_scenario(question: str):
+def extract_time_scenario(question: str):
 
-    scenario = {}
     q = question.lower()
 
-    def get_sign(text):
-        if any(w in text for w in ["decrease", "decreased", "reduced", "reduction", "drop", "loss"]):
-            return -1
-        if any(w in text for w in ["increase", "increased", "rise", "growth"]):
-            return +1
-        return +1
+    rcp = "rcp45"
+    year = "2050"
 
-    patterns = [
-        ("temperature", "Change in average temperature compared to a recent past", r"temperature"),
-        ("precipitation", "Cumulative change in precipitation compared to a recent past", r"precipitation"),
-        ("tree", "Density of tree cover", r"tree"),
-        ("productivity", "Index of total productivity by plant phenology", r"productivity"),
-        ("biodiversity|species", "Number of species potentially living in the cell", r"biodiversity|species"),
-    ]
+    if "8.5" in q or "rcp85" in q:
+        rcp = "rcp85"
 
-    for match in re.finditer(r"([a-z\s]+?)\s+(temperature|precipitation|tree|productivity|biodiversity|species)[^.,]*?(\d+\.?\d*)\s*%?", q):
+    if "2100" in q:
+        year = "2100"
 
-        full_segment = match.group(0)
-        value = float(match.group(3))
-        sign = get_sign(full_segment)
-
-        for key, column, keyword in patterns:
-            if re.search(keyword, full_segment):
-                scenario[column] = sign * value
-
-    temp_match = re.search(r"(increase|decrease|increased|decreased)[^.,]*temperature[^.,]*?(\d+\.?\d*)\s*°?c", q)
-    if temp_match:
-        sign = get_sign(temp_match.group(1))
-        value = float(temp_match.group(2))
-        scenario["Change in average temperature compared to a recent past"] = sign * value
-
-    return scenario
+    return rcp, year
 
 
 # ======================================================
@@ -204,106 +93,55 @@ def handle_question(question: str):
     print(f"\n❓ Question: {question}")
 
     question = clean_question(question)
-    q = question.lower()
 
-    # ======================
-    # ASSETS
-    # ======================
-    if is_asset_query(q):
-
-        print("📊 FEATURE IMPORTANCE MODE")
-
-        importance = compute_feature_importance()
-
-        lines = []
-        drivers = []
-
-        for i, (feat, val) in enumerate(importance.items(), 1):
-            lines.append(f"{i}. {feat} (importance: {val:.3f})")
-            drivers.append(feat)
-
-        explanation = explain_drivers_with_llm(drivers)
-
-        return f"""
-📊 Principal Drivers of Ecosystem Risk
-
-Top factors:
-
-{chr(10).join(lines)}
-
-🧠 Interpretation:
-{explanation}
-"""
-
-    # ======================
-    # STATUS
-    # ======================
-    if is_status_query(q):
-
-        print("📊 STATUS MODE")
-
-        stats = compute_current_status()
-        rag = generate_answer(question)
-
-        if is_low_quality_rag(rag):
-            rag = """
-The ecosystem shows signs of anthropogenic pressure, habitat degradation, and biodiversity stress, particularly linked to land use change and environmental variability.
-"""
-
-        return f"""
-📊 Current Ecosystem Status
-
-Mean ecosystem risk: {stats["mean_risk"]}
-Low-risk areas: {stats["low_share"] * 100:.1f}%
-Medium-risk areas: {stats["medium_share"] * 100:.1f}%
-High-risk areas: {stats["high_share"] * 100:.1f}%
-
-🧠 Interpretation:
-The ecosystem is currently in a generally low-risk state, but with localized areas of higher vulnerability indicating emerging ecological pressures.
-
-📚 Scientific evidence:
-{rag}
-"""
-
-    # ======================
-    # ROUTER
-    # ======================
     decision = route_question(question)
     route = decision["route"]
 
     print(f"➡️ ROUTE: {route}")
 
-    # ======================
-    # EMULATOR
-    # ======================
-    if route == "regression_or_emulator":
+    if route == "dynamic_model":
 
-        scenario = extract_scenario(question)
+        print("🌍 CLIMATE + SPATIAL + SAFE HYBRID")
 
-        print(f"📊 Scenario extracted: {scenario}")
+        rcp, year = extract_time_scenario(question)
 
-        result = run_basin_simulation(scenario)
+        base, future, hotspots = run_temporal_simulation(rcp, year)
 
-        interpretation = interpret_scenario(
-            result["delta_mean_risk"],
-            result["delta_high_risk_share"]
+        delta = round(future["mean_risk"] - base["mean_risk"], 3)
+
+        summary = build_scientific_summary(
+            delta,
+            future["high_share"],
+            hotspots["share"]
         )
 
+        narrative = generate_narrative_safe(delta)
+
         return f"""
-📊 Basin Risk Simulation
+📈 Climate-driven Simulation
 
-Baseline mean risk: {result["baseline"]["mean_risk"]}
-Scenario mean risk: {result["scenario"]["mean_risk"]}
+Scenario:
+- RCP: {rcp.upper()}
+- Year: {year}
 
-Δ Mean risk: {result["delta_mean_risk"]}
-Δ High-risk area share: {result["delta_high_risk_share"]}
+Initial mean risk: {base["mean_risk"]}
+Final mean risk: {future["mean_risk"]}
 
-{interpretation}
+Δ Risk: {delta}
+
+📍 Spatial Insight
+High-risk areas: {future["high_share"]*100:.1f}%
+
+🔥 Hotspots
+Top 5% areas: {hotspots["share"]*100:.1f}%
+
+📊 Scientific summary
+{summary}
+
+🧠 Interpretation
+{narrative}
 """
 
-    # ======================
-    # LLM ONLY
-    # ======================
     if route == "llm_only":
         return generate_answer(question)
 
@@ -316,7 +154,7 @@ Scenario mean risk: {result["scenario"]["mean_risk"]}
 
 def run_cli():
 
-    print("\n=== Digital Twin v11.8 — FINAL DEMO ===\n")
+    print("\n=== Digital Twin v22 — Safe Scientific AI ===\n")
 
     while True:
         q = input("Ask a question: ")

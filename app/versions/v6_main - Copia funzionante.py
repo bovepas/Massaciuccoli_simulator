@@ -167,18 +167,6 @@ USER QUESTION:
     if any(k in q for k in ["habitat", "suitability", "distribution", "where"]):
         tool = "enm"
 
-    # 3. TIME DETECTION (NUOVO — FONDAMENTALE)
-    if any(k in q for k in [
-        "year", "years", "decade", "decades",
-        "2050", "2100",
-        "over time", "nel tempo", "nei prossimi",
-        "future", "futuro",
-        "trend", "evolution", "evolve", "evolves", "evoluzione"
-    ]):
-        tool = "dynamic_model"
-        classification["has_time_reference"] = True
-        classification["question_type"] = "temporal_dynamic"
-
     return {
         "route": tool,
         "classification": classification
@@ -190,7 +178,7 @@ USER QUESTION:
 # =========================
 if __name__ == "__main__":
 
-    print("=== Massaciuccoli Digital Twin — Question Router (v6.2) ===\n")
+    print("=== Massaciuccoli Digital Twin — Question Router (v6.1) ===\n")
     print("This module ONLY classifies questions and decides which tool is required.")
     print("It does NOT answer questions.\n")
     print("Type 'exit' to quit.\n")
