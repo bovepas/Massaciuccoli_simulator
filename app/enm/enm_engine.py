@@ -1,6 +1,6 @@
 """
 Massaciuccoli Digital Twin
-ENM Engine — MaxEnt FINAL (CLEAN + TIMEOUT SAFE)
+ENM Engine — MaxEnt FULL (Drivers + Map + Hotspots)
 """
 
 import os
@@ -8,6 +8,9 @@ import subprocess
 import pandas as pd
 import shutil
 import time
+import numpy as np
+
+from tools.climate_loader import load_asc
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -17,6 +20,10 @@ PRESENCE_DIR = os.path.join(BASE_DIR, "presence")
 ENV_LAYERS_DIR = os.path.join(BASE_DIR, "env_layers")
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 
+
+# ======================================================
+# UTILS
+# ======================================================
 
 def ensure_directories():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -39,6 +46,10 @@ def clean_output_dir(path: str):
     os.makedirs(path)
 
 
+# ======================================================
+# MAXENT EXECUTION
+# ======================================================
+
 def run_maxent(species_name: str):
 
     ensure_directories()
@@ -47,7 +58,6 @@ def run_maxent(species_name: str):
 
     species_output_dir = os.path.join(OUTPUT_DIR, species_name.replace(" ", "_"))
 
-    # 🔥 FIX: pulizia completa
     clean_output_dir(species_output_dir)
 
     command = [
@@ -60,7 +70,9 @@ def run_maxent(species_name: str):
         f"samplesfile={presence_file}",
         f"outputdirectory={species_output_dir}",
         "autorun",
-        "nowarnings"
+        "nowarnings",
+        "responsecurves=true",
+        "jackknife=true"
     ]
 
     print("\n=== RUNNING MAXENT ===\n")
@@ -85,6 +97,22 @@ def run_maxent(species_name: str):
     return species_output_dir
 
 
+# ======================================================
+# RESULTS PARSING
+# ======================================================
+
+def extract_feature_contributions(df: pd.DataFrame):
+
+    contributions = {}
+
+    for col in df.columns:
+        if "contribution" in col.lower():
+            name = col.replace(" contribution", "")
+            contributions[name] = float(df[col].iloc[0])
+
+    return dict(sorted(contributions.items(), key=lambda x: -x[1]))
+
+
 def read_results(species_output_dir: str):
 
     results_file = os.path.join(species_output_dir, "maxentResults.csv")
@@ -94,11 +122,58 @@ def read_results(species_output_dir: str):
 
     df = pd.read_csv(results_file)
 
+    auc = None
+    if "Training AUC" in df.columns:
+        auc = float(df["Training AUC"].iloc[0])
+
+    contributions = extract_feature_contributions(df)
+
     return {
-        "training_auc": float(df["Training AUC"].iloc[0])
-        if "Training AUC" in df.columns else None
+        "training_auc": auc,
+        "feature_contributions": contributions
     }
 
+
+# ======================================================
+# SUITABILITY MAP
+# ======================================================
+
+def load_suitability_map(species_output_dir: str):
+
+    asc_file = None
+
+    for f in os.listdir(species_output_dir):
+        if f.endswith(".asc"):
+            asc_file = os.path.join(species_output_dir, f)
+            break
+
+    if not asc_file:
+        raise FileNotFoundError("ASC suitability map not found")
+
+    data, header = load_asc(asc_file)
+
+    return data, header
+
+
+# ======================================================
+# HOTSPOTS
+# ======================================================
+
+def detect_suitability_hotspots(data, top_percent=5):
+
+    flat = data.flatten()
+    flat = flat[~np.isnan(flat)]
+
+    threshold = np.percentile(flat, 100 - top_percent)
+
+    return {
+        "threshold": float(threshold)
+    }
+
+
+# ======================================================
+# MAIN API
+# ======================================================
 
 def run_enm_analysis(species_name: str):
 
@@ -106,11 +181,24 @@ def run_enm_analysis(species_name: str):
 
     metrics = read_results(output_dir)
 
+    data, header = load_suitability_map(output_dir)
+
+    hotspots = detect_suitability_hotspots(data)
+
     return {
         "species": species_name,
-        "metrics": metrics
+        "metrics": metrics,
+        "map": {
+            "shape": data.shape
+        },
+        "hotspots": hotspots
     }
 
 
+# ======================================================
+# TEST
+# ======================================================
+
 if __name__ == "__main__":
-    print(run_enm_analysis("Alcedo atthis"))
+    result = run_enm_analysis("Alcedo atthis")
+    print(result)

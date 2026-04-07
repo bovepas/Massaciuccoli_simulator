@@ -1,13 +1,15 @@
 """
 Massaciuccoli Digital Twin
-Orchestrator v22 — Safe Hybrid Explanation
+Orchestrator v29 — ENM Spatial Final Fix
 """
 
 import re
+import numpy as np
 
 from versions.v6_main import route_question
 from versions.v7_dynamic_model import run_temporal_simulation
 from knowledge.rag_pipeline import call_llm, generate_answer
+from enm.enm_engine import run_enm_analysis, load_suitability_map
 
 
 # ======================================================
@@ -19,69 +21,143 @@ def clean_question(q: str) -> str:
 
 
 # ======================================================
-# SCIENTIFIC CORE (NUMBERS LOCKED)
+# SPECIES EXTRACTION
 # ======================================================
 
-def build_scientific_summary(delta, high_share, hotspot_share):
+def extract_species_name(question: str) -> str:
 
-    trend = "increases" if delta > 0 else "decreases"
+    words = question.split()
 
-    return (
-        f"Risk {trend} by {delta}, "
-        f"with high-risk areas reaching {high_share*100:.1f}% "
-        f"and hotspots covering {hotspot_share*100:.1f}%."
+    for i in range(len(words) - 1):
+        if words[i][0].isupper() and words[i+1][0].isupper():
+            return words[i] + " " + words[i+1]
+
+    return "Alcedo atthis"
+
+
+# ======================================================
+# SPATIAL ANALYSIS
+# ======================================================
+
+def analyze_spatial_pattern(result):
+
+    species_name = result["species"].replace(" ", "_")
+    path = f"enm/output/{species_name}"
+
+    data, _ = load_suitability_map(path)
+    threshold = result["hotspots"]["threshold"]
+
+    high_mask = data >= threshold
+    coords = np.argwhere(high_mask)
+
+    if len(coords) == 0:
+        return {
+            "zone": "unknown",
+            "dispersion": "none",
+            "gradient": "none"
+        }
+
+    rows, cols = data.shape
+
+    centroid = coords.mean(axis=0)
+
+    y_norm = centroid[0] / rows
+    x_norm = centroid[1] / cols
+
+    # =========================
+    # LAT
+    # =========================
+    if y_norm < 0.4:
+        lat = "southern"
+    elif y_norm < 0.6:
+        lat = "central"
+    else:
+        lat = "northern"
+
+    # =========================
+    # LON
+    # =========================
+    if x_norm < 0.4:
+        lon = "western"
+    elif x_norm < 0.6:
+        lon = "central"
+    else:
+        lon = "eastern"
+
+    # =========================
+    # FIX: evitare "central central"
+    # =========================
+    if lat == "central" and lon == "central":
+        zone = "central"
+    else:
+        zone = f"{lat} {lon}"
+
+    # =========================
+    # DISPERSION
+    # =========================
+    spread = coords.std(axis=0).mean()
+
+    if spread < 15:
+        dispersion = "highly localized"
+    elif spread < 40:
+        dispersion = "clustered"
+    else:
+        dispersion = "broadly distributed"
+
+    # =========================
+    # GRADIENT
+    # =========================
+    y_std = coords[:, 0].std()
+    x_std = coords[:, 1].std()
+
+    if y_std > x_std * 1.2:
+        gradient = "north–south"
+    elif x_std > y_std * 1.2:
+        gradient = "east–west"
+    else:
+        gradient = "no clear directional pattern"
+
+    return {
+        "zone": zone,
+        "dispersion": dispersion,
+        "gradient": gradient
+    }
+
+
+# ======================================================
+# DETERMINISTIC DESCRIPTION
+# ======================================================
+
+def build_spatial_description(species, spatial):
+
+    sentence1 = f"Habitat suitability for {species} is {spatial['dispersion']} across the {spatial['zone']} portion of the basin."
+
+    if spatial["gradient"] == "no clear directional pattern":
+        sentence2 = "No dominant spatial gradient is observed."
+    else:
+        sentence2 = f"The spatial pattern follows a {spatial['gradient']} gradient."
+
+    return sentence1 + " " + sentence2
+
+
+# ======================================================
+# SCIENTIFIC SUMMARY
+# ======================================================
+
+def build_enm_summary(metrics, hotspots):
+
+    contributions = metrics["feature_contributions"]
+    top_drivers = list(contributions.items())[:3]
+
+    drivers_text = ", ".join(
+        [f"{name} ({value:.1f}%)" for name, value in top_drivers]
     )
 
-
-# ======================================================
-# SAFE NARRATIVE (NO NUMBERS)
-# ======================================================
-
-def generate_narrative_safe(delta):
-
-    trend = "increasing" if delta > 0 else "decreasing"
-
-    prompt = f"""
-Write a short scientific interpretation.
-
-CONTEXT:
-- ecosystem risk is {trend}
-- drivers: temperature increase and precipitation change
-- risk is spatially concentrated (hotspots exist)
-
-RULES:
-- Do NOT use numbers
-- Do NOT quantify anything
-- Do NOT introduce new variables
-- Do NOT add recommendations
-- Max 3 sentences
-- Explain:
-  1. what is happening
-  2. why (climate drivers)
-  3. spatial concentration
-"""
-
-    return call_llm(prompt).strip()
-
-
-# ======================================================
-# SCENARIO PARSER
-# ======================================================
-
-def extract_time_scenario(question: str):
-
-    q = question.lower()
-
-    rcp = "rcp45"
-    year = "2050"
-
-    if "8.5" in q or "rcp85" in q:
-        rcp = "rcp85"
-
-    if "2100" in q:
-        year = "2100"
-
-    return rcp, year
+    return (
+        f"Model performance is high (AUC = {metrics['training_auc']:.3f}). "
+        f"The main environmental drivers are {drivers_text}. "
+        f"High suitability areas are defined by a threshold of {hotspots['threshold']:.3f}."
+    )
 
 
 # ======================================================
@@ -99,48 +175,77 @@ def handle_question(question: str):
 
     print(f"➡️ ROUTE: {route}")
 
+    # ======================================================
+    # CLIMATE
+    # ======================================================
+
     if route == "dynamic_model":
 
-        print("🌍 CLIMATE + SPATIAL + SAFE HYBRID")
-
-        rcp, year = extract_time_scenario(question)
+        rcp = "rcp45"
+        year = "2050"
 
         base, future, hotspots = run_temporal_simulation(rcp, year)
 
         delta = round(future["mean_risk"] - base["mean_risk"], 3)
 
-        summary = build_scientific_summary(
-            delta,
-            future["high_share"],
-            hotspots["share"]
-        )
-
-        narrative = generate_narrative_safe(delta)
-
         return f"""
 📈 Climate-driven Simulation
 
-Scenario:
-- RCP: {rcp.upper()}
-- Year: {year}
-
-Initial mean risk: {base["mean_risk"]}
-Final mean risk: {future["mean_risk"]}
-
+Initial risk: {base["mean_risk"]}
+Final risk: {future["mean_risk"]}
 Δ Risk: {delta}
 
-📍 Spatial Insight
-High-risk areas: {future["high_share"]*100:.1f}%
+Hotspots: {hotspots["share"]*100:.1f}%
+"""
 
-🔥 Hotspots
-Top 5% areas: {hotspots["share"]*100:.1f}%
+    # ======================================================
+    # ENM
+    # ======================================================
+
+    if route == "enm":
+
+        species = extract_species_name(question)
+
+        print(f"🧬 Running ENM for: {species}")
+
+        result = run_enm_analysis(species)
+
+        metrics = result["metrics"]
+        hotspots = result["hotspots"]
+
+        spatial = analyze_spatial_pattern(result)
+
+        summary = build_enm_summary(metrics, hotspots)
+
+        spatial_text = build_spatial_description(
+            species,
+            spatial
+        )
+
+        return f"""
+🧬 Species Distribution Model
+
+Species: {species}
+
+📊 Model Performance
+AUC: {metrics['training_auc']:.3f}
+
+🌿 Main Drivers
+{metrics['feature_contributions']}
+
+🔥 Habitat Hotspots
+Top suitability threshold: {hotspots['threshold']:.3f}
 
 📊 Scientific summary
 {summary}
 
-🧠 Interpretation
-{narrative}
+🧭 Spatial distribution
+{spatial_text}
 """
+
+    # ======================================================
+    # RAG
+    # ======================================================
 
     if route == "llm_only":
         return generate_answer(question)
@@ -154,7 +259,7 @@ Top 5% areas: {hotspots["share"]*100:.1f}%
 
 def run_cli():
 
-    print("\n=== Digital Twin v22 — Safe Scientific AI ===\n")
+    print("\n=== Digital Twin v29 — ENM Spatial Final ===\n")
 
     while True:
         q = input("Ask a question: ")
