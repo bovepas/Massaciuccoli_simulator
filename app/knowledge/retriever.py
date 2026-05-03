@@ -2,7 +2,7 @@
 
 """
 Massaciuccoli Digital Twin
-Knowledge Engine Retriever - Robust Metadata Version
+Knowledge Engine Retriever - Robust SAFE Version
 """
 
 import requests
@@ -37,21 +37,34 @@ collection = client.get_or_create_collection(COLLECTION_NAME)
 
 
 # ======================================================
-# EMBEDDING
+# EMBEDDING (🔥 SAFE)
 # ======================================================
 
-def get_embedding(text: str) -> List[float]:
+def get_embedding(text: str):
 
-    response = requests.post(
-        OLLAMA_EMBED_URL,
-        json={
-            "model": EMBED_MODEL,
-            "prompt": text
-        }
-    )
+    try:
+        response = requests.post(
+            OLLAMA_EMBED_URL,
+            json={
+                "model": EMBED_MODEL,
+                "prompt": text
+            }
+        )
 
-    response.raise_for_status()
-    return response.json()["embedding"]
+        response.raise_for_status()
+        data = response.json()
+
+        emb = data.get("embedding", [])
+
+        # 🔥 CRITICAL FIX
+        if not emb or not isinstance(emb, list):
+            return None
+
+        return emb
+
+    except Exception as e:
+        print(f"⚠️ Embedding error: {e}")
+        return None
 
 
 # ======================================================
@@ -68,7 +81,7 @@ def expand_query(query: str) -> List[str]:
 
 
 # ======================================================
-# RETRIEVAL
+# RETRIEVAL (🔥 SAFE)
 # ======================================================
 
 def retrieve_documents(query: str) -> Tuple[List[Dict], float]:
@@ -83,10 +96,21 @@ def retrieve_documents(query: str) -> Tuple[List[Dict], float]:
 
         embedding = get_embedding(q)
 
-        results = collection.query(
-            query_embeddings=[embedding],
-            n_results=TOP_K
-        )
+        # 🔥 FIX: skip invalid embeddings
+        if embedding is None:
+            continue
+
+        try:
+            results = collection.query(
+                query_embeddings=[embedding],
+                n_results=TOP_K
+            )
+        except Exception as e:
+            print(f"⚠️ Chroma query error: {e}")
+            continue
+
+        if not results or not results.get("documents"):
+            continue
 
         for i in range(len(results["documents"][0])):
 
@@ -99,10 +123,10 @@ def retrieve_documents(query: str) -> Tuple[List[Dict], float]:
                 "distance": results["distances"][0][i]
             })
 
-    # Deduplicate by text
+    # Deduplicate
     unique_results = {r["text"]: r for r in all_results}.values()
 
-    # Sort by similarity
+    # Sort
     sorted_results = sorted(unique_results, key=lambda x: x["distance"])
     top_results = sorted_results[:TOP_K]
 

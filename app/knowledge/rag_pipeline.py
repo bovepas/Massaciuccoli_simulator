@@ -1,20 +1,38 @@
 """
 Massaciuccoli Digital Twin
-RAG Pipeline — Clean Scientific Extraction (Final Demo)
+RAG Pipeline — Clean Debug Version
 """
 
 import requests
 import os
+import re
 from knowledge.retriever import retrieve_documents
 
+
+# ======================================================
+# CONFIG
+# ======================================================
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
 OLLAMA_GENERATE_URL = f"{OLLAMA_BASE_URL}/api/generate"
 
 LLM_MODEL = "llama3:8b"
 
-LOW_CONFIDENCE_THRESHOLD = 500
+DEBUG = False  # 🔥 toggle unico
 
+
+# ======================================================
+# DEBUG PRINT
+# ======================================================
+
+def debug_print(*args):
+    if DEBUG:
+        print(*args)
+
+
+# ======================================================
+# LLM CALL
+# ======================================================
 
 def call_llm(prompt: str) -> str:
 
@@ -32,43 +50,37 @@ def call_llm(prompt: str) -> str:
     return response.json()["response"].strip()
 
 
-def generate_answer(question: str):
+# ======================================================
+# CLEAN TEXT
+# ======================================================
 
-    retrieved, avg_distance = retrieve_documents(question)
+def clean_text(text: str):
 
-    if not retrieved:
-        return "No scientific evidence found in the knowledge base."
+    text = re.sub(r"\(id\s*\d+\)", "", text)
+    text = re.sub(r"\s+", " ", text)
 
-    context_blocks = []
+    return text.strip()
 
-    for r in retrieved:
-        context_blocks.append(
-            f"DOCUMENT: {r['source']} | PAGE: {r['page']}\n{r['text']}"
-        )
 
-    context = "\n\n".join(context_blocks)
+# ======================================================
+# MAIN
+# ======================================================
 
-    confidence_note = ""
+def generate_answer(question: str, extra_prompt: str = ""):
 
-    if avg_distance > LOW_CONFIDENCE_THRESHOLD:
-        confidence_note = (
-            "\n\n⚠ Note: Retrieved evidence shows low semantic similarity to the query."
-        )
+    retrieved, _ = retrieve_documents(question)
 
-    # 🔥 FINAL PROMPT
-    extractive_prompt = f"""
-You are a scientific extraction system.
+    context = ""
+    if retrieved:
+        context = "\n\n".join([r["text"] for r in retrieved])
+
+    prompt = f"""
+You are an environmental scientist.
 
 TASK:
-List the main environmental pressures affecting biodiversity.
+Explain clearly and concisely.
 
-RULES:
-- Use ONLY the provided context
-- Do NOT use phrases like "based on the context"
-- Do NOT explain reasoning
-- Do NOT mention datasets or metadata
-- Provide ONLY a bullet list
-- Each bullet = one pressure
+{extra_prompt}
 
 Question:
 {question}
@@ -79,6 +91,27 @@ Context:
 Answer:
 """
 
-    answer = call_llm(extractive_prompt)
+    # ================= DEBUG =================
+    debug_print("\n================ RAG DEBUG ================")
+    debug_print("[RAG] Question:", question)
+    debug_print("[RAG] Retrieved documents:", len(retrieved))
+    debug_print("[RAG] Context length:", len(context), "characters")
 
-    return answer.strip() + confidence_note
+    if DEBUG:
+        preview = prompt[:1000] + "..." if len(prompt) > 1000 else prompt
+        debug_print("\n[RAG] --- PROMPT PREVIEW ---")
+        debug_print(preview)
+
+    # ================= LLM =================
+    raw = call_llm(prompt)
+
+    debug_print("\n[RAG] --- RAW LLM OUTPUT ---")
+    debug_print(raw)
+
+    cleaned = clean_text(raw)
+
+    debug_print("\n[RAG] --- CLEANED OUTPUT ---")
+    debug_print(cleaned)
+    debug_print("==========================================\n")
+
+    return cleaned

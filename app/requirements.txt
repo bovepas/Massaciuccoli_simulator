@@ -11,4 +11,5 @@ requests
 ollama
 pypdf
 sentence-transformers
-
+shap
+numba

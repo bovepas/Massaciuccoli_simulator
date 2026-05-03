@@ -2,7 +2,7 @@
 
 """
 Massaciuccoli Digital Twin
-Knowledge Base Ingestion Script - Versione Migliorata
+Knowledge Base Ingestion Script - FIX DOCKER + CLEAN
 """
 
 import os
@@ -14,7 +14,7 @@ from uuid import uuid4
 
 
 # ======================================================
-# Config
+# CONFIG
 # ======================================================
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -24,16 +24,19 @@ CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 
 COLLECTION_NAME = "massaciuccoli_knowledge"
 
-OLLAMA_EMBED_URL = "http://localhost:11434/api/embeddings"
+# 🔥 FIX: usa servizio docker, NON localhost
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
+OLLAMA_EMBED_URL = f"{OLLAMA_BASE_URL}/api/embeddings"
+
 EMBED_MODEL = "nomic-embed-text"
 
-CHUNK_SIZE = 1200
-CHUNK_OVERLAP = 300
-MIN_CHUNK_LENGTH = 400
+CHUNK_SIZE = 600
+CHUNK_OVERLAP = 150
+MIN_CHUNK_LENGTH = 200
 
 
 # ======================================================
-# Text cleaning
+# TEXT CLEANING
 # ======================================================
 
 def clean_text(text):
@@ -41,61 +44,81 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text)
     text = re.sub(r'http\S+', '', text)
     text = re.sub(r'\[\d+\]', '', text)
-    text = text.strip()
 
-    return text
+    text = re.sub(r'Figure \d+.*?', '', text)
+    text = re.sub(r'Table \d+.*?', '', text)
+    text = re.sub(r'Fig\. \d+.*?', '', text)
+
+    text = re.sub(r'\bdoi:.*?\b', '', text, flags=re.IGNORECASE)
+
+    return text.strip()
 
 
 # ======================================================
-# Text chunking
+# CHUNKING
 # ======================================================
 
-def chunk_text(text, chunk_size=1200, overlap=300):
+def chunk_text(text):
+
+    sentences = re.split(r'(?<=[.!?]) +', text)
 
     chunks = []
-    start = 0
-    text_length = len(text)
+    current_chunk = ""
 
-    while start < text_length:
+    for sentence in sentences:
 
-        end = start + chunk_size
-        chunk = text[start:end]
+        if len(current_chunk) + len(sentence) < CHUNK_SIZE:
+            current_chunk += " " + sentence
+        else:
+            if len(current_chunk) >= MIN_CHUNK_LENGTH:
+                chunks.append(current_chunk.strip())
+            current_chunk = sentence
 
-        if len(chunk) >= MIN_CHUNK_LENGTH:
-            chunks.append(chunk)
-
-        start = end - overlap
+    if len(current_chunk) >= MIN_CHUNK_LENGTH:
+        chunks.append(current_chunk.strip())
 
     return chunks
 
 
 # ======================================================
-# Embedding via Ollama
+# EMBEDDING (SAFE)
 # ======================================================
 
 def get_embedding(text):
 
-    response = requests.post(
-        OLLAMA_EMBED_URL,
-        json={
-            "model": EMBED_MODEL,
-            "prompt": text
-        }
-    )
+    try:
+        response = requests.post(
+            OLLAMA_EMBED_URL,
+            json={
+                "model": EMBED_MODEL,
+                "prompt": text
+            },
+            timeout=30
+        )
 
-    response.raise_for_status()
-    return response.json()["embedding"]
+        response.raise_for_status()
+        data = response.json()
+
+        emb = data.get("embedding", None)
+
+        if not emb:
+            return None
+
+        return emb
+
+    except Exception as e:
+        print(f"⚠️ Embedding error: {e}")
+        return None
 
 
 # ======================================================
-# Main ingestion
+# INGEST
 # ======================================================
 
 def ingest_pdfs():
 
     client = chromadb.PersistentClient(path=CHROMA_PATH)
 
-    # ricreiamo la collection pulita
     try:
         client.delete_collection(COLLECTION_NAME)
     except:
@@ -123,14 +146,16 @@ def ingest_pdfs():
                 full_text += text + " "
 
         full_text = clean_text(full_text)
-
-        chunks = chunk_text(full_text, CHUNK_SIZE, CHUNK_OVERLAP)
+        chunks = chunk_text(full_text)
 
         print(f"   → Chunk generati: {len(chunks)}")
 
         for chunk in chunks:
 
             embedding = get_embedding(chunk)
+
+            if embedding is None:
+                continue
 
             collection.add(
                 ids=[str(uuid4())],
@@ -148,7 +173,7 @@ def ingest_pdfs():
 
 
 # ======================================================
-# Run
+# RUN
 # ======================================================
 
 if __name__ == "__main__":

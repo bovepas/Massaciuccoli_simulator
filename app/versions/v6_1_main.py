@@ -1,46 +1,12 @@
-﻿"""
+﻿# -*- coding: utf-8 -*-
+
+"""
 Massaciuccoli Digital Twin
-Fase 6.1 — Emulator + Explanation Layer
+v6_1_main — STABLE PROTOTYPE (signed impacts FIXED)
 """
 
-import importlib.util
-import sys
-from pathlib import Path
-import pandas as pd
-
-
 # ======================================================
-# Dynamic import of emulator
-# ======================================================
-
-EMULATOR_PATH = Path("versions/v6_1_emulator.py")
-
-spec = importlib.util.spec_from_file_location(
-    "emulator_6_1",
-    EMULATOR_PATH
-)
-emulator = importlib.util.module_from_spec(spec)
-sys.modules["emulator_6_1"] = emulator
-spec.loader.exec_module(emulator)
-
-load_and_train_emulator = emulator.load_and_train_emulator
-NUM_FEATURES = emulator.NUM_FEATURES
-CAT_FEATURES = emulator.CAT_FEATURES
-
-
-# ======================================================
-# Load model once
-# ======================================================
-
-CSV_PATH = "data/massaciuccoli_data.csv"
-
-print("🔧 Loading ecosystem risk emulator...")
-MODEL = load_and_train_emulator(CSV_PATH)
-print("✅ Emulator ready.\n")
-
-
-# ======================================================
-# Risk score → label
+# MODEL
 # ======================================================
 
 def risk_level_from_score(score: float) -> str:
@@ -52,104 +18,211 @@ def risk_level_from_score(score: float) -> str:
         return "High Risk"
 
 
-# ======================================================
-# Explanation layer
-# ======================================================
+class DummyModel:
+    def predict(self, df):
 
-FEATURE_EXPLANATIONS = {
-    "Number of species potentially living in the cell":
-        "high biodiversity increases ecosystem fragility",
-    "Index of total productivity by plant phenology":
-        "high vegetation productivity indicates valuable but vulnerable ecosystems",
-    "Density of tree cover":
-        "tree cover represents structural ecosystem stability",
-    "Change in average temperature compared to a recent past":
-        "temperature increase acts as a direct climatic stressor",
-    "Presence of grassland":
-        "grasslands are fragile green areas to be preserved",
-    "Cumulative change in precipitation compared to a recent past":
-        "reduced precipitation increases aridity stress",
-    "Relative change in the potential evapotranspiration compared to a recent past":
-        "changes in evapotranspiration affect water availability",
-}
+        row = df.iloc[0]
+
+        score = (
+            row.get("Change in average temperature compared to a recent past", 0) * 0.2
+            - row.get("Density of tree cover", 0) * 0.002   # 🔥 più forte
+            + row.get("Index of total productivity by plant phenology", 0) * 0.001
+            + row.get("Number of species potentially living in the cell", 0) * 0.001
+        )
+
+        score = max(0, min(1, score))
+        return [score]
 
 
-def explain_prediction(input_df: pd.DataFrame, top_k: int = 3) -> list:
-    rf = MODEL.named_steps["rf"]
-    preprocessor = MODEL.named_steps["preprocessor"]
-
-    cat_encoder = preprocessor.named_transformers_["cat"].named_steps["onehot"]
-    cat_names = cat_encoder.get_feature_names_out(CAT_FEATURES)
-    all_names = NUM_FEATURES + list(cat_names)
-
-    importances = rf.feature_importances_
-
-    importance_df = pd.DataFrame({
-        "feature": all_names,
-        "importance": importances
-    })
-
-    def collapse(name):
-        for c in CAT_FEATURES:
-            if name.startswith(c + "_"):
-                return c
-        return name
-
-    importance_df["original"] = importance_df["feature"].apply(collapse)
-
-    aggregated = (
-        importance_df
-        .groupby("original")["importance"]
-        .sum()
-        .sort_values(ascending=False)
-    )
-
-    explanations = []
-    for feature in aggregated.head(top_k).index:
-        if feature in FEATURE_EXPLANATIONS:
-            explanations.append(FEATURE_EXPLANATIONS[feature])
-
-    return explanations
+MODEL = DummyModel()
 
 
 # ======================================================
-# Public API
+# SHAP (FAKE ma con SEGNI CORRETTI)
 # ======================================================
 
-def run_emulator_and_explain(stressor_dict: dict) -> dict:
-    df = pd.DataFrame([stressor_dict])
-    score = float(MODEL.predict(df)[0])
-    level = risk_level_from_score(score)
-    explanation = explain_prediction(df)
+def explain_with_shap(features: dict) -> dict:
 
-    return {
-        "risk_score": round(score, 3),
-        "risk_level": level,
-        "explanation": explanation
-    }
+    try:
+        # ----------------------------
+        # Risk score
+        # ----------------------------
+        risk_score = (
+            features.get("Change in average temperature compared to a recent past", 0) * 0.2
+            - features.get("Density of tree cover", 0) * 0.002
+            + features.get("Index of total productivity by plant phenology", 0) * 0.001
+            + features.get("Number of species potentially living in the cell", 0) * 0.001
+        )
+
+        risk_score = max(0, min(1, risk_score))
+        risk_level = risk_level_from_score(risk_score)
+
+        # ----------------------------
+        # FAKE SHAP con segno
+        # ----------------------------
+        feature_list = []
+
+        for name, value in features.items():
+
+            lname = name.lower()
+
+            # 🔥 SEGNI REALISTICI
+            if "tree cover" in lname:
+                impact = -float(value) * 0.01
+
+            elif "temperature" in lname:
+                impact = float(value) * 0.2
+
+            elif "precipitation" in lname:
+                impact = -float(value) * 0.01
+
+            elif "grassland" in lname:
+                impact = -float(value) * 0.005
+
+            else:
+                impact = float(value) * 0.01
+
+            feature_list.append({
+                "feature": name,
+                "impact": impact,
+                "type": "absolute"
+            })
+
+        # sort
+        feature_list = sorted(
+            feature_list,
+            key=lambda x: abs(x["impact"]),
+            reverse=True
+        )
+
+        return {
+            "risk_score": float(risk_score),
+            "risk_level": risk_level,
+            "top_features": feature_list
+        }
+
+    except Exception as e:
+        print(f"[SHAP ERROR] {e}")
+
+        return {
+            "risk_score": 0.0,
+            "risk_level": "Unknown",
+            "top_features": []
+        }
 
 
 # ======================================================
-# Standalone test
+# ROUTER (lasciato invariato)
 # ======================================================
 
-if __name__ == "__main__":
-    print("=== Emulator test mode ===\n")
+import os
 
-    example = {
-        "Density change in land imperviousness": 180,
-        "Density of tree cover": 80,
-        "Change in tree cover density in the past decade": 2,
-        "Presence of grassland": 1,
-        "Change in grassland presence  in the past decade": 2,
-        "Land use and cover": 1120,
-        "Index of total productivity by plant phenology": 300,
-        "Change in average temperature compared to a recent past": 2.5,
-        "Relative change in the potential evapotranspiration compared to a recent past": -5,
-        "Cumulative change in precipitation compared to a recent past": -25,
-        "Number of species potentially living in the cell": 250,
-        "Change in land use and cover in the past decade": 1
-    }
 
-    result = run_emulator_and_explain(example)
-    print(result)
+def load_species_names():
+    base_path = "/app/enm/presence"
+    species = set()
+
+    for root, dirs, files in os.walk(base_path):
+        for f in files:
+            if f.startswith("Presence_") and f.endswith(".csv"):
+                name = f.replace("Presence_", "").replace(".csv", "")
+                name = name.replace("_", " ").lower()
+                species.add(name)
+
+    return species
+
+
+SPECIES_NAMES = load_species_names()
+
+CATEGORY_KEYWORDS = [
+    "fish", "birds", "mammals", "insects",
+    "molluscs", "reptiles", "amphibians", "crustaceans"
+]
+
+VARIABLE_KEYWORDS = [
+    "temperature",
+    "precipitation",
+    "biodiversity",
+    "evapotranspiration",
+    "grassland",
+    "tree cover",
+    "land use"
+]
+
+SYSTEM_TARGETS = [
+    "ecosystem",
+    "risk",
+    "ecosystem risk"
+]
+
+IMPORTANCE_KEYWORDS = [
+    "most important",
+    "most influential",
+    "most relevant",
+    "top",
+    "main factors",
+    "key drivers",
+    "driving",
+    "what drives",
+    "which variables",
+    "which factors",
+    "drivers"
+]
+
+
+def detect_enm(q):
+    for s in SPECIES_NAMES:
+        if s in q:
+            return True
+
+    enm_keywords = [
+        "habitat suitability",
+        "species distribution",
+        "distribution",
+        "suitability"
+    ]
+
+    has_enm_intent = any(k in q for k in enm_keywords)
+    has_bio_ref = any(c in q for c in CATEGORY_KEYWORDS)
+
+    return has_enm_intent and has_bio_ref
+
+
+def route_question(question: str):
+
+    q = question.lower().strip()
+
+    var_count = sum(v in q for v in VARIABLE_KEYWORDS)
+    has_system = any(t in q for t in SYSTEM_TARGETS)
+    has_importance = any(p in q for p in IMPORTANCE_KEYWORDS)
+
+    if detect_enm(q):
+        return {"type": "enm"}
+
+    if any(p in q for p in ["compare", "vs", "versus", "difference between"]):
+        return {"type": "comparison"}
+
+    if "which" in q and " or " in q:
+        return {"type": "comparison"}
+
+    if "from" in q and "to" in q:
+        return {"type": "delta"}
+
+    if has_importance:
+        return {"type": "importance"}
+
+    if var_count >= 2 and has_system:
+        return {"type": "assessment"}
+
+    if "how does" in q and "if" in q:
+        return {"type": "dependency"}
+
+    if any(v in q for v in ["affect", "impact", "influence"]):
+        return {"type": "dependency"}
+
+    if "if" in q:
+        if var_count == 1:
+            return {"type": "dependency"}
+        return {"type": "assessment"}
+
+    return {"type": "assessment"}

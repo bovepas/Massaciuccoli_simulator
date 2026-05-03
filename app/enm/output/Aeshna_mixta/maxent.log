@@ -1,0 +1,163 @@
+Fri Apr 17 10:56:44 UTC 2026
+MaxEnt version 3.4.4
+Checking header of /app/enm/env_layers/Conductivity_EPSG4326_50m_y2002.asc
+Checking header of /app/enm/env_layers/Precipitation_proj_2050_rcp45.asc
+Checking header of /app/enm/env_layers/Temperature_proj_2050_rcp45.asc
+Reading samples from Presence_Aeshna_mixta.csv
+Read samples: max memory 1073741824, total allocated 262144000, free 241202072, used 20941928, increment 20941928
+Extractor: max memory 1073741824, total allocated 262144000, free 240638712, used 21505288, increment 563360
+Extracting random background and sample data
+Warning: Sample at 10.36065, 43.83621 in Presence_Aeshna_mixta.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.36065, 43.83621
+57224 points with values for all grids
+Adding samples to background in feature space
+Command line used:  environmentallayers=/app/enm/env_layers samplesfile=/app/enm/presence/insetti_molluschi/Presence_Aeshna_mixta.csv outputdirectory=/app/enm/output/Aeshna_mixta autorun nowarnings responsecurves=true jackknife=true
+Command line to repeat: java density.MaxEnt nowarnings noprefixes responsecurves jackknife outputdirectory=/app/enm/output/Aeshna_mixta samplesfile=/app/enm/presence/insetti_molluschi/Presence_Aeshna_mixta.csv environmentallayers=/app/enm/env_layers nowarnings autorun
+Species: Aeshna_mixta
+Layers: Conductivity_EPSG4326_50m_y2002 Precipitation_proj_2050_rcp45 Temperature_proj_2050_rcp45
+Layertypes: Continuous Continuous Continuous
+responsecurves: true
+jackknife: true
+outputdirectory: /app/enm/output/Aeshna_mixta
+samplesfile: /app/enm/presence/insetti_molluschi/Presence_Aeshna_mixta.csv
+environmentallayers: /app/enm/env_layers
+warnings: false
+autorun: true
+
+getSamples: max memory 1073741824, total allocated 262144000, free 254856448, used 7287552, increment -14217736
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 253727848, used 8416152, increment 1128600
+Aeshna_mixta: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 253427192, used 8716808, increment 300656
+linearPredictor: max memory 1073741824, total allocated 262144000, free 253427192, used 8716808, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 253427192, used 8716808, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 253411816, used 8732184, increment 15376
+Initial loss: 9.210440366976517
+120: time = 0.055000 loss = 5.809238
+Resulting gain: 3.4012025441571447
+Projecting...
+Writing file /app/enm/output/Aeshna_mixta/Aeshna_mixta.asc
+Time since start: 1.458
+Writing /app/enm/output/Aeshna_mixta/plots/Aeshna_mixta.png
+Aeshna_mixta response curves
+Response curve: only Conductivity_EPSG4326_50m_y2002
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 209036272, used 53107728, increment 44375544
+Aeshna_mixta Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 209036272, used 53107728, increment 0
+linearPredictor: max memory 1073741824, total allocated 262144000, free 209036272, used 53107728, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 209036272, used 53107728, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 209036272, used 53107728, increment 0
+Initial loss: 9.210440366976517
+60: time = 0.020000 loss = 9.196645
+Resulting gain: 0.013795246320032817
+Aeshna_mixta response curves
+Response curve: only Precipitation_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 207056736, used 55087264, increment 1979536
+Aeshna_mixta Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 206596640, used 55547360, increment 460096
+linearPredictor: max memory 1073741824, total allocated 262144000, free 206516616, used 55627384, increment 80024
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 206516616, used 55627384, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 206516616, used 55627384, increment 0
+Initial loss: 9.210440366976517
+60: time = 0.009000 loss = 8.815907
+Resulting gain: 0.39453357570462444
+Aeshna_mixta response curves
+Response curve: only Temperature_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 204799536, used 57344464, increment 1717080
+Aeshna_mixta Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 204355272, used 57788728, increment 444264
+linearPredictor: max memory 1073741824, total allocated 262144000, free 204275248, used 57868752, increment 80024
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 204275248, used 57868752, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 204275248, used 57868752, increment 0
+Initial loss: 9.210440366976517
+60: time = 0.014000 loss = 8.297294
+Resulting gain: 0.9131461864698096
+Aeshna_mixta response curves
+Time since start: 2.642
+Jackknife: leave Conductivity_EPSG4326_50m_y2002 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 189275096, used 72868904, increment 15000152
+Aeshna_mixta Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 189195072, used 72948928, increment 80024
+linearPredictor: max memory 1073741824, total allocated 262144000, free 189115048, used 73028952, increment 80024
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 189115048, used 73028952, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 189115048, used 73028952, increment 0
+Initial loss: 9.210440366976517
+100: time = 0.012000 loss = 5.816650
+Jackknife: leave Precipitation_proj_2050_rcp45 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 187786464, used 74357536, increment 1328584
+Aeshna_mixta Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 187706440, used 74437560, increment 80024
+linearPredictor: max memory 1073741824, total allocated 262144000, free 187626416, used 74517584, increment 80024
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 187626416, used 74517584, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 187626416, used 74517584, increment 0
+Initial loss: 9.210440366976517
+80: time = 0.013000 loss = 8.273641
+Jackknife: leave Temperature_proj_2050_rcp45 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 186673696, used 75470304, increment 952720
+Aeshna_mixta Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 186593672, used 75550328, increment 80024
+linearPredictor: max memory 1073741824, total allocated 262144000, free 186513648, used 75630352, increment 80024
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 186513648, used 75630352, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 186513648, used 75630352, increment 0
+Initial loss: 9.210440366976517
+80: time = 0.019000 loss = 8.519954
+Jackknife: only Conductivity_EPSG4326_50m_y2002
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 185180856, used 76963144, increment 1332792
+Aeshna_mixta Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 185180856, used 76963144, increment 0
+linearPredictor: max memory 1073741824, total allocated 262144000, free 185180856, used 76963144, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 185180856, used 76963144, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 185180856, used 76963144, increment 0
+Initial loss: 9.210440366976517
+60: time = 0.019000 loss = 9.196645
+Res.gain: 0.013795246320032817
+Jackknife: only Precipitation_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 184640736, used 77503264, increment 540120
+Aeshna_mixta Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 184512352, used 77631648, increment 128384
+linearPredictor: max memory 1073741824, total allocated 262144000, free 184432328, used 77711672, increment 80024
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 184432328, used 77711672, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 184432328, used 77711672, increment 0
+Initial loss: 9.210440366976517
+60: time = 0.010000 loss = 8.815907
+Res.gain: 0.39453357570462444
+Jackknife: only Temperature_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 183527760, used 78616240, increment 904568
+Aeshna_mixta Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.620, threshold: 1.980, hinge: 0.500
+2 samples
+Density: max memory 1073741824, total allocated 262144000, free 183463776, used 78680224, increment 63984
+linearPredictor: max memory 1073741824, total allocated 262144000, free 183463776, used 78680224, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 183463776, used 78680224, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 183463776, used 78680224, increment 0
+Initial loss: 9.210440366976517
+60: time = 0.012000 loss = 8.297294
+Res.gain: 0.9131461864698096
+Ending

@@ -1,0 +1,1 @@
+java -mx1024m -cp "/app/enm/maxent.jar:/app/enm/maxent.jar" density.Explain -l /app/enm/output/Ardea_cinerea/Ardea_cinerea.lambdas -c /app/enm/output/Ardea_cinerea/Ardea_cinerea.asc /app/enm/env_layers

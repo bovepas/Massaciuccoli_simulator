@@ -1,0 +1,177 @@
+Fri Apr 17 10:57:22 UTC 2026
+MaxEnt version 3.4.4
+Checking header of /app/enm/env_layers/Conductivity_EPSG4326_50m_y2002.asc
+Checking header of /app/enm/env_layers/Precipitation_proj_2050_rcp45.asc
+Checking header of /app/enm/env_layers/Temperature_proj_2050_rcp45.asc
+Reading samples from Presence_Ardea_cinerea.csv
+Read samples: max memory 1073741824, total allocated 262144000, free 241185392, used 20958608, increment 20958608
+Extractor: max memory 1073741824, total allocated 262144000, free 239590136, used 22553864, increment 1595256
+Extracting random background and sample data
+Warning: Sample at 10.23124, 43.88942 in Presence_Ardea_cinerea.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.23124, 43.88942
+Warning: Sample at 10.35167, 43.8402 in Presence_Ardea_cinerea.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.35167, 43.8402
+Warning: Sample at 10.35393, 43.83826 in Presence_Ardea_cinerea.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.35393, 43.83826
+Warning: Sample at 10.37206, 43.80406 in Presence_Ardea_cinerea.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.37206, 43.80406
+Warning: Sample at 10.27253, 43.77972 in Presence_Ardea_cinerea.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.27253, 43.77972
+Warning: Sample at 10.27253, 43.77972 in Presence_Ardea_cinerea.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.27253, 43.77972
+Warning: Sample at 10.27253, 43.77972 in Presence_Ardea_cinerea.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.27253, 43.77972
+57224 points with values for all grids
+Adding samples to background in feature space
+Command line used:  environmentallayers=/app/enm/env_layers samplesfile=/app/enm/presence/uccelli/Presence_Ardea_cinerea.csv outputdirectory=/app/enm/output/Ardea_cinerea autorun nowarnings responsecurves=true jackknife=true
+Command line to repeat: java density.MaxEnt nowarnings noprefixes responsecurves jackknife outputdirectory=/app/enm/output/Ardea_cinerea samplesfile=/app/enm/presence/uccelli/Presence_Ardea_cinerea.csv environmentallayers=/app/enm/env_layers nowarnings autorun
+Species: Ardea_cinerea
+Layers: Conductivity_EPSG4326_50m_y2002 Precipitation_proj_2050_rcp45 Temperature_proj_2050_rcp45
+Layertypes: Continuous Continuous Continuous
+responsecurves: true
+jackknife: true
+outputdirectory: /app/enm/output/Ardea_cinerea
+samplesfile: /app/enm/presence/uccelli/Presence_Ardea_cinerea.csv
+environmentallayers: /app/enm/env_layers
+warnings: false
+autorun: true
+
+getSamples: max memory 1073741824, total allocated 262144000, free 254312512, used 7831488, increment -14722376
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 253221720, used 8922280, increment 1090792
+Ardea_cinerea: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 246641152, used 15502848, increment 6580568
+linearPredictor: max memory 1073741824, total allocated 262144000, free 246641152, used 15502848, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 246641152, used 15502848, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 246384352, used 15759648, increment 256800
+Initial loss: 9.21492982430999
+280: time = 0.609000 loss = 8.694511
+Resulting gain: 0.520418877980271
+Time since start: 1.299
+Projecting...
+Writing file /app/enm/output/Ardea_cinerea/Ardea_cinerea.asc
+Writing /app/enm/output/Ardea_cinerea/plots/Ardea_cinerea.png
+Time since start: 2.323
+Ardea_cinerea response curves
+Response curve: only Conductivity_EPSG4326_50m_y2002
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 198751696, used 63392304, increment 47632656
+Ardea_cinerea Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 197296448, used 64847552, increment 1455248
+linearPredictor: max memory 1073741824, total allocated 262144000, free 197296448, used 64847552, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197296448, used 64847552, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 197296448, used 64847552, increment 0
+Initial loss: 9.21492982430999
+80: time = 0.056000 loss = 8.937675
+Resulting gain: 0.2772545845109935
+Ardea_cinerea response curves
+Response curve: only Precipitation_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 194675008, used 67468992, increment 2621440
+Ardea_cinerea Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 192497472, used 69646528, increment 2177536
+linearPredictor: max memory 1073741824, total allocated 262144000, free 192417088, used 69726912, increment 80384
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 192417088, used 69726912, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 192417088, used 69726912, increment 0
+Initial loss: 9.21492982430999
+200: time = 0.221000 loss = 9.078844
+Resulting gain: 0.13608556155963036
+Ardea_cinerea response curves
+Response curve: only Temperature_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 218195792, used 43948208, increment -25778704
+Ardea_cinerea Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 216305152, used 45838848, increment 1890640
+linearPredictor: max memory 1073741824, total allocated 262144000, free 216305152, used 45838848, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 216305152, used 45838848, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 216305152, used 45838848, increment 0
+Initial loss: 9.21492982430999
+200: time = 0.136000 loss = 9.044580
+Resulting gain: 0.17035009588792605
+Ardea_cinerea response curves
+Time since start: 3.367
+Jackknife: leave Conductivity_EPSG4326_50m_y2002 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 171461488, used 90682512, increment 44843664
+Ardea_cinerea Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 167913160, used 94230840, increment 3548328
+linearPredictor: max memory 1073741824, total allocated 262144000, free 167832776, used 94311224, increment 80384
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 167832776, used 94311224, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 167832776, used 94311224, increment 0
+Initial loss: 9.21492982430999
+240: time = 0.358000 loss = 8.865534
+Jackknife: leave Precipitation_proj_2050_rcp45 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 180556528, used 81587472, increment -12723752
+Ardea_cinerea Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 178385200, used 83758800, increment 2171328
+linearPredictor: max memory 1073741824, total allocated 262144000, free 178304816, used 83839184, increment 80384
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 178304816, used 83839184, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 178304816, used 83839184, increment 0
+Initial loss: 9.21492982430999
+180: time = 0.152000 loss = 8.731354
+Jackknife: leave Temperature_proj_2050_rcp45 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 167978992, used 94165008, increment 10325824
+Ardea_cinerea Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 165425608, used 96718392, increment 2553384
+linearPredictor: max memory 1073741824, total allocated 262144000, free 165345224, used 96798776, increment 80384
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 165345224, used 96798776, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 165345224, used 96798776, increment 0
+Initial loss: 9.21492982430999
+300: time = 0.336000 loss = 8.865246
+Jackknife: only Conductivity_EPSG4326_50m_y2002
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 128634104, used 133509896, increment 36711120
+Ardea_cinerea Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 127585472, used 134558528, increment 1048632
+linearPredictor: max memory 1073741824, total allocated 262144000, free 127585472, used 134558528, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 127585472, used 134558528, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 127585472, used 134558528, increment 0
+Initial loss: 9.21492982430999
+Time since start: 4.401
+80: time = 0.061000 loss = 8.937675
+Res.gain: 0.2772545845109935
+Jackknife: only Precipitation_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 126203272, used 135940728, increment 1382200
+Ardea_cinerea Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 124690736, used 137453264, increment 1512536
+linearPredictor: max memory 1073741824, total allocated 262144000, free 124610352, used 137533648, increment 80384
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 124610352, used 137533648, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 124610352, used 137533648, increment 0
+Initial loss: 9.21492982430999
+200: time = 0.201000 loss = 9.078844
+Res.gain: 0.13608556155963036
+Jackknife: only Temperature_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 154301776, used 107842224, increment -29691424
+Ardea_cinerea Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.181, categorical: 0.250, threshold: 1.460, hinge: 0.500
+54 samples
+Density: max memory 1073741824, total allocated 262144000, free 152983248, used 109160752, increment 1318528
+linearPredictor: max memory 1073741824, total allocated 262144000, free 152902864, used 109241136, increment 80384
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 152902864, used 109241136, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 152902864, used 109241136, increment 0
+Initial loss: 9.21492982430999
+200: time = 0.155000 loss = 9.044580
+Res.gain: 0.17035009588792605
+Ending

@@ -1,0 +1,1 @@
+java -mx1024m -cp "/app/enm/maxent.jar:/app/enm/maxent.jar" density.Explain -l /app/enm/output/Cyprinus_carpio/Cyprinus_carpio.lambdas -c /app/enm/output/Cyprinus_carpio/Cyprinus_carpio.asc /app/enm/env_layers

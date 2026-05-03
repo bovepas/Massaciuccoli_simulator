@@ -1,6 +1,6 @@
 """
 Massaciuccoli Digital Twin
-v9 — Climate + Maps + Hotspots
+v10 — Dynamic Model with Live Data Support
 """
 
 import pandas as pd
@@ -9,11 +9,10 @@ import numpy as np
 from versions.v6_1_main import MODEL, NUM_FEATURES, CAT_FEATURES
 from versions.v6_2_basin_engine import load_dataset, compute_basin_statistics
 from tools.climate_loader import load_asc, extract_values_for_dataframe
-from tools.spatial_analysis import (
-    plot_risk_map,
-    plot_delta_map,
-    detect_hotspots
-)
+from tools.spatial_analysis import detect_hotspots
+
+# NEW
+from tools.live_data_loader import build_live_dataframe
 
 
 # ======================================================
@@ -24,10 +23,6 @@ SCENARIOS = {
     ("rcp45", "2050"): {
         "temp": "data/climate/rcp45/2050/Temperature.asc",
         "prec": "data/climate/rcp45/2050/Precipitation.asc"
-    },
-    ("rcp85", "2100"): {
-        "temp": "data/climate/rcp85/2100/Temperature.asc",
-        "prec": "data/climate/rcp85/2100/Precipitation.asc"
     }
 }
 
@@ -115,32 +110,41 @@ def predict(df):
 # MAIN
 # ======================================================
 
-def run_temporal_simulation(rcp="rcp45", year="2050"):
+def run_temporal_simulation(rcp="rcp45", year="2050", use_live_data=False):
 
     print(f"🌍 Scenario: {rcp.upper()} — {year}")
 
-    df = load_dataset()
+    # ======================================================
+    # BASE DATA
+    # ======================================================
+
+    if use_live_data:
+        print("📡 Using LIVE data as baseline")
+        df = build_live_dataframe()
+    else:
+        df = load_dataset()
+
+    # ======================================================
+    # CLIMATE
+    # ======================================================
 
     layers = load_climate_layers(rcp, year)
     delta_temp, delta_prec = compute_climate_delta(df, layers)
 
-    # baseline
+    # ======================================================
+    # BASELINE
+    # ======================================================
+
     df_base = predict(df)
     base_stats = compute_basin_statistics(df_base)
 
-    # future
+    # ======================================================
+    # FUTURE
+    # ======================================================
+
     df_future_input = apply_delta(df, delta_temp, delta_prec)
     df_future = predict(df_future_input)
     future_stats = compute_basin_statistics(df_future)
-
-    # ======================================================
-    # MAPS
-    # ======================================================
-
-    print("🗺️ Generating maps...")
-    plot_risk_map(df_base, "Baseline Risk")
-    plot_risk_map(df_future, "Future Risk")
-    plot_delta_map(df_base, df_future)
 
     # ======================================================
     # HOTSPOTS
@@ -149,36 +153,3 @@ def run_temporal_simulation(rcp="rcp45", year="2050"):
     hotspots = detect_hotspots(df_future)
 
     return base_stats, future_stats, hotspots
-
-
-# ======================================================
-# SUMMARY
-# ======================================================
-
-def summarize_trajectory(base, future, hotspots, rcp, year):
-
-    delta = round(future["mean_risk"] - base["mean_risk"], 3)
-    trend = "increase" if delta > 0 else "decrease"
-
-    return f"""
-📈 Climate-driven Simulation
-
-Scenario:
-- RCP: {rcp.upper()}
-- Year: {year}
-
-Initial mean risk: {base["mean_risk"]}
-Final mean risk: {future["mean_risk"]}
-
-Δ Risk: {delta}
-Trend: {trend}
-
-📍 Spatial Insight
-
-High-risk areas: {future["high_share"]*100:.1f}%
-
-🔥 Hotspots:
-Top 5% threshold: {hotspots["threshold"]:.3f}
-Cells: {hotspots["count"]}
-Share: {hotspots["share"]*100:.1f}%
-"""
