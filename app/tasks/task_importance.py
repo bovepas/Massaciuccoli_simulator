@@ -2,7 +2,7 @@
 
 """
 Massaciuccoli Digital Twin
-Importance Task Handler - v22 (FIX scenario detection)
+Importance Task Handler - v23 (driver ordering + clean drivers)
 """
 
 from typing import Dict, Any
@@ -34,21 +34,37 @@ def detect_mode(question: str) -> str:
         return "absolute"
 
 
-def format_feature_statement(feature_data: Dict) -> str:
-    name = feature_data["feature"]
+def clean_name(name):
 
-    if "impact" in feature_data:
-        impact = feature_data["impact"]
-        if impact > 0:
-            return f"{name} contributes to higher predicted ecosystem risk"
-        else:
-            return f"{name} contributes to lower predicted ecosystem risk"
+    name = name.lower()
 
-    return f"{name} influences ecosystem risk"
+    if "temperature" in name:
+        return "temperature"
+    if "precipitation" in name:
+        return "precipitation"
+    if "evapotranspiration" in name:
+        return "evapotranspiration"
+    if "tree cover" in name:
+        return "tree cover"
+    if "species" in name:
+        return "biodiversity"
+    if "phenology" in name:
+        return "ecosystem productivity"
+    if "grassland" in name:
+        return "grassland"
+
+    return name
+
+
+def format_feature_statement(name: str, impact: float) -> str:
+    if impact > 0:
+        return f"{name} increases ecosystem risk"
+    else:
+        return f"{name} reduces ecosystem risk"
 
 
 # ======================================================
-# BASELINE (🔥 FIX QUI)
+# BASELINE
 # ======================================================
 
 def get_baseline():
@@ -65,7 +81,7 @@ def get_baseline():
 
 
 # ======================================================
-# MAIN HANDLER
+# MAIN
 # ======================================================
 
 def handle_importance(question: str, features: Dict[str, Any]) -> Dict[str, Any]:
@@ -82,7 +98,7 @@ def handle_importance(question: str, features: Dict[str, Any]) -> Dict[str, Any]
     print(f"[DEBUG] mode: {mode}")
 
     # --------------------------------------------------
-    # 🔥 FIX SCENARIO DETECTION
+    # Scenario detection
     # --------------------------------------------------
     baseline = get_baseline()
 
@@ -110,22 +126,42 @@ def handle_importance(question: str, features: Dict[str, Any]) -> Dict[str, Any]
         }
 
     # --------------------------------------------------
-    # FILTER
+    # CLEAN + MERGE (🔥)
+    # --------------------------------------------------
+    impact_map = {}
+
+    for f in all_features:
+        cname = clean_name(f["feature"])
+        impact = f["impact"]
+
+        if cname not in impact_map:
+            impact_map[cname] = impact
+        else:
+            if abs(impact) > abs(impact_map[cname]):
+                impact_map[cname] = impact
+
+    cleaned_features = [
+        {"feature": k, "impact": v}
+        for k, v in impact_map.items()
+    ]
+
+    # --------------------------------------------------
+    # FILTER MODE
     # --------------------------------------------------
     if mode == "reduce":
-        filtered = [f for f in all_features if f["impact"] < 0]
+        filtered = [f for f in cleaned_features if f["impact"] < 0]
 
     elif mode == "increase":
-        filtered = [f for f in all_features if f["impact"] > 0]
+        filtered = [f for f in cleaned_features if f["impact"] > 0]
 
     else:
-        filtered = all_features
+        filtered = cleaned_features
 
     if not filtered:
-        filtered = all_features
+        filtered = cleaned_features
 
     # --------------------------------------------------
-    # SORT + SELECT
+    # SORT (🔥 DRIVER ORDERING)
     # --------------------------------------------------
     filtered = sorted(
         filtered,
@@ -138,7 +174,7 @@ def handle_importance(question: str, features: Dict[str, Any]) -> Dict[str, Any]
     print("[DEBUG] top features:", [f["feature"] for f in top_features])
 
     # --------------------------------------------------
-    # RAG
+    # RAG (filtered)
     # --------------------------------------------------
     feature_names = ", ".join([f["feature"] for f in top_features])
 
@@ -152,17 +188,23 @@ def handle_importance(question: str, features: Dict[str, Any]) -> Dict[str, Any]
     rag_text = "\n".join([d["text"] for d in docs])
 
     # --------------------------------------------------
-    # INTERPRETATION
+    # INTERPRETATION (clean)
     # --------------------------------------------------
-    statements = [format_feature_statement(f) for f in top_features]
-
     interpretation = ""
 
     if scenario_mode:
         interpretation += "Under the specified scenario, "
 
-    interpretation += "the model identifies the following drivers:\n\n"
-    interpretation += "; ".join(statements) + ".\n\n"
+    statements = [
+        format_feature_statement(f["feature"], f["impact"])
+        for f in top_features
+    ]
+
+    interpretation += (
+        "the main drivers of ecosystem risk are: "
+        + ", ".join(statements) + ".\n\n"
+    )
+
     interpretation += "Scientific literature indicates:\n\n"
     interpretation += rag_text[:1200]
 

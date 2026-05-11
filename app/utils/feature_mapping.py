@@ -1,8 +1,12 @@
-"""
-Feature Mapping — v3 (COMPATIBILITY FIX)
+# -*- coding: utf-8 -*-
 
-✔ Backward compatible with old parsers (FEATURE_MAPPING)
-✔ Clean mapping layer
+"""
+Feature Mapping — v4 (ROBUST NLP MATCHING)
+
+✔ Supports synonyms
+✔ Supports partial matching
+✔ Handles unknown variables
+✔ Backward compatible
 """
 
 # ======================================================
@@ -20,7 +24,7 @@ FEATURE_MAPPING = {
     "productivity": "Index of total productivity by plant phenology",
     "phenology": "Index of total productivity by plant phenology",
     "grassland": "Presence of grassland",
-    "risk": "ecosystem_risk",  # 🔥 NEW (fondamentale)
+    "risk": "ecosystem_risk",
 }
 
 # ======================================================
@@ -33,8 +37,27 @@ SYNONYMS = {
     "rainfall": "precipitation",
     "evaporation": "evapotranspiration",
     "tree density": "tree cover",
+    "forest": "tree cover",
     "species richness": "species",
+    "ecosystem productivity": "productivity",
+    "vegetation productivity": "productivity",
 }
+
+# ======================================================
+# KEYWORD MATCHING (🔥 NEW)
+# ======================================================
+
+KEYWORD_MATCH = {
+    "temperature": ["temperature", "warming", "heat"],
+    "precipitation": ["precipitation", "rain", "rainfall"],
+    "evapotranspiration": ["evapotranspiration", "evaporation"],
+    "tree cover": ["tree", "forest"],
+    "imperviousness": ["impervious", "sealing", "urbanization"],
+    "species": ["species", "biodiversity", "richness"],
+    "productivity": ["productivity", "phenology", "vegetation"],
+    "grassland": ["grassland"],
+}
+
 
 # ======================================================
 # NORMALIZATION
@@ -42,9 +65,36 @@ SYNONYMS = {
 
 def normalize_feature_name(name: str):
 
+    if not name:
+        return None
+
     name = name.lower().strip()
+
+    # --------------------------------------------------
+    # 1️⃣ SYNONYM DIRECT
+    # --------------------------------------------------
 
     if name in SYNONYMS:
         name = SYNONYMS[name]
 
-    return FEATURE_MAPPING.get(name, None)
+    # --------------------------------------------------
+    # 2️⃣ EXACT MATCH
+    # --------------------------------------------------
+
+    if name in FEATURE_MAPPING:
+        return FEATURE_MAPPING[name]
+
+    # --------------------------------------------------
+    # 3️⃣ PARTIAL MATCH (🔥 KEY FEATURE)
+    # --------------------------------------------------
+
+    for canonical, keywords in KEYWORD_MATCH.items():
+        for kw in keywords:
+            if kw in name:
+                return FEATURE_MAPPING.get(canonical)
+
+    # --------------------------------------------------
+    # 4️⃣ FALLBACK
+    # --------------------------------------------------
+
+    return None

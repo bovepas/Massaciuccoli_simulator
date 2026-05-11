@@ -2,10 +2,8 @@
 
 """
 Massaciuccoli Digital Twin
-Task: ASSESSMENT v23 (scenario + delta + SHAP unified)
+Task: ASSESSMENT v35 (driver ordering + causal interpretation)
 """
-
-import pandas as pd
 
 from versions.v6_1_main import explain_with_shap
 from knowledge.rag_assessment import generate_assessment_explanation
@@ -53,20 +51,6 @@ def build_baseline():
 
 
 # ======================================================
-# RISK LEVEL (replacing old function)
-# ======================================================
-
-def risk_level_from_score(score: float) -> str:
-
-    if score < 0.33:
-        return "Low Risk"
-    elif score < 0.66:
-        return "Medium Risk"
-    else:
-        return "High Risk"
-
-
-# ======================================================
 # CLEAN NAME
 # ======================================================
 
@@ -98,7 +82,7 @@ def clean_name(name):
 
 def handle_assessment(question, parsed_features):
 
-    print("\n========== ASSESSMENT TASK (v23) ==========")
+    print("\n========== ASSESSMENT TASK (v35) ==========")
 
     # --------------------------------------------------
     # BASELINE + SCENARIO
@@ -110,7 +94,7 @@ def handle_assessment(question, parsed_features):
     user_modified = []
 
     for k, v in parsed_features.items():
-        if v != 0:
+        if k in scenario and scenario[k] != v:
             scenario[k] = v
             user_modified.append(k)
 
@@ -118,7 +102,7 @@ def handle_assessment(question, parsed_features):
     scenario = ensure_model_features(scenario)
 
     # --------------------------------------------------
-    # SHAP instead of MODEL
+    # SHAP
     # --------------------------------------------------
 
     base_result = explain_with_shap(baseline)
@@ -129,56 +113,112 @@ def handle_assessment(question, parsed_features):
 
     delta = round(score_scen - score_base, 3)
 
-    level_base = risk_level_from_score(score_base)
-    level_scen = risk_level_from_score(score_scen)
-
     print(f"[DEBUG] Baseline: {score_base}")
     print(f"[DEBUG] Scenario: {score_scen}")
     print(f"[DEBUG] Delta: {delta}")
 
     # --------------------------------------------------
-    # SHAP FEATURES
+    # DRIVER SELECTION (ONLY RELEVANT)
     # --------------------------------------------------
 
-    shap_features = [f["feature"] for f in scen_result["features"]]
+    shap_features = scen_result.get("top_features", [])
+
+    # map cleaned names → best impact
+    impact_map = {}
+
+    for f in shap_features:
+        cname = clean_name(f["feature"])
+        impact = f["impact"]
+
+        if cname not in impact_map:
+            impact_map[cname] = impact
+        else:
+            # keep strongest version
+            if abs(impact) > abs(impact_map[cname]):
+                impact_map[cname] = impact
+
+    # keep only user-modified variables
+    relevant = {}
+
+    for f in user_modified:
+        cname = clean_name(f)
+        if cname in impact_map:
+            relevant[cname] = impact_map[cname]
+
+    # fallback (no parsed change)
+    if not relevant:
+        for k, v in impact_map.items():
+            if abs(v) > 0.01:
+                relevant[k] = v
 
     # --------------------------------------------------
-    # DRIVER UNION
+    # DRIVER ORDERING 🔥
     # --------------------------------------------------
 
-    all_features = list(set(shap_features + user_modified))
-    drivers = [clean_name(f) for f in all_features]
+    sorted_drivers = sorted(
+        relevant.items(),
+        key=lambda x: abs(x[1]),
+        reverse=True
+    )
+
+    drivers = [d[0] for d in sorted_drivers]
+
+    # split positive / negative
+    increasing = [d[0] for d in sorted_drivers if d[1] > 0]
+    decreasing = [d[0] for d in sorted_drivers if d[1] < 0]
 
     # --------------------------------------------------
     # INTERPRETATION CORE
     # --------------------------------------------------
 
     if abs(delta) < 0.01:
-        base_text = (
-            f"Ecosystem risk remains stable at {round(score_scen,3)}."
-        )
+        base_text = f"Ecosystem risk remains stable at {round(score_scen,3)}."
     else:
         direction = "increases" if delta > 0 else "decreases"
-
         base_text = (
             f"Ecosystem risk {direction} from {round(score_base,3)} "
             f"to {round(score_scen,3)} (Δ = {delta})."
         )
 
     # --------------------------------------------------
-    # RAG
+    # CAUSAL LANGUAGE 🔥
     # --------------------------------------------------
 
-    rag_text = generate_assessment_explanation(
-        [(f, scenario.get(f, 0)) for f in all_features]
-    )
-
     interpretation = base_text
+
+    if increasing:
+        if len(increasing) == 1:
+            interpretation += f" The change is primarily driven by {increasing[0]}."
+        else:
+            interpretation += (
+                f" The increase in risk is primarily driven by {', '.join(increasing[:-1])} "
+                f"and {increasing[-1]}."
+            )
+
+    if decreasing:
+        if len(decreasing) == 1:
+            interpretation += f" Mitigating effects are associated with {decreasing[0]}."
+        else:
+            interpretation += (
+                f" Mitigating effects are associated with {', '.join(decreasing[:-1])} "
+                f"and {decreasing[-1]}."
+            )
+
+    # --------------------------------------------------
+    # RAG (FILTERED)
+    # --------------------------------------------------
+
+    rag_input = [(d, relevant[d]) for d in drivers]
+    rag_text = generate_assessment_explanation(rag_input)
 
     if rag_text:
         interpretation += " " + rag_text
 
     print("========== ASSESSMENT TASK END ==========\n")
+
+    # --------------------------------------------------
+    # OUTPUT
+    # --------------------------------------------------
 
     return {
         "type": "assessment",
@@ -186,9 +226,7 @@ def handle_assessment(question, parsed_features):
         "data": {
             "baseline_score": round(score_base, 3),
             "scenario_score": round(score_scen, 3),
-            "delta": delta,
-            "baseline_level": level_base,
-            "scenario_level": level_scen
+            "delta": delta
         },
         "drivers": drivers,
         "interpretation": interpretation

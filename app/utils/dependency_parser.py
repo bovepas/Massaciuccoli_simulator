@@ -1,44 +1,72 @@
 """
-Dependency Parser — v2 (robust, rule-based)
+Dependency Parser — v3 (robust matching FIX)
 
-✔ Detects source → target
-✔ Supports:
-   - "how does X affect Y"
-   - "how does Y change if X increases by N"
-   - "effect of X on Y"
-✔ Extracts delta if present
-✔ Uses FEATURE_MAPPING (single source of truth)
+✔ Fix feature detection
+✔ Supports multi-word features
+✔ Uses synonyms correctly
+✔ Handles partial matches (e.g. "temperature change")
 """
 
 import re
-from utils.feature_mapping import FEATURE_MAPPING, normalize_feature_name
+from utils.feature_mapping import FEATURE_MAPPING, SYNONYMS, normalize_feature_name
 
 
 # ======================================================
-# HELPERS
+# TEXT NORMALIZATION
+# ======================================================
+
+def normalize_text(text: str):
+    text = text.lower()
+    text = re.sub(r"[^\w\s]", " ", text)  # remove punctuation
+    return text
+
+
+# ======================================================
+# FEATURE DETECTION (🔥 FIX)
 # ======================================================
 
 def find_features_in_text(text: str):
     """
-    Detect all features mentioned in text (canonical names)
+    Detect features using robust matching
     """
+
+    text = normalize_text(text)
+
     found = []
 
-    q = text.lower()
+    # --------------------------------------------------
+    # 1️⃣ direct mapping (multi-word safe)
+    # --------------------------------------------------
 
     for key in FEATURE_MAPPING.keys():
-        if key in q:
+        if key in text:
             canonical = normalize_feature_name(key)
             if canonical:
                 found.append(canonical)
 
+    # --------------------------------------------------
+    # 2️⃣ synonyms
+    # --------------------------------------------------
+
+    for syn, base in SYNONYMS.items():
+        if syn in text:
+            canonical = normalize_feature_name(base)
+            if canonical:
+                found.append(canonical)
+
+    # --------------------------------------------------
+    # 3️⃣ deduplicate
+    # --------------------------------------------------
+
     return list(dict.fromkeys(found))
 
 
+# ======================================================
+# DELTA
+# ======================================================
+
 def extract_delta(text: str):
-    """
-    Extract numeric delta (e.g. +2°C, -10%, increase by 5)
-    """
+
     match = re.search(r"([-+]?\d+\.?\d*)", text)
     if match:
         return float(match.group(1))
@@ -46,9 +74,7 @@ def extract_delta(text: str):
 
 
 def detect_directional_delta(text: str, delta):
-    """
-    Apply sign based on words like increase/decrease
-    """
+
     if delta is None:
         return None
 
@@ -71,37 +97,47 @@ def parse_dependency(question: str):
 
     print("[DEPENDENCY PARSER DEBUG]")
 
-    q = question.lower()
+    q = normalize_text(question)
 
     features = find_features_in_text(q)
 
-    print("Detected:", features)
+    print("Detected features:", features)
 
     if len(features) < 2:
         return {
             "source": None,
             "target": None,
-            "delta": None
+            "delta": None,
+            "unknown": []
         }
 
     # --------------------------------------------------
-    # PATTERN 1:
-    # "how does X affect Y"
+    # PATTERN 1: effect of X on Y
     # --------------------------------------------------
-    if "affect" in q or "impact" in q or "influence" in q:
 
-        source = features[0]
-        target = features[1]
+    if "effect of" in q or "impact of" in q:
+
+        parts = q.split(" on ")
+
+        if len(parts) == 2:
+            left = parts[0]
+            right = parts[1]
+
+            source_candidates = find_features_in_text(left)
+            target_candidates = find_features_in_text(right)
+
+            source = source_candidates[0] if source_candidates else features[0]
+            target = target_candidates[0] if target_candidates else features[1]
+
+        else:
+            source = features[0]
+            target = features[1]
 
     # --------------------------------------------------
-    # PATTERN 2:
-    # "how does Y change if X increases"
+    # PATTERN 2: how does Y change if X ...
     # --------------------------------------------------
+
     elif "if" in q and "change" in q:
-
-        # heuristic:
-        # after "if" → source
-        # before → target
 
         parts = q.split("if")
 
@@ -117,6 +153,7 @@ def parse_dependency(question: str):
     # --------------------------------------------------
     # DEFAULT
     # --------------------------------------------------
+
     else:
         source = features[0]
         target = features[1]
@@ -135,5 +172,6 @@ def parse_dependency(question: str):
     return {
         "source": source,
         "target": target,
-        "delta": delta
+        "delta": delta,
+        "unknown": []
     }

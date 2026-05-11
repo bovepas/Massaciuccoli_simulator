@@ -3,7 +3,7 @@ Router Test Suite — Massaciuccoli Digital Twin
 Run all routing tests automatically
 """
 
-from versions.v6_main import route_question
+from versions.v6_1_main import route_question
 
 
 # ======================================================
@@ -24,14 +24,20 @@ TESTS = [
     ("estimate risk with precipitation -20%", "assessment"),
     ("How do changes in land use and tree cover interact to influence ecosystem risk?", "assessment"),
     ("describe the current state of the ecosystem", "assessment"),
-    ("Combine environmental variables (temperature, precipitation) with ecosystem data to assess current risk conditions.", "assessment"),
+    ("If the climate becomes warmer and drier, how does ecosystem risk change?", "assessment"),
+    ("What happens to ecosystem risk if temperature increases by 2?", "assessment"),
 
     # ======================
     # DEPENDENCY
     # ======================
-    ("if precipitation decreases, how does risk change", "dependency"),
+  
     ("How does temperature affect biodiversity?", "dependency"),
-    ("How does precipitation affect ecosystem risk?", "dependency"),
+    ("How does grassland presence affect tree cover?", "dependency"),
+    ("What is the effect of precipitation on biodiversity?", "dependency"),
+    ("If temperature increases, how does tree cover change?", "dependency"),
+    ("How does evapotranspiration influence grassland presence?", "dependency"),
+    ("If precipitation decreases by 10, how does biodiversity change?", "dependency"),
+    ("Does precipitation change affect ecosystem productivity?", "dependency"),
     ("How does biodiversity change if temperature increases by 2°C?", "dependency"),
 
     # ======================
@@ -70,6 +76,14 @@ TESTS = [
     # 🔥 NATURAL LANGUAGE VARIANTS
     ("What drives ecosystem risk the most?", "importance"),
     ("What variables are most important for ecosystem risk?", "importance"),
+
+    # ======================
+    # 🔥 DRIVERS (NEW TASK)
+    # ======================
+    ("Which are the factors whose change may drive a temperature increase?", "drivers"),
+    ("Top 3 drivers of biodiversity", "drivers"),
+    ("Which factors drive biodiversity loss?", "drivers"),
+    ("What drives precipitation change?", "drivers"),
 
     # ======================
     # ENM

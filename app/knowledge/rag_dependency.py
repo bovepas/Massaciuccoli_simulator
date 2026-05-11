@@ -1,6 +1,6 @@
 """
 Massaciuccoli Digital Twin
-RAG Dependency — v5 (uncertainty-aware)
+RAG Dependency — v6 (causal-aware + consistency fix)
 """
 
 import requests
@@ -41,7 +41,7 @@ def call_llm(prompt: str) -> str:
 
 
 # ======================================================
-# PROMPT (🔥 UNCERTAINTY-AWARE)
+# PROMPT (🔥 CAUSAL + CONSISTENT)
 # ======================================================
 
 def build_prompt(source, target, strength, direction, drivers):
@@ -50,8 +50,23 @@ def build_prompt(source, target, strength, direction, drivers):
     if drivers:
         drivers_text = "\nMODEL DRIVERS:\n" + "\n".join([f"- {d}" for d in drivers])
 
+    # 🔥 LOGICA LINGUAGGIO
+    if strength in ["strong", "moderate"]:
+        behavior_rules = """
+- Describe a plausible environmental mechanism linking the variables
+- Use simple causal language (e.g., "can lead to", "is associated with")
+- Keep statements realistic and not overly specific
+- Avoid introducing unrelated processes
+"""
+    else:
+        behavior_rules = """
+- Emphasize uncertainty and weak evidence
+- Avoid strong causal claims
+- Describe the effect as small, unclear, or data-dependent
+"""
+
     return f"""
-You are a hydrology expert.
+You are an environmental scientist.
 
 RELATION:
 {source} → {target} ({strength}, {direction})
@@ -59,24 +74,22 @@ RELATION:
 {drivers_text}
 
 TASK:
-Explain the relationship between these variables.
+Explain the relationship between these variables in a realistic ecological context.
 
 IMPORTANT:
-- If strength is negligible or weak, emphasize uncertainty
-- DO NOT present a strong causal mechanism
-- Describe the effect as small, unclear, or data-dependent
+- The explanation MUST be consistent with the strength ({strength})
+- Do NOT contradict the strength level
+- Do NOT exaggerate weak relationships
 
 RULES:
-- Use cautious language (e.g., "suggests", "may indicate")
-- Only mention physical processes if clearly justified
-- Avoid deterministic explanations
-- Keep explanation realistic
+{behavior_rules}
+- Use clear and simple language
 - Max 2 sentences
 """
 
 
 # ======================================================
-# FALLBACK
+# FALLBACK (🔥 CONSISTENT)
 # ======================================================
 
 def fallback_response(source, target, strength, direction):
@@ -87,10 +100,23 @@ def fallback_response(source, target, strength, direction):
             f"Any observed effect is very small and may reflect noise rather than a consistent pattern."
         )
 
-    return (
-        f"The relationship between {source} and {target} appears {direction}, "
-        f"but should be interpreted as a general tendency rather than a strong causal link."
-    )
+    elif strength == "weak":
+        return (
+            f"The relationship between {source} and {target} appears {direction}, "
+            f"but the effect is weak and may depend on local environmental conditions."
+        )
+
+    elif strength == "moderate":
+        return (
+            f"{source} shows a moderate {direction} relationship with {target}, "
+            f"suggesting a possible environmental link that may vary across conditions."
+        )
+
+    else:  # strong
+        return (
+            f"{source} is strongly associated with {target}, "
+            f"indicating a consistent relationship in the observed data."
+        )
 
 
 # ======================================================
@@ -103,7 +129,7 @@ def generate_dependency_explanation(source, target, strength, direction, drivers
 
     try:
 
-        # 🔥 HARD RULE: skip LLM if negligible
+        # 🔥 HARD RULE: skip LLM if negligible (fast + safe)
         if strength == "negligible":
             return fallback_response(source, target, strength, direction)
 
@@ -118,6 +144,9 @@ def generate_dependency_explanation(source, target, strength, direction, drivers
         debug_print(raw)
 
         final = raw.strip().replace("\n", " ")
+
+        # 🔥 SANITY CLEANUP
+        final = final.replace("  ", " ")
 
         debug_print("\n[RAG-DEPENDENCY] Final output:")
         debug_print(final)

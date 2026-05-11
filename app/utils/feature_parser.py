@@ -1,25 +1,52 @@
+# -*- coding: utf-8 -*-
+
 """
-Feature Parser — v2 (CLEAN & ROBUST)
-
-Estrae valori numerici dalle domande utente
-→ usato da assessment / interaction
-
-Output:
-{
-    "Change in average temperature compared to a recent past": 2.0,
-    "Cumulative change in precipitation compared to a recent past": -20.0,
-    ...
-}
+Feature Parser v22
+- scala corretta
+- parsing numerico
+- parsing semantico (warmer, drier, ecc.)
 """
 
 import re
 
 
 # ======================================================
-# BASE FEATURES (DEFAULT SCENARIO)
+# FEATURE MAP
 # ======================================================
 
-def get_default_features():
+FEATURE_MAP = {
+    "temperature": "Change in average temperature compared to a recent past",
+    "precipitation": "Cumulative change in precipitation compared to a recent past",
+    "biodiversity": "Number of species potentially living in the cell",
+    "tree cover": "Density of tree cover",
+    "grassland": "Presence of grassland",
+    "evapotranspiration": "Relative change in the potential evapotranspiration compared to a recent past"
+}
+
+
+# ======================================================
+# SEMANTIC MAP (🔥 NEW)
+# ======================================================
+
+SEMANTIC_MAP = {
+    "warmer": ("temperature", 1.0),
+    "hotter": ("temperature", 1.0),
+    "cooler": ("temperature", -1.0),
+
+    "drier": ("precipitation", -1.0),
+    "dryer": ("precipitation", -1.0),
+    "wetter": ("precipitation", 1.0),
+
+    "more biodiversity": ("biodiversity", 10.0),
+    "less biodiversity": ("biodiversity", -10.0),
+}
+
+
+# ======================================================
+# BASELINE
+# ======================================================
+
+def build_default_features():
     return {
         'Density change in land imperviousness': 0,
         'Density of tree cover': 50,
@@ -33,92 +60,58 @@ def get_default_features():
 
 
 # ======================================================
-# HELPERS
-# ======================================================
-
-def extract_number(pattern, text):
-    match = re.search(pattern, text)
-    return float(match.group(1)) if match else None
-
-
-# ======================================================
 # MAIN PARSER
 # ======================================================
 
 def parse_features(question: str):
 
     q = question.lower()
-    features = get_default_features()
+    features = build_default_features()
 
     # --------------------------------------------------
-    # 🌡️ TEMPERATURE
+    # NUMERIC PARSING
     # --------------------------------------------------
-    temp = extract_number(r"(-?\d+(\.\d+)?)\s*°c", q)
 
-    if temp is None:
-        temp = extract_number(r"temperature.*?(-?\d+(\.\d+)?)", q)
+    pattern = r"(temperature|precipitation|biodiversity|tree cover|grassland|evapotranspiration)\s+(increases|decreases)\s+by\s+(-?\d+\.?\d*)"
 
-    if temp is not None:
-        features["Change in average temperature compared to a recent past"] = temp
+    matches = re.findall(pattern, q)
 
-    # --------------------------------------------------
-    # 🌧️ PRECIPITATION
-    # --------------------------------------------------
-    precip = extract_number(r"(-?\d+(\.\d+)?)\s*%", q)
+    for var, direction, value in matches:
 
-    if precip is not None:
-        # attenzione: se c'è "decrease"
-        if "decrease" in q or "drop" in q:
-            precip = -abs(precip)
-        elif "increase" in q:
-            precip = abs(precip)
+        value = float(value)
 
-        features["Cumulative change in precipitation compared to a recent past"] = precip
+        if direction == "decreases":
+            value = -value
+
+        mapped = FEATURE_MAP.get(var)
+
+        if mapped:
+            features[mapped] = features[mapped] + value
 
     # --------------------------------------------------
-    # 💧 EVAPOTRANSPIRATION
+    # SEMANTIC PARSING (🔥 NEW)
     # --------------------------------------------------
-    et = extract_number(r"evapotranspiration.*?(-?\d+(\.\d+)?)\s*%", q)
 
-    if et is not None:
-        features["Relative change in the potential evapotranspiration compared to a recent past"] = et
+    for word, (var, delta) in SEMANTIC_MAP.items():
 
-    # --------------------------------------------------
-    # 🌳 TREE COVER
-    # --------------------------------------------------
-    tree = extract_number(r"tree cover.*?(-?\d+(\.\d+)?)\s*%", q)
+        if word in q:
+            mapped = FEATURE_MAP.get(var)
 
-    if tree is not None:
-        features["Density of tree cover"] = tree
+            if mapped:
+                features[mapped] = features[mapped] + delta
 
     # --------------------------------------------------
-    # 🏙️ IMPERVIOUSNESS
+    # FALLBACK SIMPLE
     # --------------------------------------------------
-    imp = extract_number(r"imperviousness.*?(-?\d+(\.\d+)?)\s*%", q)
 
-    if imp is not None:
-        features["Density change in land imperviousness"] = imp
+    for var in FEATURE_MAP:
 
-    # --------------------------------------------------
-    # 🧬 BIODIVERSITY
-    # --------------------------------------------------
-    bio = extract_number(r"(\d+)\s*(species)", q)
+        mapped = FEATURE_MAP[var]
 
-    if bio is not None:
-        features["Number of species potentially living in the cell"] = bio
+        if f"{var} increases" in q:
+            features[mapped] += 1.0
 
-    # --------------------------------------------------
-    # 🌱 PRODUCTIVITY (fallback semplice)
-    # --------------------------------------------------
-    if "high productivity" in q:
-        features["Index of total productivity by plant phenology"] = 300
-
-    if "low productivity" in q:
-        features["Index of total productivity by plant phenology"] = 100
-
-    # --------------------------------------------------
-    # DEBUG
-    # --------------------------------------------------
-    print("[DEBUG] Parsed features:", features)
+        if f"{var} decreases" in q:
+            features[mapped] -= 1.0
 
     return features

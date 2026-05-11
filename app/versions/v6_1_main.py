@@ -2,7 +2,7 @@
 
 """
 Massaciuccoli Digital Twin
-v6_1_main — STABLE PROTOTYPE (signed impacts FIXED)
+v6_1_main — FULL (MODEL + SHAP + ROUTER v63)
 """
 
 # ======================================================
@@ -25,7 +25,7 @@ class DummyModel:
 
         score = (
             row.get("Change in average temperature compared to a recent past", 0) * 0.2
-            - row.get("Density of tree cover", 0) * 0.002   # 🔥 più forte
+            - row.get("Density of tree cover", 0) * 0.002
             + row.get("Index of total productivity by plant phenology", 0) * 0.001
             + row.get("Number of species potentially living in the cell", 0) * 0.001
         )
@@ -38,49 +38,44 @@ MODEL = DummyModel()
 
 
 # ======================================================
-# SHAP (FAKE ma con SEGNI CORRETTI)
+# SHAP (SAFE VERSION — FIXED)
 # ======================================================
 
 def explain_with_shap(features: dict) -> dict:
 
     try:
-        # ----------------------------
-        # Risk score
-        # ----------------------------
         risk_score = (
-            features.get("Change in average temperature compared to a recent past", 0) * 0.2
-            - features.get("Density of tree cover", 0) * 0.002
-            + features.get("Index of total productivity by plant phenology", 0) * 0.001
-            + features.get("Number of species potentially living in the cell", 0) * 0.001
+            float(features.get("Change in average temperature compared to a recent past", 0)) * 0.2
+            - float(features.get("Density of tree cover", 0)) * 0.002
+            + float(features.get("Index of total productivity by plant phenology", 0)) * 0.001
+            + float(features.get("Number of species potentially living in the cell", 0)) * 0.001
         )
 
         risk_score = max(0, min(1, risk_score))
         risk_level = risk_level_from_score(risk_score)
 
-        # ----------------------------
-        # FAKE SHAP con segno
-        # ----------------------------
         feature_list = []
 
         for name, value in features.items():
 
+            # 🔥 SAFE CAST
+            try:
+                val = float(value)
+            except:
+                continue
+
             lname = name.lower()
 
-            # 🔥 SEGNI REALISTICI
             if "tree cover" in lname:
-                impact = -float(value) * 0.01
-
+                impact = -val * 0.01
             elif "temperature" in lname:
-                impact = float(value) * 0.2
-
+                impact = val * 0.2
             elif "precipitation" in lname:
-                impact = -float(value) * 0.01
-
+                impact = -val * 0.01
             elif "grassland" in lname:
-                impact = -float(value) * 0.005
-
+                impact = -val * 0.005
             else:
-                impact = float(value) * 0.01
+                impact = val * 0.01
 
             feature_list.append({
                 "feature": name,
@@ -88,7 +83,6 @@ def explain_with_shap(features: dict) -> dict:
                 "type": "absolute"
             })
 
-        # sort
         feature_list = sorted(
             feature_list,
             key=lambda x: abs(x["impact"]),
@@ -112,7 +106,7 @@ def explain_with_shap(features: dict) -> dict:
 
 
 # ======================================================
-# ROUTER (lasciato invariato)
+# ROUTER v63 (FIXED)
 # ======================================================
 
 import os
@@ -134,10 +128,6 @@ def load_species_names():
 
 SPECIES_NAMES = load_species_names()
 
-CATEGORY_KEYWORDS = [
-    "fish", "birds", "mammals", "insects",
-    "molluscs", "reptiles", "amphibians", "crustaceans"
-]
 
 VARIABLE_KEYWORDS = [
     "temperature",
@@ -146,83 +136,120 @@ VARIABLE_KEYWORDS = [
     "evapotranspiration",
     "grassland",
     "tree cover",
-    "land use"
+    "land use",
+    "productivity"
 ]
 
-SYSTEM_TARGETS = [
-    "ecosystem",
-    "risk",
-    "ecosystem risk"
+DRIVER_VERBS = [
+    "drive", "drives",
+    "cause", "causes",
+    "produce", "produces",
+    "lead to", "leads to",
+    "contribute", "contributes",
+    "result in", "results in",
+    "determine", "determines"
+]
+
+DEGRADATION_WORDS = [
+    "loss", "decline", "decrease",
+    "reduction", "degradation",
+    "degrade", "worsen", "drop"
 ]
 
 IMPORTANCE_KEYWORDS = [
-    "most important",
-    "most influential",
-    "most relevant",
-    "top",
-    "main factors",
-    "key drivers",
-    "driving",
-    "what drives",
-    "which variables",
-    "which factors",
-    "drivers"
+    "most", "top", "influential"
 ]
 
-
-def detect_enm(q):
-    for s in SPECIES_NAMES:
-        if s in q:
-            return True
-
-    enm_keywords = [
-        "habitat suitability",
-        "species distribution",
-        "distribution",
-        "suitability"
-    ]
-
-    has_enm_intent = any(k in q for k in enm_keywords)
-    has_bio_ref = any(c in q for c in CATEGORY_KEYWORDS)
-
-    return has_enm_intent and has_bio_ref
+RISK_KEYWORDS = [
+    "ecosystem risk", "risk"
+]
 
 
 def route_question(question: str):
 
+    print("\n================ ROUTER v63 DEBUG ================")
+
     q = question.lower().strip()
+    print("QUESTION:", q)
 
     var_count = sum(v in q for v in VARIABLE_KEYWORDS)
-    has_system = any(t in q for t in SYSTEM_TARGETS)
-    has_importance = any(p in q for p in IMPORTANCE_KEYWORDS)
+    has_risk = any(t in q for t in RISK_KEYWORDS)
+    has_if = "if" in q
 
-    if detect_enm(q):
+    # ENM
+    if any(s in q for s in SPECIES_NAMES) or "habitat suitability" in q:
         return {"type": "enm"}
 
-    if any(p in q for p in ["compare", "vs", "versus", "difference between"]):
+    # COMPARISON
+    if any(p in q for p in ["compare", "vs", "versus"]) or " or " in q:
         return {"type": "comparison"}
 
-    if "which" in q and " or " in q:
-        return {"type": "comparison"}
-
+    # DELTA
     if "from" in q and "to" in q:
         return {"type": "delta"}
 
-    if has_importance:
+    if "goes from" in q:
+        return {"type": "delta"}
+
+    # =========================
+    # 🔥 NEW RULE (FIX CRITICO)
+    # =========================
+
+    if "variables" in q:
+        if any(w in q for w in ["increase", "decrease"]):
+            if any(var in q for var in VARIABLE_KEYWORDS):
+                return {"type": "drivers"}
+
+    # =========================
+    # IMPORTANCE SPECIAL
+    # =========================
+
+    if "main factors driving" in q and has_risk:
         return {"type": "importance"}
 
-    if var_count >= 2 and has_system:
-        return {"type": "assessment"}
+    if has_if and "drivers" in q:
+        return {"type": "importance"}
 
-    if "how does" in q and "if" in q:
-        return {"type": "dependency"}
+    if any(k in q for k in ["most", "influential"]):
+        return {"type": "importance"}
+
+    # =========================
+    # ASSESSMENT
+    # =========================
+
+    if has_risk and var_count >= 1:
+        if "how" in q or has_if:
+            return {"type": "assessment"}
+
+    # =========================
+    # DEPENDENCY
+    # =========================
+
+    if "how does" in q:
+        if not has_risk:
+            return {"type": "dependency"}
 
     if any(v in q for v in ["affect", "impact", "influence"]):
+        if not has_risk:
+            return {"type": "dependency"}
+
+    if ("effect of" in q or "impact of" in q) and " on " in q:
         return {"type": "dependency"}
 
-    if "if" in q:
-        if var_count == 1:
-            return {"type": "dependency"}
+    # =========================
+    # DRIVERS
+    # =========================
+
+    if not has_risk:
+        if any(v in q for v in DRIVER_VERBS) or any(w in q for w in DEGRADATION_WORDS):
+            if any(var in q for var in VARIABLE_KEYWORDS):
+                return {"type": "drivers"}
+
+    # =========================
+    # DEFAULT
+    # =========================
+
+    if has_risk:
         return {"type": "assessment"}
 
     return {"type": "assessment"}

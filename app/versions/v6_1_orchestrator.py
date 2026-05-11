@@ -2,22 +2,37 @@
 
 """
 Massaciuccoli Digital Twin
-Orchestrator v25 (router fix)
+Orchestrator v26 (drivers support + stable routing)
 """
 
 import sys
 import os
 
-# ROOT PATH
+# ======================================================
+# PATH SETUP
+# ======================================================
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+# ======================================================
+# TASKS
+# ======================================================
 
 from tasks.task_assessment import handle_assessment
 from tasks.task_importance import handle_importance
 from tasks.task_delta import handle_delta
 from tasks.task_dependency import handle_dependency
+from tasks.task_drivers import handle_drivers  # 🔥 NEW
 
-# 🔥 FIX QUI
-from versions.v6_main import route_question
+# ======================================================
+# ROUTER
+# ======================================================
+
+from versions.v6_1_main import route_question
+
+# ======================================================
+# PARSERS
+# ======================================================
 
 from utils.feature_parser import parse_features
 from utils.range_parser import parse_range
@@ -84,6 +99,9 @@ def run():
 
             elif task_type == "dependency":
                 result = handle_dependency(question, route)
+
+            elif task_type == "drivers":
+                result = handle_drivers(question)  # 🔥 NEW
 
             else:
                 result = {
