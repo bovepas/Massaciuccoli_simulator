@@ -1,7 +1,15 @@
+# -*- coding: utf-8 -*-
+
 """
 Massaciuccoli Digital Twin
-RAG Comparison v2 — STRUCTURED + DETERMINISTIC
+RAG Comparison v3 — deterministic + optional LLM enhancement
+
+✔ Deterministic core (always works)
+✔ Optional LLM for better phrasing
+✔ Safe fallback
 """
+
+from tools.llm_client import call_llm
 
 DEBUG = True
 
@@ -12,17 +20,12 @@ def debug_print(*args):
 
 
 # ======================================================
-# MAIN
+# BUILD BASE (DETERMINISTIC CORE)
 # ======================================================
 
-def generate_comparison_explanation(drivers, delta):
+def build_base_explanation(drivers, delta):
 
-    print("\n[RAG-COMPARISON v2] START")
-
-    # --------------------------------------------------
-    # BASE SENTENCE
-    # --------------------------------------------------
-
+    # ---------------- BASE ----------------
     if abs(delta) < 0.01:
         base = "The two scenarios show similar ecosystem risk."
     elif delta > 0:
@@ -30,10 +33,7 @@ def generate_comparison_explanation(drivers, delta):
     else:
         base = "The first scenario shows higher ecosystem risk."
 
-    # --------------------------------------------------
-    # DRIVER INTERPRETATION
-    # --------------------------------------------------
-
+    # ---------------- DRIVERS ----------------
     explanations = []
 
     for feature, a, b in drivers:
@@ -52,18 +52,63 @@ def generate_comparison_explanation(drivers, delta):
     else:
         driver_sentence = ""
 
-    # --------------------------------------------------
-    # CONTEXT
-    # --------------------------------------------------
-
+    # ---------------- CONTEXT ----------------
     context = (
         " Higher risk reflects ecosystems that are more fragile "
         "or sensitive to environmental stressors."
     )
 
-    final = base + driver_sentence + context
+    return base + driver_sentence + context
+
+
+# ======================================================
+# OPTIONAL LLM REWRITE
+# ======================================================
+
+def enhance_with_llm(text):
+
+    prompt = f"""
+Rewrite the following explanation in a slightly more natural and fluid way.
+
+TEXT:
+{text}
+
+RULES:
+- Keep the same meaning
+- Do NOT add new information
+- Keep it concise (max 2 sentences)
+"""
+
+    try:
+
+        raw = call_llm(prompt)
+
+        if not raw or "Interpretation not available" in raw:
+            return text
+
+        return raw.strip()
+
+    except Exception:
+        return text
+
+
+# ======================================================
+# MAIN
+# ======================================================
+
+def generate_comparison_explanation(drivers, delta):
+
+    print("\n[RAG-COMPARISON v3] START")
+
+    base = build_base_explanation(drivers, delta)
+
+    debug_print("[BASE]:", base)
+
+    # 🔥 optional enhancement
+    final = enhance_with_llm(base)
 
     debug_print("[FINAL]:", final)
-    print("[RAG-COMPARISON v2] END")
+
+    print("[RAG-COMPARISON v3] END")
 
     return final

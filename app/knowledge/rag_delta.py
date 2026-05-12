@@ -1,15 +1,16 @@
+# -*- coding: utf-8 -*-
+
 """
-RAG Delta — v34 (clean, no duplication, robust alignment)
+RAG Delta — v35 (centralized LLM + robust + demo-ready)
+
+✔ Uses centralized llm_client
+✔ Keeps deterministic ecological logic
+✔ Strong fallback
+✔ Safe risk alignment
 """
 
-import requests
-import os
 import re
-
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-OLLAMA_GENERATE_URL = f"{OLLAMA_BASE_URL}/api/generate"
-
-LLM_MODEL = "llama3:8b"
+from tools.llm_client import call_llm
 
 DEBUG = True
 
@@ -20,7 +21,7 @@ def debug_print(*args):
 
 
 # ======================================================
-# BUILD FACTS (uses delta direction)
+# BUILD FACTS (UNCHANGED LOGIC)
 # ======================================================
 
 def build_facts(drivers):
@@ -32,7 +33,6 @@ def build_facts(drivers):
         name = feature.lower()
         delta = v_to - v_from
 
-        # ---------------- TEMPERATURE ----------------
         if "temperature" in name:
             if delta > 0:
                 facts += [
@@ -49,7 +49,6 @@ def build_facts(drivers):
                     "ecosystem stress decreases",
                 ]
 
-        # ---------------- PRECIPITATION ----------------
         elif "precipitation" in name:
             if delta > 0:
                 facts += [
@@ -64,7 +63,6 @@ def build_facts(drivers):
                     "ecosystem stress increases",
                 ]
 
-        # ---------------- EVAPOTRANSPIRATION ----------------
         elif "evapotranspiration" in name:
             if delta > 0:
                 facts += [
@@ -79,7 +77,6 @@ def build_facts(drivers):
                     "ecosystem stress decreases",
                 ]
 
-    # remove duplicates while preserving order
     return list(dict.fromkeys(facts))
 
 
@@ -113,13 +110,14 @@ RULES:
 
 def clean_output(text):
 
+    if not text:
+        return ""
+
     text = text.strip()
 
-    # remove typical prefixes
     text = re.sub(r"^here is.*?:", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^this means.*?:", "", text, flags=re.IGNORECASE)
 
-    # normalize whitespace
     text = text.replace("\n", " ")
     text = re.sub(r"\s+", " ", text)
 
@@ -127,7 +125,7 @@ def clean_output(text):
 
 
 # ======================================================
-# ADD RISK SENTENCE (SAFE)
+# ADD RISK SENTENCE
 # ======================================================
 
 def add_risk_alignment(text, delta):
@@ -135,7 +133,6 @@ def add_risk_alignment(text, delta):
     if delta is None:
         return text
 
-    # avoid duplication
     if "ecosystem risk" in text.lower():
         return text
 
@@ -148,35 +145,17 @@ def add_risk_alignment(text, delta):
 
 
 # ======================================================
-# LLM CALL
+# FALLBACK (IMPROVED)
 # ======================================================
 
-def call_llm(prompt):
-
-    response = requests.post(
-        OLLAMA_GENERATE_URL,
-        json={
-            "model": LLM_MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "options": {"temperature": 0}
-        }
-    )
-
-    response.raise_for_status()
-    return response.json()["response"]
-
-
-# ======================================================
-# FALLBACK
-# ======================================================
-
-def fallback(facts):
+def fallback(facts, delta):
 
     if not facts:
         return "No clear environmental pattern detected."
 
-    return " ".join(facts[:2]) + "."
+    base = " ".join(facts[:2]) + "."
+
+    return add_risk_alignment(base, delta)
 
 
 # ======================================================
@@ -185,7 +164,7 @@ def fallback(facts):
 
 def generate_delta_explanation(question, drivers, delta=None):
 
-    print("\n[RAG-DELTA v34] START")
+    print("\n[RAG-DELTA v35] START")
 
     facts = build_facts(drivers)
     debug_print("[FACTS]:", facts)
@@ -197,19 +176,22 @@ def generate_delta_explanation(question, drivers, delta=None):
     debug_print("\n[PROMPT]:\n", prompt)
 
     try:
+
         raw = call_llm(prompt)
         debug_print("\n[RAW]:", raw)
 
-        cleaned = clean_output(raw)
+        if not raw or "Interpretation not available" in raw:
+            return fallback(facts, delta)
 
-        # 🔥 SAFE ALIGNMENT
+        cleaned = clean_output(raw)
         final = add_risk_alignment(cleaned, delta)
 
         print("[FINAL]:", final)
-        print("[RAG-DELTA v34] END")
+        print("[RAG-DELTA v35] END")
 
         return final
 
     except Exception as e:
+
         print("[RAG ERROR]", e)
-        return fallback(facts)
+        return fallback(facts, delta)

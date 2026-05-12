@@ -1,24 +1,25 @@
+# -*- coding: utf-8 -*-
+
 """
 Massaciuccoli Digital Twin
-RAG Pipeline — Clean Debug Version
+RAG Pipeline — v2 (centralized LLM + safe + docker-ready)
+
+✔ Uses centralized llm_client
+✔ Works in Docker + local
+✔ Safe fallback (no crash)
+✔ Clean debug
 """
 
-import requests
-import os
 import re
 from knowledge.retriever import retrieve_documents
+from tools.llm_client import call_llm
 
 
 # ======================================================
 # CONFIG
 # ======================================================
 
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-OLLAMA_GENERATE_URL = f"{OLLAMA_BASE_URL}/api/generate"
-
-LLM_MODEL = "llama3:8b"
-
-DEBUG = False  # 🔥 toggle unico
+DEBUG = False  # toggle unico
 
 
 # ======================================================
@@ -31,35 +32,27 @@ def debug_print(*args):
 
 
 # ======================================================
-# LLM CALL
-# ======================================================
-
-def call_llm(prompt: str) -> str:
-
-    response = requests.post(
-        OLLAMA_GENERATE_URL,
-        json={
-            "model": LLM_MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "options": {"temperature": 0}
-        }
-    )
-
-    response.raise_for_status()
-    return response.json()["response"].strip()
-
-
-# ======================================================
 # CLEAN TEXT
 # ======================================================
 
 def clean_text(text: str):
 
+    if not text:
+        return ""
+
     text = re.sub(r"\(id\s*\d+\)", "", text)
     text = re.sub(r"\s+", " ", text)
 
     return text.strip()
+
+
+# ======================================================
+# FALLBACK
+# ======================================================
+
+def fallback_answer(question: str):
+
+    return "The system retrieved relevant information, but a detailed explanation is currently unavailable."
 
 
 # ======================================================
@@ -103,15 +96,27 @@ Answer:
         debug_print(preview)
 
     # ================= LLM =================
-    raw = call_llm(prompt)
+    try:
 
-    debug_print("\n[RAG] --- RAW LLM OUTPUT ---")
-    debug_print(raw)
+        raw = call_llm(prompt)
 
-    cleaned = clean_text(raw)
+        debug_print("\n[RAG] --- RAW LLM OUTPUT ---")
+        debug_print(raw)
 
-    debug_print("\n[RAG] --- CLEANED OUTPUT ---")
-    debug_print(cleaned)
-    debug_print("==========================================\n")
+        if not raw or "Interpretation not available" in raw:
+            return fallback_answer(question)
 
-    return cleaned
+        cleaned = clean_text(raw)
+
+        debug_print("\n[RAG] --- CLEANED OUTPUT ---")
+        debug_print(cleaned)
+        debug_print("==========================================\n")
+
+        return cleaned
+
+    except Exception as e:
+
+        print("\n🔥 RAG-PIPELINE ERROR:")
+        print(e)
+
+        return fallback_answer(question)

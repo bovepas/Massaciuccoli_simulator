@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Drivers — v3 (STRICT DATA-GROUNDED)
-✔ ZERO hallucination
-✔ NO causal claims beyond correlation
-✔ DEMO SAFE
+RAG Drivers — v5 (centralized LLM + strong fallback)
+
+✔ Uses centralized LLM client
+✔ No direct HTTP calls
+✔ Robust fallback (structured)
+✔ Demo-ready output
 """
 
-import requests
-import os
-
-
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-OLLAMA_GENERATE_URL = f"{OLLAMA_BASE_URL}/api/generate"
-
-LLM_MODEL = "llama3:8b"
+from tools.llm_client import call_llm
 
 DEBUG = True
 
@@ -25,27 +20,7 @@ def debug_print(*args):
 
 
 # ======================================================
-# LLM CALL
-# ======================================================
-
-def call_llm(prompt: str) -> str:
-
-    response = requests.post(
-        OLLAMA_GENERATE_URL,
-        json={
-            "model": LLM_MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "options": {"temperature": 0}
-        }
-    )
-
-    response.raise_for_status()
-    return response.json()["response"].strip()
-
-
-# ======================================================
-# PROMPT (🔥 HARDENED)
+# PROMPT (STRICT + DEMO READY)
 # ======================================================
 
 def build_prompt(target, drivers):
@@ -68,38 +43,41 @@ TASK:
 Describe the observed relationships between variables.
 
 STRICT RULES:
-
 - ONLY describe correlations
-- DO NOT explain mechanisms (no "because", no physical explanations)
-- DO NOT introduce external concepts (e.g. urbanization, climate dynamics)
+- DO NOT explain mechanisms
+- DO NOT introduce external concepts
 - DO NOT infer causality
 - DO NOT generalize beyond the listed variables
 - Use only the variable names provided
 
 STYLE:
-
 - 2 short paragraphs
 - Simple and factual
-
-STRICT LANGUAGE RULES:
-
-- Use ONLY associative language
-- Allowed expressions:
+- Use ONLY associative language:
   "is positively associated with"
   "is negatively associated with"
   "shows a strong relationship with"
-
-- FORBIDDEN:
-  "leads to"
-  "causes"
-  "results in"
-  "as X increases"
-  "this means that"
-  "due to"
-
-Write neutral statistical descriptions only.
-
 """
+
+
+# ======================================================
+# FALLBACK (🔥 MUCH BETTER)
+# ======================================================
+
+def fallback_explanation(target, drivers):
+
+    if not drivers:
+        return "No relevant statistical relationships were identified."
+
+    sentences = []
+
+    for d in drivers[:3]:  # top 3 for readability
+        sentences.append(
+            f"{d['feature']} is {d['direction']}ly associated with {target} "
+            f"with a {d['strength']} relationship."
+        )
+
+    return " ".join(sentences)
 
 
 # ======================================================
@@ -122,6 +100,10 @@ def generate_drivers_explanation(target, drivers):
         debug_print("\n[RAG-DRIVERS] Raw output:")
         debug_print(raw)
 
+        # 🔥 fallback if LLM fails silently
+        if not raw or "Interpretation not available" in raw:
+            return fallback_explanation(target, drivers)
+
         final = raw.strip()
 
         debug_print("\n[RAG-DRIVERS] Final output:")
@@ -134,7 +116,7 @@ def generate_drivers_explanation(target, drivers):
         print("\n🔥 RAG-DRIVERS ERROR:")
         print(e)
 
-        return "Interpretation not available."
+        return fallback_explanation(target, drivers)
 
     finally:
         print("[RAG-DRIVERS] END\n")

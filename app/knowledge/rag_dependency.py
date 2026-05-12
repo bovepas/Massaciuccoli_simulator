@@ -1,16 +1,16 @@
+# -*- coding: utf-8 -*-
+
 """
 Massaciuccoli Digital Twin
-RAG Dependency — v6 (causal-aware + consistency fix)
+RAG Dependency — v7 (centralized LLM + safe + consistent)
+
+✔ Uses centralized LLM client
+✔ Keeps causal-aware prompting
+✔ Strong fallback
+✔ No duplication of HTTP logic
 """
 
-import requests
-import os
-
-
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-OLLAMA_GENERATE_URL = f"{OLLAMA_BASE_URL}/api/generate"
-
-LLM_MODEL = "llama3:8b"
+from tools.llm_client import call_llm
 
 DEBUG = True
 
@@ -21,27 +21,7 @@ def debug_print(*args):
 
 
 # ======================================================
-# LLM CALL
-# ======================================================
-
-def call_llm(prompt: str) -> str:
-
-    response = requests.post(
-        OLLAMA_GENERATE_URL,
-        json={
-            "model": LLM_MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "options": {"temperature": 0}
-        }
-    )
-
-    response.raise_for_status()
-    return response.json()["response"].strip()
-
-
-# ======================================================
-# PROMPT (🔥 CAUSAL + CONSISTENT)
+# PROMPT (UNCHANGED LOGIC, CLEANED)
 # ======================================================
 
 def build_prompt(source, target, strength, direction, drivers):
@@ -50,7 +30,6 @@ def build_prompt(source, target, strength, direction, drivers):
     if drivers:
         drivers_text = "\nMODEL DRIVERS:\n" + "\n".join([f"- {d}" for d in drivers])
 
-    # 🔥 LOGICA LINGUAGGIO
     if strength in ["strong", "moderate"]:
         behavior_rules = """
 - Describe a plausible environmental mechanism linking the variables
@@ -89,7 +68,7 @@ RULES:
 
 
 # ======================================================
-# FALLBACK (🔥 CONSISTENT)
+# FALLBACK (UNCHANGED)
 # ======================================================
 
 def fallback_response(source, target, strength, direction):
@@ -129,7 +108,7 @@ def generate_dependency_explanation(source, target, strength, direction, drivers
 
     try:
 
-        # 🔥 HARD RULE: skip LLM if negligible (fast + safe)
+        # 🔥 skip LLM for negligible
         if strength == "negligible":
             return fallback_response(source, target, strength, direction)
 
@@ -143,10 +122,11 @@ def generate_dependency_explanation(source, target, strength, direction, drivers
         debug_print("\n[RAG-DEPENDENCY] Raw output:")
         debug_print(raw)
 
-        final = raw.strip().replace("\n", " ")
+        # 🔥 fallback if LLM failed
+        if not raw or "Interpretation not available" in raw:
+            return fallback_response(source, target, strength, direction)
 
-        # 🔥 SANITY CLEANUP
-        final = final.replace("  ", " ")
+        final = raw.strip().replace("\n", " ").replace("  ", " ")
 
         debug_print("\n[RAG-DEPENDENCY] Final output:")
         debug_print(final)

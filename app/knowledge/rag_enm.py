@@ -1,9 +1,32 @@
+# -*- coding: utf-8 -*-
+
 """
 Massaciuccoli Digital Twin
-RAG ENM — Species Explanation Layer
+RAG ENM — Species Explanation Layer v2 (robust + demo-ready)
+
+✔ Uses centralized RAG pipeline
+✔ Strong fallback (scientific)
+✔ Cleaner output
 """
 
 from knowledge.rag_pipeline import generate_answer
+
+
+# ======================================================
+# FALLBACK (🔥 IMPORTANT FOR DEMO)
+# ======================================================
+
+def fallback_explanation(species, drivers):
+
+    if not drivers:
+        return f"Habitat suitability for {species} depends on environmental conditions represented in the model."
+
+    driver_text = ", ".join(drivers[:3])
+
+    return (
+        f"Habitat suitability for {species} is influenced by environmental variables such as {driver_text}, "
+        f"which define the ecological conditions supporting species presence."
+    )
 
 
 # ======================================================
@@ -21,42 +44,54 @@ def generate_enm_explanation(question, drivers, species):
     driver_text = "\n".join([f"- {d}" for d in drivers])
 
     # --------------------------------------------------
-    # PROMPT
+    # PROMPT (IMPROVED)
     # --------------------------------------------------
 
     extra_prompt = f"""
-IMPORTANT:
-You must explain habitat suitability using ecological reasoning grounded in the provided variables.
+You are an ecological modeler.
 
 SPECIES:
 {species}
 
-DRIVERS:
+ENVIRONMENTAL DRIVERS:
 {driver_text}
 
 TASK:
-Explain how these environmental variables influence habitat suitability for the species.
+Explain how these variables influence habitat suitability for the species.
 
-STRICT RULES:
-- Focus on ecological interpretation (habitat preferences, environmental constraints)
-- Use cause → effect logic
-- You MAY use ecological concepts (unlike assessment/comparison)
-- Do NOT invent variables not listed above
-- Be concise (2–3 sentences)
+RULES:
+- Use ecological reasoning (habitat preference, environmental constraints)
+- Link variables to species presence
+- Be realistic and scientifically plausible
+- Use 2–3 sentences maximum
 - No lists, no formatting
+- Do NOT introduce variables not listed
 """
 
     # --------------------------------------------------
     # CALL RAG
     # --------------------------------------------------
 
-    answer = generate_answer(
-        question=question,
-        extra_prompt=extra_prompt
-    )
+    try:
 
-    print("\n[RAG-ENM] OUTPUT:")
-    print(answer)
-    print("[RAG-ENM] END\n")
+        answer = generate_answer(
+            question=question,
+            extra_prompt=extra_prompt
+        )
 
-    return answer
+        print("\n[RAG-ENM] OUTPUT:")
+        print(answer)
+
+        # 🔥 fallback if weak output
+        if not answer or "unavailable" in answer.lower():
+            return fallback_explanation(species, drivers)
+
+        print("[RAG-ENM] END\n")
+        return answer
+
+    except Exception as e:
+
+        print("\n🔥 RAG-ENM ERROR:")
+        print(e)
+
+        return fallback_explanation(species, drivers)
