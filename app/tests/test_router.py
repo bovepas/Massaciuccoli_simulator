@@ -30,7 +30,6 @@ TESTS = [
     # ======================
     # DEPENDENCY
     # ======================
-  
     ("How does temperature affect biodiversity?", "dependency"),
     ("How does grassland presence affect tree cover?", "dependency"),
     ("What is the effect of precipitation on biodiversity?", "dependency"),
@@ -64,21 +63,15 @@ TESTS = [
     ("What are the main factors driving the ecosystem risk in this scenario.", "importance"),
     ("Explain the main factors driving the ecosystem risk in this scenario. List the top 3 most influential variables.", "importance"),
     ("What are the top 3 most influential variables affecting ecosystem risk under baseline conditions?", "importance"),
-
-    # 🔥 SCENARIO + IF (bug fix)
     ("What are the main drivers if temperature increases by 2?", "importance"),
     ("Which variables are most influential if precipitation decreases by 20%?", "importance"),
-
-    # 🔥 REDUCE / INCREASE (bug fix)
     ("Which variables reduce ecosystem risk the most?", "importance"),
     ("Which factors increase ecosystem risk the most?", "importance"),
-
-    # 🔥 NATURAL LANGUAGE VARIANTS
     ("What drives ecosystem risk the most?", "importance"),
     ("What variables are most important for ecosystem risk?", "importance"),
 
     # ======================
-    # 🔥 DRIVERS (NEW TASK)
+    # DRIVERS
     # ======================
     ("Which are the factors whose change may drive a temperature increase?", "drivers"),
     ("Top 3 drivers of biodiversity", "drivers"),
@@ -91,6 +84,33 @@ TESTS = [
     ("Cyprinus carpio habitat suitability", "enm"),
     ("What is the predicted habitat suitability of Cyprinus carpio in the study area?", "enm"),
     ("What is the habitat suitability of fish species in the area given temperature increase of 2°C?", "enm"),
+
+    # ======================================================
+    # 🔥 CHAT / OUT-OF-DOMAIN (NEW)
+    # ======================================================
+
+    # Greetings
+    ("hello", "chat"),
+    ("hi there", "chat"),
+    ("hey", "chat"),
+
+    # Identity / system questions
+    ("what are you?", "chat"),
+    ("are you an ecosystem model?", "chat"),
+    ("who are you?", "chat"),
+
+    # Generic help
+    ("can you help me?", "chat"),
+    ("what can you do?", "chat"),
+
+    # Out-of-domain nonsense
+    ("asdasdasd", "chat"),
+    ("random text with no meaning", "chat"),
+
+    # Borderline tricky cases
+    ("tell me something", "chat"),
+    ("explain this system", "chat"),
+    ("what is going on here?", "chat"),
 ]
 
 

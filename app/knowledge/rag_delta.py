@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Delta — v35 (centralized LLM + robust + demo-ready)
+RAG Delta — v36 (polished + stable + demo-ready)
 
 ✔ Uses centralized llm_client
-✔ Keeps deterministic ecological logic
-✔ Strong fallback
-✔ Safe risk alignment
+✔ Deterministic ecological logic preserved
+✔ Output validation
+✔ Cleaner text generation
+✔ Strong fallback (demo-safe)
 """
 
 import re
@@ -21,7 +22,7 @@ def debug_print(*args):
 
 
 # ======================================================
-# BUILD FACTS (UNCHANGED LOGIC)
+# BUILD FACTS
 # ======================================================
 
 def build_facts(drivers):
@@ -77,6 +78,7 @@ def build_facts(drivers):
                     "ecosystem stress decreases",
                 ]
 
+    # remove duplicates
     return list(dict.fromkeys(facts))
 
 
@@ -96,10 +98,10 @@ FACTS:
 
 RULES:
 - Use ONLY these facts
+- Combine them into 1–2 sentences
 - Do NOT add causes
 - Do NOT introduce new concepts
-- Keep it clear and simple
-- Max 2 sentences
+- Keep it clear and natural
 - No introductions
 """
 
@@ -121,7 +123,29 @@ def clean_output(text):
     text = text.replace("\n", " ")
     text = re.sub(r"\s+", " ", text)
 
+    # 🔥 fix repetition artifacts
+    text = text.replace("increases increases", "increases")
+    text = text.replace("decreases decreases", "decreases")
+
     return text.strip()
+
+
+# ======================================================
+# OUTPUT VALIDATION
+# ======================================================
+
+def is_valid(text):
+
+    if not text:
+        return False
+
+    if len(text) < 20:
+        return False
+
+    if "Interpretation not available" in text:
+        return False
+
+    return True
 
 
 # ======================================================
@@ -145,7 +169,7 @@ def add_risk_alignment(text, delta):
 
 
 # ======================================================
-# FALLBACK (IMPROVED)
+# FALLBACK (🔥 MUCH BETTER)
 # ======================================================
 
 def fallback(facts, delta):
@@ -153,9 +177,9 @@ def fallback(facts, delta):
     if not facts:
         return "No clear environmental pattern detected."
 
-    base = " ".join(facts[:2]) + "."
+    sentence = " and ".join(facts[:2]) + "."
 
-    return add_risk_alignment(base, delta)
+    return add_risk_alignment(sentence, delta)
 
 
 # ======================================================
@@ -164,7 +188,7 @@ def fallback(facts, delta):
 
 def generate_delta_explanation(question, drivers, delta=None):
 
-    print("\n[RAG-DELTA v35] START")
+    print("\n[RAG-DELTA v36] START")
 
     facts = build_facts(drivers)
     debug_print("[FACTS]:", facts)
@@ -180,14 +204,14 @@ def generate_delta_explanation(question, drivers, delta=None):
         raw = call_llm(prompt)
         debug_print("\n[RAW]:", raw)
 
-        if not raw or "Interpretation not available" in raw:
+        if not is_valid(raw):
             return fallback(facts, delta)
 
         cleaned = clean_output(raw)
         final = add_risk_alignment(cleaned, delta)
 
         print("[FINAL]:", final)
-        print("[RAG-DELTA v35] END")
+        print("[RAG-DELTA v36] END")
 
         return final
 

@@ -2,7 +2,11 @@
 
 """
 Massaciuccoli Digital Twin
-Orchestrator v26 (drivers support + stable routing)
+Orchestrator v29 (smart parsing)
+
+✔ Skip parsing for chat
+✔ Cleaner logs
+✔ Same behavior
 """
 
 import sys
@@ -15,6 +19,18 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # ======================================================
+# LOGGER
+# ======================================================
+
+from utils.logger import (
+    log_section,
+    log_question,
+    log_route,
+    log_data,
+    log_error
+)
+
+# ======================================================
 # TASKS
 # ======================================================
 
@@ -22,7 +38,8 @@ from tasks.task_assessment import handle_assessment
 from tasks.task_importance import handle_importance
 from tasks.task_delta import handle_delta
 from tasks.task_dependency import handle_dependency
-from tasks.task_drivers import handle_drivers  # 🔥 NEW
+from tasks.task_drivers import handle_drivers
+from tasks.task_chat import handle_chat
 
 # ======================================================
 # ROUTER
@@ -47,7 +64,7 @@ def run():
     print("🔧 Loading ecosystem risk emulator...")
     print("✅ Emulator ready.\n")
 
-    print("Massaciuccoli Digital Twin — v134 (interactive)\n")
+    print("Massaciuccoli Digital Twin — v137 (smart logging)\n")
 
     while True:
 
@@ -56,37 +73,58 @@ def run():
         if question.lower() in ["exit", "quit"]:
             break
 
-        # --------------------------------------------------
+        # ==================================================
+        # REQUEST
+        # ==================================================
+
+        log_section("NEW REQUEST")
+        log_question(question)
+
+        # ==================================================
         # ROUTING
-        # --------------------------------------------------
-
-        print("\n================ ROUTING DEBUG ================")
-        print("QUESTION:", question)
-
-        route = route_question(question)
-
-        print("ROUTER OUTPUT:", route)
-
-        task_type = route.get("type")
-
-        print("SELECTED TASK:", task_type)
-        print("==============================================")
-
-        # --------------------------------------------------
-        # PARSING
-        # --------------------------------------------------
-
-        features = parse_features(question)
-        range_info = parse_range(question)
-
-        print("[ORCHESTRATOR DEBUG] FEATURES PARSED:", features)
-        print("[ORCHESTRATOR DEBUG] RANGE PARSED:", range_info)
-
-        # --------------------------------------------------
-        # TASK EXECUTION
-        # --------------------------------------------------
+        # ==================================================
 
         try:
+            route = route_question(question)
+            task_type = route.get("type")
+            log_route(task_type)
+
+        except Exception as e:
+            log_error("ROUTING", e)
+            continue
+
+        # ==================================================
+        # PARSING (🔥 FIX)
+        # ==================================================
+
+        features = None
+        range_info = None
+
+        try:
+            if task_type in ["assessment", "importance", "delta"]:
+                log_section("PARSING")
+
+                features = parse_features(question)
+                range_info = parse_range(question)
+
+                log_data("features", features)
+                log_data("range", range_info)
+
+            else:
+                log_section("PARSING")
+                log_data("skipped", f"Task '{task_type}' does not require parsing")
+
+        except Exception as e:
+            log_error("PARSING", e)
+            continue
+
+        # ==================================================
+        # TASK EXECUTION
+        # ==================================================
+
+        try:
+            log_section("TASK EXECUTION")
+            log_data("task_type", task_type)
 
             if task_type == "assessment":
                 result = handle_assessment(question, features)
@@ -101,7 +139,10 @@ def run():
                 result = handle_dependency(question, route)
 
             elif task_type == "drivers":
-                result = handle_drivers(question)  # 🔥 NEW
+                result = handle_drivers(question)
+
+            elif task_type == "chat":
+                result = handle_chat(question)
 
             else:
                 result = {
@@ -112,30 +153,35 @@ def run():
                 }
 
         except Exception as e:
-            print("[ERROR]", e)
+            log_error("TASK EXECUTION", e)
             continue
 
-        # --------------------------------------------------
+        # ==================================================
         # OUTPUT
-        # --------------------------------------------------
+        # ==================================================
 
-        print("\n--- RESULT ---\n")
+        log_section("OUTPUT")
 
-        print("SUMMARY:")
-        print(result.get("summary", ""))
+        try:
+            print("\nSUMMARY:")
+            print(result.get("summary", ""))
 
-        print("\nDATA:")
-        print(result.get("data", {}))
+            print("\nDATA:")
+            print(result.get("data", {}))
 
-        if "drivers" in result:
-            print("\nDRIVERS:")
-            for d in result["drivers"]:
-                print("-", d)
+            if "drivers" in result:
+                print("\nDRIVERS:")
+                for d in result["drivers"]:
+                    print("-", d)
 
-        print("\nINTERPRETATION:")
-        print(result.get("interpretation", ""))
+            print("\nINTERPRETATION:")
+            print(result.get("interpretation", ""))
 
-        print("\n---------------------------\n")
+            print("\n---------------------------\n")
+
+        except Exception as e:
+            log_error("OUTPUT", e)
+            continue
 
 
 # ======================================================

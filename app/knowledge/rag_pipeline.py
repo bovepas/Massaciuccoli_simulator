@@ -2,11 +2,12 @@
 
 """
 Massaciuccoli Digital Twin
-RAG Pipeline — v2 (centralized LLM + safe + docker-ready)
+RAG Pipeline — v3 (robust + demo-ready)
 
 ✔ Uses centralized llm_client
-✔ Works in Docker + local
-✔ Safe fallback (no crash)
+✔ Context trimming (important for LLM quality)
+✔ Output validation
+✔ Strong fallback
 ✔ Clean debug
 """
 
@@ -19,7 +20,9 @@ from tools.llm_client import call_llm
 # CONFIG
 # ======================================================
 
-DEBUG = False  # toggle unico
+DEBUG = False
+
+MAX_CONTEXT_CHARS = 3000  # 🔥 limit context size
 
 
 # ======================================================
@@ -47,12 +50,55 @@ def clean_text(text: str):
 
 
 # ======================================================
+# CONTEXT BUILDER (🔥 NEW)
+# ======================================================
+
+def build_context(retrieved):
+
+    if not retrieved:
+        return ""
+
+    chunks = [r["text"] for r in retrieved]
+
+    context = "\n\n".join(chunks)
+
+    # 🔥 trim if too long
+    if len(context) > MAX_CONTEXT_CHARS:
+        context = context[:MAX_CONTEXT_CHARS]
+
+    return context
+
+
+# ======================================================
+# OUTPUT VALIDATION (🔥 NEW)
+# ======================================================
+
+def is_valid_output(text: str):
+
+    if not text:
+        return False
+
+    text = text.strip()
+
+    if len(text) < 30:
+        return False
+
+    if "Interpretation not available" in text:
+        return False
+
+    return True
+
+
+# ======================================================
 # FALLBACK
 # ======================================================
 
 def fallback_answer(question: str):
 
-    return "The system retrieved relevant information, but a detailed explanation is currently unavailable."
+    return (
+        "The system retrieved relevant environmental information, "
+        "but a detailed explanation could not be generated at this time."
+    )
 
 
 # ======================================================
@@ -63,15 +109,13 @@ def generate_answer(question: str, extra_prompt: str = ""):
 
     retrieved, _ = retrieve_documents(question)
 
-    context = ""
-    if retrieved:
-        context = "\n\n".join([r["text"] for r in retrieved])
+    context = build_context(retrieved)
 
     prompt = f"""
 You are an environmental scientist.
 
 TASK:
-Explain clearly and concisely.
+Provide a clear and concise explanation based ONLY on the provided context.
 
 {extra_prompt}
 
@@ -88,7 +132,7 @@ Answer:
     debug_print("\n================ RAG DEBUG ================")
     debug_print("[RAG] Question:", question)
     debug_print("[RAG] Retrieved documents:", len(retrieved))
-    debug_print("[RAG] Context length:", len(context), "characters")
+    debug_print("[RAG] Context length:", len(context))
 
     if DEBUG:
         preview = prompt[:1000] + "..." if len(prompt) > 1000 else prompt
@@ -103,7 +147,8 @@ Answer:
         debug_print("\n[RAG] --- RAW LLM OUTPUT ---")
         debug_print(raw)
 
-        if not raw or "Interpretation not available" in raw:
+        # 🔥 VALIDATION
+        if not is_valid_output(raw):
             return fallback_answer(question)
 
         cleaned = clean_text(raw)

@@ -1,116 +1,84 @@
 ﻿# -*- coding: utf-8 -*-
 
-"""
-Massaciuccoli Digital Twin
-v6_1_main — FULL (MODEL + SHAP + ROUTER v63)
-"""
+import os
 
 # ======================================================
-# MODEL
+# FAKE MODEL (COHERENT + DEBUGGABLE)
 # ======================================================
 
-def risk_level_from_score(score: float) -> str:
-    if score < 0.33:
-        return "Low Risk"
-    elif score < 0.66:
-        return "Medium Risk"
-    else:
-        return "High Risk"
+FEATURE_WEIGHTS = {
+    "Change in average temperature compared to a recent past": 0.3,
+    "Cumulative change in precipitation compared to a recent past": -0.25,
+    "Relative change in the potential evapotranspiration compared to a recent past": 0.2,
+    "Density of tree cover": -0.15,
+    "Number of species potentially living in the cell": -0.2,
+    "Presence of grassland": -0.1,
+}
 
 
-class DummyModel:
-    def predict(self, df):
+def _normalize_value(v):
+    try:
+        return float(v)
+    except:
+        return 0.0
 
-        row = df.iloc[0]
-
-        score = (
-            row.get("Change in average temperature compared to a recent past", 0) * 0.2
-            - row.get("Density of tree cover", 0) * 0.002
-            + row.get("Index of total productivity by plant phenology", 0) * 0.001
-            + row.get("Number of species potentially living in the cell", 0) * 0.001
-        )
-
-        score = max(0, min(1, score))
-        return [score]
-
-
-MODEL = DummyModel()
-
-
-# ======================================================
-# SHAP (SAFE VERSION — FIXED)
-# ======================================================
 
 def explain_with_shap(features: dict) -> dict:
 
-    try:
-        risk_score = (
-            float(features.get("Change in average temperature compared to a recent past", 0)) * 0.2
-            - float(features.get("Density of tree cover", 0)) * 0.002
-            + float(features.get("Index of total productivity by plant phenology", 0)) * 0.001
-            + float(features.get("Number of species potentially living in the cell", 0)) * 0.001
-        )
+    # -------------------------------
+    # SCORE COMPUTATION
+    # -------------------------------
 
-        risk_score = max(0, min(1, risk_score))
-        risk_level = risk_level_from_score(risk_score)
+    score = 0.5  # baseline
 
-        feature_list = []
+    contributions = []
 
-        for name, value in features.items():
+    for fname, weight in FEATURE_WEIGHTS.items():
+        value = _normalize_value(features.get(fname, 0))
 
-            # 🔥 SAFE CAST
-            try:
-                val = float(value)
-            except:
-                continue
+        impact = value * weight
 
-            lname = name.lower()
+        score += impact
 
-            if "tree cover" in lname:
-                impact = -val * 0.01
-            elif "temperature" in lname:
-                impact = val * 0.2
-            elif "precipitation" in lname:
-                impact = -val * 0.01
-            elif "grassland" in lname:
-                impact = -val * 0.005
-            else:
-                impact = val * 0.01
+        contributions.append({
+            "feature": fname,
+            "impact": round(impact, 4)
+        })
 
-            feature_list.append({
-                "feature": name,
-                "impact": impact,
-                "type": "absolute"
-            })
+    # clamp score
+    score = max(0, min(1, score))
 
-        feature_list = sorted(
-            feature_list,
-            key=lambda x: abs(x["impact"]),
-            reverse=True
-        )
+    # -------------------------------
+    # SORT FEATURES (SHAP-like)
+    # -------------------------------
 
-        return {
-            "risk_score": float(risk_score),
-            "risk_level": risk_level,
-            "top_features": feature_list
-        }
+    contributions_sorted = sorted(
+        contributions,
+        key=lambda x: abs(x["impact"]),
+        reverse=True
+    )
 
-    except Exception as e:
-        print(f"[SHAP ERROR] {e}")
+    # -------------------------------
+    # RISK LEVEL
+    # -------------------------------
 
-        return {
-            "risk_score": 0.0,
-            "risk_level": "Unknown",
-            "top_features": []
-        }
+    if score < 0.33:
+        level = "Low Risk"
+    elif score < 0.66:
+        level = "Medium Risk"
+    else:
+        level = "High Risk"
+
+    return {
+        "risk_score": round(score, 3),
+        "risk_level": level,
+        "top_features": contributions_sorted[:5]
+    }
 
 
 # ======================================================
-# ROUTER v63 (FIXED)
+# SPECIES
 # ======================================================
-
-import os
-
 
 def load_species_names():
     base_path = "/app/enm/presence"
@@ -129,127 +97,179 @@ def load_species_names():
 SPECIES_NAMES = load_species_names()
 
 
-VARIABLE_KEYWORDS = [
-    "temperature",
-    "precipitation",
-    "biodiversity",
-    "evapotranspiration",
-    "grassland",
-    "tree cover",
-    "land use",
-    "productivity"
-]
+# ======================================================
+# NORMALIZATION
+# ======================================================
 
-DRIVER_VERBS = [
-    "drive", "drives",
-    "cause", "causes",
-    "produce", "produces",
-    "lead to", "leads to",
-    "contribute", "contributes",
-    "result in", "results in",
-    "determine", "determines"
-]
+def normalize(q: str) -> str:
+    return q.lower().strip()
 
-DEGRADATION_WORDS = [
-    "loss", "decline", "decrease",
-    "reduction", "degradation",
-    "degrade", "worsen", "drop"
-]
 
-IMPORTANCE_KEYWORDS = [
-    "most", "top", "influential"
-]
+# ======================================================
+# CHAT
+# ======================================================
 
-RISK_KEYWORDS = [
-    "ecosystem risk", "risk"
-]
+def is_chat(q: str):
+    patterns = [
+        "what are you", "who are you",
+        "are you", "can you",
+        "what can you do",
+        "help me", "tell me",
+        "explain this system",
+        "what is going on"
+    ]
+    return any(p in q for p in patterns)
+
+
+def is_greeting(q: str):
+    return q in ["hi", "hello", "hey"]
+
+
+def is_gibberish(q: str):
+    words = q.split()
+
+    if len(words) <= 2:
+        return True
+
+    scientific_words = [
+        "temperature", "precipitation", "biodiversity",
+        "ecosystem", "risk", "habitat", "species"
+    ]
+
+    if any(w in q for w in scientific_words):
+        return False
+
+    if not any(w in ["what", "how", "why", "which", "is", "are"] for w in words):
+        return True
+
+    return False
+
+
+# ======================================================
+# TASK DETECTORS
+# ======================================================
+
+def is_enm(q: str):
+    return (
+        "habitat" in q or
+        "suitability" in q or
+        any(s in q for s in SPECIES_NAMES)
+    )
+
+
+def is_comparison(q: str):
+    return (
+        "compare" in q or
+        "vs" in q or
+        "versus" in q or
+        ("which" in q and "riskier" in q) or
+        "higher" in q or
+        "lower" in q
+    )
+
+
+def is_delta(q: str):
+    return (
+        ("from" in q and "to" in q) or
+        ("goes from" in q)
+    )
+
+
+def is_importance(q: str):
+    return (
+        "most" in q or
+        "top" in q or
+        "influential" in q or
+        "important" in q
+    )
+
+
+def is_drivers(q: str):
+    return (
+        "drivers of" in q or
+        "what drives" in q or
+        "factors driving" in q or
+        "drive" in q
+    )
+
+
+def is_dependency(q: str):
+    return (
+        "how does" in q or
+        "effect of" in q or
+        "affect" in q or
+        "influence" in q
+    )
+
+
+# ======================================================
+# ROUTER (NON TOCCATO)
+# ======================================================
+
+from utils.logger import log_section, log_question, log_route
 
 
 def route_question(question: str):
 
-    print("\n================ ROUTER v63 DEBUG ================")
+    q = normalize(question)
 
-    q = question.lower().strip()
-    print("QUESTION:", q)
+    log_section("ROUTER v6_5")
+    log_question(question)
 
-    var_count = sum(v in q for v in VARIABLE_KEYWORDS)
-    has_risk = any(t in q for t in RISK_KEYWORDS)
-    has_if = "if" in q
+    # 1. CHAT
+    if is_chat(q) or is_greeting(q) or is_gibberish(q):
+        log_route("CHAT")
+        return {"type": "chat"}
 
-    # ENM
-    if any(s in q for s in SPECIES_NAMES) or "habitat suitability" in q:
+    # 2. ENM
+    if is_enm(q):
+        log_route("ENM")
         return {"type": "enm"}
 
-    # COMPARISON
-    if any(p in q for p in ["compare", "vs", "versus"]) or " or " in q:
+    # 3. COMPARISON
+    if is_comparison(q):
+        log_route("COMPARISON")
         return {"type": "comparison"}
 
-    # DELTA
-    if "from" in q and "to" in q:
+    # 4. DELTA
+    if is_delta(q):
+        log_route("DELTA")
         return {"type": "delta"}
 
-    if "goes from" in q:
-        return {"type": "delta"}
+    # 🔥 5. RISK OVERRIDE
+    if "risk" in q:
+        if is_importance(q) or "driving" in q:
+            log_route("IMPORTANCE (risk override)")
+            return {"type": "importance"}
 
-    # =========================
-    # 🔥 NEW RULE (FIX CRITICO)
-    # =========================
-
-    if "variables" in q:
-        if any(w in q for w in ["increase", "decrease"]):
-            if any(var in q for var in VARIABLE_KEYWORDS):
-                return {"type": "drivers"}
-
-    # =========================
-    # IMPORTANCE SPECIAL
-    # =========================
-
-    if "main factors driving" in q and has_risk:
-        return {"type": "importance"}
-
-    if has_if and "drivers" in q:
-        return {"type": "importance"}
-
-    if any(k in q for k in ["most", "influential"]):
-        return {"type": "importance"}
-
-    # =========================
-    # ASSESSMENT
-    # =========================
-
-    if has_risk and var_count >= 1:
-        if "how" in q or has_if:
-            return {"type": "assessment"}
-
-    # =========================
-    # DEPENDENCY
-    # =========================
-
-    if "how does" in q:
-        if not has_risk:
-            return {"type": "dependency"}
-
-    if any(v in q for v in ["affect", "impact", "influence"]):
-        if not has_risk:
-            return {"type": "dependency"}
-
-    if ("effect of" in q or "impact of" in q) and " on " in q:
-        return {"type": "dependency"}
-
-    # =========================
-    # DRIVERS
-    # =========================
-
-    if not has_risk:
-        if any(v in q for v in DRIVER_VERBS) or any(w in q for w in DEGRADATION_WORDS):
-            if any(var in q for var in VARIABLE_KEYWORDS):
-                return {"type": "drivers"}
-
-    # =========================
-    # DEFAULT
-    # =========================
-
-    if has_risk:
+        log_route("ASSESSMENT (risk override)")
         return {"type": "assessment"}
 
+    # 🔥 6. DRIVERS PRIORITY FIX
+    if "drivers of" in q:
+        log_route("DRIVERS (explicit)")
+        return {"type": "drivers"}
+
+    # 🔥 7. CONDITIONAL DRIVERS → IMPORTANCE
+    if "drivers" in q and ("if" in q or "when" in q):
+        log_route("IMPORTANCE (conditional drivers)")
+        return {"type": "importance"}
+
+    # 8. IMPORTANCE
+    if is_importance(q):
+        log_route("IMPORTANCE")
+        return {"type": "importance"}
+
+    # 9. DRIVERS
+    if is_drivers(q):
+        log_route("DRIVERS")
+        return {"type": "drivers"}
+
+    # 10. DEPENDENCY
+    if is_dependency(q):
+        log_route("DEPENDENCY")
+        return {"type": "dependency"}
+
+    # DEFAULT
+    log_route("DEFAULT: ASSESSMENT")
     return {"type": "assessment"}

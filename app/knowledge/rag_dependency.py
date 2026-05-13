@@ -2,12 +2,12 @@
 
 """
 Massaciuccoli Digital Twin
-RAG Dependency — v7 (centralized LLM + safe + consistent)
+RAG Dependency — v8 (robust demo version)
 
 ✔ Uses centralized LLM client
-✔ Keeps causal-aware prompting
-✔ Strong fallback
-✔ No duplication of HTTP logic
+✔ Strong fallback (even for bad LLM outputs)
+✔ Cleaner output validation
+✔ Demo-safe
 """
 
 from tools.llm_client import call_llm
@@ -21,7 +21,7 @@ def debug_print(*args):
 
 
 # ======================================================
-# PROMPT (UNCHANGED LOGIC, CLEANED)
+# PROMPT
 # ======================================================
 
 def build_prompt(source, target, strength, direction, drivers):
@@ -68,7 +68,7 @@ RULES:
 
 
 # ======================================================
-# FALLBACK (UNCHANGED)
+# FALLBACK
 # ======================================================
 
 def fallback_response(source, target, strength, direction):
@@ -99,6 +99,28 @@ def fallback_response(source, target, strength, direction):
 
 
 # ======================================================
+# OUTPUT VALIDATION (🔥 NEW)
+# ======================================================
+
+def is_valid_output(text: str) -> bool:
+
+    if not text:
+        return False
+
+    text = text.strip()
+
+    # troppo corto → sospetto
+    if len(text) < 20:
+        return False
+
+    # fallback già presente
+    if "Interpretation not available" in text:
+        return False
+
+    return True
+
+
+# ======================================================
 # MAIN
 # ======================================================
 
@@ -108,7 +130,7 @@ def generate_dependency_explanation(source, target, strength, direction, drivers
 
     try:
 
-        # 🔥 skip LLM for negligible
+        # skip LLM for negligible
         if strength == "negligible":
             return fallback_response(source, target, strength, direction)
 
@@ -122,8 +144,8 @@ def generate_dependency_explanation(source, target, strength, direction, drivers
         debug_print("\n[RAG-DEPENDENCY] Raw output:")
         debug_print(raw)
 
-        # 🔥 fallback if LLM failed
-        if not raw or "Interpretation not available" in raw:
+        # 🔥 VALIDATION STRONGER
+        if not is_valid_output(raw):
             return fallback_response(source, target, strength, direction)
 
         final = raw.strip().replace("\n", " ").replace("  ", " ")

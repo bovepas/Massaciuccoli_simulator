@@ -2,12 +2,19 @@
 
 """
 Massaciuccoli Digital Twin
-RAG con query expansion semantica migliorata
+RAG Chat — v2 (centralized LLM + safe + docker-ready)
+
+✔ Uses centralized llm_client for generation
+✔ Keeps embedding logic (Ollama)
+✔ Works in Docker + local
+✔ Safe fallback
 """
 
 import requests
 import chromadb
 import os
+
+from tools.llm_client import call_llm
 
 
 # ======================================================
@@ -19,10 +26,12 @@ CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 
 COLLECTION_NAME = "massaciuccoli_knowledge"
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
-OLLAMA_EMBED_URL = "http://localhost:11434/api/embeddings"
+# 🔥 embedding endpoint (keep separate)
+if os.path.exists("/.dockerenv"):
+    OLLAMA_EMBED_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434") + "/api/embeddings"
+else:
+    OLLAMA_EMBED_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434") + "/api/embeddings"
 
-LLM_MODEL = "llama3"
 EMBED_MODEL = "nomic-embed-text"
 
 TOP_K = 8
@@ -43,20 +52,26 @@ collection = client.get_or_create_collection(COLLECTION_NAME)
 
 def get_embedding(text):
 
-    response = requests.post(
-        OLLAMA_EMBED_URL,
-        json={
-            "model": EMBED_MODEL,
-            "prompt": text
-        }
-    )
+    try:
+        response = requests.post(
+            OLLAMA_EMBED_URL,
+            json={
+                "model": EMBED_MODEL,
+                "prompt": text
+            },
+            timeout=60
+        )
 
-    response.raise_for_status()
-    return response.json()["embedding"]
+        response.raise_for_status()
+        return response.json()["embedding"]
+
+    except Exception as e:
+        print("[EMBED ERROR]", e)
+        return None
 
 
 # ======================================================
-# SMART QUERY EXPANSION
+# QUERY EXPANSION
 # ======================================================
 
 def expand_query(query):
@@ -102,6 +117,8 @@ def retrieve_documents(query):
     for q in expanded_queries:
 
         embedding = get_embedding(q)
+        if embedding is None:
+            continue
 
         results = collection.query(
             query_embeddings=[embedding],
@@ -132,62 +149,50 @@ def build_prompt(query, documents):
 
     context = "\n\n".join(documents[:5])
 
-    prompt = f"""
-Sei un esperto di ecosistemi lacustri.
+    return f"""
+You are an expert in lake ecosystems.
 
-Rispondi alla domanda usando SOLO le informazioni presenti nel contesto.
-Se l'informazione non è presente nel contesto, dichiaralo chiaramente.
+Answer the question using ONLY the provided context.
+If the answer is not contained in the context, say so clearly.
 
-Contesto:
+CONTEXT:
 {context}
 
-Domanda:
+QUESTION:
 {query}
 
-Risposta:
+ANSWER:
 """
 
-    return prompt
-
 
 # ======================================================
-# LLM
+# MAIN GENERATION
 # ======================================================
 
-def generate_answer(prompt):
+def generate_chat_answer(query):
 
-    response = requests.post(
-        OLLAMA_URL,
-        json={
-            "model": LLM_MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "temperature": 0.2
-        }
-    )
+    print("\n[RAG-CHAT] START")
 
-    response.raise_for_status()
-    return response.json()["response"]
-
-
-# ======================================================
-# MAIN
-# ======================================================
-
-if __name__ == "__main__":
-
-    query = input("Fai una domanda: ")
-
-    print("\n[1] Recupero documenti...")
     docs = retrieve_documents(query)
 
-    print("Documenti trovati:", len(docs))
+    print("[RAG-CHAT] Retrieved docs:", len(docs))
 
     if not docs:
-        print("Nessun documento rilevante trovato.")
-    else:
-        print("\n[2] Generazione risposta...\n")
-        prompt = build_prompt(query, docs)
-        answer = generate_answer(prompt)
+        return "No relevant information found in the knowledge base."
 
-        print("RISPO
+    prompt = build_prompt(query, docs)
+
+    try:
+
+        raw = call_llm(prompt)
+
+        if not raw or "Interpretation not available" in raw:
+            return "The system could not generate a reliable answer from the available data."
+
+        return raw.strip()
+
+    except Exception as e:
+
+        print("[RAG-CHAT ERROR]", e)
+
+        return "An error occurred while generating the answer."

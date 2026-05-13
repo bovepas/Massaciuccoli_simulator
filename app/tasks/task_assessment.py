@@ -2,12 +2,21 @@
 
 """
 Massaciuccoli Digital Twin
-Task: ASSESSMENT v35 (driver ordering + causal interpretation)
+Task: ASSESSMENT v36 (structured logging)
+
+✔ Added structured logging
+✔ No logic changes
+✔ Fully debuggable pipeline
 """
 
 from versions.v6_1_main import explain_with_shap
 from knowledge.rag_assessment import generate_assessment_explanation
 
+from utils.logger import (
+    log_section,
+    log_data,
+    log_error
+)
 
 # ======================================================
 # REQUIRED DEFAULTS
@@ -82,77 +91,99 @@ def clean_name(name):
 
 def handle_assessment(question, parsed_features):
 
-    print("\n========== ASSESSMENT TASK (v35) ==========")
+    log_section("ASSESSMENT TASK")
 
     # --------------------------------------------------
     # BASELINE + SCENARIO
     # --------------------------------------------------
 
-    baseline = build_baseline()
-    scenario = baseline.copy()
+    try:
+        baseline = build_baseline()
+        scenario = baseline.copy()
 
-    user_modified = []
+        user_modified = []
 
-    for k, v in parsed_features.items():
-        if k in scenario and scenario[k] != v:
-            scenario[k] = v
-            user_modified.append(k)
+        for k, v in parsed_features.items():
+            if k in scenario and scenario[k] != v:
+                scenario[k] = v
+                user_modified.append(k)
 
-    baseline = ensure_model_features(baseline)
-    scenario = ensure_model_features(scenario)
+        baseline = ensure_model_features(baseline)
+        scenario = ensure_model_features(scenario)
+
+        log_section("SCENARIO")
+        log_data("baseline", baseline)
+        log_data("scenario", scenario)
+        log_data("user_modified", user_modified)
+
+    except Exception as e:
+        log_error("SCENARIO BUILD", e)
+        raise
 
     # --------------------------------------------------
     # SHAP
     # --------------------------------------------------
 
-    base_result = explain_with_shap(baseline)
-    scen_result = explain_with_shap(scenario)
+    try:
+        base_result = explain_with_shap(baseline)
+        scen_result = explain_with_shap(scenario)
 
-    score_base = base_result["risk_score"]
-    score_scen = scen_result["risk_score"]
+        score_base = base_result["risk_score"]
+        score_scen = scen_result["risk_score"]
 
-    delta = round(score_scen - score_base, 3)
+        delta = round(score_scen - score_base, 3)
 
-    print(f"[DEBUG] Baseline: {score_base}")
-    print(f"[DEBUG] Scenario: {score_scen}")
-    print(f"[DEBUG] Delta: {delta}")
+        log_section("SHAP RESULTS")
+        log_data("baseline_score", score_base)
+        log_data("scenario_score", score_scen)
+        log_data("delta", delta)
+        log_data("top_features", scen_result.get("top_features", []))
+
+    except Exception as e:
+        log_error("SHAP", e)
+        raise
 
     # --------------------------------------------------
-    # DRIVER SELECTION (ONLY RELEVANT)
+    # DRIVER SELECTION
     # --------------------------------------------------
 
-    shap_features = scen_result.get("top_features", [])
+    try:
+        shap_features = scen_result.get("top_features", [])
 
-    # map cleaned names → best impact
-    impact_map = {}
+        impact_map = {}
 
-    for f in shap_features:
-        cname = clean_name(f["feature"])
-        impact = f["impact"]
+        for f in shap_features:
+            cname = clean_name(f["feature"])
+            impact = f["impact"]
 
-        if cname not in impact_map:
-            impact_map[cname] = impact
-        else:
-            # keep strongest version
-            if abs(impact) > abs(impact_map[cname]):
+            if cname not in impact_map:
                 impact_map[cname] = impact
+            else:
+                if abs(impact) > abs(impact_map[cname]):
+                    impact_map[cname] = impact
 
-    # keep only user-modified variables
-    relevant = {}
+        relevant = {}
 
-    for f in user_modified:
-        cname = clean_name(f)
-        if cname in impact_map:
-            relevant[cname] = impact_map[cname]
+        for f in user_modified:
+            cname = clean_name(f)
+            if cname in impact_map:
+                relevant[cname] = impact_map[cname]
 
-    # fallback (no parsed change)
-    if not relevant:
-        for k, v in impact_map.items():
-            if abs(v) > 0.01:
-                relevant[k] = v
+        if not relevant:
+            for k, v in impact_map.items():
+                if abs(v) > 0.01:
+                    relevant[k] = v
+
+        log_section("DRIVER SELECTION")
+        log_data("impact_map", impact_map)
+        log_data("relevant_drivers", relevant)
+
+    except Exception as e:
+        log_error("DRIVER SELECTION", e)
+        raise
 
     # --------------------------------------------------
-    # DRIVER ORDERING 🔥
+    # DRIVER ORDERING
     # --------------------------------------------------
 
     sorted_drivers = sorted(
@@ -163,9 +194,13 @@ def handle_assessment(question, parsed_features):
 
     drivers = [d[0] for d in sorted_drivers]
 
-    # split positive / negative
     increasing = [d[0] for d in sorted_drivers if d[1] > 0]
     decreasing = [d[0] for d in sorted_drivers if d[1] < 0]
+
+    log_section("DRIVER ORDERING")
+    log_data("sorted", sorted_drivers)
+    log_data("increasing", increasing)
+    log_data("decreasing", decreasing)
 
     # --------------------------------------------------
     # INTERPRETATION CORE
@@ -180,11 +215,11 @@ def handle_assessment(question, parsed_features):
             f"to {round(score_scen,3)} (Δ = {delta})."
         )
 
-    # --------------------------------------------------
-    # CAUSAL LANGUAGE 🔥
-    # --------------------------------------------------
-
     interpretation = base_text
+
+    # --------------------------------------------------
+    # CAUSAL LANGUAGE
+    # --------------------------------------------------
 
     if increasing:
         if len(increasing) == 1:
@@ -205,16 +240,24 @@ def handle_assessment(question, parsed_features):
             )
 
     # --------------------------------------------------
-    # RAG (FILTERED)
+    # RAG
     # --------------------------------------------------
 
-    rag_input = [(d, relevant[d]) for d in drivers]
-    rag_text = generate_assessment_explanation(rag_input)
+    try:
+        rag_input = [(d, relevant[d]) for d in drivers]
+        rag_text = generate_assessment_explanation(rag_input)
 
-    if rag_text:
-        interpretation += " " + rag_text
+        log_section("RAG")
+        log_data("rag_input", rag_input)
+        log_data("rag_text", rag_text)
 
-    print("========== ASSESSMENT TASK END ==========\n")
+        if rag_text:
+            interpretation += " " + rag_text
+
+    except Exception as e:
+        log_error("RAG", e)
+
+    log_section("ASSESSMENT END")
 
     # --------------------------------------------------
     # OUTPUT

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Drivers — v5 (centralized LLM + strong fallback)
+RAG Drivers — v6 (polished + validated + demo-ready)
 
 ✔ Uses centralized LLM client
-✔ No direct HTTP calls
-✔ Robust fallback (structured)
-✔ Demo-ready output
+✔ Strict correlation-only language
+✔ Output validation
+✔ Natural fallback (demo-quality)
+✔ Cleaner formatting
 """
 
 from tools.llm_client import call_llm
@@ -20,7 +21,7 @@ def debug_print(*args):
 
 
 # ======================================================
-# PROMPT (STRICT + DEMO READY)
+# PROMPT
 # ======================================================
 
 def build_prompt(target, drivers):
@@ -52,7 +53,8 @@ STRICT RULES:
 
 STYLE:
 - 2 short paragraphs
-- Simple and factual
+- Simple and readable
+- Avoid repetition
 - Use ONLY associative language:
   "is positively associated with"
   "is negatively associated with"
@@ -61,23 +63,61 @@ STYLE:
 
 
 # ======================================================
-# FALLBACK (🔥 MUCH BETTER)
+# OUTPUT VALIDATION
+# ======================================================
+
+def is_valid(text):
+
+    if not text:
+        return False
+
+    if len(text) < 30:
+        return False
+
+    if "Interpretation not available" in text:
+        return False
+
+    return True
+
+
+# ======================================================
+# CLEAN OUTPUT
+# ======================================================
+
+def clean_output(text):
+
+    text = text.strip()
+
+    # remove excessive newlines
+    text = text.replace("\n\n\n", "\n\n")
+
+    # normalize spaces
+    text = " ".join(text.split())
+
+    return text
+
+
+# ======================================================
+# FALLBACK (🔥 MUCH MORE NATURAL)
 # ======================================================
 
 def fallback_explanation(target, drivers):
 
     if not drivers:
-        return "No relevant statistical relationships were identified."
+        return "No relevant statistical relationships were identified for the selected variable."
 
-    sentences = []
+    parts = []
 
-    for d in drivers[:3]:  # top 3 for readability
-        sentences.append(
-            f"{d['feature']} is {d['direction']}ly associated with {target} "
-            f"with a {d['strength']} relationship."
+    for d in drivers[:3]:
+
+        direction = "positively" if d["direction"] == "positive" else "negatively"
+
+        parts.append(
+            f"{d['feature']} is {direction} associated with {target} "
+            f"with a {d['strength']} relationship"
         )
 
-    return " ".join(sentences)
+    return ". ".join(parts) + "."
 
 
 # ======================================================
@@ -100,16 +140,15 @@ def generate_drivers_explanation(target, drivers):
         debug_print("\n[RAG-DRIVERS] Raw output:")
         debug_print(raw)
 
-        # 🔥 fallback if LLM fails silently
-        if not raw or "Interpretation not available" in raw:
+        if not is_valid(raw):
             return fallback_explanation(target, drivers)
 
-        final = raw.strip()
+        cleaned = clean_output(raw)
 
         debug_print("\n[RAG-DRIVERS] Final output:")
-        debug_print(final)
+        debug_print(cleaned)
 
-        return final
+        return cleaned
 
     except Exception as e:
 
