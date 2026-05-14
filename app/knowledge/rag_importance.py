@@ -2,11 +2,16 @@
 
 """
 Massaciuccoli Digital Twin
-RAG — IMPORTANCE EXPLANATION v11 (robust + fallback)
+RAG — IMPORTANCE EXPLANATION v16 (driver-aligned + grounded)
+
+✔ Uses SHAP drivers explicitly
+✔ Forces grounding in KB context
+✔ Aligns explanation with model outputs
+✔ Clean and stable for demo
 """
 
-from knowledge.rag_pipeline import generate_answer
 import re
+from knowledge.rag_pipeline import generate_answer
 
 
 # ======================================================
@@ -20,17 +25,20 @@ def clean_output(text: str):
 
     text = text.strip()
 
-    text = re.sub(r"here is.*?:", "", text, flags=re.IGNORECASE)
-    text = re.sub(r"[*•\-]+", "", text)
-    text = re.sub(r"\*\*(.*?)\*\*", r"\1", text)
+    # non distruggere punteggiatura
     text = re.sub(r"\s+", " ", text)
 
-    sentences = [s.strip() for s in text.split(".") if s.strip()]
+    text = text.replace("Climatedriven", "Climate-driven")
+
+    sentences = re.split(r'(?<=[.!?])\s+', text)
 
     if not sentences:
         return None
 
-    return sentences[0] + "."
+    # max 4 frasi (leggermente più permissivo)
+    cleaned = " ".join(sentences[:4]).strip()
+
+    return cleaned
 
 
 # ======================================================
@@ -44,92 +52,114 @@ def fallback_explanation(drivers, mode):
 
     variables = ", ".join(drivers)
 
-    if mode == "delta":
-        return f"{variables} drive changes in ecosystem risk by increasing or decreasing stress, instability, and vulnerability."
-    else:
-        return f"{variables} drive ecosystem risk through stress, instability, and vulnerability."
+    return (
+        f"In the Massaciuccoli lake basin, {variables} influence ecosystem risk "
+        f"through interactions affecting hydrological dynamics, nutrient cycles, "
+        f"and ecosystem resilience."
+    )
 
 
 # ======================================================
-# MAIN
+# MAIN FUNCTION
 # ======================================================
 
 def generate_importance_explanation(drivers, mode="absolute"):
 
-    print("\n[RAG-IMPORTANCE v11] START\n")
+    print("\n[RAG-IMPORTANCE v16] START\n")
 
     if not drivers:
         return "No dominant drivers were identified in this scenario."
 
-    drivers_text = ", ".join(drivers)
+    # ======================================================
+    # 🔥 DRIVER STRING (SHAP → RAG)
+    # ======================================================
 
-    # --------------------------------------------------
-    # PROMPT
-    # --------------------------------------------------
+    driver_text = ", ".join(drivers[:5])  # top 5 max
 
-    if mode == "delta":
+    print("[DEBUG] Drivers passed to RAG:", driver_text)
 
-        prompt = f"""
-Fill this template EXACTLY.
+    # ======================================================
+    # 🔥 QUERY DINAMICA (driver-aware)
+    # ======================================================
 
-TEMPLATE:
-"<variables> drive changes in ecosystem risk by increasing or decreasing stress, instability, and vulnerability."
+    rag_query = (
+        f"{driver_text} ecosystem risk lake basin hydrology nutrient loading "
+        f"climate biodiversity Massaciuccoli ecosystem dynamics"
+    )
 
-VARIABLES:
-{drivers_text}
+    print("[DEBUG] RAG query:", rag_query)
 
-RULES:
-- Replace <variables> with the list
-- One sentence only
-- Use ONLY: stress, instability, vulnerability
-- Do NOT add explanations
-- Do NOT add causes
-- Do NOT add extra sentences
+    # ======================================================
+    # 🔥 PROMPT (FIXED: NO LIST OUTPUT)
+    # ======================================================
+
+    prompt = f"""
+You are an environmental scientist analyzing a real lake ecosystem.
+
+TASK:
+Explain how the following environmental drivers jointly influence ecosystem risk:
+{driver_text}
+
+STRICT REQUIREMENTS:
+- You MUST explicitly refer to the listed drivers
+- You MUST use information from the provided context
+- You MUST explain WHY these drivers are important (not just describe the system)
+- You MUST explicitly mention at least ONE of:
+  • hydrological dynamics
+  • nutrient loading
+  • water quality
+  • anthropogenic pressures
+  • climate-driven changes
+
+CONTEXT ANCHORING:
+- You MUST explicitly refer to the Massaciuccoli lake basin
+- The explanation must feel grounded in a real ecosystem
+
+CAUSAL STRUCTURE:
+- You MUST describe a causal chain
+  (e.g., temperature → hydrology → water quality → species → ecosystem risk)
+- Connect the drivers within a single mechanism
+- Do NOT invent causal relationships between drivers unless supported by the context
+
+OUTPUT FORMAT:
+- Write a single coherent paragraph
+- Do NOT list drivers one by one
+- Integrate the drivers into a unified explanation
+
+STYLE:
+- 3–5 sentences
+- Scientific but concrete
+- Avoid generic explanations
+
+DO NOT:
+- Ignore the listed drivers
+- Give abstract ecological theory
+- Mention models or SHAP
+
+---
+
+Now explain how these drivers increase ecosystem risk using ONLY the context.
 """
 
-    else:
-
-        prompt = f"""
-Fill this template EXACTLY.
-
-TEMPLATE:
-"<variables> drive ecosystem risk through stress, instability, and vulnerability."
-
-VARIABLES:
-{drivers_text}
-
-RULES:
-- Replace <variables> with the list
-- One sentence only
-- Use ONLY: stress, instability, vulnerability
-- Do NOT add explanations
-- Do NOT add causes
-- Do NOT add extra sentences
-"""
-
-    # --------------------------------------------------
-    # CALL MODEL
-    # --------------------------------------------------
+    # ======================================================
+    # CALL
+    # ======================================================
 
     try:
 
         result = generate_answer(
-            question="Fill template.",
+            question=rag_query,
             extra_prompt=prompt
         )
-
-        print("\n[RAG-IMPORTANCE] Raw output:")
-        print(result)
 
         cleaned = clean_output(result)
 
         if cleaned:
-            print("\n[RAG-IMPORTANCE] Cleaned output:")
+            print("\n[RAG-IMPORTANCE] Output:")
             print(cleaned)
-            print("[RAG-IMPORTANCE v11] END\n")
+            print("[RAG-IMPORTANCE v16] END\n")
             return cleaned
 
-        # 🔥 fallback if cleaning failed
         return fallback_explanation(drivers, mode)
 
     except Exception as e:

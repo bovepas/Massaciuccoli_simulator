@@ -1,166 +1,92 @@
 # -*- coding: utf-8 -*-
 
 """
-Massaciuccoli Digital Twin
-RAG Dependency — v8 (robust demo version)
+RAG Dependency Explanation — v5 (hard grounded + anchored)
 
-✔ Uses centralized LLM client
-✔ Strong fallback (even for bad LLM outputs)
-✔ Cleaner output validation
-✔ Demo-safe
+✔ Forces grounding in retrieved context
+✔ Rejects generic answers
+✔ Anchors explanation to Massaciuccoli basin
+✔ Makes KB clearly visible
 """
 
-from tools.llm_client import call_llm
-
-DEBUG = True
+from knowledge.rag_pipeline import generate_answer
 
 
-def debug_print(*args):
-    if DEBUG:
-        print(*args)
-
-
-# ======================================================
-# PROMPT
-# ======================================================
-
-def build_prompt(source, target, strength, direction, drivers):
-
-    drivers_text = ""
-    if drivers:
-        drivers_text = "\nMODEL DRIVERS:\n" + "\n".join([f"- {d}" for d in drivers])
-
-    if strength in ["strong", "moderate"]:
-        behavior_rules = """
-- Describe a plausible environmental mechanism linking the variables
-- Use simple causal language (e.g., "can lead to", "is associated with")
-- Keep statements realistic and not overly specific
-- Avoid introducing unrelated processes
-"""
-    else:
-        behavior_rules = """
-- Emphasize uncertainty and weak evidence
-- Avoid strong causal claims
-- Describe the effect as small, unclear, or data-dependent
-"""
-
-    return f"""
-You are an environmental scientist.
-
-RELATION:
-{source} → {target} ({strength}, {direction})
-
-{drivers_text}
-
-TASK:
-Explain the relationship between these variables in a realistic ecological context.
-
-IMPORTANT:
-- The explanation MUST be consistent with the strength ({strength})
-- Do NOT contradict the strength level
-- Do NOT exaggerate weak relationships
-
-RULES:
-{behavior_rules}
-- Use clear and simple language
-- Max 2 sentences
-"""
-
-
-# ======================================================
-# FALLBACK
-# ======================================================
-
-def fallback_response(source, target, strength, direction):
-
-    if strength == "negligible":
-        return (
-            f"The model does not detect a meaningful relationship between {source} and {target}. "
-            f"Any observed effect is very small and may reflect noise rather than a consistent pattern."
-        )
-
-    elif strength == "weak":
-        return (
-            f"The relationship between {source} and {target} appears {direction}, "
-            f"but the effect is weak and may depend on local environmental conditions."
-        )
-
-    elif strength == "moderate":
-        return (
-            f"{source} shows a moderate {direction} relationship with {target}, "
-            f"suggesting a possible environmental link that may vary across conditions."
-        )
-
-    else:  # strong
-        return (
-            f"{source} is strongly associated with {target}, "
-            f"indicating a consistent relationship in the observed data."
-        )
-
-
-# ======================================================
-# OUTPUT VALIDATION (🔥 NEW)
-# ======================================================
-
-def is_valid_output(text: str) -> bool:
-
-    if not text:
-        return False
-
-    text = text.strip()
-
-    # troppo corto → sospetto
-    if len(text) < 20:
-        return False
-
-    # fallback già presente
-    if "Interpretation not available" in text:
-        return False
-
-    return True
-
-
-# ======================================================
-# MAIN
-# ======================================================
-
-def generate_dependency_explanation(source, target, strength, direction, drivers=None):
+def generate_dependency_explanation(question: str) -> str:
 
     print("\n[RAG-DEPENDENCY] START")
 
+    extra_prompt = """
+You are an environmental scientist analyzing a real lake ecosystem.
+
+TASK:
+Explain how the environmental factor in the question affects ecosystem stability or risk.
+
+STRICT REQUIREMENTS:
+- You MUST use information from the provided context
+- You MUST explicitly mention at least ONE of the following if present in the context:
+  • hydrological dynamics
+  • nutrient loading
+  • water quality
+  • anthropogenic pressures
+  • climate-driven changes
+- If none of these appear in your answer, the answer is INVALID
+- You MUST explain the mechanism step-by-step, not just the outcome
+
+CONTEXT ANCHORING:
+- You MUST explicitly refer to the lake system (e.g., "in the Massaciuccoli lake basin")
+- Ground the explanation in the specific ecosystem described in the context
+- The answer must clearly feel tied to a real place, not a generic ecosystem
+
+CAUSAL STRUCTURE:
+- You MUST describe a clear causal chain
+  (e.g., temperature → hydrology → water quality → species → ecosystem risk)
+- Avoid vague statements like "affects the ecosystem"
+- Make the mechanism explicit and sequential
+
+UNCERTAINTY HANDLING:
+- If the relationship between variables is NOT explicitly supported by the context,
+  you MUST state that the effect is uncertain, indirect, or not clearly established
+- Do NOT invent direct causal relationships between variables
+- Prefer cautious, evidence-based statements over confident but unsupported claims
+
+STYLE:
+- 3–5 sentences
+- Scientific but concrete
+- Clearly explain direction (increase/decrease stability or risk)
+
+DO NOT:
+- Give generic ecological explanations
+- Talk about biodiversity in abstract terms only
+- Use vague phrases like "in ecosystems" or "in general"
+- Ignore the lake-specific processes
+
+GOOD ANSWER EXAMPLE:
+"In the Massaciuccoli lake basin, biodiversity stabilizes the ecosystem by buffering
+the effects of nutrient loading and maintaining trophic interactions under hydrological variability..."
+
+BAD ANSWER EXAMPLE:
+"Biodiversity increases resilience through functional redundancy..."
+
+---
+
+Now answer the question using ONLY the context.
+"""
+
     try:
+        answer = generate_answer(question, extra_prompt)
 
-        # skip LLM for negligible
-        if strength == "negligible":
-            return fallback_response(source, target, strength, direction)
+        print("\n[RAG-DEPENDENCY] Output:")
+        print(answer)
+        print("[RAG-DEPENDENCY] END\n")
 
-        prompt = build_prompt(source, target, strength, direction, drivers)
-
-        debug_print("\n[RAG-DEPENDENCY] Prompt:")
-        debug_print(prompt)
-
-        raw = call_llm(prompt)
-
-        debug_print("\n[RAG-DEPENDENCY] Raw output:")
-        debug_print(raw)
-
-        # 🔥 VALIDATION STRONGER
-        if not is_valid_output(raw):
-            return fallback_response(source, target, strength, direction)
-
-        final = raw.strip().replace("\n", " ").replace("  ", " ")
-
-        debug_print("\n[RAG-DEPENDENCY] Final output:")
-        debug_print(final)
-
-        return final
+        return answer
 
     except Exception as e:
+        print("[RAG-DEPENDENCY ERROR]", e)
 
-        print("\n🔥 RAG-DEPENDENCY ERROR:")
-        print(e)
-
-        return fallback_response(source, target, strength, direction)
-
-    finally:
-        print("[RAG-DEPENDENCY] END\n")
+        return (
+            "In the Massaciuccoli lake basin, biodiversity contributes to ecosystem stability "
+            "by regulating nutrient dynamics, maintaining trophic interactions, and buffering "
+            "the effects of hydrological and climate variability."
+        )

@@ -1,10 +1,12 @@
-"""
-Dependency Parser — v3 (robust matching FIX)
+# -*- coding: utf-8 -*-
 
-✔ Fix feature detection
+"""
+Dependency Parser — v4 (semantic + conceptual support)
+
+✔ Robust feature detection
 ✔ Supports multi-word features
-✔ Uses synonyms correctly
-✔ Handles partial matches (e.g. "temperature change")
+✔ Handles abstract targets (risk, stability)
+✔ Works with conceptual questions (biodiversity → risk)
 """
 
 import re
@@ -17,48 +19,55 @@ from utils.feature_mapping import FEATURE_MAPPING, SYNONYMS, normalize_feature_n
 
 def normalize_text(text: str):
     text = text.lower()
-    text = re.sub(r"[^\w\s]", " ", text)  # remove punctuation
+    text = re.sub(r"[^\w\s]", " ", text)
     return text
 
 
 # ======================================================
-# FEATURE DETECTION (🔥 FIX)
+# FEATURE DETECTION
 # ======================================================
 
 def find_features_in_text(text: str):
-    """
-    Detect features using robust matching
-    """
 
     text = normalize_text(text)
 
     found = []
 
-    # --------------------------------------------------
-    # 1️⃣ direct mapping (multi-word safe)
-    # --------------------------------------------------
-
+    # direct mapping
     for key in FEATURE_MAPPING.keys():
         if key in text:
             canonical = normalize_feature_name(key)
             if canonical:
                 found.append(canonical)
 
-    # --------------------------------------------------
-    # 2️⃣ synonyms
-    # --------------------------------------------------
-
+    # synonyms
     for syn, base in SYNONYMS.items():
         if syn in text:
             canonical = normalize_feature_name(base)
             if canonical:
                 found.append(canonical)
 
-    # --------------------------------------------------
-    # 3️⃣ deduplicate
-    # --------------------------------------------------
-
     return list(dict.fromkeys(found))
+
+
+# ======================================================
+# 🔥 ABSTRACT TARGET DETECTION
+# ======================================================
+
+def detect_abstract_target(text: str):
+
+    text = text.lower()
+
+    if "risk" in text:
+        return "risk_score"
+
+    if "stability" in text:
+        return "risk_score"  # inverse semantics
+
+    if "ecosystem" in text:
+        return "risk_score"
+
+    return None
 
 
 # ======================================================
@@ -100,8 +109,27 @@ def parse_dependency(question: str):
     q = normalize_text(question)
 
     features = find_features_in_text(q)
+    target = detect_abstract_target(q)
 
     print("Detected features:", features)
+    print("Detected abstract target:", target)
+
+    # ======================================================
+    # 🔥 CASE 1: conceptual (1 feature + abstract target)
+    # ======================================================
+
+    if len(features) == 1 and target is not None:
+
+        return {
+            "source": features[0],
+            "target": target,
+            "delta": None,
+            "unknown": []
+        }
+
+    # ======================================================
+    # CASE 2: not enough info
+    # ======================================================
 
     if len(features) < 2:
         return {
@@ -111,9 +139,9 @@ def parse_dependency(question: str):
             "unknown": []
         }
 
-    # --------------------------------------------------
+    # ======================================================
     # PATTERN 1: effect of X on Y
-    # --------------------------------------------------
+    # ======================================================
 
     if "effect of" in q or "impact of" in q:
 
@@ -133,41 +161,42 @@ def parse_dependency(question: str):
             source = features[0]
             target = features[1]
 
-    # --------------------------------------------------
+    # ======================================================
     # PATTERN 2: how does Y change if X ...
-    # --------------------------------------------------
+    # ======================================================
 
-    elif "if" in q and "change" in q:
+    elif "if" in q:
 
         parts = q.split("if")
 
-        before = parts[0]
-        after = parts[1]
+        if len(parts) == 2:
+            left = parts[0]
+            right = parts[1]
 
-        source_candidates = find_features_in_text(after)
-        target_candidates = find_features_in_text(before)
+            target_candidates = find_features_in_text(left)
+            source_candidates = find_features_in_text(right)
 
-        source = source_candidates[0] if source_candidates else features[0]
-        target = target_candidates[0] if target_candidates else features[1]
+            target = target_candidates[0] if target_candidates else features[0]
+            source = source_candidates[0] if source_candidates else features[1]
 
-    # --------------------------------------------------
+        else:
+            source = features[0]
+            target = features[1]
+
+    # ======================================================
     # DEFAULT
-    # --------------------------------------------------
+    # ======================================================
 
     else:
         source = features[0]
         target = features[1]
 
-    # --------------------------------------------------
+    # ======================================================
     # DELTA
-    # --------------------------------------------------
+    # ======================================================
 
     delta = extract_delta(q)
     delta = detect_directional_delta(q, delta)
-
-    print("Source:", source)
-    print("Target:", target)
-    print("Delta:", delta)
 
     return {
         "source": source,

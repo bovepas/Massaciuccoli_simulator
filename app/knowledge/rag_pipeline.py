@@ -20,7 +20,7 @@ from tools.llm_client import call_llm
 # CONFIG
 # ======================================================
 
-DEBUG = False
+DEBUG = True
 
 MAX_CONTEXT_CHARS = 3000  # 🔥 limit context size
 

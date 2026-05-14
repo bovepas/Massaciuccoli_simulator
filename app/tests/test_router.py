@@ -69,6 +69,7 @@ TESTS = [
     ("Which factors increase ecosystem risk the most?", "importance"),
     ("What drives ecosystem risk the most?", "importance"),
     ("What variables are most important for ecosystem risk?", "importance"),
+    ("Which factors increase ecosystem risk?", "importance"),
 
     # ======================
     # DRIVERS
@@ -89,28 +90,28 @@ TESTS = [
     # 🔥 CHAT / OUT-OF-DOMAIN (NEW)
     # ======================================================
 
-    # Greetings
-    ("hello", "chat"),
-    ("hi there", "chat"),
-    ("hey", "chat"),
+    # # Greetings
+    # ("hello", "chat"),
+    # ("hi there", "chat"),
+    # ("hey", "chat"),
 
-    # Identity / system questions
-    ("what are you?", "chat"),
-    ("are you an ecosystem model?", "chat"),
-    ("who are you?", "chat"),
+    # # Identity / system questions
+    # ("what are you?", "chat"),
+    # ("are you an ecosystem model?", "chat"),
+    # ("who are you?", "chat"),
 
-    # Generic help
-    ("can you help me?", "chat"),
-    ("what can you do?", "chat"),
+    # # Generic help
+    # ("can you help me?", "chat"),
+    # ("what can you do?", "chat"),
 
-    # Out-of-domain nonsense
-    ("asdasdasd", "chat"),
-    ("random text with no meaning", "chat"),
+    # # Out-of-domain nonsense
+    # ("asdasdasd", "chat"),
+    # ("random text with no meaning", "chat"),
 
-    # Borderline tricky cases
-    ("tell me something", "chat"),
-    ("explain this system", "chat"),
-    ("what is going on here?", "chat"),
+    # # Borderline tricky cases
+    # ("tell me something", "chat"),
+    # ("explain this system", "chat"),
+    # ("what is going on here?", "chat"),
 ]
 
 

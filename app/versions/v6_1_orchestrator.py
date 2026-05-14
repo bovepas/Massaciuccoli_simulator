@@ -2,11 +2,12 @@
 
 """
 Massaciuccoli Digital Twin
-Orchestrator v29 (smart parsing)
+Orchestrator v31 (FULLY DECOUPLED)
 
-✔ Skip parsing for chat
-✔ Cleaner logs
-✔ Same behavior
+✔ Tasks completely isolated
+✔ No cross-calls between tasks
+✔ Dependency = pure RAG
+✔ Stable for demo
 """
 
 import sys
@@ -40,6 +41,7 @@ from tasks.task_delta import handle_delta
 from tasks.task_dependency import handle_dependency
 from tasks.task_drivers import handle_drivers
 from tasks.task_chat import handle_chat
+from tasks.task_data import handle_data   # 🔥 AGGIUNTO
 
 # ======================================================
 # ROUTER
@@ -94,7 +96,7 @@ def run():
             continue
 
         # ==================================================
-        # PARSING (🔥 FIX)
+        # PARSING
         # ==================================================
 
         features = None
@@ -126,24 +128,54 @@ def run():
             log_section("TASK EXECUTION")
             log_data("task_type", task_type)
 
+            # ----------------------------------------------
+            # ASSESSMENT
+            # ----------------------------------------------
             if task_type == "assessment":
                 result = handle_assessment(question, features)
 
+            # ----------------------------------------------
+            # IMPORTANCE
+            # ----------------------------------------------
             elif task_type == "importance":
-                result = handle_importance(question, features)
+                result = handle_importance(
+                    question=question,
+                    features=features
+                )
 
+            # ----------------------------------------------
+            # DELTA
+            # ----------------------------------------------
             elif task_type == "delta":
                 result = handle_delta(question, features, range_info)
 
+            # ----------------------------------------------
+            # 🔥 DEPENDENCY (PURE)
+            # ----------------------------------------------
             elif task_type == "dependency":
                 result = handle_dependency(question, route)
 
+            # ----------------------------------------------
+            # 🔥 DATA (NEW)
+            # ----------------------------------------------
+            elif task_type == "data":
+                result = handle_data(question)
+
+            # ----------------------------------------------
+            # DRIVERS
+            # ----------------------------------------------
             elif task_type == "drivers":
                 result = handle_drivers(question)
 
+            # ----------------------------------------------
+            # CHAT
+            # ----------------------------------------------
             elif task_type == "chat":
                 result = handle_chat(question)
 
+            # ----------------------------------------------
+            # UNKNOWN
+            # ----------------------------------------------
             else:
                 result = {
                     "summary": "Unknown task",
@@ -166,8 +198,11 @@ def run():
             print("\nSUMMARY:")
             print(result.get("summary", ""))
 
-            print("\nDATA:")
-            print(result.get("data", {}))
+            # 🔥 PRINT DATA SOLO SE NON VUOTO
+            data = result.get("data", {})
+            if data:
+                print("\nDATA:")
+                print(data)
 
             if "drivers" in result:
                 print("\nDRIVERS:")
