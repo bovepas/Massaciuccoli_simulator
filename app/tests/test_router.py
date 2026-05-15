@@ -14,6 +14,18 @@ from versions.v6_1_main import route_question
 TESTS = [
 
     # ======================
+    # 🆕 DATA
+    # ======================
+    ("Get temperature data", "data"),
+    ("Retrieve precipitation values", "data"),
+    ("Show biodiversity data", "data"),
+    ("What are the latest temperature measurements?", "data"),
+    ("Give me the current precipitation values", "data"),
+    ("Show ecosystem productivity data", "data"),
+    ("Retrieve evapotranspiration time series", "data"),
+    ("Get the latest biodiversity numbers", "data"),
+
+    # ======================
     # ASSESSMENT
     # ======================
     ("What is the ecosystem risk with temperature increase of 2°C and precipitation decrease of 20%?", "assessment"),

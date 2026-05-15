@@ -19,6 +19,35 @@ VARIABLE_KEYWORDS = [
 ]
 
 
+# ======================================================
+# 🆕 DATA DETECTION (NUOVO)
+# ======================================================
+
+DATA_KEYWORDS = [
+    "data",
+    "dataset",
+    "value",
+    "values",
+    "numbers",
+    "measurements",
+    "records",
+    "time series",
+    "latest",
+    "current value",
+    "retrieve",
+    "get data",
+    "show data"
+]
+
+
+def is_data_query(q: str) -> bool:
+    return any(k in q for k in DATA_KEYWORDS)
+
+
+# ======================================================
+# SEMANTICS
+# ======================================================
+
 def detect_target(q: str):
     if "risk" in q or "ecosystem" in q:
         return "risk"
@@ -54,12 +83,24 @@ def parse_semantics(q: str):
     }
 
 
+# ======================================================
+# ROUTER
+# ======================================================
+
 def route_question(question: str):
 
     q = normalize(question)
 
-    log_section("ROUTER V27 FINAL")
+    log_section("ROUTER V28 FINAL (DATA SAFE)")
     log_question(question)
+
+    # ==================================================
+    # 🆕 HARD RULE: DATA FIRST
+    # ==================================================
+
+    if is_data_query(q):
+        log_route("DATA (hard rule)")
+        return {"type": "data"}
 
     p = parse_semantics(q)
 
@@ -159,7 +200,7 @@ def route_question(question: str):
         scores["assessment"] += 40
 
     # =============================
-    # 🔍 DEBUG SCORES
+    # DEBUG
     # =============================
 
     print("---- SCORE BREAKDOWN ----")

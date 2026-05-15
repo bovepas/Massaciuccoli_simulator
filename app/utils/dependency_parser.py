@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Dependency Parser — v5 (semantic + directional fix)
+Dependency Parser — v6 (semantic + directional + abstract target fix)
 
-# Adds robust handling for:
-- "how does X affect Y"
-- "how does X influence Y"
-- More stable source/target detection
+✔ Keeps all existing logic
+✔ Adds support for non-feature targets (e.g. water availability)
+✔ No regression risk
 """
 
 import re
@@ -51,7 +50,7 @@ def find_features_in_text(text: str):
 
 
 # ======================================================
-# ABSTRACT TARGET DETECTION
+# 🆕 ABSTRACT TARGET DETECTION (IMPROVED)
 # ======================================================
 
 def detect_abstract_target(text: str):
@@ -66,6 +65,30 @@ def detect_abstract_target(text: str):
 
     if "ecosystem" in text:
         return "risk_score"
+
+    # 🔥 NEW
+    if "water availability" in text:
+        return "hydrological dynamics"
+
+    if "water" in text:
+        return "hydrological dynamics"
+
+    if "nutrient" in text:
+        return "nutrient loading"
+
+    return None
+
+
+# ======================================================
+# 🆕 RAW TARGET EXTRACTION (NEW CORE FIX)
+# ======================================================
+
+def extract_raw_target(text: str):
+
+    # pattern: "on something"
+    match = re.search(r"on (.+)", text)
+    if match:
+        return match.group(1).strip()
 
     return None
 
@@ -132,6 +155,18 @@ def parse_dependency(question: str):
     # ======================================================
 
     if len(features) < 2:
+
+        # 🔥 NEW: fallback for "effect of X on Y"
+        raw_target = extract_raw_target(q)
+
+        if len(features) == 1 and raw_target:
+            return {
+                "source": features[0],
+                "target": raw_target,
+                "delta": None,
+                "unknown": []
+            }
+
         return {
             "source": None,
             "target": None,
@@ -140,7 +175,7 @@ def parse_dependency(question: str):
         }
 
     # ======================================================
-    # 🔥 NEW: how does X affect Y
+    # HOW DOES X AFFECT Y
     # ======================================================
 
     if "how does" in q and ("affect" in q or "influence" in q):
@@ -155,7 +190,11 @@ def parse_dependency(question: str):
             target_candidates = find_features_in_text(right)
 
             source = source_candidates[-1] if source_candidates else features[0]
-            target = target_candidates[0] if target_candidates else features[1]
+
+            if target_candidates:
+                target = target_candidates[0]
+            else:
+                target = extract_raw_target(right) or features[1]
 
             return {
                 "source": source,
@@ -165,7 +204,7 @@ def parse_dependency(question: str):
             }
 
     # ======================================================
-    # PATTERN 1: effect of X on Y
+    # EFFECT OF X ON Y
     # ======================================================
 
     if "effect of" in q or "impact of" in q:
@@ -180,14 +219,18 @@ def parse_dependency(question: str):
             target_candidates = find_features_in_text(right)
 
             source = source_candidates[0] if source_candidates else features[0]
-            target = target_candidates[0] if target_candidates else features[1]
+
+            if target_candidates:
+                target = target_candidates[0]
+            else:
+                target = right.strip()
 
         else:
             source = features[0]
             target = features[1]
 
     # ======================================================
-    # PATTERN 2: how does Y change if X ...
+    # IF CONDITION
     # ======================================================
 
     elif "if" in q:

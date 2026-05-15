@@ -2,29 +2,64 @@
 
 """
 Massaciuccoli Digital Twin
-Data Task — v3 (GENERIC + FEATURE-AWARE)
+Data Task — v4 (FIXED FEATURE MAPPING)
 
-✔ Works for ANY feature
-✔ No hardcoding on temperature
-✔ Uses question → feature mapping
-✔ Baseline vs latest comparison
+✔ Robust feature detection
+✔ Uses semantic mapping (temperature → real feature)
+✔ Safe fallback
 """
 
 from utils.model_input_builder import compute_baseline
 from utils.feature_mapping import normalize_feature_name
 
 
+# ======================================================
+# FEATURE EXTRACTION (FIXED)
+# ======================================================
+
 def extract_feature_from_question(question: str, baseline: dict):
 
     q = question.lower()
 
-    for feature in baseline.keys():
-        if feature.lower() in q:
-            return feature
+    # --------------------------------------------------
+    # 🔥 STEP 1: semantic normalization
+    # --------------------------------------------------
 
-    # fallback (prima feature disponibile)
+    mapped = normalize_feature_name(q)
+
+    if mapped and mapped in baseline:
+        return mapped
+
+    # --------------------------------------------------
+    # 🔥 STEP 2: fallback match su keyword semplici
+    # --------------------------------------------------
+
+    KEYWORD_MAP = {
+        "temperature": "Change in average temperature compared to a recent past",
+        "precipitation": "Cumulative change in precipitation compared to a recent past",
+        "biodiversity": "Number of species potentially living in the cell",
+        "tree cover": "Density of tree cover",
+        "grassland": "Presence of grassland",
+        "evapotranspiration": "Relative change in the potential evapotranspiration compared to a recent past",
+        "productivity": "Index of total productivity by plant phenology"
+    }
+
+    for k, v in KEYWORD_MAP.items():
+        if k in q and v in baseline:
+            return v
+
+    # --------------------------------------------------
+    # ⚠️ LAST RESORT
+    # --------------------------------------------------
+
+    print("[WARNING] No feature matched, using fallback")
+
     return list(baseline.keys())[0]
 
+
+# ======================================================
+# MAIN
+# ======================================================
 
 def handle_data(question, dataset=None):
 
@@ -46,7 +81,7 @@ def handle_data(question, dataset=None):
     baseline = compute_baseline(dataset)
 
     # ======================================================
-    # 🔥 FEATURE DETECTION (FIX)
+    # FEATURE DETECTION
     # ======================================================
 
     feature = extract_feature_from_question(question, baseline)
@@ -54,10 +89,9 @@ def handle_data(question, dataset=None):
     baseline_value = baseline.get(feature, 0)
 
     # ======================================================
-    # 🔥 LATEST DATA (mock dinamico)
+    # MOCK LATEST
     # ======================================================
 
-    # 👉 per ora: simula leggero cambiamento
     latest_value = round(baseline_value * 1.02, 2)
 
     print("[DEBUG] Feature:", feature)
