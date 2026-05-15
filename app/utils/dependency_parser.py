@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Dependency Parser — v4 (semantic + conceptual support)
+Dependency Parser — v5 (semantic + directional fix)
 
-✔ Robust feature detection
-✔ Supports multi-word features
-✔ Handles abstract targets (risk, stability)
-✔ Works with conceptual questions (biodiversity → risk)
+# Adds robust handling for:
+- "how does X affect Y"
+- "how does X influence Y"
+- More stable source/target detection
 """
 
 import re
@@ -51,7 +51,7 @@ def find_features_in_text(text: str):
 
 
 # ======================================================
-# 🔥 ABSTRACT TARGET DETECTION
+# ABSTRACT TARGET DETECTION
 # ======================================================
 
 def detect_abstract_target(text: str):
@@ -62,7 +62,7 @@ def detect_abstract_target(text: str):
         return "risk_score"
 
     if "stability" in text:
-        return "risk_score"  # inverse semantics
+        return "risk_score"
 
     if "ecosystem" in text:
         return "risk_score"
@@ -115,7 +115,7 @@ def parse_dependency(question: str):
     print("Detected abstract target:", target)
 
     # ======================================================
-    # 🔥 CASE 1: conceptual (1 feature + abstract target)
+    # CASE 1: conceptual (1 feature + abstract target)
     # ======================================================
 
     if len(features) == 1 and target is not None:
@@ -138,6 +138,31 @@ def parse_dependency(question: str):
             "delta": None,
             "unknown": []
         }
+
+    # ======================================================
+    # 🔥 NEW: how does X affect Y
+    # ======================================================
+
+    if "how does" in q and ("affect" in q or "influence" in q):
+
+        parts = re.split(r"affect|influence", q)
+
+        if len(parts) == 2:
+            left = parts[0]
+            right = parts[1]
+
+            source_candidates = find_features_in_text(left)
+            target_candidates = find_features_in_text(right)
+
+            source = source_candidates[-1] if source_candidates else features[0]
+            target = target_candidates[0] if target_candidates else features[1]
+
+            return {
+                "source": source,
+                "target": target,
+                "delta": None,
+                "unknown": []
+            }
 
     # ======================================================
     # PATTERN 1: effect of X on Y

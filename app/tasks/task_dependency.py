@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Dependency Task — v7 (clean conceptual mode)
+Dependency Task — v9 (STRUCTURED + RAG ALIGNED)
 
-✔ Fully isolated from other tasks
-✔ Pure RAG-based reasoning
-✔ No SHAP
-✔ No importance reuse
-✔ Clean output (no fake drivers)
+# Passes structured source/target to RAG
+# Cleaner reasoning
+# Still fully decoupled
 """
 
 from utils.dependency_parser import parse_dependency
@@ -15,7 +13,7 @@ from knowledge.rag_dependency import generate_dependency_explanation
 
 
 # ======================================================
-# 🔥 HUMAN READABLE FEATURE
+# HUMAN READABLE FEATURE
 # ======================================================
 
 def humanize_feature(name: str) -> str:
@@ -47,7 +45,7 @@ def humanize_feature(name: str) -> str:
 def handle_dependency(question, route):
 
     print("\n========== DEPENDENCY TASK START ==========")
-    print("🔥 USING NEW DEPENDENCY TASK")
+    print("# USING STRUCTURED DEPENDENCY TASK")
 
     parsed = parse_dependency(question)
 
@@ -60,21 +58,24 @@ def handle_dependency(question, route):
     print("[DEBUG] Delta:", delta)
 
     # ======================================================
-    # 🔥 PURE RAG EXPLANATION
+    # RAG (STRUCTURED)
     # ======================================================
 
-    explanation = generate_dependency_explanation(question)
+    explanation = generate_dependency_explanation(
+        question=question,
+        source=source,
+        target=target
+    )
 
     # ======================================================
-    # OUTPUT LOGIC (clean)
+    # OUTPUT
     # ======================================================
 
-    # 👉 human-readable variable (non tecnico)
     variables = [humanize_feature(source)] if source else []
 
     return {
         "summary": "Conceptual dependency analysis",
         "data": {},
-        "drivers": variables,   # solo per riferimento, non “drivers reali”
+        "drivers": variables,
         "interpretation": explanation
     }

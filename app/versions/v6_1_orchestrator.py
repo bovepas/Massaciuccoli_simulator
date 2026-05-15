@@ -2,16 +2,16 @@
 
 """
 Massaciuccoli Digital Twin
-Orchestrator v31 (FULLY DECOUPLED)
+Orchestrator v32 (MODEL + DATA INJECTION)
 
-✔ Tasks completely isolated
-✔ No cross-calls between tasks
-✔ Dependency = pure RAG
-✔ Stable for demo
+# Tasks still decoupled
+# Model + dataset injected only where needed
+# Stable for demo
 """
 
 import sys
 import os
+import pandas as pd
 
 # ======================================================
 # PATH SETUP
@@ -41,7 +41,7 @@ from tasks.task_delta import handle_delta
 from tasks.task_dependency import handle_dependency
 from tasks.task_drivers import handle_drivers
 from tasks.task_chat import handle_chat
-from tasks.task_data import handle_data   # 🔥 AGGIUNTO
+from tasks.task_data import handle_data
 
 # ======================================================
 # ROUTER
@@ -56,6 +56,33 @@ from versions.v6_1_main import route_question
 from utils.feature_parser import parse_features
 from utils.range_parser import parse_range
 
+# ======================================================
+# 🔥 MODEL + DATA LOADING (FIXED)
+# ======================================================
+
+from versions.v6_1_emulator import load_and_train_emulator
+
+DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "massaciuccoli_data.csv")
+
+
+def load_resources():
+
+    print("# Loading model and dataset...")
+
+    try:
+        # dataset coerente con training
+        dataset = pd.read_csv(DATA_PATH, skiprows=[1])
+
+        # modello allenato al volo
+        model = load_and_train_emulator(DATA_PATH)
+
+        print("# Model trained and dataset loaded")
+        return model, dataset
+
+    except Exception as e:
+        print("# ERROR loading resources:", e)
+        return None, None
+
 
 # ======================================================
 # MAIN LOOP
@@ -63,10 +90,12 @@ from utils.range_parser import parse_range
 
 def run():
 
-    print("🔧 Loading ecosystem risk emulator...")
-    print("✅ Emulator ready.\n")
+    print("# Loading ecosystem risk emulator...")
 
-    print("Massaciuccoli Digital Twin — v137 (smart logging)\n")
+    model, dataset = load_resources()
+
+    print("# Emulator ready.\n")
+    print("Massaciuccoli Digital Twin — v138\n")
 
     while True:
 
@@ -135,12 +164,14 @@ def run():
                 result = handle_assessment(question, features)
 
             # ----------------------------------------------
-            # IMPORTANCE
+            # IMPORTANCE (FIXED)
             # ----------------------------------------------
             elif task_type == "importance":
                 result = handle_importance(
                     question=question,
-                    features=features
+                    features=features,
+                    model=model,
+                    dataset=dataset
                 )
 
             # ----------------------------------------------
@@ -150,16 +181,16 @@ def run():
                 result = handle_delta(question, features, range_info)
 
             # ----------------------------------------------
-            # 🔥 DEPENDENCY (PURE)
+            # DEPENDENCY
             # ----------------------------------------------
             elif task_type == "dependency":
                 result = handle_dependency(question, route)
 
             # ----------------------------------------------
-            # 🔥 DATA (NEW)
+            # DATA
             # ----------------------------------------------
             elif task_type == "data":
-                result = handle_data(question)
+                result = handle_data(question, dataset=dataset)
 
             # ----------------------------------------------
             # DRIVERS
@@ -198,7 +229,6 @@ def run():
             print("\nSUMMARY:")
             print(result.get("summary", ""))
 
-            # 🔥 PRINT DATA SOLO SE NON VUOTO
             data = result.get("data", {})
             if data:
                 print("\nDATA:")

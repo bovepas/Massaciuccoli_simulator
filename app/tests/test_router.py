@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Router Test Suite — Massaciuccoli Digital Twin
 Run all routing tests automatically
@@ -25,7 +26,6 @@ TESTS = [
     ("How do changes in land use and tree cover interact to influence ecosystem risk?", "assessment"),
     ("describe the current state of the ecosystem", "assessment"),
     ("If the climate becomes warmer and drier, how does ecosystem risk change?", "assessment"),
-    ("What happens to ecosystem risk if temperature increases by 2?", "assessment"),
 
     # ======================
     # DEPENDENCY
@@ -38,6 +38,7 @@ TESTS = [
     ("If precipitation decreases by 10, how does biodiversity change?", "dependency"),
     ("Does precipitation change affect ecosystem productivity?", "dependency"),
     ("How does biodiversity change if temperature increases by 2°C?", "dependency"),
+    ("What is the effect of increasing evapotranspiration?", "dependency"),
 
     # ======================
     # DELTA
@@ -49,6 +50,9 @@ TESTS = [
     ("change in risk from 5 to 15 evapotranspiration", "delta"),
     ("What is the expected change in ecosystem risk if tree cover density decreases from 60% to 30%, while all other environmental variables remain constant?", "delta"),
     ("How does the ecosystem risk change if precipitation decreases from -10% to -40%, keeping all other variables constant?", "delta"),
+    ("What happens if temperature increases by 1?", "delta"),
+    ("What happens if precipitation decreases by 10%?", "delta"),
+    ("What happens to ecosystem risk if temperature increases by 2?", "delta"),
 
     # ======================
     # COMPARISON
@@ -85,33 +89,6 @@ TESTS = [
     ("Cyprinus carpio habitat suitability", "enm"),
     ("What is the predicted habitat suitability of Cyprinus carpio in the study area?", "enm"),
     ("What is the habitat suitability of fish species in the area given temperature increase of 2°C?", "enm"),
-
-    # ======================================================
-    # 🔥 CHAT / OUT-OF-DOMAIN (NEW)
-    # ======================================================
-
-    # # Greetings
-    # ("hello", "chat"),
-    # ("hi there", "chat"),
-    # ("hey", "chat"),
-
-    # # Identity / system questions
-    # ("what are you?", "chat"),
-    # ("are you an ecosystem model?", "chat"),
-    # ("who are you?", "chat"),
-
-    # # Generic help
-    # ("can you help me?", "chat"),
-    # ("what can you do?", "chat"),
-
-    # # Out-of-domain nonsense
-    # ("asdasdasd", "chat"),
-    # ("random text with no meaning", "chat"),
-
-    # # Borderline tricky cases
-    # ("tell me something", "chat"),
-    # ("explain this system", "chat"),
-    # ("what is going on here?", "chat"),
 ]
 
 

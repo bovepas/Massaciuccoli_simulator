@@ -2,12 +2,13 @@
 
 """
 Massaciuccoli Digital Twin
-RAG — IMPORTANCE EXPLANATION v16 (driver-aligned + grounded)
+RAG — IMPORTANCE EXPLANATION v19 (QUERY-AWARE + FIX OVERFITTING)
 
-✔ Uses SHAP drivers explicitly
-✔ Forces grounding in KB context
-✔ Aligns explanation with model outputs
-✔ Clean and stable for demo
+# FIX:
+# - Now uses user question
+# - Handles increase / decrease / stability
+# - Prevents semantic overfitting
+# - Keeps clean RAG structure
 """
 
 import re
@@ -24,21 +25,14 @@ def clean_output(text: str):
         return None
 
     text = text.strip()
-
-    # non distruggere punteggiatura
     text = re.sub(r"\s+", " ", text)
-
-    text = text.replace("Climatedriven", "Climate-driven")
 
     sentences = re.split(r'(?<=[.!?])\s+', text)
 
     if not sentences:
         return None
 
-    # max 4 frasi (leggermente più permissivo)
-    cleaned = " ".join(sentences[:4]).strip()
-
-    return cleaned
+    return " ".join(sentences[:4]).strip()
 
 
 # ======================================================
@@ -50,7 +44,7 @@ def fallback_explanation(drivers, mode):
     if not drivers:
         return "No dominant drivers were identified."
 
-    variables = ", ".join(drivers)
+    variables = ", ".join([d["name"] for d in drivers[:5]])
 
     return (
         f"In the Massaciuccoli lake basin, {variables} influence ecosystem risk "
@@ -60,26 +54,111 @@ def fallback_explanation(drivers, mode):
 
 
 # ======================================================
-# MAIN FUNCTION
+# MAIN FUNCTION (🔥 FIXED)
 # ======================================================
 
-def generate_importance_explanation(drivers, mode="absolute"):
+def generate_importance_explanation(drivers, question, mode="absolute"):
 
-    print("\n[RAG-IMPORTANCE v16] START\n")
+    print("\n[RAG-IMPORTANCE v19] START\n")
 
     if not drivers:
         return "No dominant drivers were identified in this scenario."
 
     # ======================================================
-    # 🔥 DRIVER STRING (SHAP → RAG)
+    # 🔥 UNDERSTAND USER INTENT (CORE FIX)
     # ======================================================
 
-    driver_text = ", ".join(drivers[:5])  # top 5 max
+    q = question.lower()
 
-    print("[DEBUG] Drivers passed to RAG:", driver_text)
+    focus = "all"
+
+    if any(k in q for k in ["increase", "higher", "raise", "drives risk"]):
+        focus = "increase"
+
+    elif any(k in q for k in ["decrease", "reduce", "mitigate", "lower"]):
+        focus = "decrease"
+
+    elif "stability" in q:
+        focus = "stability"
+
+    print(f"[DEBUG] Detected focus: {focus}")
 
     # ======================================================
-    # 🔥 QUERY DINAMICA (driver-aware)
+    # DRIVER NAMES (for retrieval)
+    # ======================================================
+
+    driver_names = [d["name"] for d in drivers[:5]]
+    driver_text = ", ".join(driver_names)
+
+    print("[DEBUG] Driver names:", driver_names)
+
+    # ======================================================
+    # 🔥 FILTER DRIVERS BASED ON QUESTION
+    # ======================================================
+
+    if focus == "increase":
+        increase = [d for d in drivers if d["impact"] > 0][:5]
+        decrease = []
+
+    elif focus == "decrease":
+        increase = []
+        decrease = [d for d in drivers if d["impact"] < 0][:5]
+
+    elif focus == "stability":
+        # stability = inverse of risk
+        increase = [d for d in drivers if d["impact"] < 0][:5]
+        decrease = [d for d in drivers if d["impact"] > 0][:5]
+
+    else:
+        increase = [d for d in drivers if d["impact"] > 0][:5]
+        decrease = [d for d in drivers if d["impact"] < 0][:5]
+
+    # ======================================================
+    # BUILD TEXT BLOCKS
+    # ======================================================
+
+    increase_text = "\n".join([
+        f"- An increase in {d['name']} leads to higher ecosystem risk"
+        for d in increase
+    ]) or "- None"
+
+    decrease_text = "\n".join([
+        f"- An increase in {d['name']} leads to lower ecosystem risk"
+        for d in decrease
+    ]) or "- None"
+
+    # ======================================================
+    # 🔥 ADAPT PROMPT BASED ON FOCUS
+    # ======================================================
+
+    if focus == "increase":
+
+        impact_text = f"""
+DRIVERS THAT INCREASE RISK:
+{increase_text}
+"""
+
+    elif focus == "decrease":
+
+        impact_text = f"""
+DRIVERS THAT REDUCE RISK:
+{decrease_text}
+"""
+
+    else:
+
+        impact_text = f"""
+DRIVERS THAT INCREASE RISK:
+{increase_text}
+
+DRIVERS THAT REDUCE RISK:
+{decrease_text}
+"""
+
+    print("[DEBUG] Impact structure:\n", impact_text)
+
+    # ======================================================
+    # RAG QUERY
     # ======================================================
 
     rag_query = (
@@ -90,55 +169,46 @@ def generate_importance_explanation(drivers, mode="absolute"):
     print("[DEBUG] RAG query:", rag_query)
 
     # ======================================================
-    # 🔥 PROMPT (FIXED: NO LIST OUTPUT)
+    # PROMPT
     # ======================================================
 
     prompt = f"""
 You are an environmental scientist analyzing a real lake ecosystem.
 
 TASK:
-Explain how the following environmental drivers jointly influence ecosystem risk:
-{driver_text}
+Explain how the following environmental drivers influence ecosystem risk.
+
+{impact_text}
 
 STRICT REQUIREMENTS:
-- You MUST explicitly refer to the listed drivers
+- You MUST respect the direction of influence
+- You MUST NOT introduce drivers not listed above
+- You MUST explain WHY these drivers matter
 - You MUST use information from the provided context
-- You MUST explain WHY these drivers are important (not just describe the system)
-- You MUST explicitly mention at least ONE of:
-  • hydrological dynamics
-  • nutrient loading
-  • water quality
-  • anthropogenic pressures
-  • climate-driven changes
+
+You MUST explicitly mention at least ONE of:
+• hydrological dynamics
+• nutrient loading
+• water quality
+• anthropogenic pressures
+• climate-driven changes
 
 CONTEXT ANCHORING:
-- You MUST explicitly refer to the Massaciuccoli lake basin
-- The explanation must feel grounded in a real ecosystem
+- You MUST refer to the Massaciuccoli lake basin
 
-CAUSAL STRUCTURE:
-- You MUST describe a causal chain
-  (e.g., temperature → hydrology → water quality → species → ecosystem risk)
-- Connect the drivers within a single mechanism
-- Do NOT invent causal relationships between drivers unless supported by the context
-
-OUTPUT FORMAT:
-- Write a single coherent paragraph
-- Do NOT list drivers one by one
-- Integrate the drivers into a unified explanation
-
-STYLE:
+OUTPUT:
+- Single paragraph
 - 3–5 sentences
-- Scientific but concrete
-- Avoid generic explanations
+- No bullet points
 
 DO NOT:
-- Ignore the listed drivers
-- Give abstract ecological theory
-- Mention models or SHAP
+- Treat all drivers equally
+- Ignore the requested focus
+- Invent relationships not supported by context
 
 ---
 
-Now explain how these drivers increase ecosystem risk using ONLY the context.
+Now explain the system.
 """
 
     # ======================================================
@@ -157,14 +227,14 @@ Now explain how these drivers increase ecosystem risk using ONLY the context.
         if cleaned:
             print("\n[RAG-IMPORTANCE] Output:")
             print(cleaned)
-            print("[RAG-IMPORTANCE v16] END\n")
+            print("[RAG-IMPORTANCE v19] END\n")
             return cleaned
 
         return fallback_explanation(drivers, mode)
 
     except Exception as e:
 
-        print("\n🔥 RAG-IMPORTANCE ERROR:")
+        print("\n# RAG-IMPORTANCE ERROR:")
         print(e)
 
         return fallback_explanation(drivers, mode)
