@@ -2,7 +2,7 @@
 
 """
 Massaciuccoli Digital Twin
-Knowledge Base Ingestion Script - FIX DOCKER + CLEAN
+Knowledge Base Ingestion Script - AUTO-INIT READY
 """
 
 import os
@@ -24,7 +24,6 @@ CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
 
 COLLECTION_NAME = "massaciuccoli_knowledge"
 
-# 🔥 FIX: usa servizio docker, NON localhost
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
 OLLAMA_EMBED_URL = f"{OLLAMA_BASE_URL}/api/embeddings"
 
@@ -112,17 +111,35 @@ def get_embedding(text):
 
 
 # ======================================================
+# 🔥 KB CHECK
+# ======================================================
+
+def is_kb_empty():
+
+    client = chromadb.PersistentClient(path=CHROMA_PATH)
+    collection = client.get_or_create_collection(COLLECTION_NAME)
+
+    try:
+        count = collection.count()
+        return count == 0
+    except:
+        return True
+
+
+# ======================================================
 # INGEST
 # ======================================================
 
-def ingest_pdfs():
+def ingest_pdfs(force=False):
 
     client = chromadb.PersistentClient(path=CHROMA_PATH)
 
-    try:
-        client.delete_collection(COLLECTION_NAME)
-    except:
-        pass
+    # 🔥 cancella solo se richiesto
+    if force:
+        try:
+            client.delete_collection(COLLECTION_NAME)
+        except:
+            pass
 
     collection = client.get_or_create_collection(COLLECTION_NAME)
 
@@ -173,8 +190,21 @@ def ingest_pdfs():
 
 
 # ======================================================
+# 🔥 AUTO INIT
+# ======================================================
+
+def ensure_kb_ready():
+
+    if is_kb_empty():
+        print("\n📚 Knowledge base empty → running ingestion...\n")
+        ingest_pdfs(force=True)
+    else:
+        print("\n✅ Knowledge base already populated.\n")
+
+
+# ======================================================
 # RUN
 # ======================================================
 
 if __name__ == "__main__":
-    ingest_pdfs()
+    ingest_pdfs(force=True)

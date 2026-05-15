@@ -2,13 +2,16 @@
 
 """
 Massaciuccoli Digital Twin
-Knowledge Engine Retriever - v3 (ADAPTIVE FILTER + DEBUG STABLE)
+Knowledge Engine Retriever - v4 (AUTO-KB INIT)
 """
 
 import requests
 import chromadb
 from typing import List, Dict, Tuple
 import os
+
+# 🔥 NEW
+from knowledge.ingest_pdfs import ensure_kb_ready
 
 
 # ======================================================
@@ -107,8 +110,18 @@ def retrieve_documents(query: str) -> Tuple[List[Dict], float]:
 
     debug_print("Query:", query)
 
+    # ======================================================
+    # 🔥 AUTO-KB INIT
+    # ======================================================
+
+    ensure_kb_ready()
+
+    # 🔥 reload collection dopo ingest (importantissimo)
+    global collection
+    collection = client.get_or_create_collection(COLLECTION_NAME)
+
     if collection.count() == 0:
-        debug_print("Empty collection")
+        debug_print("Empty collection AFTER INIT")
         return [], 9999.0
 
     expanded_queries = expand_query(query)

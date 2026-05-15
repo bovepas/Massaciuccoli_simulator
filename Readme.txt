@@ -65,10 +65,27 @@ Massaciuccoli Digital Twin — interactive
 
 You can now ask questions like:
 
-* Which factors drive biodiversity loss?
-* What drives ecosystem productivity?
-* How does temperature affect precipitation?
-* Compare two environmental scenarios
+# Understanding drivers
+Which environmental variables are most influential in increasing ecosystem risk?
+What factors drive biodiversity loss in the lake system?
+Which variables most strongly affect ecosystem productivity?
+# Understanding relationships (cause-effect)
+How does temperature affect precipitation in the lake basin?
+How does a decrease in precipitation influence ecosystem risk?
+What is the effect of evapotranspiration on water availability?
+# Comparing scenarios (IMPORTANT: you must specify both scenarios)
+Compare ecosystem risk when temperature increases by 2°C versus when precipitation decreases by 10%.
+Which scenario is worse: temperature +3°C or precipitation −20%?
+Compare two scenarios: one with increased tree cover (70%) and one with reduced biodiversity (−30%).
+# Retrieving latest environmental data
+Retrieve the latest average temperature data.
+What is the latest precipitation change?
+Show the latest environmental conditions of the system.
+
+# Notes:
+
+When comparing scenarios, always specify both conditions clearly.
+The system answers based on a scientific knowledge base of the Massaciuccoli lake ecosystem.
 
 Type:
 

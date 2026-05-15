@@ -1,35 +1,21 @@
 # tasks/task_data.py
 
 from tools.live_data_loader import load_live_data, safe_get
+from utils.data_parser import parse_data_request
 
 
 # ======================================================
-# 🔥 LIGHT DATA PARSER
+# 🔥 LABEL USER-FRIENDLY
 # ======================================================
 
-def detect_requested_variable(question: str):
-
-    q = question.lower()
-
-    if "temperature" in q:
-        return "temperature change"
-
-    if "precipitation" in q or "rain" in q:
-        return "water from rain"
-
-    if "evaporation" in q:
-        return "evaporation change"
-
-    if "tree" in q:
-        return "tree"
-
-    if "grass" in q:
-        return "grassland"
-
-    if "species" in q or "biodiversity" in q:
-        return "species richness"
-
-    return None
+VARIABLE_LABELS = {
+    "temperature change": "average temperature change (°C)",
+    "water from rain": "precipitation change (%)",
+    "evaporation change": "evaporation change (%)",
+    "tree": "tree cover (%)",
+    "grassland": "grassland area (%)",
+    "species richness": "species richness"
+}
 
 
 # ======================================================
@@ -42,15 +28,16 @@ def handle_data(question):
 
     try:
         # ======================================================
-        # 🔥 STEP 1: CARICA DATI LIVE
+        # 🔥 STEP 1: LOAD LIVE DATA
         # ======================================================
         print("[DATA] Loading live data...")
         row = load_live_data()
 
         # ======================================================
-        # 🔥 STEP 2: PARSE USER REQUEST
+        # 🔥 STEP 2: PARSE USER REQUEST (CENTRALIZED)
         # ======================================================
-        variable = detect_requested_variable(question)
+        parsed = parse_data_request(question)
+        variable = parsed.get("variable")
 
         # ======================================================
         # 🔥 STEP 3: SINGLE VARIABLE
@@ -64,17 +51,19 @@ def handle_data(question):
             except:
                 pass
 
+            label = VARIABLE_LABELS.get(variable, variable)
+
             return {
                 "summary": "Latest environmental data",
                 "data": {
                     variable: value
                 },
                 "drivers": [],
-                "interpretation": f"The latest value for {variable} is {value}."
+                "interpretation": f"The latest {label} is {value}."
             }
 
         # ======================================================
-        # 🔥 STEP 4: FULL SNAPSHOT (fallback)
+        # 🔥 STEP 4: FULL SNAPSHOT
         # ======================================================
         data = {
             "temperature": safe_get(row, "temperature change"),
@@ -84,7 +73,6 @@ def handle_data(question):
             "species": safe_get(row, "species richness")
         }
 
-        # cast sicuro
         for k, v in data.items():
             try:
                 data[k] = float(v)

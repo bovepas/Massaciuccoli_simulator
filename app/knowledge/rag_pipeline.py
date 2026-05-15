@@ -2,11 +2,10 @@
 
 """
 Massaciuccoli Digital Twin
-RAG Pipeline — v3 (robust + demo-ready)
+RAG Pipeline — v4 (robust + anti-empty + anti-llm-failure)
 
-✔ Uses centralized llm_client
-✔ Context trimming (important for LLM quality)
-✔ Output validation
+✔ Handles empty retrieval
+✔ Prevents LLM useless responses
 ✔ Strong fallback
 ✔ Clean debug
 """
@@ -22,7 +21,7 @@ from tools.llm_client import call_llm
 
 DEBUG = True
 
-MAX_CONTEXT_CHARS = 3000  # 🔥 limit context size
+MAX_CONTEXT_CHARS = 3000
 
 
 # ======================================================
@@ -50,7 +49,7 @@ def clean_text(text: str):
 
 
 # ======================================================
-# CONTEXT BUILDER (🔥 NEW)
+# CONTEXT BUILDER
 # ======================================================
 
 def build_context(retrieved):
@@ -62,7 +61,6 @@ def build_context(retrieved):
 
     context = "\n\n".join(chunks)
 
-    # 🔥 trim if too long
     if len(context) > MAX_CONTEXT_CHARS:
         context = context[:MAX_CONTEXT_CHARS]
 
@@ -70,7 +68,7 @@ def build_context(retrieved):
 
 
 # ======================================================
-# OUTPUT VALIDATION (🔥 NEW)
+# OUTPUT VALIDATION
 # ======================================================
 
 def is_valid_output(text: str):
@@ -78,26 +76,37 @@ def is_valid_output(text: str):
     if not text:
         return False
 
-    text = text.strip()
+    text = text.strip().lower()
 
     if len(text) < 30:
         return False
 
-    if "Interpretation not available" in text:
+    # 🔥 intercetta rifiuti LLM
+    bad_patterns = [
+        "no mention",
+        "not present in the context",
+        "cannot answer",
+        "not enough information",
+        "outside the scope"
+    ]
+
+    if any(p in text for p in bad_patterns):
         return False
 
     return True
 
 
 # ======================================================
-# FALLBACK
+# FALLBACK (🔥 MIGLIORATO)
 # ======================================================
 
 def fallback_answer(question: str):
 
     return (
-        "The system retrieved relevant environmental information, "
-        "but a detailed explanation could not be generated at this time."
+        "The system could not retrieve sufficient domain-specific information "
+        "to provide a grounded answer. This may happen if the knowledge base "
+        "is not fully initialized or if the query is outside the available "
+        "scientific context."
     )
 
 
@@ -109,7 +118,20 @@ def generate_answer(question: str, extra_prompt: str = ""):
 
     retrieved, _ = retrieve_documents(question)
 
+    # ======================================================
+    # 🔥 HARD STOP: NO CONTEXT
+    # ======================================================
+
+    if not retrieved:
+        debug_print("[RAG] No documents retrieved → fallback")
+        return fallback_answer(question)
+
     context = build_context(retrieved)
+
+    # sicurezza extra
+    if not context.strip():
+        debug_print("[RAG] Empty context after build → fallback")
+        return fallback_answer(question)
 
     prompt = f"""
 You are an environmental scientist.
@@ -147,8 +169,12 @@ Answer:
         debug_print("\n[RAG] --- RAW LLM OUTPUT ---")
         debug_print(raw)
 
-        # 🔥 VALIDATION
+        # ======================================================
+        # 🔥 VALIDATION (ANTI-FAIL)
+        # ======================================================
+
         if not is_valid_output(raw):
+            debug_print("[RAG] Invalid LLM output → fallback")
             return fallback_answer(question)
 
         cleaned = clean_text(raw)

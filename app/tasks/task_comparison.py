@@ -47,6 +47,26 @@ def handle_comparison(question, model):
     print("\n========== COMPARISON TASK START ==========")
 
     scenario_A, scenario_B = parse_comparison_scenarios(question)
+     # --------------------------------------------------
+    # 🔥 GUARDRAIL: INCOMPLETE / TEMPLATE QUESTION
+    # --------------------------------------------------
+
+    if question.strip().lower() in [
+        "compare two environmental scenarios",
+        "compare scenarios",
+        "compare two scenarios"
+    ]:
+        return {
+            "summary": "Incomplete request",
+            "data": {},
+            "drivers": [],
+            "interpretation": (
+                "Your request is incomplete. To compare environmental scenarios, "
+                "please specify the variables and their values. "
+                "Example: 'Compare ecosystem risk when temperature increases by 2°C "
+                "versus when precipitation decreases by 10%.'"
+            )
+        }
 
     debug_print("[DEBUG] Parsed Scenario A:", scenario_A)
     debug_print("[DEBUG] Parsed Scenario B:", scenario_B)
