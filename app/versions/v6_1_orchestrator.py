@@ -42,6 +42,7 @@ from tasks.task_dependency import handle_dependency
 from tasks.task_drivers import handle_drivers
 from tasks.task_chat import handle_chat
 from tasks.task_data import handle_data
+from tasks.task_comparison import handle_comparison  # 🔥 NEW
 
 # ======================================================
 # ROUTER
@@ -57,7 +58,7 @@ from utils.feature_parser import parse_features
 from utils.range_parser import parse_range
 
 # ======================================================
-# 🔥 MODEL + DATA LOADING (FIXED)
+# MODEL + DATA LOADING
 # ======================================================
 
 from versions.v6_1_emulator import load_and_train_emulator
@@ -70,10 +71,7 @@ def load_resources():
     print("# Loading model and dataset...")
 
     try:
-        # dataset coerente con training
         dataset = pd.read_csv(DATA_PATH, skiprows=[1])
-
-        # modello allenato al volo
         model = load_and_train_emulator(DATA_PATH)
 
         print("# Model trained and dataset loaded")
@@ -103,10 +101,6 @@ def run():
 
         if question.lower() in ["exit", "quit"]:
             break
-
-        # ==================================================
-        # REQUEST
-        # ==================================================
 
         log_section("NEW REQUEST")
         log_question(question)
@@ -157,15 +151,9 @@ def run():
             log_section("TASK EXECUTION")
             log_data("task_type", task_type)
 
-            # ----------------------------------------------
-            # ASSESSMENT
-            # ----------------------------------------------
             if task_type == "assessment":
                 result = handle_assessment(question, features)
 
-            # ----------------------------------------------
-            # IMPORTANCE (FIXED)
-            # ----------------------------------------------
             elif task_type == "importance":
                 result = handle_importance(
                     question=question,
@@ -174,39 +162,24 @@ def run():
                     dataset=dataset
                 )
 
-            # ----------------------------------------------
-            # DELTA
-            # ----------------------------------------------
             elif task_type == "delta":
-                result = handle_delta(question, features, range_info)
+                result = handle_delta(question, range_info, model)
 
-            # ----------------------------------------------
-            # DEPENDENCY
-            # ----------------------------------------------
             elif task_type == "dependency":
                 result = handle_dependency(question, route)
 
-            # ----------------------------------------------
-            # DATA
-            # ----------------------------------------------
+            elif task_type == "comparison":
+                result = handle_comparison(question, model)
+
             elif task_type == "data":
                 result = handle_data(question, dataset=dataset)
 
-            # ----------------------------------------------
-            # DRIVERS
-            # ----------------------------------------------
             elif task_type == "drivers":
                 result = handle_drivers(question)
 
-            # ----------------------------------------------
-            # CHAT
-            # ----------------------------------------------
             elif task_type == "chat":
                 result = handle_chat(question)
 
-            # ----------------------------------------------
-            # UNKNOWN
-            # ----------------------------------------------
             else:
                 result = {
                     "summary": "Unknown task",

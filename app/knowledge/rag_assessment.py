@@ -1,12 +1,12 @@
-# knowledge/rag_assessment.py
+# -*- coding: utf-8 -*-
 
 """
-RAG Assessment — v1 (modular + SHAP-aware)
+RAG Assessment — v2 (STRONG KB INJECTION)
 
-✔ Uses shared retriever
-✔ Uses shared llm client
-✔ Task-specific prompt
-✔ Injects SHAP drivers into explanation
+✔ Retrieval guidato dai driver
+✔ Prompt che forza uso della KB
+✔ Output più “knowledge-grounded”
+✔ Fallback sicuro
 """
 
 from knowledge.retriever import retrieve_documents
@@ -67,16 +67,17 @@ def fallback():
 
 def generate_assessment_explanation(question: str, drivers: list):
 
-    print("\n[RAG-ASSESSMENT] START")
+    print("\n[RAG-ASSESSMENT v2] START")
 
     # ==================================================
-    # 🔥 QUERY (più generica → migliore retrieval)
+    # 🔥 DRIVERS → QUERY DINAMICA (FIX PRINCIPALE)
     # ==================================================
 
-    query = (
-        "lake ecosystem risk hydrology biodiversity nutrient loading "
-        "climate change ecosystem processes"
-    )
+    driver_text = ", ".join(drivers[:3])
+
+    query = f"""
+    lake ecosystem risk interactions {driver_text} hydrology biodiversity nutrient dynamics
+    """
 
     print("[DEBUG] RAG query:", query)
 
@@ -87,13 +88,7 @@ def generate_assessment_explanation(question: str, drivers: list):
     print("[RAG] Context length:", len(context))
 
     # ==================================================
-    # 🔥 SHAP → testo
-    # ==================================================
-
-    driver_text = ", ".join(drivers[:3])
-
-    # ==================================================
-    # 🔥 PROMPT (QUI STA LA MAGIA)
+    # 🔥 PROMPT FORZATO (USA LA KB)
     # ==================================================
 
     prompt = f"""
@@ -105,8 +100,12 @@ Explain how key environmental drivers influence ecosystem risk in a lake ecosyst
 DRIVERS:
 {driver_text}
 
-RULES:
-- Use scientific and academic tone
+CONTEXT FROM SCIENTIFIC KNOWLEDGE BASE:
+{context}
+
+IMPORTANT:
+- You MUST use the context to support your explanation
+- Base your reasoning on the retrieved scientific content
 - Integrate ecological mechanisms (hydrology, biodiversity, resilience)
 - Do NOT list variables explicitly
 - Do NOT mention models or SHAP
@@ -114,9 +113,6 @@ RULES:
 
 Question:
 {question}
-
-Context:
-{context}
 
 Answer:
 """
@@ -135,7 +131,7 @@ Answer:
 
         cleaned = clean_text(raw)
 
-        print("[RAG-ASSESSMENT] END\n")
+        print("[RAG-ASSESSMENT v2] END\n")
 
         return cleaned
 

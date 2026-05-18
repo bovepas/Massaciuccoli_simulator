@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 """
-Scenario Parser — v6 (comparison + delta unified)
+Scenario Parser — v7 (comparison + delta unified + ONE/AND support)
 
 Supporta:
-- comparison (vs / versus / first-second)
+- comparison (vs / versus / first-second / one-and-one)
 - delta (from X to Y)
 - implicit numeric comparisons
 """
@@ -22,11 +24,12 @@ def detect_feature(text):
 
     text = text.lower()
 
-    if "temperature" in text or "°c" in text:
-        return "temperature"
-
-    if "precipitation" in text or "%" in text:
+    # 🔥 PRIORITÀ: keyword esplicite
+    if "precipitation" in text:
         return "precipitation"
+
+    if "temperature" in text:
+        return "temperature"
 
     if "evapotranspiration" in text:
         return "evapotranspiration"
@@ -40,11 +43,21 @@ def detect_feature(text):
     if "impervious" in text:
         return "imperviousness"
 
+    # --------------------------------------------------
+    # fallback su unità
+    # --------------------------------------------------
+
+    if "°c" in text:
+        return "temperature"
+
+    if "%" in text:
+        return "precipitation"
+
     return None
 
 
 # ======================================================
-# SPLIT STANDARD (vs / versus)
+# SPLIT STANDARD (vs / versus / or)
 # ======================================================
 
 def split_vs(q):
@@ -73,6 +86,22 @@ def split_first_second(q):
 
 
 # ======================================================
+# 🔥 NEW: SPLIT ONE / AND ONE
+# ======================================================
+
+def split_one_and_one(q):
+
+    pattern = r"one\s+with\s+(.*?)\s+and\s+one\s+with\s+(.*)"
+
+    match = re.search(pattern, q)
+
+    if match:
+        return match.group(1), match.group(2)
+
+    return None, None
+
+
+# ======================================================
 # PARSE SIMPLE SCENARIO
 # ======================================================
 
@@ -84,11 +113,20 @@ def parse_simple(text):
     if not feature or not numbers:
         return None
 
-    return {feature: numbers[0]}
+    value = numbers[0]
+
+    # 🔥 SIGN DETECTION
+    if "decrease" in text or "decreases" in text or "-" in text:
+        value = -abs(value)
+
+    elif "increase" in text or "increases" in text or "+" in text:
+        value = abs(value)
+
+    return {feature: value}
 
 
 # ======================================================
-# 🔥 NEW: PARSE "FROM X TO Y"
+# PARSE "FROM X TO Y"
 # ======================================================
 
 def parse_from_to(q):
@@ -120,10 +158,13 @@ def parse_comparison_scenarios(question: str):
 
     q = question.lower()
 
-    print("[PARSER v6 DEBUG]")
+    # 🔥 FIX UNICODE MINUS
+    q = q.replace("−", "-")
+
+    print("[PARSER v7 DEBUG]")
 
     # --------------------------------------------------
-    # 1. FROM → TO (DELTA 🔥)
+    # 1. FROM → TO (DELTA)
     # --------------------------------------------------
 
     scen_A, scen_B = parse_from_to(q)
@@ -145,6 +186,23 @@ def parse_comparison_scenarios(question: str):
         scen_B = parse_simple(b)
 
         print("Detected FIRST/SECOND")
+        print("Parsed A:", scen_A)
+        print("Parsed B:", scen_B)
+
+        if scen_A and scen_B:
+            return scen_A, scen_B
+
+    # --------------------------------------------------
+    # 2.5 ONE / AND ONE 🔥
+    # --------------------------------------------------
+
+    a, b = split_one_and_one(q)
+
+    if a and b:
+        scen_A = parse_simple(a)
+        scen_B = parse_simple(b)
+
+        print("Detected ONE/AND")
         print("Parsed A:", scen_A)
         print("Parsed B:", scen_B)
 

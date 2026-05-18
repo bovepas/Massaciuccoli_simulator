@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Feature Mapping — v4 (ROBUST NLP MATCHING)
+Feature Mapping — v5 (ROBUST + ABSTRACT FEATURES)
 
 ✔ Supports synonyms
 ✔ Supports partial matching
 ✔ Handles unknown variables
+✔ 🔥 NEW: abstract concepts (water availability, etc.)
 ✔ Backward compatible
 """
 
@@ -44,7 +45,7 @@ SYNONYMS = {
 }
 
 # ======================================================
-# KEYWORD MATCHING (🔥 NEW)
+# KEYWORD MATCHING
 # ======================================================
 
 KEYWORD_MATCH = {
@@ -58,6 +59,43 @@ KEYWORD_MATCH = {
     "grassland": ["grassland"],
 }
 
+# ======================================================
+# 🔥 ABSTRACT FEATURES (NEW)
+# ======================================================
+
+ABSTRACT_FEATURES = {
+    "water availability": [
+        "Cumulative change in precipitation compared to a recent past",
+        "Relative change in the potential evapotranspiration compared to a recent past"
+    ],
+    "water level": [
+        "Cumulative change in precipitation compared to a recent past",
+        "Relative change in the potential evapotranspiration compared to a recent past"
+    ],
+    "hydrology": [
+        "Cumulative change in precipitation compared to a recent past",
+        "Relative change in the potential evapotranspiration compared to a recent past"
+    ]
+}
+
+
+# ======================================================
+# 🔥 ABSTRACT NORMALIZATION
+# ======================================================
+
+def normalize_abstract_feature(name: str):
+
+    if not name:
+        return None
+
+    name = name.lower()
+
+    for k, v in ABSTRACT_FEATURES.items():
+        if k in name:
+            return v
+
+    return None
+
 
 # ======================================================
 # NORMALIZATION
@@ -69,6 +107,14 @@ def normalize_feature_name(name: str):
         return None
 
     name = name.lower().strip()
+
+    # --------------------------------------------------
+    # 🔥 0️⃣ ABSTRACT MATCH (NEW PRIORITY)
+    # --------------------------------------------------
+
+    abstract = normalize_abstract_feature(name)
+    if abstract:
+        return abstract
 
     # --------------------------------------------------
     # 1️⃣ SYNONYM DIRECT
@@ -85,7 +131,7 @@ def normalize_feature_name(name: str):
         return FEATURE_MAPPING[name]
 
     # --------------------------------------------------
-    # 3️⃣ PARTIAL MATCH (🔥 KEY FEATURE)
+    # 3️⃣ PARTIAL MATCH
     # --------------------------------------------------
 
     for canonical, keywords in KEYWORD_MATCH.items():

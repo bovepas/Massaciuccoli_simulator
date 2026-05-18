@@ -2,11 +2,13 @@
 
 """
 Massaciuccoli Digital Twin
-Delta Task — v23 (SHAP-based + range-aware + RAG aligned)
+Delta Task — v29 (final with implicit range support)
 """
 
-from versions.v6_1_main import explain_with_shap
+import pandas as pd
+
 from knowledge.rag_delta import generate_delta_explanation
+from utils.feature_mapping import normalize_feature_name
 
 
 # ======================================================
@@ -31,7 +33,7 @@ def get_base_scenario():
 
 
 # ======================================================
-# RISK LEVEL (local replacement)
+# RISK LEVEL
 # ======================================================
 
 def risk_level_from_score(score: float) -> str:
@@ -45,24 +47,123 @@ def risk_level_from_score(score: float) -> str:
 
 
 # ======================================================
+# 🔥 GENERIC FALLBACK (IMPLICIT DELTA)
+# ======================================================
+
+def infer_simple_range(question):
+
+    q = question.lower()
+
+    keywords = [
+        "temperature",
+        "precipitation",
+        "evapotranspiration",
+        "biodiversity",
+        "species",
+        "tree cover",
+        "impervious",
+        "productivity",
+        "land use"
+    ]
+
+    detected = None
+
+    for k in keywords:
+        if k in q:
+            detected = k
+            break
+
+    if not detected:
+        return None
+
+    feature = normalize_feature_name(detected)
+
+    if not feature:
+        return None
+
+    # direction
+    if any(w in q for w in ["decrease", "reduce", "drop"]):
+        direction = -1
+    elif any(w in q for w in ["increase", "rise"]):
+        direction = 1
+    else:
+        return None
+
+    # magnitude (safe generic)
+    magnitude = 10
+    if "temperature" in detected:
+        magnitude = 2
+
+    return {
+        "feature": feature,
+        "from": 0,
+        "to": direction * magnitude
+    }
+
+
+# ======================================================
+# 🔥 FEATURE RECOVERY
+# ======================================================
+
+def recover_feature_from_question(question):
+
+    q = question.lower()
+
+    if "tree cover" in q:
+        return normalize_feature_name("tree_cover")
+
+    if "biodiversity" in q or "species" in q:
+        return normalize_feature_name("biodiversity")
+
+    if "evapotranspiration" in q:
+        return normalize_feature_name("evapotranspiration")
+
+    if "temperature" in q:
+        return normalize_feature_name("temperature")
+
+    if "precipitation" in q:
+        return normalize_feature_name("precipitation")
+
+    return None
+
+
+# ======================================================
 # MAIN
 # ======================================================
 
-def handle_delta(question, parsed_features, range_info):
+def handle_delta(question, range_info, model):
 
     print("\n========== DELTA TASK START ==========")
 
+    # 🔥 FALLBACK ATTIVO
     if not range_info:
-        return {
-            "summary": "Range not recognized",
-            "data": {},
-            "drivers": [],
-            "interpretation": "Could not parse range"
-        }
+        print("[DEBUG] No range detected → using implicit range")
+        range_info = infer_simple_range(question)
+
+        if not range_info:
+            return {
+                "summary": "Range not recognized",
+                "data": {},
+                "drivers": [],
+                "interpretation": "Could not parse range"
+            }
 
     feature = range_info["feature"]
     v_from = range_info["from"]
     v_to = range_info["to"]
+
+    # 🔥 RECOVERY
+    if feature is None:
+        print("[DEBUG] Recovering feature from question...")
+        feature = recover_feature_from_question(question)
+
+    if feature is None:
+        return {
+            "summary": "Feature not recognized",
+            "data": {},
+            "drivers": [],
+            "interpretation": "Could not identify the environmental variable."
+        }
 
     base = get_base_scenario()
 
@@ -75,32 +176,20 @@ def handle_delta(question, parsed_features, range_info):
     print(f"[DEBUG] Feature: {feature}")
     print(f"[DEBUG] Range: {v_from} → {v_to}")
 
-    # --------------------------------------------------
-    # SHAP instead of MODEL
-    # --------------------------------------------------
+    df_a = pd.DataFrame([scenario_a])
+    df_b = pd.DataFrame([scenario_b])
 
-    result_a = explain_with_shap(scenario_a)
-    result_b = explain_with_shap(scenario_b)
-
-    score_a = result_a["risk_score"]
-    score_b = result_b["risk_score"]
+    score_a = float(model.predict(df_a)[0])
+    score_b = float(model.predict(df_b)[0])
 
     delta = round(score_b - score_a, 3)
 
-    drivers = [(feature, v_from, v_to)]
-
     print(f"[DEBUG] Scores: {score_a} → {score_b} | Δ = {delta}")
 
-    # --------------------------------------------------
-    # RISK LEVELS
-    # --------------------------------------------------
+    drivers = [(feature, v_from, v_to)]
 
     risk_from = risk_level_from_score(score_a)
     risk_to = risk_level_from_score(score_b)
-
-    # --------------------------------------------------
-    # RAG
-    # --------------------------------------------------
 
     interpretation = generate_delta_explanation(
         question,

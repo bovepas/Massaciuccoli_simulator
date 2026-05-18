@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-Drivers Task — v5 (clean + demo-ready)
+Drivers Task — v6 (clean + demo-ready + semantic fix)
 
 ✔ Removes noisy variables
 ✔ Filters weak correlations
 ✔ Improves output readability
 ✔ Adds scientific disclaimer
+✔ 🔥 Aligns wording with "loss / increase"
 """
 
 import pandas as pd
@@ -52,8 +53,24 @@ def classify_strength(corr):
         return "strong"
 
 
-def format_driver(d):
-    return f"{d['feature']} ({d['direction']}, {d['strength']} influence)"
+# ======================================================
+# 🔥 UPDATED DRIVER FORMAT (SEMANTIC FIX)
+# ======================================================
+
+def format_driver(d, target, goal):
+    feature = d["feature"]
+    strength = d["strength"]
+    direction = d["direction"]
+
+    # 👉 caso biodiversità → linguaggio naturale "loss"
+    if "species" in target.lower() and goal == "decrease":
+        return f"{feature} (associated with biodiversity decline, {strength})"
+
+    if "species" in target.lower() and goal == "increase":
+        return f"{feature} (associated with biodiversity increase, {strength})"
+
+    # 👉 fallback generico
+    return f"{feature} ({direction}, {strength} influence)"
 
 
 def handle_drivers(question: str):
@@ -117,7 +134,8 @@ def handle_drivers(question: str):
 
     print("[DEBUG] Top drivers:", [d["feature"] for d in top])
 
-    drivers = [format_driver(d) for d in top]
+    # 🔥 UPDATED DRIVER OUTPUT
+    drivers = [format_driver(d, target, goal) for d in top]
 
     # 🔥 SUMMARY
     if goal == "decrease" and "species" in target.lower():
@@ -134,6 +152,27 @@ def handle_drivers(question: str):
 
     # 🔥 RAG
     explanation = generate_drivers_explanation(target, top)
+
+    # ======================================================
+    # 🔥 POST-PROCESS FIX (GRAMMAR SAFE)
+    # ======================================================
+
+    if "species" in target.lower():
+
+        explanation = explanation.replace(
+            "shows a negative relationship with",
+            "is negatively affected by"
+        )
+
+        explanation = explanation.replace(
+            "exhibits negative associations with",
+            "is further negatively influenced by"
+        )
+
+        explanation = explanation.replace(
+            "linked to a decrease in the potential for species to live in the cell",
+            "acting as drivers of biodiversity loss in the system"
+        )
 
     # 🔥 DISCLAIMER
     explanation += (

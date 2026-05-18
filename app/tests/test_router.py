@@ -25,6 +25,11 @@ TESTS = [
     ("Retrieve evapotranspiration time series", "data"),
     ("Get the latest biodiversity numbers", "data"),
 
+    # 🔥 NEW DATA
+    ("Retrieve the latest average temperature data.", "data"),
+    ("What is the latest precipitation change?", "data"),
+    ("Show the latest environmental conditions of the system.", "data"),
+
     # ======================
     # ASSESSMENT
     # ======================
@@ -52,6 +57,10 @@ TESTS = [
     ("How does biodiversity change if temperature increases by 2°C?", "dependency"),
     ("What is the effect of increasing evapotranspiration?", "dependency"),
 
+    # 🔥 NEW DEPENDENCY
+    ("How does temperature affect precipitation in the lake basin?", "dependency"),
+    ("What is the effect of evapotranspiration on water availability?", "dependency"),
+
     # ======================
     # DELTA
     # ======================
@@ -66,12 +75,20 @@ TESTS = [
     ("What happens if precipitation decreases by 10%?", "delta"),
     ("What happens to ecosystem risk if temperature increases by 2?", "delta"),
 
+    # 🔥 NEW DELTA (CRITICAL)
+    ("How does a decrease in precipitation influence ecosystem risk?", "delta"),
+
     # ======================
     # COMPARISON
     # ======================
     ("which scenario is riskier: high vs low biodiversity", "comparison"),
     ("Compare two scenarios: temperature +1°C and precipitation -10% versus temperature +3°C and precipitation -30%. Which leads to higher ecosystem risk?", "comparison"),
     ("Which scenario is riskier: temperature increase of 1°C or temperature increase of 4°C?", "comparison"),
+
+    # 🔥 NEW COMPARISON
+    ("Compare ecosystem risk when temperature increases by 2°C versus when precipitation decreases by 10%.", "comparison"),
+    ("Which scenario is worse: temperature +3°C or precipitation −20%?", "comparison"),
+    ("Compare two scenarios: one with increased tree cover (70%) and one with reduced biodiversity (−30%).", "comparison"),
 
     # ======================
     # IMPORTANCE
@@ -87,6 +104,9 @@ TESTS = [
     ("What variables are most important for ecosystem risk?", "importance"),
     ("Which factors increase ecosystem risk?", "importance"),
 
+    # 🔥 NEW IMPORTANCE
+    ("Which environmental variables are most influential in increasing ecosystem risk?", "importance"),
+
     # ======================
     # DRIVERS
     # ======================
@@ -94,6 +114,9 @@ TESTS = [
     ("Top 3 drivers of biodiversity", "drivers"),
     ("Which factors drive biodiversity loss?", "drivers"),
     ("What drives precipitation change?", "drivers"),
+
+    # 🔥 NEW DRIVERS
+    ("What factors drive biodiversity loss in the lake system?", "drivers"),
 
     # ======================
     # ENM

@@ -94,6 +94,15 @@ def route_question(question: str):
     log_section("ROUTER V28 FINAL (DATA SAFE)")
     log_question(question)
 
+    # ======================================================
+    # 🔥 VERY SPECIFIC DELTA FIX (NON-DESTRUCTIVE)
+    # ======================================================
+
+    if re.search(r"how does (an? )?(increase|decrease|reduction|rise) in .* (affect|influence|impact)", q):
+        if "risk" in q or "ecosystem" in q:
+            print("[ROUTER FIX] Detected causal change pattern → DELTA")
+            return {"type": "delta"}
+
     # ==================================================
     # 🆕 HARD RULE: DATA FIRST
     # ==================================================

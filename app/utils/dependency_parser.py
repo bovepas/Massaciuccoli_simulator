@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Dependency Parser — v6 (semantic + directional + abstract target fix)
+Dependency Parser — v7 (FIXED abstract targets + dual target system)
 
 ✔ Keeps all existing logic
-✔ Adds support for non-feature targets (e.g. water availability)
-✔ No regression risk
+✔ 🔥 NEW: dual target (raw + normalized)
+✔ Fix water availability
+✔ No regression
 """
 
 import re
@@ -32,14 +33,12 @@ def find_features_in_text(text: str):
 
     found = []
 
-    # direct mapping
     for key in FEATURE_MAPPING.keys():
         if key in text:
             canonical = normalize_feature_name(key)
             if canonical:
                 found.append(canonical)
 
-    # synonyms
     for syn, base in SYNONYMS.items():
         if syn in text:
             canonical = normalize_feature_name(base)
@@ -50,42 +49,40 @@ def find_features_in_text(text: str):
 
 
 # ======================================================
-# 🆕 ABSTRACT TARGET DETECTION (IMPROVED)
+# 🔥 ABSTRACT TARGET NORMALIZATION
 # ======================================================
 
-def detect_abstract_target(text: str):
+def normalize_abstract_target(raw_target: str):
 
-    text = text.lower()
+    if not raw_target:
+        return None
 
-    if "risk" in text:
-        return "risk_score"
+    t = raw_target.lower()
 
-    if "stability" in text:
-        return "risk_score"
-
-    if "ecosystem" in text:
-        return "risk_score"
-
-    # 🔥 NEW
-    if "water availability" in text:
+    if "water availability" in t:
         return "hydrological dynamics"
 
-    if "water" in text:
+    if "water" in t:
         return "hydrological dynamics"
 
-    if "nutrient" in text:
-        return "nutrient loading"
+    if "risk" in t or "ecosystem" in t:
+        return "risk_score"
 
-    return None
+    if "productivity" in t:
+        return "ecosystem productivity"
+
+    if "biodiversity" in t:
+        return "biodiversity"
+
+    return raw_target  # fallback → keep raw
 
 
 # ======================================================
-# 🆕 RAW TARGET EXTRACTION (NEW CORE FIX)
+# RAW TARGET EXTRACTION
 # ======================================================
 
 def extract_raw_target(text: str):
 
-    # pattern: "on something"
     match = re.search(r"on (.+)", text)
     if match:
         return match.group(1).strip()
@@ -132,20 +129,29 @@ def parse_dependency(question: str):
     q = normalize_text(question)
 
     features = find_features_in_text(q)
-    target = detect_abstract_target(q)
 
     print("Detected features:", features)
-    print("Detected abstract target:", target)
 
     # ======================================================
-    # CASE 1: conceptual (1 feature + abstract target)
+    # RAW TARGET
     # ======================================================
 
-    if len(features) == 1 and target is not None:
+    raw_target = extract_raw_target(q)
+    target = normalize_abstract_target(raw_target)
+
+    print("Raw target:", raw_target)
+    print("Normalized target:", target)
+
+    # ======================================================
+    # CASE 1: 1 feature + abstract target
+    # ======================================================
+
+    if len(features) == 1 and target:
 
         return {
             "source": features[0],
             "target": target,
+            "target_raw": raw_target,
             "delta": None,
             "unknown": []
         }
@@ -156,13 +162,11 @@ def parse_dependency(question: str):
 
     if len(features) < 2:
 
-        # 🔥 NEW: fallback for "effect of X on Y"
-        raw_target = extract_raw_target(q)
-
         if len(features) == 1 and raw_target:
             return {
                 "source": features[0],
-                "target": raw_target,
+                "target": target,
+                "target_raw": raw_target,
                 "delta": None,
                 "unknown": []
             }
@@ -170,6 +174,7 @@ def parse_dependency(question: str):
         return {
             "source": None,
             "target": None,
+            "target_raw": None,
             "delta": None,
             "unknown": []
         }
@@ -193,75 +198,25 @@ def parse_dependency(question: str):
 
             if target_candidates:
                 target = target_candidates[0]
+                raw_target = target
             else:
-                target = extract_raw_target(right) or features[1]
+                raw_target = extract_raw_target(right)
+                target = normalize_abstract_target(raw_target)
 
             return {
                 "source": source,
                 "target": target,
+                "target_raw": raw_target,
                 "delta": None,
                 "unknown": []
             }
 
     # ======================================================
-    # EFFECT OF X ON Y
-    # ======================================================
-
-    if "effect of" in q or "impact of" in q:
-
-        parts = q.split(" on ")
-
-        if len(parts) == 2:
-            left = parts[0]
-            right = parts[1]
-
-            source_candidates = find_features_in_text(left)
-            target_candidates = find_features_in_text(right)
-
-            source = source_candidates[0] if source_candidates else features[0]
-
-            if target_candidates:
-                target = target_candidates[0]
-            else:
-                target = right.strip()
-
-        else:
-            source = features[0]
-            target = features[1]
-
-    # ======================================================
-    # IF CONDITION
-    # ======================================================
-
-    elif "if" in q:
-
-        parts = q.split("if")
-
-        if len(parts) == 2:
-            left = parts[0]
-            right = parts[1]
-
-            target_candidates = find_features_in_text(left)
-            source_candidates = find_features_in_text(right)
-
-            target = target_candidates[0] if target_candidates else features[0]
-            source = source_candidates[0] if source_candidates else features[1]
-
-        else:
-            source = features[0]
-            target = features[1]
-
-    # ======================================================
     # DEFAULT
     # ======================================================
 
-    else:
-        source = features[0]
-        target = features[1]
-
-    # ======================================================
-    # DELTA
-    # ======================================================
+    source = features[0]
+    target = features[1] if len(features) > 1 else None
 
     delta = extract_delta(q)
     delta = detect_directional_delta(q, delta)
@@ -269,6 +224,7 @@ def parse_dependency(question: str):
     return {
         "source": source,
         "target": target,
+        "target_raw": target,
         "delta": delta,
         "unknown": []
     }

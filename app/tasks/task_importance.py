@@ -2,11 +2,12 @@
 
 """
 Massaciuccoli Digital Twin
-Importance Task — v5 (STRUCTURED + RAG ALIGNED)
+Importance Task — v6 (CLEAN OUTPUT + SIGN SPLIT)
 
-# Structured drivers (name + impact)
-# Clean separation: logic vs UI
-# RAG receives structured input
+✔ Filters noise (low impact features)
+✔ Separates increasing vs decreasing drivers
+✔ Keeps SHAP logic unchanged
+✔ Keeps RAG unchanged
 """
 
 from knowledge.rag_importance import generate_importance_explanation
@@ -49,11 +50,10 @@ def handle_importance(question, features=None, model=None, dataset=None, top_k=5
         test_values = baseline_values.copy()
         val = baseline_values[feature]
 
-        # numeric perturbation
         if isinstance(val, (int, float)):
-            test_values[feature] = val * 1.1  # +10%
+            test_values[feature] = val * 1.1
         else:
-            continue  # skip categorical for now
+            continue
 
         df_test = build_input_df(test_values, dataset)
 
@@ -64,6 +64,15 @@ def handle_importance(question, features=None, model=None, dataset=None, top_k=5
         shap_values[feature] = round(impact, 4)
 
     print("[DEBUG] shap_values:", shap_values)
+
+    # ======================================================
+    # 🔥 FILTER NOISE (NEW)
+    # ======================================================
+
+    shap_values = {
+        k: v for k, v in shap_values.items()
+        if abs(v) > 0.01
+    }
 
     # ======================================================
     # RANKING
@@ -78,30 +87,49 @@ def handle_importance(question, features=None, model=None, dataset=None, top_k=5
     top = ranking[:top_k]
 
     # ======================================================
-    # 🔥 STRUCTURED DRIVERS (FIX)
+    # 🔥 SPLIT POSITIVE / NEGATIVE (NEW)
+    # ======================================================
+
+    positive = [(k, v) for k, v in top if v > 0]
+    negative = [(k, v) for k, v in top if v < 0]
+
+    # ======================================================
+    # STRUCTURED DRIVERS
     # ======================================================
 
     structured_drivers = [
-        {
-            "name": k,
-            "impact": round(v, 4)
-        }
+        {"name": k, "impact": round(v, 4)}
         for k, v in top
     ]
 
     print("[DEBUG] structured_drivers:", structured_drivers)
 
     # ======================================================
-    # 🔥 UI DRIVERS (ONLY FOR PRINT)
+    # UI DRIVERS (CLEAN FORMAT)
     # ======================================================
 
-    drivers = [
-        f"{d['name']} (impact={round(d['impact'], 3)})"
-        for d in structured_drivers
-    ]
+    drivers = []
+
+    if positive:
+        drivers.append("📈 Increasing risk:")
+        drivers.extend([
+            f"{k} (impact={round(v, 3)})"
+            for k, v in positive
+        ])
 
     # ======================================================
-    # RAG EXPLANATION (STRUCTURED INPUT)
+    # 🔥 OPTIONAL: show negative only if question is generic
+    # ======================================================
+
+    if negative and "increase" not in question.lower():
+        drivers.append("📉 Reducing risk:")
+        drivers.extend([
+            f"{k} (impact={round(v, 3)})"
+            for k, v in negative
+        ])
+
+    # ======================================================
+    # RAG EXPLANATION
     # ======================================================
 
     try:

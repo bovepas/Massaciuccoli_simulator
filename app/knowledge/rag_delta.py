@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Delta — v36 (polished + stable + demo-ready)
+RAG Delta — v37 (extended variables + stable + demo-ready)
 
 ✔ Uses centralized llm_client
 ✔ Deterministic ecological logic preserved
 ✔ Output validation
 ✔ Cleaner text generation
 ✔ Strong fallback (demo-safe)
+✔ NEW: tree cover + biodiversity support
 """
 
 import re
@@ -34,6 +35,9 @@ def build_facts(drivers):
         name = feature.lower()
         delta = v_to - v_from
 
+        # --------------------------------------------------
+        # TEMPERATURE
+        # --------------------------------------------------
         if "temperature" in name:
             if delta > 0:
                 facts += [
@@ -50,6 +54,9 @@ def build_facts(drivers):
                     "ecosystem stress decreases",
                 ]
 
+        # --------------------------------------------------
+        # PRECIPITATION
+        # --------------------------------------------------
         elif "precipitation" in name:
             if delta > 0:
                 facts += [
@@ -64,6 +71,9 @@ def build_facts(drivers):
                     "ecosystem stress increases",
                 ]
 
+        # --------------------------------------------------
+        # EVAPOTRANSPIRATION
+        # --------------------------------------------------
         elif "evapotranspiration" in name:
             if delta > 0:
                 facts += [
@@ -76,6 +86,42 @@ def build_facts(drivers):
                     "evapotranspiration decreases",
                     "water loss decreases",
                     "ecosystem stress decreases",
+                ]
+
+        # --------------------------------------------------
+        # 🔥 NEW: TREE COVER
+        # --------------------------------------------------
+        elif "tree cover" in name:
+            if delta > 0:
+                facts += [
+                    "tree cover increases",
+                    "vegetation density increases",
+                    "habitat conditions change",
+                    "ecosystem dynamics are altered",
+                ]
+            else:
+                facts += [
+                    "tree cover decreases",
+                    "vegetation density decreases",
+                    "habitat conditions change",
+                    "ecosystem dynamics are altered",
+                ]
+
+        # --------------------------------------------------
+        # 🔥 NEW: BIODIVERSITY
+        # --------------------------------------------------
+        elif "species" in name or "biodiversity" in name:
+            if delta > 0:
+                facts += [
+                    "biodiversity increases",
+                    "ecosystem resilience increases",
+                    "ecosystem stress decreases",
+                ]
+            else:
+                facts += [
+                    "biodiversity decreases",
+                    "ecosystem resilience decreases",
+                    "ecosystem stress increases",
                 ]
 
     # remove duplicates
@@ -103,6 +149,7 @@ RULES:
 - Do NOT introduce new concepts
 - Keep it clear and natural
 - No introductions
+- Do NOT infer changes in ecosystem risk unless explicitly provided
 """
 
 
@@ -123,7 +170,7 @@ def clean_output(text):
     text = text.replace("\n", " ")
     text = re.sub(r"\s+", " ", text)
 
-    # 🔥 fix repetition artifacts
+    # fix repetition artifacts
     text = text.replace("increases increases", "increases")
     text = text.replace("decreases decreases", "decreases")
 
@@ -169,7 +216,7 @@ def add_risk_alignment(text, delta):
 
 
 # ======================================================
-# FALLBACK (🔥 MUCH BETTER)
+# FALLBACK
 # ======================================================
 
 def fallback(facts, delta):
@@ -188,7 +235,7 @@ def fallback(facts, delta):
 
 def generate_delta_explanation(question, drivers, delta=None):
 
-    print("\n[RAG-DELTA v36] START")
+    print("\n[RAG-DELTA v37] START")
 
     facts = build_facts(drivers)
     debug_print("[FACTS]:", facts)
@@ -211,7 +258,7 @@ def generate_delta_explanation(question, drivers, delta=None):
         final = add_risk_alignment(cleaned, delta)
 
         print("[FINAL]:", final)
-        print("[RAG-DELTA v36] END")
+        print("[RAG-DELTA v37] END")
 
         return final
 
