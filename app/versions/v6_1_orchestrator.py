@@ -185,7 +185,7 @@ def run():
                 result = handle_dependency(question, route)
 
             elif task_type == "comparison":
-                result = handle_comparison(question, model)
+                result = handle_comparison(question, model,dataset)
 
             elif task_type == "data":
                 result = handle_data(question, dataset=dataset)

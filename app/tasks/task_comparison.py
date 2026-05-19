@@ -2,14 +2,42 @@
 
 """
 Massaciuccoli Digital Twin
-Task: Comparison (v3 — STRUCTURED DRIVERS + CLEAN RAG)
+Task: Comparison v8 (DUAL ASSESSMENT LITE)
+
+✔ Real model predictions
+✔ Dual local explainability
+✔ Semantic driver prioritization
+✔ Transition-ready architecture
+✔ KB-grounded comparison
+✔ Backward compatible
 """
 
 import pandas as pd
 
-from utils.feature_mapping import normalize_feature_name
-from utils.scenario_parser import parse_comparison_scenarios
-from knowledge.rag_comparison import generate_comparison_explanation
+from utils.feature_mapping import (
+    normalize_feature_name,
+    prettify_feature_dict,
+    prettify_feature_name
+)
+
+from utils.scenario_parser import (
+    parse_comparison_scenarios
+)
+
+from utils.model_input_builder import (
+    build_input_df,
+    compute_baseline
+)
+
+from utils.shap_utils import (
+    compute_delta_shap,
+    aggregate_onehot_features,
+    simplify_feature_names
+)
+
+from knowledge.rag_comparison import (
+    generate_comparison_explanation
+)
 
 DEBUG = True
 
@@ -24,6 +52,7 @@ def debug_print(*args):
 # ======================================================
 
 def get_base_scenario():
+
     return {
         'Density change in land imperviousness': 0,
         'Density of tree cover': 50,
@@ -41,139 +70,455 @@ def get_base_scenario():
 
 
 # ======================================================
-# HELPERS
+# PRIMARY / SECONDARY SPLIT
 # ======================================================
 
-def build_human_summary(structured_drivers, score_A, score_B):
-    """
-    Costruisce una summary coerente con i driver effettivi.
-    """
-    # trova i nomi feature (umani)
-    names = [f for f, _, _ in structured_drivers]
+def split_primary_secondary(
+    shap_values,
+    modified_features
+):
 
-    if score_A > score_B:
-        if names:
-            return f"The scenario with higher {names[0].lower()} leads to higher ecosystem risk"
-        return "The first scenario leads to higher ecosystem risk"
+    primary = {}
+    secondary = {}
 
-    elif score_B > score_A:
-        if len(names) > 1:
-            return f"The scenario with higher {names[1].lower()} leads to higher ecosystem risk"
-        return "The second scenario leads to higher ecosystem risk"
+    for feature, impact in shap_values.items():
 
-    return "Both scenarios show similar ecosystem risk"
+        matched = False
+
+        for modified in modified_features:
+
+            pretty_modified = prettify_feature_name(
+                modified
+            )
+
+            if pretty_modified.lower() == feature.lower():
+
+                primary[feature] = impact
+                matched = True
+                break
+
+        if not matched:
+            secondary[feature] = impact
+
+    return primary, secondary
 
 
-def format_drivers(structured_drivers):
-    drivers = []
-    for f, va, vb in structured_drivers:
-        if va is not None and vb is not None:
-            drivers.append(f"{f}: {va} → {vb}")
-        elif va is not None:
-            drivers.append(f"{f}: baseline → {va}")
-        elif vb is not None:
-            drivers.append(f"{f}: baseline → {vb}")
-    return drivers
+# ======================================================
+# SCENARIO ANALYSIS
+# ======================================================
+
+def analyze_scenario(
+    scenario_features,
+    model,
+    dataset,
+    top_k=5
+):
+
+    baseline_values = compute_baseline(dataset)
+
+    # --------------------------------------------------
+    # INPUTS
+    # --------------------------------------------------
+
+    df_base = build_input_df(
+        baseline_values,
+        dataset
+    )
+
+    df_scenario = build_input_df(
+        scenario_features,
+        dataset
+    )
+
+    # --------------------------------------------------
+    # PREDICTIONS
+    # --------------------------------------------------
+
+    base_pred = float(
+        model.predict(df_base)[0]
+    )
+
+    scenario_pred = float(
+        model.predict(df_scenario)[0]
+    )
+
+    delta = scenario_pred - base_pred
+
+    # --------------------------------------------------
+    # SHAP
+    # --------------------------------------------------
+
+    shap_values = compute_delta_shap(
+         model=model,
+        df_baseline=df_base,
+        df_scenario=df_scenario,
+        top_k=top_k
+    )
+
+    shap_values = aggregate_onehot_features(
+        shap_values
+    )
+
+    shap_values = simplify_feature_names(
+        shap_values
+    )
+
+    shap_values = prettify_feature_dict(
+        shap_values
+    )
+
+    # --------------------------------------------------
+    # FILTER SMALL RESPONSES
+    # --------------------------------------------------
+
+    shap_values = {
+        k: v
+        for k, v in shap_values.items()
+        if abs(v) > 0.01
+    }
+
+    # --------------------------------------------------
+    # MODIFIED FEATURES
+    # --------------------------------------------------
+
+    modified_candidates = list(
+        scenario_features.keys()
+    )
+
+    modified_candidates = [
+        prettify_feature_name(x)
+        for x in modified_candidates
+    ]
+
+    primary, secondary = split_primary_secondary(
+        shap_values,
+        modified_candidates
+    )
+
+    return {
+
+        "risk": round(scenario_pred, 4),
+
+        "delta": round(delta, 4),
+
+        "primary_drivers": primary,
+
+        "secondary_drivers": secondary,
+
+        "shap_values": shap_values
+    }
+
+
+# ======================================================
+# DRIVER FORMATTER
+# ======================================================
+
+def format_scenario_drivers(
+    title,
+    primary,
+    secondary
+):
+
+    output = []
+
+    output.append(title)
+    output.append("PRIMARY DRIVERS")
+
+    for k, v in primary.items():
+
+        output.append(
+            f"{k} (impact={round(v, 3)})"
+        )
+
+    output.append("SECONDARY RESPONSES")
+
+    if secondary:
+
+        for k, v in secondary.items():
+
+            output.append(
+                f"{k} (impact={round(v, 3)})"
+            )
+
+    else:
+
+        output.append(
+            "No major secondary ecosystem responses detected."
+        )
+
+    return output
+
+
+# ======================================================
+# SUMMARY
+# ======================================================
+
+def build_summary(score_a, score_b):
+
+    delta = abs(score_a - score_b)
+
+    # --------------------------------------------------
+    # SIMILAR RISK
+    # --------------------------------------------------
+
+    if delta < 0.01:
+
+        return (
+            "The two scenarios produce "
+            "similar ecosystem risk"
+        )
+
+    # --------------------------------------------------
+    # SCENARIO A WORSE
+    # --------------------------------------------------
+
+    if score_a > score_b:
+
+        return (
+            "The first scenario produces "
+            "higher ecosystem risk"
+        )
+
+    # --------------------------------------------------
+    # SCENARIO B WORSE
+    # --------------------------------------------------
+
+    return (
+        "The second scenario produces "
+        "higher ecosystem risk"
+    )
 
 
 # ======================================================
 # MAIN
 # ======================================================
 
-def handle_comparison(question, model):
+def handle_comparison(
+    question,
+    model,
+    dataset=None
+):
 
     print("\n========== COMPARISON TASK START ==========")
 
-    scenario_A, scenario_B = parse_comparison_scenarios(question)
+    # ==================================================
+    # SAFETY
+    # ==================================================
 
-    if question.strip().lower() in [
-        "compare two environmental scenarios",
-        "compare scenarios",
-        "compare two scenarios"
-    ]:
+    if model is None or dataset is None:
+
         return {
-            "summary": "Incomplete request",
+            "summary": "Comparison unavailable",
             "data": {},
             "drivers": [],
             "interpretation": (
-                "Your request is incomplete. To compare environmental scenarios, "
-                "please specify the variables and their values."
+                "Model or dataset missing."
             )
         }
 
-    debug_print("[DEBUG] Parsed Scenario A:", scenario_A)
-    debug_print("[DEBUG] Parsed Scenario B:", scenario_B)
+    # ==================================================
+    # PARSING
+    # ==================================================
+
+    scenario_A, scenario_B = parse_comparison_scenarios(
+        question
+    )
+
+    debug_print(
+        "[DEBUG] Parsed Scenario A:",
+        scenario_A
+    )
+
+    debug_print(
+        "[DEBUG] Parsed Scenario B:",
+        scenario_B
+    )
 
     if not scenario_A or not scenario_B:
+
         return {
             "summary": "Comparison not recognized",
             "data": {},
             "drivers": [],
-            "interpretation": "Could not parse scenarios"
+            "interpretation": (
+                "Could not parse scenarios"
+            )
         }
 
-    base = get_base_scenario()
-    input_A = base.copy()
-    input_B = base.copy()
+    # ==================================================
+    # NORMALIZATION
+    # ==================================================
+
+    normalized_A = {}
+    normalized_B = {}
+
+    for k, v in scenario_A.items():
+
+        feature = normalize_feature_name(k)
+
+        if feature:
+            normalized_A[feature] = v
+
+    for k, v in scenario_B.items():
+
+        feature = normalize_feature_name(k)
+
+        if feature:
+            normalized_B[feature] = v
+
+    # ==================================================
+    # ANALYSIS
+    # ==================================================
+
+    analysis_A = analyze_scenario(
+        normalized_A,
+        model,
+        dataset
+    )
+
+    analysis_B = analyze_scenario(
+        normalized_B,
+        model,
+        dataset
+    )
+
+    score_A = analysis_A["risk"]
+    score_B = analysis_B["risk"]
+
+    delta = round(score_B - score_A, 4)
+
+    debug_print(
+        f"[DEBUG] Scores: "
+        f"A={score_A} | "
+        f"B={score_B} | "
+        f"Δ={delta}"
+    )
+
+    # ==================================================
+    # RAG DRIVER STRUCTURE
+    # ==================================================
 
     structured_drivers = []
 
-    # APPLY A
-    for k, v in scenario_A.items():
-        feature = normalize_feature_name(k)
-        if feature:
-            input_A[feature] = v
-            structured_drivers.append((feature, v, None))
+    # --------------------------------------------------
+    # SCENARIO A
+    # --------------------------------------------------
 
-    # APPLY B
-    for k, v in scenario_B.items():
-        feature = normalize_feature_name(k)
-        if feature:
-            input_B[feature] = v
+    for feature, impact in analysis_A["primary_drivers"].items():
 
-            found = False
-            for i, (f, va, vb) in enumerate(structured_drivers):
-                if f == feature:
-                    structured_drivers[i] = (f, va, v)
-                    found = True
-                    break
+        structured_drivers.append(
+            (feature, impact, None)
+        )
 
-            if not found:
-                structured_drivers.append((feature, None, v))
+    # --------------------------------------------------
+    # SCENARIO B
+    # --------------------------------------------------
 
-    debug_print("[DEBUG] Structured drivers:", structured_drivers)
+    for feature, impact in analysis_B["primary_drivers"].items():
 
-    # MODEL
-    df_A = pd.DataFrame([input_A])
-    df_B = pd.DataFrame([input_B])
+        structured_drivers.append(
+            (feature, None, impact)
+        )
 
-    score_A = float(model.predict(df_A)[0])
-    score_B = float(model.predict(df_B)[0])
-    delta = round(score_B - score_A, 3)
+    # ==================================================
+    # COMPARATIVE STATEMENT
+    # ==================================================
 
-    debug_print(f"[DEBUG] Scores: A={score_A} | B={score_B} | Δ={delta}")
+    comparative_statement = ""
 
-    # 🔥 SUMMARY CORRETTA
-    summary = build_human_summary(structured_drivers, score_A, score_B)
+    primary_a = list(
+        analysis_A["primary_drivers"].keys()
+    )
 
-    # 🔥 DRIVERS LEGGIBILI
-    drivers = format_drivers(structured_drivers)
+    primary_b = list(
+        analysis_B["primary_drivers"].keys()
+    )
 
+    if primary_a and primary_b:
+
+        comparative_statement = (
+            f"Compared to the "
+            f"{primary_b[0].lower()} scenario, "
+            f"the {primary_a[0].lower()} scenario "
+            f"shows different ecosystem stress dynamics. "
+        )
+
+    # ==================================================
     # RAG
-    interpretation = generate_comparison_explanation(
+    # ==================================================
+
+    rag_text = generate_comparison_explanation(
         drivers=structured_drivers,
         delta=delta
     )
 
+    interpretation = (
+        comparative_statement + rag_text
+    )
+
+    # ==================================================
+    # SUMMARY
+    # ==================================================
+
+    summary = build_summary(
+        score_A,
+        score_B
+    )
+
+    # ==================================================
+    # DRIVER OUTPUT
+    # ==================================================
+
+    drivers = []
+
+    drivers.extend(
+        format_scenario_drivers(
+            "SCENARIO A",
+            analysis_A["primary_drivers"],
+            analysis_A["secondary_drivers"]
+        )
+    )
+
+    drivers.extend(
+        format_scenario_drivers(
+            "SCENARIO B",
+            analysis_B["primary_drivers"],
+            analysis_B["secondary_drivers"]
+        )
+    )
+
     print("========== COMPARISON TASK END ==========\n")
 
+    # ==================================================
+    # OUTPUT
+    # ==================================================
+
     return {
+
         "summary": summary,
+
         "data": {
-            "scenario_a": {"score": round(score_A, 3)},
-            "scenario_b": {"score": round(score_B, 3)},
-            "delta": delta
+
+            "scenario_a": {
+
+                "risk": score_A,
+
+                "delta_from_baseline":
+                    analysis_A["delta"]
+            },
+
+            "scenario_b": {
+
+                "risk": score_B,
+
+                "delta_from_baseline":
+                    analysis_B["delta"]
+            },
+
+            "risk_difference": delta
         },
+
         "drivers": drivers,
+
         "interpretation": interpretation
     }
