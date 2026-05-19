@@ -122,20 +122,30 @@ def run():
         # PARSING
         # ==================================================
 
+        farsed = None
         features = None
         range_info = None
 
         try:
             if task_type in ["assessment", "importance", "delta"]:
+
                 log_section("PARSING")
 
-                features = parse_features(question)
+                # 🔥 FULL METADATA PARSING
+                parsed = parse_features(
+                    question,
+                    return_metadata=True
+                )
+
+                features = parsed["features"]
+
                 range_info = parse_range(question)
 
                 log_data("features", features)
                 log_data("range", range_info)
 
             else:
+
                 log_section("PARSING")
                 log_data("skipped", f"Task '{task_type}' does not require parsing")
 
@@ -152,7 +162,13 @@ def run():
             log_data("task_type", task_type)
 
             if task_type == "assessment":
-                result = handle_assessment(question, features)
+                result = handle_assessment(
+                    question=question,
+                    features=features,
+                    qualitative_changes=parsed.get("qualitative_changes", []),
+                    dataset=dataset,
+                    model=model
+                    )
 
             elif task_type == "importance":
                 result = handle_importance(

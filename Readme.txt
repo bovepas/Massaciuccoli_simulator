@@ -58,7 +58,7 @@ What factors drive biodiversity loss in the lake system?
 Understanding relationships (cause-effect)
 
 How does temperature affect precipitation in the lake basin?
-How does an increase in temperature influence ecosystem risk from 0 to 5?
+What is the ecosystem risk if temperature increases by 3°C and precipitation decreases by 20%?
 What is the effect of evapotranspiration on water availability?
 
 Comparing scenarios (IMPORTANT: you must specify both scenarios)

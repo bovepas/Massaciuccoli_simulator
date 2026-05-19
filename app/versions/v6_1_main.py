@@ -1,26 +1,26 @@
 ﻿# -*- coding: utf-8 -*-
 
 import re
-from utils.logger import log_section, log_question, log_route
 
+from utils.logger import (
+    log_section,
+    log_question,
+    log_route
+)
+
+from utils.feature_parser import parse_features
+
+
+# ======================================================
+# NORMALIZATION
+# ======================================================
 
 def normalize(q: str) -> str:
     return q.lower().strip()
 
 
-VARIABLE_KEYWORDS = [
-    "temperature",
-    "precipitation",
-    "biodiversity",
-    "tree cover",
-    "grassland",
-    "evapotranspiration",
-    "productivity"
-]
-
-
 # ======================================================
-# 🆕 DATA DETECTION (NUOVO)
+# DATA DETECTION
 # ======================================================
 
 DATA_KEYWORDS = [
@@ -40,47 +40,188 @@ DATA_KEYWORDS = [
 ]
 
 
-def is_data_query(q: str) -> bool:
+def is_data_query(q: str):
+
     return any(k in q for k in DATA_KEYWORDS)
 
 
 # ======================================================
-# SEMANTICS
+# TARGET DETECTION
 # ======================================================
 
 def detect_target(q: str):
-    if "risk" in q or "ecosystem" in q:
+
+    risk_patterns = [
+        "ecosystem risk",
+        "risk level",
+        "risk score",
+
+        # 🔥 NEW
+        "risk"
+    ]
+
+    if any(p in q for p in risk_patterns):
         return "risk"
-    if any(v in q for v in VARIABLE_KEYWORDS):
-        return "variable"
+
+    if "ecosystem" in q:
+        return "ecosystem"
+
+    variable_patterns = [
+        "temperature",
+        "precipitation",
+        "biodiversity",
+        "species richness",
+        "tree cover",
+        "grassland",
+        "evapotranspiration",
+        "productivity"
+    ]
+
+    for v in variable_patterns:
+
+        if v in q:
+            return "variable"
+
     return "unknown"
 
 
-def count_variables(q: str):
-    return sum(1 for v in VARIABLE_KEYWORDS if v in q)
+# ======================================================
+# DRIVER ANALYSIS
+# ======================================================
+
+def asks_driver_analysis(q: str):
+
+    patterns = [
+        "drivers",
+        "drive",
+        "driving",
+        "important",
+        "importance",
+        "influential",
+        "main factors",
+        "top factors",
+        "top variables",
+        "which factors",
+        "which variables",
+        "what drives"
+    ]
+
+    return any(p in q for p in patterns)
 
 
-def parse_semantics(q: str):
-    return {
-        "target": detect_target(q),
-        "num_variables": count_variables(q),
-        "has_range": bool(re.search(r"\bfrom\b.*\bto\b", q)),
-        "has_delta_change": bool(
-            re.search(r"\b(increase|decrease)\b", q) or
-            re.search(r"[\+\-]\s*\d", q)
-        ),
-        "has_comparison": (
-            any(k in q for k in [" vs ", " versus ", "compare"]) or
-            re.search(r"\bor\b.*\d", q)
-        ),
-        "has_condition": any(k in q for k in ["if", "given", "when"]),
-        "asks_influence": any(k in q for k in ["affect", "influence", "effect", "impact"]),
-        "asks_importance": any(k in q for k in ["most", "top", "important", "influential"]),
-        "asks_drivers": any(k in q for k in ["drivers", "drive"]),
-        "mentions_habitat": any(k in q for k in ["habitat", "suitability"]),
-        "asks_what_happens": "what happens" in q,
-        "mentions_multiple": " and " in q or "interact" in q or "combined" in q or "together" in q or "also" in q
-    }
+# ======================================================
+# RISK ESTIMATION
+# ======================================================
+
+def asks_risk_estimation(q: str):
+
+    patterns = [
+        "risk level",
+        "ecosystem risk",
+        "estimate risk",
+        "estimate the ecosystem risk",
+        "assess ecosystem risk",
+        "predict ecosystem risk",
+        "what is the risk",
+        "risk score",
+        "environmental conditions",
+        "state of the ecosystem",
+        "current ecosystem state"
+    ]
+
+    return any(p in q for p in patterns)
+
+
+# ======================================================
+# COMPARISON DETECTION
+# ======================================================
+
+def has_comparison(q: str):
+
+    patterns = [
+        " vs ",
+        " versus ",
+        "compare",
+        "comparison"
+    ]
+
+    if any(p in q for p in patterns):
+        return True
+
+    if re.search(r"\bor\b.*[\+\-]?\d", q):
+        return True
+
+    return False
+
+
+# ======================================================
+# DEPENDENCY DETECTION
+# ======================================================
+
+def asks_dependency(q: str):
+
+    dependency_patterns = [
+        "affect",
+        "influence",
+        "impact",
+        "effect"
+    ]
+
+    if any(p in q for p in dependency_patterns):
+        return True
+
+    if re.search(r"how does .* change", q):
+        return True
+
+    return False
+
+
+# ======================================================
+# DELTA DETECTION
+# ======================================================
+
+def asks_delta_reasoning(q: str):
+
+    patterns = [
+        "change from",
+        "goes from",
+        "from",
+        "to"
+    ]
+
+    return any(p in q for p in patterns)
+
+
+# ======================================================
+# BASELINE REFERENCES
+# ======================================================
+
+def references_baseline(q: str):
+
+    baseline_patterns = [
+        "baseline",
+        "current",
+        "present",
+        "today"
+    ]
+
+    return any(p in q for p in baseline_patterns)
+
+
+# ======================================================
+# ENM DETECTION
+# ======================================================
+
+def asks_enm(q: str):
+
+    patterns = [
+        "habitat",
+        "suitability",
+        "species distribution",
+        "ecological niche"
+    ]
+
+    return any(p in q for p in patterns)
 
 
 # ======================================================
@@ -91,27 +232,57 @@ def route_question(question: str):
 
     q = normalize(question)
 
-    log_section("ROUTER V28 FINAL (DATA SAFE)")
+    log_section("ROUTER V35 (RISK TARGET FIX)")
     log_question(question)
 
-    # ======================================================
-    # 🔥 VERY SPECIFIC DELTA FIX (NON-DESTRUCTIVE)
-    # ======================================================
-
-    if re.search(r"how does (an? )?(increase|decrease|reduction|rise) in .* (affect|influence|impact)", q):
-        if "risk" in q or "ecosystem" in q:
-            print("[ROUTER FIX] Detected causal change pattern → DELTA")
-            return {"type": "delta"}
-
     # ==================================================
-    # 🆕 HARD RULE: DATA FIRST
+    # HARD RULES
     # ==================================================
 
     if is_data_query(q):
+
         log_route("DATA (hard rule)")
+
         return {"type": "data"}
 
-    p = parse_semantics(q)
+    # ==================================================
+    # PARSER
+    # ==================================================
+
+    parsed = parse_features(
+        question,
+        return_metadata=True
+    )
+
+    scenario_detected = parsed["scenario_detected"]
+
+    num_modified = parsed["num_modified_features"]
+
+    range_detected = parsed["range_detected"]
+
+    # ==================================================
+    # SEMANTICS
+    # ==================================================
+
+    target = detect_target(q)
+
+    comparison_detected = has_comparison(q)
+
+    dependency_detected = asks_dependency(q)
+
+    driver_analysis = asks_driver_analysis(q)
+
+    delta_reasoning = asks_delta_reasoning(q)
+
+    risk_estimation = asks_risk_estimation(q)
+
+    baseline_reference = references_baseline(q)
+
+    enm_detected = asks_enm(q)
+
+    # ==================================================
+    # SCORES
+    # ==================================================
 
     scores = {
         "assessment": 0,
@@ -123,103 +294,164 @@ def route_question(question: str):
         "enm": 0
     }
 
-    # =============================
-    # HARD RULES
-    # =============================
+    # ==================================================
+    # LEVEL 1 — DOMINANT STRUCTURES
+    # ==================================================
 
-    if p["mentions_habitat"]:
-        return {"type": "enm"}
+    # --------------------------------------------------
+    # COMPARISON
+    # --------------------------------------------------
 
-    if p["has_comparison"]:
-        return {"type": "comparison"}
+    if comparison_detected:
 
-    # =============================
+        scores["comparison"] += 400
+
+    # --------------------------------------------------
     # DELTA
-    # =============================
+    # --------------------------------------------------
 
-    if p["has_range"]:
-        scores["delta"] += 100
+    if (
+        range_detected
+        and not baseline_reference
+        and target == "risk"
+    ):
 
-    if p["asks_what_happens"]:
-        scores["delta"] += 80
+        scores["delta"] += 350
 
-    if p["has_delta_change"] and p["num_variables"] == 1:
-        scores["delta"] += 40
-
-    if p["target"] == "risk" and p["has_condition"]:
-        scores["delta"] += 40
-
-    # =============================
-    # INTERACTION → ASSESSMENT
-    # =============================
-
-    if p["asks_influence"] and p["mentions_multiple"] and p["target"] == "risk":
-        scores["assessment"] += 100
-
-    # =============================
-    # DEPENDENCY
-    # =============================
-
-    if p["asks_influence"]:
-        scores["dependency"] += 50
-
-    if p["target"] == "variable" and p["has_condition"]:
-        scores["dependency"] += 30
-
-    # =============================
-    # IMPORTANCE
-    # =============================
-
-    if "which factors" in q or "which variables" in q or "main factors" in q:
-        scores["importance"] += 80
-
-    if p["asks_importance"]:
-        scores["importance"] += 60
-
-    if p["asks_drivers"] and p["has_condition"]:
-        scores["importance"] += 90
-
-    if q.startswith("what drives"):
-        if p["target"] == "risk":
-            scores["importance"] += 80
-        else:
-            scores["drivers"] += 80
-
-    # =============================
-    # DRIVERS
-    # =============================
-
-    if re.search(r"top\s*\d*\s*drivers", q):
-        scores["drivers"] += 100
-
-    elif re.search(r"which .* drive", q):
-        scores["drivers"] += 90
-
-    elif "drivers of" in q:
-        scores["drivers"] += 80
-
-    elif p["asks_drivers"]:
-        scores["drivers"] += 40
-
-    # =============================
+    # --------------------------------------------------
     # ASSESSMENT
-    # =============================
+    # --------------------------------------------------
 
-    if p["target"] == "risk":
+    if (
+        scenario_detected
+        and risk_estimation
+    ):
+
+        scores["assessment"] += 300
+
+    # --------------------------------------------------
+    # ENM
+    # --------------------------------------------------
+
+    if enm_detected:
+
+        scores["enm"] += 300
+
+    # ==================================================
+    # LEVEL 2 — CONTEXTUAL SEMANTICS
+    # ==================================================
+
+    # --------------------------------------------------
+    # DEPENDENCY
+    # --------------------------------------------------
+
+    if (
+        dependency_detected
+        and target != "risk"
+    ):
+
+        scores["dependency"] += 180
+
+    # --------------------------------------------------
+    # DRIVER FAMILY
+    # --------------------------------------------------
+
+    if driver_analysis:
+
+        if target == "risk":
+
+            scores["importance"] += 240
+
+        elif target in ["variable", "ecosystem"]:
+
+            scores["drivers"] += 240
+
+    # --------------------------------------------------
+    # ASSESSMENT CONTEXT
+    # --------------------------------------------------
+
+    if target == "risk":
+
+        scores["assessment"] += 60
+
+    if scenario_detected and num_modified > 1:
+
         scores["assessment"] += 40
 
-    # =============================
+    # ==================================================
+    # LEVEL 3 — DELTA TRAJECTORY
+    # ==================================================
+
+    if (
+        delta_reasoning
+        and range_detected
+        and not baseline_reference
+        and target == "risk"
+    ):
+
+        scores["delta"] += 120
+
+    # ==================================================
+    # LEVEL 4 — CONFLICT RESOLUTION
+    # ==================================================
+
+    # --------------------------------------------------
+    # COMPARISON DOMINATES
+    # --------------------------------------------------
+
+    if comparison_detected:
+
+        scores["comparison"] += 100
+
+    # --------------------------------------------------
+    # DRIVER ANALYSIS REDUCES ASSESSMENT
+    # --------------------------------------------------
+
+    if driver_analysis:
+
+        scores["assessment"] -= 60
+
+    # --------------------------------------------------
+    # TRUE DELTA SHOULD REDUCE ASSESSMENT
+    # --------------------------------------------------
+
+    if (
+        range_detected
+        and not baseline_reference
+        and target == "risk"
+    ):
+
+        scores["assessment"] -= 120
+
+    # ==================================================
     # DEBUG
-    # =============================
+    # ==================================================
+
+    print("---- ROUTER SEMANTICS ----")
+
+    print("scenario_detected:", scenario_detected)
+    print("num_modified:", num_modified)
+    print("range_detected:", range_detected)
+    print("baseline_reference:", baseline_reference)
+    print("target:", target)
+    print("comparison_detected:", comparison_detected)
+    print("dependency_detected:", dependency_detected)
+    print("driver_analysis:", driver_analysis)
+    print("risk_estimation:", risk_estimation)
+
+    print("--------------------------")
 
     print("---- SCORE BREAKDOWN ----")
+
     for k, v in sorted(scores.items(), key=lambda x: x[1], reverse=True):
+
         print(f"{k}: {v}")
+
     print("-------------------------")
 
-    # =============================
-    # PICK BEST
-    # =============================
+    # ==================================================
+    # FINAL SELECTION
+    # ==================================================
 
     best = max(scores, key=scores.get)
 
@@ -227,6 +459,10 @@ def route_question(question: str):
 
     return {"type": best}
 
+
+# ======================================================
+# LEGACY
+# ======================================================
 
 def explain_with_shap(*args, **kwargs):
     return None

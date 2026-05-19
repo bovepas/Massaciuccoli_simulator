@@ -12,3 +12,4 @@ ollama
 pypdf
 sentence-transformers
 numba
+shap
