@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Drivers — v6 (polished + validated + demo-ready)
+RAG Drivers — v7 (ecosystem pressure reasoning)
 
-✔ Uses centralized LLM client
-✔ Strict correlation-only language
-✔ Output validation
-✔ Natural fallback (demo-quality)
-✔ Cleaner formatting
+✔ Environmental-science framing
+✔ Ecosystem-pressure interpretation
+✔ Softer non-causal language
+✔ Better KB alignment
+✔ Cleaner scientific UX
+✔ Backward compatible
 """
 
 from tools.llm_client import call_llm
@@ -27,38 +28,39 @@ def debug_print(*args):
 def build_prompt(target, drivers):
 
     drivers_text = "\n".join([
-        f"- {d['feature']} ({d['direction']}, {d['strength']})"
+
+        f"- {d['feature']} "
+        f"({d['direction']}, {d['strength']})"
+
         for d in drivers
     ])
 
     return f"""
-You are a data analyst.
+You are an environmental scientist analyzing ecosystem pressures in a lake system.
 
 TARGET VARIABLE:
 {target}
 
-OBSERVED RELATIONSHIPS (from correlations):
+OBSERVED ENVIRONMENTAL ASSOCIATIONS:
 {drivers_text}
 
 TASK:
-Describe the observed relationships between variables.
+Explain how the listed variables are environmentally associated with {target}.
 
-STRICT RULES:
-- ONLY describe correlations
-- DO NOT explain mechanisms
-- DO NOT introduce external concepts
-- DO NOT infer causality
-- DO NOT generalize beyond the listed variables
-- Use only the variable names provided
+STRICT REQUIREMENTS:
+- Base the explanation on the listed variables
+- Use ecological and environmental interpretation
+- You may discuss ecosystem pressures, environmental stress, and interacting processes
+- Avoid unsupported causal claims
+- Do not invent variables that are not listed
+- Keep the explanation scientifically grounded and concise
 
 STYLE:
 - 2 short paragraphs
-- Simple and readable
-- Avoid repetition
-- Use ONLY associative language:
-  "is positively associated with"
-  "is negatively associated with"
-  "shows a strong relationship with"
+- Clear scientific language
+- Readable and natural tone
+- Emphasize ecosystem pressures and degradation patterns when relevant
+- Prefer ecosystem-oriented wording over statistical jargon
 """
 
 
@@ -88,33 +90,42 @@ def clean_output(text):
 
     text = text.strip()
 
-    # remove excessive newlines
     text = text.replace("\n\n\n", "\n\n")
 
-    # normalize spaces
     text = " ".join(text.split())
 
     return text
 
 
 # ======================================================
-# FALLBACK (🔥 MUCH MORE NATURAL)
+# FALLBACK
 # ======================================================
 
 def fallback_explanation(target, drivers):
 
     if not drivers:
-        return "No relevant statistical relationships were identified for the selected variable."
+
+        return (
+            "No relevant environmental associations "
+            "were identified for the selected variable."
+        )
 
     parts = []
 
     for d in drivers[:3]:
 
-        direction = "positively" if d["direction"] == "positive" else "negatively"
+        direction = (
+            "positively associated with"
+            if d["direction"] == "positive"
+            else "negatively associated with"
+        )
 
         parts.append(
-            f"{d['feature']} is {direction} associated with {target} "
-            f"with a {d['strength']} relationship"
+
+            f"{d['feature']} is {direction} "
+            f"{target} with a {d['strength']} "
+            f"environmental relationship"
+
         )
 
     return ". ".join(parts) + "."
@@ -126,11 +137,14 @@ def fallback_explanation(target, drivers):
 
 def generate_drivers_explanation(target, drivers):
 
-    print("\n[RAG-DRIVERS] START")
+    print("\n[RAG-DRIVERS v7] START")
 
     try:
 
-        prompt = build_prompt(target, drivers)
+        prompt = build_prompt(
+            target,
+            drivers
+        )
 
         debug_print("\n[RAG-DRIVERS] Prompt:")
         debug_print(prompt)
@@ -141,7 +155,11 @@ def generate_drivers_explanation(target, drivers):
         debug_print(raw)
 
         if not is_valid(raw):
-            return fallback_explanation(target, drivers)
+
+            return fallback_explanation(
+                target,
+                drivers
+            )
 
         cleaned = clean_output(raw)
 
@@ -155,7 +173,11 @@ def generate_drivers_explanation(target, drivers):
         print("\n🔥 RAG-DRIVERS ERROR:")
         print(e)
 
-        return fallback_explanation(target, drivers)
+        return fallback_explanation(
+            target,
+            drivers
+        )
 
     finally:
+
         print("[RAG-DRIVERS] END\n")

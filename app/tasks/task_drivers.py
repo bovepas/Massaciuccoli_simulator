@@ -176,8 +176,9 @@ def handle_drivers(question: str):
 
     # 🔥 DISCLAIMER
     explanation += (
-        "\n\nNote: These relationships are based on statistical correlations "
-        "and do not necessarily imply causation."
+        "\n\nThese associations highlight environmental pressures "
+        "observed in the lake ecosystem and may reflect interacting "
+        "ecological processes."
     )
 
     print("========== DRIVERS TASK END ==========\n")
