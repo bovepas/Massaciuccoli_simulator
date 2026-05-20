@@ -2,17 +2,29 @@
 
 """
 Massaciuccoli Digital Twin
-RAG Pipeline — v4 (robust + anti-empty + anti-llm-failure)
+RAG Pipeline — v5
+(timing instrumentation + retrieval observability)
 
-✔ Handles empty retrieval
-✔ Prevents LLM useless responses
-✔ Strong fallback
-✔ Clean debug
+✔ Retrieval timing
+✔ Context building timing
+✔ Prompt sizing observability
+✔ LLM timing
+✔ Full RAG profiling
+✔ Keeps existing architecture unchanged
 """
 
 import re
+
 from knowledge.retriever import retrieve_documents
+
 from tools.llm_client import call_llm
+
+from utils.logger import (
+
+    start_timer,
+    end_timer,
+    log_data
+)
 
 
 # ======================================================
@@ -29,6 +41,7 @@ MAX_CONTEXT_CHARS = 3000
 # ======================================================
 
 def debug_print(*args):
+
     if DEBUG:
         print(*args)
 
@@ -42,8 +55,17 @@ def clean_text(text: str):
     if not text:
         return ""
 
-    text = re.sub(r"\(id\s*\d+\)", "", text)
-    text = re.sub(r"\s+", " ", text)
+    text = re.sub(
+        r"\(id\s*\d+\)",
+        "",
+        text
+    )
+
+    text = re.sub(
+        r"\s+",
+        " ",
+        text
+    )
 
     return text.strip()
 
@@ -57,12 +79,22 @@ def build_context(retrieved):
     if not retrieved:
         return ""
 
-    chunks = [r["text"] for r in retrieved]
+    chunks = [
 
-    context = "\n\n".join(chunks)
+        r["text"]
+
+        for r in retrieved
+    ]
+
+    context = "\n\n".join(
+        chunks
+    )
 
     if len(context) > MAX_CONTEXT_CHARS:
-        context = context[:MAX_CONTEXT_CHARS]
+
+        context = context[
+            :MAX_CONTEXT_CHARS
+        ]
 
     return context
 
@@ -81,32 +113,51 @@ def is_valid_output(text: str):
     if len(text) < 30:
         return False
 
-    # 🔥 intercetta rifiuti LLM
+    # --------------------------------------------------
+    # LLM REFUSALS
+    # --------------------------------------------------
+
     bad_patterns = [
+
         "no mention",
+
         "not present in the context",
+
         "cannot answer",
+
         "not enough information",
+
         "outside the scope"
     ]
 
-    if any(p in text for p in bad_patterns):
+    if any(
+
+        p in text
+
+        for p in bad_patterns
+    ):
+
         return False
 
     return True
 
 
 # ======================================================
-# FALLBACK (🔥 MIGLIORATO)
+# FALLBACK
 # ======================================================
 
 def fallback_answer(question: str):
 
     return (
-        "The system could not retrieve sufficient domain-specific information "
-        "to provide a grounded answer. This may happen if the knowledge base "
-        "is not fully initialized or if the query is outside the available "
-        "scientific context."
+
+        "The system could not retrieve "
+        "sufficient domain-specific "
+        "information to provide a grounded "
+        "answer. This may happen if the "
+        "knowledge base is not fully "
+        "initialized or if the query is "
+        "outside the available scientific "
+        "context."
     )
 
 
@@ -114,30 +165,83 @@ def fallback_answer(question: str):
 # MAIN
 # ======================================================
 
-def generate_answer(question: str, extra_prompt: str = ""):
+def generate_answer(
+    question: str,
+    extra_prompt: str = ""
+):
 
-    retrieved, _ = retrieve_documents(question)
+    # ==================================================
+    # TOTAL RAG TIMER
+    # ==================================================
 
-    # ======================================================
-    # 🔥 HARD STOP: NO CONTEXT
-    # ======================================================
+    start_timer("rag_total")
+
+    # ==================================================
+    # RETRIEVAL
+    # ==================================================
+
+    start_timer("retrieval")
+
+    retrieved, _ = retrieve_documents(
+        question
+    )
+
+    end_timer("retrieval")
+
+    # ==================================================
+    # HARD STOP
+    # ==================================================
 
     if not retrieved:
-        debug_print("[RAG] No documents retrieved → fallback")
+
+        debug_print(
+            "[RAG] No documents "
+            "retrieved → fallback"
+        )
+
+        end_timer("rag_total")
+
         return fallback_answer(question)
 
-    context = build_context(retrieved)
+    # ==================================================
+    # CONTEXT BUILDING
+    # ==================================================
 
-    # sicurezza extra
+    start_timer("context_building")
+
+    context = build_context(
+        retrieved
+    )
+
+    end_timer("context_building")
+
+    # --------------------------------------------------
+    # EMPTY CONTEXT
+    # --------------------------------------------------
+
     if not context.strip():
-        debug_print("[RAG] Empty context after build → fallback")
+
+        debug_print(
+            "[RAG] Empty context "
+            "after build → fallback"
+        )
+
+        end_timer("rag_total")
+
         return fallback_answer(question)
+
+    # ==================================================
+    # PROMPT BUILDING
+    # ==================================================
+
+    start_timer("prompt_building")
 
     prompt = f"""
 You are an environmental scientist.
 
 TASK:
-Provide a clear and concise explanation based ONLY on the provided context.
+Provide a clear and concise explanation
+based ONLY on the provided context.
 
 {extra_prompt}
 
@@ -150,44 +254,144 @@ Context:
 Answer:
 """
 
-    # ================= DEBUG =================
-    debug_print("\n================ RAG DEBUG ================")
-    debug_print("[RAG] Question:", question)
-    debug_print("[RAG] Retrieved documents:", len(retrieved))
-    debug_print("[RAG] Context length:", len(context))
+    end_timer("prompt_building")
+
+    # ==================================================
+    # OBSERVABILITY
+    # ==================================================
+
+    log_data(
+        "retrieved_documents",
+        len(retrieved)
+    )
+
+    log_data(
+        "context_length",
+        len(context)
+    )
+
+    log_data(
+        "prompt_length",
+        len(prompt)
+    )
+
+    # ==================================================
+    # DEBUG
+    # ==================================================
+
+    debug_print(
+        "\n================ "
+        "RAG DEBUG "
+        "================"
+    )
+
+    debug_print(
+        "[RAG] Question:",
+        question
+    )
+
+    debug_print(
+        "[RAG] Retrieved documents:",
+        len(retrieved)
+    )
+
+    debug_print(
+        "[RAG] Context length:",
+        len(context)
+    )
+
+    debug_print(
+        "[RAG] Prompt length:",
+        len(prompt)
+    )
 
     if DEBUG:
-        preview = prompt[:1000] + "..." if len(prompt) > 1000 else prompt
-        debug_print("\n[RAG] --- PROMPT PREVIEW ---")
+
+        preview = (
+
+            prompt[:1000] + "..."
+
+            if len(prompt) > 1000
+
+            else prompt
+        )
+
+        debug_print(
+            "\n[RAG] --- "
+            "PROMPT PREVIEW ---"
+        )
+
         debug_print(preview)
 
-    # ================= LLM =================
+    # ==================================================
+    # LLM
+    # ==================================================
+
     try:
+
+        start_timer("llm_generation")
 
         raw = call_llm(prompt)
 
-        debug_print("\n[RAG] --- RAW LLM OUTPUT ---")
+        end_timer("llm_generation")
+
+        debug_print(
+            "\n[RAG] --- "
+            "RAW LLM OUTPUT ---"
+        )
+
         debug_print(raw)
 
-        # ======================================================
-        # 🔥 VALIDATION (ANTI-FAIL)
-        # ======================================================
+        # ==================================================
+        # VALIDATION
+        # ==================================================
+
+        start_timer("output_validation")
 
         if not is_valid_output(raw):
-            debug_print("[RAG] Invalid LLM output → fallback")
+
+            debug_print(
+                "[RAG] Invalid "
+                "LLM output → fallback"
+            )
+
+            end_timer("output_validation")
+
+            end_timer("rag_total")
+
             return fallback_answer(question)
 
         cleaned = clean_text(raw)
 
-        debug_print("\n[RAG] --- CLEANED OUTPUT ---")
+        end_timer("output_validation")
+
+        # ==================================================
+        # FINAL DEBUG
+        # ==================================================
+
+        debug_print(
+            "\n[RAG] --- "
+            "CLEANED OUTPUT ---"
+        )
+
         debug_print(cleaned)
-        debug_print("==========================================\n")
+
+        debug_print(
+            "==========================================\n"
+        )
+
+        end_timer("rag_total")
 
         return cleaned
 
     except Exception as e:
 
-        print("\n🔥 RAG-PIPELINE ERROR:")
+        print(
+            "\n🔥 RAG-PIPELINE ERROR:"
+        )
+
         print(e)
+
+        end_timer("rag_total")
 
         return fallback_answer(question)

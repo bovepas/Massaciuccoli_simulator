@@ -36,7 +36,14 @@ The system requires a local LLM to generate explanations.
 
 After starting Docker, run:
 
-docker exec -it ollama ollama pull llama3:8b
+docker exec -it ollama ollama pull llama3.2:3b
+
+The system uses a lightweight local LLM
+optimized for responsiveness and grounded
+environmental explanations.
+
+The first model download may take several minutes
+depending on your internet connection.
 
 ⚠️ This step is required only the first time.
 It downloads the language model used by the system.
@@ -119,7 +126,12 @@ app/
  ├── data/               # environmental dataset
  └── enm/                # species models
 Notes
-The system requires the Ollama model (llama3:8b) to generate explanations.
+The system requires the Ollama model (llama3.2:3b) to generate explanations.
+This model was selected to balance:
+- response speed
+- scientific readability
+- retrieval grounding
+- local hardware efficiency
 Without it, fallback explanations will be used.
 First startup may take several minutes (model download).
 Demo Tips

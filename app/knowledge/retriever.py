@@ -2,29 +2,58 @@
 
 """
 Massaciuccoli Digital Twin
-Knowledge Engine Retriever - v4 (AUTO-KB INIT)
+Knowledge Engine Retriever — v5
+
+✔ Retrieval timing instrumentation
+✔ Embedding timing
+✔ Chroma timing
+✔ Query expansion observability
+✔ Retrieval observability
+✔ Keeps retrieval logic unchanged
 """
 
 import requests
 import chromadb
+
 from typing import List, Dict, Tuple
+
 import os
 
-# 🔥 NEW
 from knowledge.ingest_pdfs import ensure_kb_ready
+
+from utils.logger import (
+
+    start_timer,
+    end_timer,
+    log_data
+)
 
 
 # ======================================================
 # CONFIG
 # ======================================================
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
+BASE_DIR = os.path.dirname(
+    os.path.dirname(__file__)
+)
 
-COLLECTION_NAME = "massaciuccoli_knowledge"
+CHROMA_PATH = os.path.join(
+    BASE_DIR,
+    "chroma_db"
+)
 
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
-OLLAMA_EMBED_URL = f"{OLLAMA_BASE_URL}/api/embeddings"
+COLLECTION_NAME = (
+    "massaciuccoli_knowledge"
+)
+
+OLLAMA_BASE_URL = os.getenv(
+    "OLLAMA_BASE_URL",
+    "http://ollama:11434"
+)
+
+OLLAMA_EMBED_URL = (
+    f"{OLLAMA_BASE_URL}/api/embeddings"
+)
 
 EMBED_MODEL = "nomic-embed-text"
 
@@ -34,6 +63,7 @@ DEBUG = True
 
 
 def debug_print(*args):
+
     if DEBUG:
         print("[RETRIEVER]", *args)
 
@@ -42,8 +72,13 @@ def debug_print(*args):
 # CHROMA CLIENT
 # ======================================================
 
-client = chromadb.PersistentClient(path=CHROMA_PATH)
-collection = client.get_or_create_collection(COLLECTION_NAME)
+client = chromadb.PersistentClient(
+    path=CHROMA_PATH
+)
+
+collection = client.get_or_create_collection(
+    COLLECTION_NAME
+)
 
 
 # ======================================================
@@ -53,8 +88,13 @@ collection = client.get_or_create_collection(COLLECTION_NAME)
 def get_embedding(text: str):
 
     try:
+
+        start_timer("embedding_generation")
+
         response = requests.post(
+
             OLLAMA_EMBED_URL,
+
             json={
                 "model": EMBED_MODEL,
                 "prompt": text
@@ -62,18 +102,39 @@ def get_embedding(text: str):
         )
 
         response.raise_for_status()
+
         data = response.json()
 
-        emb = data.get("embedding", [])
+        emb = data.get(
+            "embedding",
+            []
+        )
 
-        if not emb or not isinstance(emb, list):
-            debug_print("Invalid embedding for:", text)
+        end_timer("embedding_generation")
+
+        if not emb or not isinstance(
+            emb,
+            list
+        ):
+
+            debug_print(
+                "Invalid embedding for:",
+                text
+            )
+
             return None
 
         return emb
 
     except Exception as e:
-        debug_print("Embedding error:", e)
+
+        end_timer("embedding_generation")
+
+        debug_print(
+            "Embedding error:",
+            e
+        )
+
         return None
 
 
@@ -87,17 +148,48 @@ def expand_query(query: str) -> List[str]:
 
     expansions = [query]
 
-    expansions.append(f"ecosystem risk factors {q}")
-    expansions.append(f"lake ecosystem dynamics {q}")
+    expansions.append(
+        f"ecosystem risk factors {q}"
+    )
 
-    if "temperature" in q or "precipitation" in q:
-        expansions.append(f"climate change impact lake ecosystem {q}")
+    expansions.append(
+        f"lake ecosystem dynamics {q}"
+    )
 
-    if "biodiversity" in q or "species" in q:
-        expansions.append(f"biodiversity ecosystem resilience {q}")
+    if (
+        "temperature" in q
+        or
+        "precipitation" in q
+    ):
 
-    if "land" in q or "tree" in q or "grassland" in q:
-        expansions.append(f"land use change ecosystem impact {q}")
+        expansions.append(
+            f"climate change impact "
+            f"lake ecosystem {q}"
+        )
+
+    if (
+        "biodiversity" in q
+        or
+        "species" in q
+    ):
+
+        expansions.append(
+            f"biodiversity ecosystem "
+            f"resilience {q}"
+        )
+
+    if (
+        "land" in q
+        or
+        "tree" in q
+        or
+        "grassland" in q
+    ):
+
+        expansions.append(
+            f"land use change "
+            f"ecosystem impact {q}"
+        )
 
     return expansions
 
@@ -106,110 +198,302 @@ def expand_query(query: str) -> List[str]:
 # RETRIEVAL
 # ======================================================
 
-def retrieve_documents(query: str) -> Tuple[List[Dict], float]:
+def retrieve_documents(
+    query: str
+) -> Tuple[List[Dict], float]:
+
+    start_timer("retriever_total")
 
     debug_print("Query:", query)
 
-    # ======================================================
-    # 🔥 AUTO-KB INIT
-    # ======================================================
+    # ==================================================
+    # KB INIT
+    # ==================================================
+
+    start_timer("kb_check")
 
     ensure_kb_ready()
 
-    # 🔥 reload collection dopo ingest (importantissimo)
+    end_timer("kb_check")
+
+    # --------------------------------------------------
+    # RELOAD COLLECTION
+    # --------------------------------------------------
+
     global collection
-    collection = client.get_or_create_collection(COLLECTION_NAME)
+
+    collection = client.get_or_create_collection(
+        COLLECTION_NAME
+    )
 
     if collection.count() == 0:
-        debug_print("Empty collection AFTER INIT")
+
+        debug_print(
+            "Empty collection AFTER INIT"
+        )
+
+        end_timer("retriever_total")
+
         return [], 9999.0
 
-    expanded_queries = expand_query(query)
+    # ==================================================
+    # QUERY EXPANSION
+    # ==================================================
 
-    debug_print("Expanded queries:", expanded_queries)
+    start_timer("query_expansion")
+
+    expanded_queries = expand_query(
+        query
+    )
+
+    end_timer("query_expansion")
+
+    debug_print(
+        "Expanded queries:",
+        expanded_queries
+    )
+
+    log_data(
+        "expanded_queries",
+        len(expanded_queries)
+    )
 
     all_results = []
 
-    # ======================================================
-    # STEP 1 — RETRIEVE EVERYTHING (NO FILTER)
-    # ======================================================
+    # ==================================================
+    # RETRIEVE
+    # ==================================================
+
+    start_timer("retrieval_loop")
 
     for q in expanded_queries:
+
+        # --------------------------------------------------
+        # EMBEDDING
+        # --------------------------------------------------
 
         embedding = get_embedding(q)
 
         if embedding is None:
             continue
 
+        # --------------------------------------------------
+        # CHROMA QUERY
+        # --------------------------------------------------
+
         try:
+
+            start_timer("chroma_query")
+
             results = collection.query(
+
                 query_embeddings=[embedding],
+
                 n_results=TOP_K
             )
+
+            end_timer("chroma_query")
+
         except Exception as e:
-            debug_print("Chroma query error:", e)
+
+            end_timer("chroma_query")
+
+            debug_print(
+                "Chroma query error:",
+                e
+            )
+
             continue
 
-        if not results or not results.get("documents"):
+        # --------------------------------------------------
+        # EMPTY RESULTS
+        # --------------------------------------------------
+
+        if (
+            not results
+            or
+            not results.get("documents")
+        ):
             continue
 
-        for i in range(len(results["documents"][0])):
+        # --------------------------------------------------
+        # STORE RESULTS
+        # --------------------------------------------------
 
-            distance = results["distances"][0][i]
-            metadata = results["metadatas"][0][i] or {}
+        for i in range(
+
+            len(results["documents"][0])
+        ):
+
+            distance = results[
+                "distances"
+            ][0][i]
+
+            metadata = results[
+                "metadatas"
+            ][0][i] or {}
 
             all_results.append({
-                "text": results["documents"][0][i],
-                "source": metadata.get("source", "unknown"),
-                "page": metadata.get("page", "N/A"),
-                "distance": distance
+
+                "text":
+                    results["documents"][0][i],
+
+                "source":
+                    metadata.get(
+                        "source",
+                        "unknown"
+                    ),
+
+                "page":
+                    metadata.get(
+                        "page",
+                        "N/A"
+                    ),
+
+                "distance":
+                    distance
             })
 
-    # ======================================================
-    # STEP 2 — UNIQUE RESULTS
-    # ======================================================
+    end_timer("retrieval_loop")
 
-    unique_results = list({r["text"]: r for r in all_results}.values())
+    # ==================================================
+    # UNIQUE RESULTS
+    # ==================================================
+
+    start_timer("deduplication")
+
+    unique_results = list({
+
+        r["text"]: r
+
+        for r in all_results
+
+    }.values())
+
+    end_timer("deduplication")
 
     if not unique_results:
+
         debug_print("No results found")
+
+        end_timer("retriever_total")
+
         return [], 9999.0
 
-    # ======================================================
-    # STEP 3 — AVG DISTANCE
-    # ======================================================
+    # ==================================================
+    # AVG DISTANCE
+    # ==================================================
 
-    avg_distance = sum(r["distance"] for r in unique_results) / len(unique_results)
+    start_timer("distance_analysis")
 
-    debug_print("Avg distance (pre-filter):", avg_distance)
+    avg_distance = sum(
 
-    # ======================================================
-    # STEP 4 — ADAPTIVE FILTER
-    # ======================================================
+        r["distance"]
+
+        for r in unique_results
+
+    ) / len(unique_results)
+
+    end_timer("distance_analysis")
+
+    debug_print(
+        "Avg distance (pre-filter):",
+        avg_distance
+    )
+
+    # ==================================================
+    # ADAPTIVE FILTER
+    # ==================================================
+
+    start_timer("adaptive_filter")
 
     filtered_results = [
+
         r for r in unique_results
+
         if r["distance"] <= avg_distance * 3
     ]
 
-    debug_print(f"After adaptive filter: {len(filtered_results)} docs")
+    end_timer("adaptive_filter")
 
-    # fallback safety
+    debug_print(
+        f"After adaptive filter: "
+        f"{len(filtered_results)} docs"
+    )
+
+    # --------------------------------------------------
+    # FILTER FALLBACK
+    # --------------------------------------------------
+
     if not filtered_results:
-        debug_print("Filter too strict → fallback to all results")
+
+        debug_print(
+            "Filter too strict "
+            "→ fallback to all results"
+        )
+
         filtered_results = unique_results
 
-    # ======================================================
-    # STEP 5 — SORT + TOP_K
-    # ======================================================
+    # ==================================================
+    # SORT + TOP_K
+    # ==================================================
 
-    sorted_results = sorted(filtered_results, key=lambda x: x["distance"])
+    start_timer("result_sorting")
+
+    sorted_results = sorted(
+
+        filtered_results,
+
+        key=lambda x: x["distance"]
+    )
+
     top_results = sorted_results[:TOP_K]
 
-    debug_print(f"Final retrieved: {len(top_results)} documents")
+    end_timer("result_sorting")
 
-    avg_distance_final = sum(r["distance"] for r in top_results) / len(top_results)
+    debug_print(
+        f"Final retrieved: "
+        f"{len(top_results)} documents"
+    )
 
-    debug_print("Avg distance (final):", avg_distance_final)
+    avg_distance_final = sum(
 
-    return top_results, avg_distance_final
+        r["distance"]
+
+        for r in top_results
+
+    ) / len(top_results)
+
+    debug_print(
+        "Avg distance (final):",
+        avg_distance_final
+    )
+
+    # ==================================================
+    # OBSERVABILITY
+    # ==================================================
+
+    log_data(
+        "retrieved_documents",
+        len(top_results)
+    )
+
+    log_data(
+        "unique_documents",
+        len(unique_results)
+    )
+
+    log_data(
+        "avg_distance",
+        round(
+            avg_distance_final,
+            4
+        )
+    )
+
+    end_timer("retriever_total")
+
+    return (
+        top_results,
+        avg_distance_final
+    )

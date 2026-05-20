@@ -2,11 +2,14 @@
 
 """
 Massaciuccoli Digital Twin
-Orchestrator v32 (MODEL + DATA INJECTION)
+Orchestrator v33 (TIMING INSTRUMENTATION)
 
-# Tasks still decoupled
-# Model + dataset injected only where needed
-# Stable for demo
+✔ Request timing
+✔ Routing timing
+✔ Parsing timing
+✔ Task timing
+✔ Output timing
+✔ Minimal invasive profiling
 """
 
 import sys
@@ -17,18 +20,30 @@ import pandas as pd
 # PATH SETUP
 # ======================================================
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append(
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            ".."
+        )
+    )
+)
 
 # ======================================================
 # LOGGER
 # ======================================================
 
 from utils.logger import (
+
     log_section,
     log_question,
     log_route,
     log_data,
-    log_error
+    log_error,
+
+    # 🔥 NEW
+    start_timer,
+    end_timer
 )
 
 # ======================================================
@@ -36,14 +51,23 @@ from utils.logger import (
 # ======================================================
 
 from tasks.task_assessment import handle_assessment
+
 from tasks.task_importance import handle_importance
+
 from utils.importance_parser import parse_top_k
+
 from tasks.task_delta import handle_delta
+
 from tasks.task_dependency import handle_dependency
+
 from tasks.task_drivers import handle_drivers
+
 from tasks.task_chat import handle_chat
+
 from tasks.task_data import handle_data
-from tasks.task_comparison import handle_comparison  # 🔥 NEW
+
+from tasks.task_comparison import handle_comparison
+
 
 # ======================================================
 # ROUTER
@@ -51,12 +75,15 @@ from tasks.task_comparison import handle_comparison  # 🔥 NEW
 
 from versions.v6_1_main import route_question
 
+
 # ======================================================
 # PARSERS
 # ======================================================
 
 from utils.feature_parser import parse_features
+
 from utils.range_parser import parse_range
+
 
 # ======================================================
 # MODEL + DATA LOADING
@@ -64,22 +91,54 @@ from utils.range_parser import parse_range
 
 from versions.v6_1_emulator import load_and_train_emulator
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "massaciuccoli_data.csv")
+DATA_PATH = os.path.join(
 
+    os.path.dirname(__file__),
+
+    "..",
+
+    "data",
+
+    "massaciuccoli_data.csv"
+)
+
+
+# ======================================================
+# LOAD RESOURCES
+# ======================================================
 
 def load_resources():
 
     print("# Loading model and dataset...")
 
     try:
-        dataset = pd.read_csv(DATA_PATH, skiprows=[1])
-        model = load_and_train_emulator(DATA_PATH)
 
-        print("# Model trained and dataset loaded")
+        start_timer("resource_loading")
+
+        dataset = pd.read_csv(
+            DATA_PATH,
+            skiprows=[1]
+        )
+
+        model = load_and_train_emulator(
+            DATA_PATH
+        )
+
+        end_timer("resource_loading")
+
+        print(
+            "# Model trained and dataset loaded"
+        )
+
         return model, dataset
 
     except Exception as e:
-        print("# ERROR loading resources:", e)
+
+        log_error(
+            "RESOURCE LOADING",
+            e
+        )
+
         return None, None
 
 
@@ -94,16 +153,31 @@ def run():
     model, dataset = load_resources()
 
     print("# Emulator ready.\n")
-    print("Massaciuccoli Digital Twin — v138\n")
+
+    print(
+        "Massaciuccoli Digital Twin — v138\n"
+    )
 
     while True:
 
-        question = input("Ask a question (type 'exit' to quit): ")
+        question = input(
+            "Ask a question (type 'exit' to quit): "
+        )
 
-        if question.lower() in ["exit", "quit"]:
+        if question.lower() in [
+            "exit",
+            "quit"
+        ]:
             break
 
+        # ==================================================
+        # TOTAL REQUEST TIMER
+        # ==================================================
+
+        start_timer("total_request")
+
         log_section("NEW REQUEST")
+
         log_question(question)
 
         # ==================================================
@@ -111,47 +185,98 @@ def run():
         # ==================================================
 
         try:
-            route = route_question(question)
+
+            start_timer("routing")
+
+            route = route_question(
+                question
+            )
+
             task_type = route.get("type")
+
+            end_timer("routing")
+
             log_route(task_type)
 
         except Exception as e:
-            log_error("ROUTING", e)
+
+            log_error(
+                "ROUTING",
+                e
+            )
+
+            end_timer("routing")
+
             continue
 
         # ==================================================
         # PARSING
         # ==================================================
 
-        farsed = None
+        parsed = None
+
         features = None
+
         range_info = None
 
         try:
-            if task_type in ["assessment", "importance", "delta"]:
+
+            start_timer("parsing")
+
+            if task_type in [
+                "assessment",
+                "importance",
+                "delta"
+            ]:
 
                 log_section("PARSING")
 
-                # 🔥 FULL METADATA PARSING
                 parsed = parse_features(
+
                     question,
+
                     return_metadata=True
                 )
 
                 features = parsed["features"]
 
-                range_info = parse_range(question)
+                range_info = parse_range(
+                    question
+                )
 
-                log_data("features", features)
-                log_data("range", range_info)
+                log_data(
+                    "features",
+                    features
+                )
+
+                log_data(
+                    "range",
+                    range_info
+                )
 
             else:
 
                 log_section("PARSING")
-                log_data("skipped", f"Task '{task_type}' does not require parsing")
+
+                log_data(
+
+                    "skipped",
+
+                    f"Task '{task_type}' "
+                    f"does not require parsing"
+                )
+
+            end_timer("parsing")
 
         except Exception as e:
-            log_error("PARSING", e)
+
+            log_error(
+                "PARSING",
+                e
+            )
+
+            end_timer("parsing")
+
             continue
 
         # ==================================================
@@ -159,55 +284,166 @@ def run():
         # ==================================================
 
         try:
+
+            start_timer("task_execution")
+
             log_section("TASK EXECUTION")
-            log_data("task_type", task_type)
+
+            log_data(
+                "task_type",
+                task_type
+            )
+
+            # --------------------------------------------------
+            # ASSESSMENT
+            # --------------------------------------------------
 
             if task_type == "assessment":
-                result = handle_assessment(
-                    question=question,
-                    features=features,
-                    qualitative_changes=parsed.get("qualitative_changes", []),
-                    dataset=dataset,
-                    model=model
-                    )
 
-            elif task_type == "importance":
-                result = handle_importance(
+                result = handle_assessment(
+
                     question=question,
+
                     features=features,
-                    model=model,
+
+                    qualitative_changes=parsed.get(
+                        "qualitative_changes",
+                        []
+                    ),
+
                     dataset=dataset,
-                    top_k=parse_top_k(question)
+
+                    model=model
                 )
 
+            # --------------------------------------------------
+            # IMPORTANCE
+            # --------------------------------------------------
+
+            elif task_type == "importance":
+
+                result = handle_importance(
+
+                    question=question,
+
+                    features=features,
+
+                    model=model,
+
+                    dataset=dataset,
+
+                    top_k=parse_top_k(
+                        question
+                    )
+                )
+
+            # --------------------------------------------------
+            # DELTA
+            # --------------------------------------------------
+
             elif task_type == "delta":
-                result = handle_delta(question, range_info, model)
+
+                result = handle_delta(
+
+                    question,
+
+                    range_info,
+
+                    model
+                )
+
+            # --------------------------------------------------
+            # DEPENDENCY
+            # --------------------------------------------------
 
             elif task_type == "dependency":
-                result = handle_dependency(question, route)
+
+                result = handle_dependency(
+                    question,
+                    route
+                )
+
+            # --------------------------------------------------
+            # COMPARISON
+            # --------------------------------------------------
 
             elif task_type == "comparison":
-                result = handle_comparison(question, model,dataset)
+
+                result = handle_comparison(
+
+                    question,
+
+                    model,
+
+                    dataset
+                )
+
+            # --------------------------------------------------
+            # DATA
+            # --------------------------------------------------
 
             elif task_type == "data":
-                result = handle_data(question, dataset=dataset)
+
+                result = handle_data(
+
+                    question,
+
+                    dataset=dataset
+                )
+
+            # --------------------------------------------------
+            # DRIVERS
+            # --------------------------------------------------
 
             elif task_type == "drivers":
-                result = handle_drivers(question)
+
+                result = handle_drivers(
+                    question
+                )
+
+            # --------------------------------------------------
+            # CHAT
+            # --------------------------------------------------
 
             elif task_type == "chat":
-                result = handle_chat(question)
+
+                result = handle_chat(
+                    question
+                )
+
+            # --------------------------------------------------
+            # UNKNOWN
+            # --------------------------------------------------
 
             else:
+
                 result = {
-                    "summary": "Unknown task",
-                    "data": {},
-                    "drivers": [],
-                    "interpretation": "Could not determine the task type."
+
+                    "summary":
+                        "Unknown task",
+
+                    "data":
+                        {},
+
+                    "drivers":
+                        [],
+
+                    "interpretation":
+                        "Could not determine "
+                        "the task type."
                 }
 
+            end_timer("task_execution")
+
         except Exception as e:
-            log_error("TASK EXECUTION", e)
+
+            log_error(
+                "TASK EXECUTION",
+                e
+            )
+
+            end_timer("task_execution")
+
             continue
 
         # ==================================================
@@ -217,27 +453,66 @@ def run():
         log_section("OUTPUT")
 
         try:
-            print("\nSUMMARY:")
-            print(result.get("summary", ""))
 
-            data = result.get("data", {})
+            start_timer("output_rendering")
+
+            print("\nSUMMARY:")
+
+            print(
+                result.get(
+                    "summary",
+                    ""
+                )
+            )
+
+            data = result.get(
+                "data",
+                {}
+            )
+
             if data:
+
                 print("\nDATA:")
+
                 print(data)
 
             if "drivers" in result:
+
                 print("\nDRIVERS:")
+
                 for d in result["drivers"]:
+
                     print("-", d)
 
             print("\nINTERPRETATION:")
-            print(result.get("interpretation", ""))
+
+            print(
+                result.get(
+                    "interpretation",
+                    ""
+                )
+            )
 
             print("\n---------------------------\n")
 
+            end_timer("output_rendering")
+
         except Exception as e:
-            log_error("OUTPUT", e)
+
+            log_error(
+                "OUTPUT",
+                e
+            )
+
+            end_timer("output_rendering")
+
             continue
+
+        # ==================================================
+        # TOTAL REQUEST END
+        # ==================================================
+
+        end_timer("total_request")
 
 
 # ======================================================
@@ -245,4 +520,5 @@ def run():
 # ======================================================
 
 if __name__ == "__main__":
+
     run()
