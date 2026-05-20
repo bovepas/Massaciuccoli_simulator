@@ -55,8 +55,6 @@ def detect_target(q: str):
         "ecosystem risk",
         "risk level",
         "risk score",
-
-        # 🔥 NEW
         "risk"
     ]
 
@@ -91,6 +89,10 @@ def detect_target(q: str):
 
 def asks_driver_analysis(q: str):
 
+    # --------------------------------------------------
+    # DIRECT DRIVER KEYWORDS
+    # --------------------------------------------------
+
     patterns = [
         "drivers",
         "drive",
@@ -106,7 +108,32 @@ def asks_driver_analysis(q: str):
         "what drives"
     ]
 
-    return any(p in q for p in patterns)
+    if any(p in q for p in patterns):
+        return True
+
+    # --------------------------------------------------
+    # SEMANTIC RANKING STRUCTURE
+    # --------------------------------------------------
+
+    ranking_patterns = [
+        "most",
+        "top",
+        "main"
+    ]
+
+    variable_patterns = [
+        "variables",
+        "factors",
+        "drivers"
+    ]
+
+    if (
+        any(r in q for r in ranking_patterns)
+        and any(v in q for v in variable_patterns)
+    ):
+        return True
+
+    return False
 
 
 # ======================================================

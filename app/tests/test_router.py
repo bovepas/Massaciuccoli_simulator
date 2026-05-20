@@ -97,6 +97,7 @@ TESTS = [
     ("What are the main factors driving the ecosystem risk in this scenario.", "importance"),
     ("Explain the main factors driving the ecosystem risk in this scenario. List the top 3 most influential variables.", "importance"),
     ("What are the top 3 most influential variables affecting ecosystem risk under baseline conditions?", "importance"),
+    ("What are the 3 environmental variables that most influence ecosystem risk?", "importance"),
 
     # 🔥 REMOVED (SEMANTICALLY AMBIGUOUS)
     # ("What are the main drivers if temperature increases by 2?", "importance"),

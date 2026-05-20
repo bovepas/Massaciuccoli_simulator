@@ -37,6 +37,7 @@ from utils.logger import (
 
 from tasks.task_assessment import handle_assessment
 from tasks.task_importance import handle_importance
+from utils.importance_parser import parse_top_k
 from tasks.task_delta import handle_delta
 from tasks.task_dependency import handle_dependency
 from tasks.task_drivers import handle_drivers
@@ -175,7 +176,8 @@ def run():
                     question=question,
                     features=features,
                     model=model,
-                    dataset=dataset
+                    dataset=dataset,
+                    top_k=parse_top_k(question)
                 )
 
             elif task_type == "delta":
