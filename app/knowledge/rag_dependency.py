@@ -1,27 +1,38 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Dependency Explanation — v11 (STRONG KB GROUNDING)
+RAG Dependency Explanation — v13 (epistemically grounded dependency reasoning)
 
-✔ Keeps existing structure
-✔ Strengthens KB usage
-✔ Forces concrete, context-based reasoning
-✔ Minimal changes, safe drop-in
+✔ Uses dependency evidence
+✔ Separates statistical interaction from ecological mechanisms
+✔ KB-grounded ecological interpretation
+✔ Strong uncertainty handling
+✔ Preserves existing architecture
 """
 
 from knowledge.rag_pipeline import generate_answer
 
 
 # ======================================================
-# 🔥 TARGET NORMALIZATION FOR RETRIEVAL
+# TARGET NORMALIZATION FOR RETRIEVAL
 # ======================================================
 
 TARGET_QUERY_MAP = {
-    "hydrological dynamics": "water balance lake level hydrology",
-    "ecosystem stability": "ecosystem stability lake dynamics",
-    "ecosystem productivity": "primary productivity lake ecosystem",
-    "biodiversity": "species richness biodiversity ecosystem",
-    "ecosystem risk": "ecosystem risk environmental stress lake"
+
+    "hydrological dynamics":
+        "water balance lake level hydrology",
+
+    "ecosystem stability":
+        "ecosystem stability lake dynamics",
+
+    "ecosystem productivity":
+        "primary productivity lake ecosystem",
+
+    "biodiversity":
+        "species richness biodiversity ecosystem",
+
+    "ecosystem risk":
+        "ecosystem risk environmental stress lake"
 }
 
 
@@ -30,60 +41,145 @@ def normalize_target_for_query(target: str):
     if not target:
         return ""
 
-    return TARGET_QUERY_MAP.get(target, target)
+    return TARGET_QUERY_MAP.get(
+        target,
+        target
+    )
+
+
+# ======================================================
+# DEPENDENCY EVIDENCE BLOCK
+# ======================================================
+
+def build_dependency_block(dependency_info):
+
+    if not dependency_info:
+
+        return """
+DEPENDENCY EVIDENCE:
+No quantitative dependency evidence available.
+"""
+
+    return f"""
+DEPENDENCY EVIDENCE:
+
+- Dependency strength:
+  {dependency_info.get('strength')}
+
+- Dependency score:
+  {dependency_info.get('score')}
+
+- Interaction type:
+  {dependency_info.get('interaction_type')}
+
+- Confidence:
+  {dependency_info.get('confidence')}
+
+- Direction:
+  {dependency_info.get('direction')}
+"""
 
 
 # ======================================================
 # MAIN
 # ======================================================
 
-def generate_dependency_explanation(question: str, source=None, target=None) -> str:
+def generate_dependency_explanation(
+    question: str,
+    source=None,
+    target=None,
+    dependency_info=None
+) -> str:
 
-    print("\n[RAG-DEPENDENCY v11] START")
+    print("\n[RAG-DEPENDENCY v13] START")
 
-    target_for_query = normalize_target_for_query(target)
+    target_for_query = normalize_target_for_query(
+        target
+    )
+
+    dependency_block = build_dependency_block(
+        dependency_info
+    )
 
     # ======================================================
-    # CASE 1: FEATURE → FEATURE
+    # CASE 1: FEATURE → FEATURE / ABSTRACT TARGET
     # ======================================================
 
     if target and target != "risk_score":
 
         extra_prompt = f"""
-You are an environmental scientist analyzing a lake ecosystem.
+You are analyzing interactions within a lake ecosystem.
 
 TASK:
 Explain how {source} influences {target}.
 
+{dependency_block}
+
 STRICT REQUIREMENTS:
 - You MUST use information from the provided context
-- You MUST explicitly use BOTH {source} and {target}
-- You MUST base your explanation on specific mechanisms described in the context
-- You MUST NOT rely on generic ecological knowledge alone
-- You MUST ground your explanation in concrete processes (e.g., hydrology, nutrient dynamics)
+- You MUST explicitly refer to BOTH {source} and {target}
+- You MUST ground ecological mechanisms ONLY in the retrieved context
+- You MUST use the dependency evidence as a quantitative constraint
+- You MUST NOT contradict the dependency evidence
+- You MUST avoid unsupported causal claims
 
-CAUSAL REASONING:
+DEPENDENCY INTERPRETATION:
 
-- The relationship may be:
-  • direct
-  • indirect (via hydrological dynamics, climate processes, etc.)
-  • uncertain or context-dependent
+- The dependency evidence ONLY measures
+  statistical interaction strength between variables.
 
-- If indirect:
-  • explain intermediate mechanisms grounded in the context
+- The dependency score does NOT prove
+  direct causality.
 
-- If unsupported:
-  • explicitly state uncertainty
-  • do NOT invent links
+- Ecological mechanisms MUST come ONLY
+  from the retrieved context.
 
-CONTEXT USAGE (CRITICAL):
-- Refer to specific processes or dynamics mentioned in the context
-- Avoid generic textbook explanations
-- Anchor reasoning to lake ecosystem conditions when possible
+- Statistical interaction strength
+  MUST NOT be described as proven causality.
 
-OUTPUT FORMAT:
-- Single paragraph
-- 3–4 sentences
+- Avoid verbs implying causal certainty such as:
+  "drives"
+  "determines"
+  "directly causes"
+  "controls"
+
+- Prefer cautious language such as:
+  "is associated with"
+  "may contribute to"
+  "is linked to"
+  "appears related to"
+
+- Clearly distinguish between:
+  • modeled statistical interaction
+  • ecological mechanisms discussed in the literature
+
+- Strong dependencies:
+  • indicate stronger modeled interactions
+  • but do NOT automatically imply direct causation
+
+- Moderate dependencies:
+  • may reflect indirect or context-dependent interactions
+
+- Weak dependencies:
+  • should be interpreted cautiously
+  • may reflect limited influence or noisy interactions
+
+- Unsupported dependencies:
+  • explicitly state that quantitative support is limited
+  • avoid forcing explanations
+
+CONTEXT USAGE:
+- Prefer mechanisms grounded in retrieved documents
+- Refer to hydrology, biodiversity, vegetation, climate, or nutrient dynamics when relevant
+- Avoid generic textbook ecology
+
+STYLE:
+- Scientific but readable
+- Natural language
+- No introductory phrases like:
+  "As an environmental scientist..."
+- 3–5 sentences
+- Suitable for both academic and non-technical users
 """
 
     # ======================================================
@@ -93,66 +189,105 @@ OUTPUT FORMAT:
     else:
 
         extra_prompt = f"""
-You are an environmental scientist analyzing a real lake ecosystem.
+You are analyzing interactions within a lake ecosystem.
 
 TASK:
 Explain how {source} affects ecosystem risk.
 
+{dependency_block}
+
 STRICT REQUIREMENTS:
 - You MUST use information from the provided context
 - You MUST explicitly refer to {source}
-- You MUST base your reasoning on specific mechanisms from the context
-- You MUST NOT rely on generic knowledge alone
+- You MUST use the dependency evidence as a quantitative constraint
+- You MUST avoid unsupported causal claims
+
+DEPENDENCY INTERPRETATION:
+
+- The dependency evidence ONLY measures
+  modeled interaction strength.
+
+- The dependency score does NOT prove
+  direct causality.
+
+- Ecological mechanisms MUST come ONLY
+  from the retrieved context.
+
+- Strong interaction scores:
+  • indicate stronger modeled relationships
+  • but NOT guaranteed direct ecological causation
+
+- Weak or unsupported interactions:
+  • should be interpreted cautiously
+  • may indicate limited evidence
 
 DOMAIN REQUIREMENTS:
-- You MUST explicitly mention at least ONE of:
-  • hydrological dynamics
-  • nutrient loading
-  • water quality
-  • climate-driven changes
+- Explicitly discuss ecosystem stressors when relevant
+- Prefer concrete mechanisms from the retrieved context
+- Refer to hydrological dynamics, biodiversity, vegetation, or climate pressures when relevant
 
-CONTEXT USAGE (CRITICAL):
-- Anchor the explanation to processes described in the context
-- Avoid generic ecosystem explanations
-- Prefer concrete mechanisms over general statements
-
-OUTPUT FORMAT:
-- Single paragraph
+STYLE:
+- Scientific but readable
+- Natural language
+- No introductory phrases like:
+  "As an environmental scientist..."
 - 3–5 sentences
 """
 
     # ======================================================
-    # 🔥 STRONGER QUERY (driver-guided)
+    # QUERY
     # ======================================================
 
     rag_query = question
 
     if source:
+
         rag_query = f"""
-        lake ecosystem {source} {target_for_query} interactions
-        hydrology nutrient dynamics water quality climate processes
+        lake ecosystem
+        {source}
+        {target_for_query}
+
+        interaction dynamics
+        hydrology
+        biodiversity
+        nutrient loading
+        climate processes
+        ecosystem stress
         """
 
-    print("[RAG] Final query:", rag_query)
+    print("[RAG] Final query:")
+    print(rag_query)
+
+    print("[RAG] Dependency evidence:")
+    print(dependency_info)
 
     # ======================================================
     # CALL RAG
     # ======================================================
 
     try:
-        answer = generate_answer(rag_query, extra_prompt)
+
+        answer = generate_answer(
+            rag_query,
+            extra_prompt
+        )
 
         print("\n[RAG-DEPENDENCY] Output:")
         print(answer)
-        print("[RAG-DEPENDENCY v11] END\n")
+
+        print("[RAG-DEPENDENCY v13] END\n")
 
         return answer
 
     except Exception as e:
-        print("[RAG-DEPENDENCY ERROR]", e)
+
+        print("[RAG-DEPENDENCY ERROR]")
+        print(e)
 
         return (
-            "In lake ecosystems, environmental drivers influence ecological dynamics "
-            "through hydrological and biogeochemical processes, although specific "
-            "relationships may depend on local conditions and available evidence."
+            "Environmental interactions in lake ecosystems "
+            "often emerge through coupled hydrological, "
+            "climatic, and ecological processes, although "
+            "the strength of specific dependencies may vary "
+            "depending on available evidence and ecosystem conditions."
         )
