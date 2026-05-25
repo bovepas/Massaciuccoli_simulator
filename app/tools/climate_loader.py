@@ -5,6 +5,7 @@ Climate Loader (ASC Raster → Lat/Lon Mapping)
 Questo modulo:
 - legge file .asc (raster)
 - costruisce una matrice numpy
+- converte automaticamente i NODATA (-9999) in NaN
 - permette di ottenere il valore dato (lat, lon)
 """
 
@@ -20,15 +21,33 @@ def load_asc(filepath: str):
     Carica un file .asc e restituisce:
     - array 2D (numpy)
     - metadata
+
+    Converte automaticamente i valori NODATA in np.nan
     """
 
     with open(filepath, "r") as f:
+
         header = {}
+
         for _ in range(6):
+
             line = f.readline().strip().split()
+
             header[line[0].lower()] = float(line[1])
 
         data = np.loadtxt(f)
+
+    # --------------------------------------------------
+    # NODATA → NaN
+    # --------------------------------------------------
+
+    nodata = header.get("nodata_value", -9999)
+
+    data = np.where(
+        data == nodata,
+        np.nan,
+        data
+    )
 
     return data, header
 
@@ -76,7 +95,11 @@ def get_value_from_asc(lat, lon, data, header):
 
     value = data[row, col]
 
-    if value == header.get("nodata_value", -9999):
+    # --------------------------------------------------
+    # NaN handling
+    # --------------------------------------------------
+
+    if np.isnan(value):
         return None
 
     return float(value)
@@ -86,9 +109,13 @@ def get_value_from_asc(lat, lon, data, header):
 # VECTOR EXTRACTION (CSV → raster)
 # ======================================================
 
-def extract_values_for_dataframe(df, data, header,
-                                 lat_col="Latitude",
-                                 lon_col="Longitude"):
+def extract_values_for_dataframe(
+    df,
+    data,
+    header,
+    lat_col="Latitude",
+    lon_col="Longitude"
+):
     """
     Estrae valori raster per tutte le righe del dataframe
     """
@@ -96,10 +123,17 @@ def extract_values_for_dataframe(df, data, header,
     values = []
 
     for _, row in df.iterrows():
+
         lat = row[lat_col]
         lon = row[lon_col]
 
-        val = get_value_from_asc(lat, lon, data, header)
+        val = get_value_from_asc(
+            lat,
+            lon,
+            data,
+            header
+        )
+
         values.append(val)
 
     return np.array(values)

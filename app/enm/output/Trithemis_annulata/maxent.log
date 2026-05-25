@@ -1,0 +1,168 @@
+Mon May 25 08:12:28 UTC 2026
+MaxEnt version 3.4.4
+Checking header of /app/enm/env_layers/Conductivity_EPSG4326_50m_y2002.asc
+Checking header of /app/enm/env_layers/Precipitation_proj_2050_rcp45.asc
+Checking header of /app/enm/env_layers/Temperature_proj_2050_rcp45.asc
+Reading samples from Presence_Trithemis_annulata.csv
+Read samples: max memory 1073741824, total allocated 262144000, free 241667992, used 20476008, increment 20476008
+Extractor: max memory 1073741824, total allocated 262144000, free 241185616, used 20958384, increment 482376
+Extracting random background and sample data
+Warning: Sample at 10.35285, 43.83907 in Presence_Trithemis_annulata.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.35285, 43.83907
+Warning: Sample at 10.35576, 43.83825 in Presence_Trithemis_annulata.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.35576, 43.83825
+Warning: Sample at 10.3548, 43.83777 in Presence_Trithemis_annulata.csv is missing some environmental data (e.g. Conductivity_EPSG4326_50m_y2002)
+Warning: Skipping sample at 10.3548, 43.83777
+57224 points with values for all grids
+Adding samples to background in feature space
+Command line used:  environmentallayers=/app/enm/env_layers samplesfile=/app/enm/presence/insetti_molluschi/Presence_Trithemis_annulata.csv outputdirectory=/app/enm/output/Trithemis_annulata autorun nowarnings responsecurves=true jackknife=true
+Command line to repeat: java density.MaxEnt nowarnings noprefixes responsecurves jackknife outputdirectory=/app/enm/output/Trithemis_annulata samplesfile=/app/enm/presence/insetti_molluschi/Presence_Trithemis_annulata.csv environmentallayers=/app/enm/env_layers nowarnings autorun
+Species: Trithemis_annulata
+Layers: Conductivity_EPSG4326_50m_y2002 Precipitation_proj_2050_rcp45 Temperature_proj_2050_rcp45
+Layertypes: Continuous Continuous Continuous
+responsecurves: true
+jackknife: true
+outputdirectory: /app/enm/output/Trithemis_annulata
+samplesfile: /app/enm/presence/insetti_molluschi/Presence_Trithemis_annulata.csv
+environmentallayers: /app/enm/env_layers
+warnings: false
+autorun: true
+
+getSamples: max memory 1073741824, total allocated 262144000, free 237011288, used 25132712, increment 4174328
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 254460952, used 7683048, increment -17449664
+Trithemis_annulata: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 248952104, used 13191896, increment 5508848
+linearPredictor: max memory 1073741824, total allocated 262144000, free 248952104, used 13191896, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 248952104, used 13191896, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 248683552, used 13460448, increment 268552
+Initial loss: 9.212138753917563
+220: time = 0.494000 loss = 8.871985
+Resulting gain: 0.34015378872233093
+Time since start: 1.122
+Projecting...
+Writing file /app/enm/output/Trithemis_annulata/Trithemis_annulata.asc
+Writing /app/enm/output/Trithemis_annulata/plots/Trithemis_annulata.png
+Trithemis_annulata response curves
+Response curve: only Conductivity_EPSG4326_50m_y2002
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 219187600, used 42956400, increment 29495952
+Trithemis_annulata Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 217775080, used 44368920, increment 1412520
+linearPredictor: max memory 1073741824, total allocated 262144000, free 217775080, used 44368920, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 217775080, used 44368920, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 217775080, used 44368920, increment 0
+Initial loss: 9.212138753917563
+60: time = 0.049000 loss = 9.064627
+Resulting gain: 0.1475115621254819
+Trithemis_annulata response curves
+Response curve: only Precipitation_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 215560872, used 46583128, increment 2214208
+Trithemis_annulata Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+Time since start: 2.125
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 213056488, used 49087512, increment 2504384
+linearPredictor: max memory 1073741824, total allocated 262144000, free 213056488, used 49087512, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 213056488, used 49087512, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 213056488, used 49087512, increment 0
+Initial loss: 9.212138753917563
+100: time = 0.142000 loss = 9.151997
+Resulting gain: 0.06014162728677874
+Trithemis_annulata response curves
+Response curve: only Temperature_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 148699664, used 113444336, increment 64356824
+Trithemis_annulata Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 147244416, used 114899584, increment 1455248
+linearPredictor: max memory 1073741824, total allocated 262144000, free 147244416, used 114899584, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 147244416, used 114899584, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 147244416, used 114899584, increment 0
+Initial loss: 9.212138753917563
+140: time = 0.132000 loss = 9.088906
+Resulting gain: 0.12323317288684166
+Trithemis_annulata response curves
+Jackknife: leave Conductivity_EPSG4326_50m_y2002 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 164923264, used 97220736, increment -17678848
+Trithemis_annulata Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 161253248, used 100890752, increment 3670016
+linearPredictor: max memory 1073741824, total allocated 262144000, free 161173088, used 100970912, increment 80160
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 161173088, used 100970912, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 161173088, used 100970912, increment 0
+Initial loss: 9.212138753917563
+200: time = 0.316000 loss = 9.032572
+Jackknife: leave Precipitation_proj_2050_rcp45 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 150406184, used 111737816, increment 10766904
+Trithemis_annulata Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 148336592, used 113807408, increment 2069592
+linearPredictor: max memory 1073741824, total allocated 262144000, free 148256432, used 113887568, increment 80160
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 148256432, used 113887568, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 148256432, used 113887568, increment 0
+Initial loss: 9.212138753917563
+Time since start: 3.206
+220: time = 0.220000 loss = 8.899420
+Jackknife: leave Temperature_proj_2050_rcp45 out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 247549232, used 14594768, increment -99292800
+Trithemis_annulata Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 245040376, used 17103624, increment 2508856
+linearPredictor: max memory 1073741824, total allocated 262144000, free 244960216, used 17183784, increment 80160
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 244960216, used 17183784, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 244960216, used 17183784, increment 0
+Initial loss: 9.212138753917563
+100: time = 0.156000 loss = 9.025891
+Jackknife: only Conductivity_EPSG4326_50m_y2002
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 177360584, used 84783416, increment 67599632
+Trithemis_annulata Conductivity_EPSG4326_50m_y2002: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 176362768, used 85781232, increment 997816
+linearPredictor: max memory 1073741824, total allocated 262144000, free 176362768, used 85781232, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 176362768, used 85781232, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 176362768, used 85781232, increment 0
+Initial loss: 9.212138753917563
+60: time = 0.051000 loss = 9.064627
+Res.gain: 0.1475115621254819
+Jackknife: only Precipitation_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 175720936, used 86423064, increment 641832
+Trithemis_annulata Precipitation_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 174030320, used 88113680, increment 1690616
+linearPredictor: max memory 1073741824, total allocated 262144000, free 173950160, used 88193840, increment 80160
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 173950160, used 88193840, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 173950160, used 88193840, increment 0
+Initial loss: 9.212138753917563
+100: time = 0.133000 loss = 9.151997
+Res.gain: 0.06014162728677874
+Jackknife: only Temperature_proj_2050_rcp45
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 107711040, used 154432960, increment 66239120
+Trithemis_annulata Temperature_proj_2050_rcp45: 
+Regularization values: linear/quadratic/product: 0.385, categorical: 0.250, threshold: 1.770, hinge: 0.500
+23 samples
+Density: max memory 1073741824, total allocated 262144000, free 106374712, used 155769288, increment 1336328
+linearPredictor: max memory 1073741824, total allocated 262144000, free 106294552, used 155849448, increment 80160
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 106294552, used 155849448, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 106294552, used 155849448, increment 0
+Initial loss: 9.212138753917563
+140: time = 0.137000 loss = 9.088906
+Res.gain: 0.12323317288684166
+Ending

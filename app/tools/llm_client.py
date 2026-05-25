@@ -70,7 +70,7 @@ RETRY_DELAY = 1
 
 TIMEOUT = 60
 
-MAX_PREDICT = 256
+MAX_PREDICT = 192
 
 TEMPERATURE = 0
 
@@ -175,10 +175,37 @@ def call_llm(prompt: str) -> str:
 
             data = response.json()
 
+            print(
+                "[LLM CLIENT] done_reason:",
+                data.get("done_reason")
+            )
+
+            print(
+                "[LLM CLIENT] eval_count:",
+                data.get("eval_count")
+            )
+
+            log_data(
+                "llm_done_reason",
+                data.get("done_reason")
+            )
+
+            log_data(
+                "llm_eval_count",
+                data.get("eval_count")
+            )
+
             output = data.get(
                 "response",
                 ""
             ).strip()
+
+            if data.get("done_reason") == "length":
+
+                print(
+                    "⚠️ Output truncated "
+                    "(MAX_PREDICT reached)"
+                )
 
             end_timer(
                 "ollama_response_processing"

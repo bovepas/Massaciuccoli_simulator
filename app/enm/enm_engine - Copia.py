@@ -1,6 +1,6 @@
 """
 Massaciuccoli Digital Twin
-ENM Engine — Stable + Safe Species Resolution (v16)
+ENM Engine — Stable + Safe Species Resolution (v15)
 """
 
 import os
@@ -465,22 +465,26 @@ def read_results(species_output_dir: str):
 def load_suitability_map(species_output_dir: str):
 
     asc_file = next(
+
         (
             os.path.join(
                 species_output_dir,
                 f
             )
+
             for f in os.listdir(
                 species_output_dir
             )
+
             if f.endswith(".asc")
         ),
+
         None
     )
 
     data, header = load_asc(asc_file)
 
-    return data, header, asc_file
+    return data, header
 
 
 # ======================================================
@@ -491,19 +495,8 @@ def compute_suitability_stats(
     data,
     threshold
 ):
-    #print("RAW NAN:", np.isnan(data).sum())
 
-
-    flat = data.flatten()
-    flat = flat[flat != -9999]
-    flat = flat[~np.isnan(flat)]
-
-    #print("VALID PIXELS:", len(flat))
-    #print("FILTERED NAN:", np.isnan(flat).sum())
-
-    #print("MIN VALID:", np.min(flat))
-    #print("MAX VALID:", np.max(flat))
-
+    flat = data[data != -9999].flatten()
 
     total = len(flat)
 
@@ -577,10 +570,6 @@ def compute_suitability_stats(
 # HOTSPOTS
 # ======================================================
 
-# ======================================================
-# HOTSPOTS
-# ======================================================
-
 def detect_suitability_hotspots(
     data,
     threshold
@@ -607,208 +596,35 @@ def detect_suitability_hotspots(
     if hotspot_sizes:
 
         largest_hotspot = max(hotspot_sizes)
-
-        mean_hotspot = float(
-            np.mean(hotspot_sizes)
-        )
-
-        total_hotspot_pixels = sum(
-            hotspot_sizes
-        )
+        mean_hotspot = float(np.mean(hotspot_sizes))
+        total_hotspot_pixels = sum(hotspot_sizes)
 
         largest_fraction = (
-            largest_hotspot /
-            total_hotspot_pixels
+            largest_hotspot / total_hotspot_pixels
         )
-
-        # ------------------------------------------
-        # DOMINANCE RATIO
-        # ------------------------------------------
-
-        sorted_sizes = sorted(
-            hotspot_sizes,
-            reverse=True
-        )
-
-        if len(sorted_sizes) >= 2:
-
-            dominance_ratio = (
-                sorted_sizes[0] /
-                sorted_sizes[1]
-            )
-
-        elif len(sorted_sizes) == 1:
-
-            dominance_ratio = float("inf")
-
-        else:
-
-            dominance_ratio = 0
 
     else:
 
         largest_hotspot = 0
-
         mean_hotspot = 0
-
         largest_fraction = 0
 
-        dominance_ratio = 0
-
-    # --------------------------------------------------
-    # FRAGMENTATION
-    # --------------------------------------------------
-
     if largest_fraction >= 0.70:
-
         fragmentation = "low"
-
     elif largest_fraction >= 0.40:
-
         fragmentation = "moderate"
-
     else:
-
         fragmentation = "high"
 
-    # --------------------------------------------------
-    # HABITAT STRUCTURE
-    # --------------------------------------------------
-
-    if num_hotspots == 0:
-
-        structure = "no major hotspots"
-
-    elif largest_fraction >= 0.90:
-
-        structure = "single dominant hotspot"
-
-    elif largest_fraction >= 0.70:
-
-        structure = (
-            "dominant hotspot with "
-            "secondary habitat nuclei"
-        )
-
-    elif largest_fraction >= 0.40:
-
-        structure = (
-            "multiple major hotspots"
-        )
-
-    else:
-
-        structure = (
-            "highly fragmented habitat"
-        )
-
     return {
-
-        "threshold":
-            float(threshold),
-
-        "num_hotspots":
-            num_hotspots,
-
-        "largest_hotspot_pixels":
-            largest_hotspot,
-
-        "mean_hotspot_pixels":
-            round(mean_hotspot, 1),
-
-        "largest_hotspot_fraction":
-            round(largest_fraction, 3),
-
-        "dominance_ratio":
-            round(dominance_ratio, 2)
-            if dominance_ratio != float("inf")
-            else 999,
-
-        "fragmentation":
-            fragmentation,
-
-        "structure":
-            structure
+        "threshold": float(threshold),
+        "num_hotspots": num_hotspots,
+        "largest_hotspot_pixels": largest_hotspot,
+        "mean_hotspot_pixels": round(mean_hotspot,1),
+        "largest_hotspot_fraction": round(largest_fraction,3),
+        "fragmentation": fragmentation
     }
 
-# ======================================================
-# DRIVER ANALYSIS
-# ======================================================
-
-def classify_driver_structure(
-    contributions
-):
-
-    if not contributions:
-
-        return {
-
-            "dominant_driver": None,
-
-            "driver_ratio": 0,
-
-            "driver_structure":
-                "unknown"
-        }
-
-    sorted_drivers = sorted(
-        contributions.items(),
-        key=lambda x: x[1],
-        reverse=True
-    )
-
-    dominant_driver = sorted_drivers[0][0]
-    dominant_value = sorted_drivers[0][1]
-
-    if len(sorted_drivers) >= 2:
-
-        second_value = sorted_drivers[1][1]
-
-        if second_value > 0:
-
-            driver_ratio = (
-                dominant_value /
-                second_value
-            )
-
-        else:
-
-            driver_ratio = 999
-
-    else:
-
-        driver_ratio = 999
-
-    if driver_ratio >= 5:
-
-        driver_structure = (
-            "single dominant driver"
-        )
-
-    elif driver_ratio >= 2:
-
-        driver_structure = (
-            "dominant driver with "
-            "secondary influences"
-        )
-
-    else:
-
-        driver_structure = (
-            "multiple co-dominant drivers"
-        )
-
-    return {
-
-        "dominant_driver":
-            dominant_driver,
-
-        "driver_ratio":
-            round(driver_ratio, 2),
-
-        "driver_structure":
-            driver_structure
-    }
 
 # ======================================================
 # PUBLIC API
@@ -843,16 +659,7 @@ def run_enm_analysis(question: str):
 
     metrics = read_results(output_dir)
 
-    driver_analysis = (
-        classify_driver_structure(
-            metrics.get(
-                "feature_contributions",
-                {}
-            )
-        )
-    )
-
-    data, header, asc_path = load_suitability_map(
+    data, header = load_suitability_map(
         output_dir
     )
 
@@ -892,13 +699,6 @@ def run_enm_analysis(question: str):
         "hotspots":
             hotspots,
 
-        "driver_analysis":
-            driver_analysis,
-
         "suitability":
-            suitability,
-
-        "artifacts": {
-            "asc_file": asc_path
-        }
+            suitability
     }

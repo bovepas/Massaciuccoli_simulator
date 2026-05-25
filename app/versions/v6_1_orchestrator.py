@@ -68,6 +68,8 @@ from tasks.task_data import handle_data
 
 from tasks.task_comparison import handle_comparison
 
+from tasks.task_enm import handle_enm
+
 
 # ======================================================
 # ROUTER
@@ -400,7 +402,16 @@ def run():
                 result = handle_drivers(
                     question
                 )
+            # --------------------------------------------------
+            # ENM
+            # --------------------------------------------------
 
+            elif task_type == "enm":
+
+                result = handle_enm(
+                    question
+                )
+                
             # --------------------------------------------------
             # CHAT
             # --------------------------------------------------

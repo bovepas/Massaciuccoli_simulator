@@ -1,6 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
 
 import re
+import os
+import glob
 
 from utils.logger import (
     log_section,
@@ -234,6 +236,105 @@ def references_baseline(q: str):
 
     return any(p in q for p in baseline_patterns)
 
+# ======================================================
+# KNOWN ENM SPECIES
+# ======================================================
+
+def load_enm_species():
+
+    species = set()
+
+    for file in glob.glob(
+        "enm/presence/**/*Presence_*.csv",
+        recursive=True
+    ):
+
+        name = (
+            os.path.basename(file)
+            .replace("Presence_", "")
+            .replace(".csv", "")
+            .replace("_", " ")
+            .lower()
+        )
+
+        species.add(name)
+
+    return species
+
+
+KNOWN_ENM_SPECIES = load_enm_species()
+
+
+def contains_taxonomic_group(q: str):
+
+    for group in KNOWN_TAXONOMIC_GROUPS:
+
+        pattern = rf"\b{re.escape(group)}\b"
+
+        if re.search(pattern, q):
+
+            return group
+
+    return None
+
+# ======================================================
+# KNOWN TAXONOMIC GROUPS
+# ======================================================
+
+KNOWN_TAXONOMIC_GROUPS = {
+    "fish",
+    "fishes",
+    "pesce",
+    "pesci",
+
+    "bird",
+    "birds",
+    "uccello",
+    "uccelli",
+
+    "crustacean",
+    "crustaceans",
+    "crostaceo",
+    "crostacei",
+
+    "amphibian",
+    "amphibians",
+    "anfibio",
+    "anfibi",
+
+    "reptile",
+    "reptiles",
+    "rettile",
+    "rettili",
+
+    "mammal",
+    "mammals",
+    "mammifero",
+    "mammiferi"
+}
+
+# ======================================================
+# SPECIES DETECTION
+# ======================================================
+
+def contains_known_species(q: str):
+
+    for species in KNOWN_ENM_SPECIES:
+
+        pattern = rf"\b{re.escape(species)}\b"
+
+        if re.search(pattern, q):
+
+            return species
+
+    return None
+
+
+print(
+    f"[ROUTER] Loaded "
+    f"{len(KNOWN_ENM_SPECIES)} "
+    f"ENM species"
+)
 
 # ======================================================
 # ENM DETECTION
@@ -261,6 +362,27 @@ def route_question(question: str):
 
     log_section("ROUTER V35 (RISK TARGET FIX)")
     log_question(question)
+
+    # ==================================================
+    # ENM SPECIES SHORTCUT
+    # ==================================================
+
+    species_match = contains_known_species(q)
+
+    if species_match:
+
+        print(
+            f"[ROUTER] ENM species detected: "
+            f"{species_match}"
+        )
+
+        log_route(
+            f"ENM (species={species_match})"
+        )
+
+        return {
+            "type": "enm"
+        }
 
     # ==================================================
     # HARD RULES

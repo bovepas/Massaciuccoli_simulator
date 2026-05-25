@@ -1,0 +1,4 @@
+Predictor variable,Categorical,Sample average
+Conductivity_EPSG4326_50m_y2002,false,2048.259259259259
+Precipitation_proj_2050_rcp45,false,840.2131528501158
+Temperature_proj_2050_rcp45,false,17.76650827902335

@@ -2,38 +2,116 @@
 
 """
 Massaciuccoli Digital Twin
-RAG ENM — Species Explanation Layer v2 (robust + demo-ready)
+RAG ENM — Ecological Explanation Layer v7
 
 ✔ Uses centralized RAG pipeline
-✔ Strong fallback (scientific)
-✔ Cleaner output
+✔ Strong fallback
+✔ Ecological interpretation only
+✔ No repetition of ENM metrics
+✔ Uses pre-computed driver interpretation
+✔ No driver ratios exposed to LLM
 """
 
 from knowledge.rag_pipeline import generate_answer
 
 
 # ======================================================
-# FALLBACK (🔥 IMPORTANT FOR DEMO)
+# FALLBACK
 # ======================================================
 
-def fallback_explanation(species, drivers):
+def fallback_explanation(
+    species,
+    drivers,
+    model_summary=None
+):
 
     if not drivers:
-        return f"Habitat suitability for {species} depends on environmental conditions represented in the model."
+
+        return (
+            f"Habitat suitability for {species} "
+            f"depends on environmental conditions "
+            f"represented in the model."
+        )
 
     driver_text = ", ".join(drivers[:3])
 
     return (
-        f"Habitat suitability for {species} is influenced by environmental variables such as {driver_text}, "
-        f"which define the ecological conditions supporting species presence."
+        f"Habitat suitability for {species} is "
+        f"influenced by environmental variables such as "
+        f"{driver_text}, which define the ecological "
+        f"conditions supporting species presence."
     )
+
+
+# ======================================================
+# DRIVER INTERPRETATION
+# ======================================================
+
+def build_driver_interpretation(
+    driver_analysis
+):
+
+    if not driver_analysis:
+
+        return ""
+
+    structure = driver_analysis.get(
+        "driver_structure",
+        ""
+    )
+
+    dominant_driver = driver_analysis.get(
+        "dominant_driver",
+        ""
+    )
+
+    if (
+        structure ==
+        "single dominant driver"
+    ):
+
+        return (
+            f"Habitat suitability is overwhelmingly "
+            f"controlled by {dominant_driver}."
+        )
+
+    elif (
+        structure ==
+        "dominant driver with secondary influences"
+    ):
+
+        return (
+            f"{dominant_driver} is the primary "
+            f"environmental driver, although "
+            f"other variables also contribute."
+        )
+
+    elif (
+        structure ==
+        "multiple co-dominant drivers"
+    ):
+
+        return (
+            "Habitat suitability results from "
+            "the interaction of multiple "
+            "environmental drivers, with no "
+            "single dominant factor."
+        )
+
+    return ""
 
 
 # ======================================================
 # MAIN
 # ======================================================
 
-def generate_enm_explanation(question, drivers, species):
+def generate_enm_explanation(
+    question,
+    drivers,
+    species,
+    model_summary=None,
+    driver_analysis=None
+):
 
     print("\n[RAG-ENM] START")
 
@@ -41,10 +119,28 @@ def generate_enm_explanation(question, drivers, species):
     # FORMAT DRIVERS
     # --------------------------------------------------
 
-    driver_text = "\n".join([f"- {d}" for d in drivers])
+    driver_text = "\n".join(
+        [f"- {d}" for d in drivers]
+    )
+
+    if model_summary is None:
+
+        model_summary = (
+            "No model summary available."
+        )
 
     # --------------------------------------------------
-    # PROMPT (IMPROVED)
+    # PRECOMPUTED DRIVER INTERPRETATION
+    # --------------------------------------------------
+
+    driver_interpretation = (
+        build_driver_interpretation(
+            driver_analysis
+        )
+    )
+
+    # --------------------------------------------------
+    # PROMPT
     # --------------------------------------------------
 
     extra_prompt = f"""
@@ -53,19 +149,87 @@ You are an ecological modeler.
 SPECIES:
 {species}
 
+MODEL RESULTS:
+{model_summary}
+
+PRECOMPUTED ECOLOGICAL INTERPRETATION:
+
+{driver_interpretation}
+
 ENVIRONMENTAL DRIVERS:
+(sorted by importance)
+
 {driver_text}
 
 TASK:
-Explain how these variables influence habitat suitability for the species.
+
+Provide an ecological explanation of the
+predicted distribution pattern.
+
+IMPORTANT:
+
+Do NOT repeat information already reported
+in MODEL RESULTS.
+
+Do NOT repeat:
+
+- habitat extent
+- hotspot count
+- hotspot size
+- hotspot structure
+- connectivity assessment
+- fragmentation level
+- suitability percentages
+- AUC values
+
+These have already been reported.
+
+Your role is to explain WHY the species
+shows this distribution pattern.
+
+Use:
+
+- PRECOMPUTED ECOLOGICAL INTERPRETATION
+- ENVIRONMENTAL DRIVERS
+- retrieved ecological knowledge
+
+The precomputed interpretation is already
+correct and should not be contradicted.
+
+If it states that no single environmental
+factor dominates, do not describe any
+variable as dominant.
+
+Do not introduce environmental drivers,
+pressures, stressors, ecological mechanisms,
+or causal factors that are not explicitly
+supported by:
+
+- PRECOMPUTED ECOLOGICAL INTERPRETATION
+- ENVIRONMENTAL DRIVERS
+- retrieved ecological knowledge
+
+If information is not provided,
+do not infer it.
+
+Focus on:
+
+- habitat preferences
+- environmental constraints
+- ecological requirements
+- environmental gradients
+- species-environment relationships
 
 RULES:
-- Use ecological reasoning (habitat preference, environmental constraints)
-- Link variables to species presence
+
+- Focus on ecological interpretation
+- Focus on species-environment relationships
+- Use ecological reasoning
 - Be realistic and scientifically plausible
-- Use 2–3 sentences maximum
-- No lists, no formatting
-- Do NOT introduce variables not listed
+- Use 2–4 sentences
+- No lists
+- No formatting
+- Do not invent variables not listed
 """
 
     # --------------------------------------------------
@@ -82,11 +246,19 @@ RULES:
         print("\n[RAG-ENM] OUTPUT:")
         print(answer)
 
-        # 🔥 fallback if weak output
-        if not answer or "unavailable" in answer.lower():
-            return fallback_explanation(species, drivers)
+        if (
+            not answer
+            or "unavailable" in answer.lower()
+        ):
+
+            return fallback_explanation(
+                species,
+                drivers,
+                model_summary
+            )
 
         print("[RAG-ENM] END\n")
+
         return answer
 
     except Exception as e:
@@ -94,4 +266,8 @@ RULES:
         print("\n🔥 RAG-ENM ERROR:")
         print(e)
 
-        return fallback_explanation(species, drivers)
+        return fallback_explanation(
+            species,
+            drivers,
+            model_summary
+        )
