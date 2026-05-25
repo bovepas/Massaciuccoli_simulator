@@ -225,6 +225,112 @@ def resolve_species(question):
 
     return None, None
 
+# ======================================================
+# SCENARIO PARSING
+# ======================================================
+
+def parse_scenario(question):
+
+    q = question.lower()
+
+    future_keywords = [
+        "future",
+        "futuro",
+
+        "2050",
+        "2100",
+
+        "climate change",
+        "cambiamento climatico",
+
+        "rcp"
+    ]
+
+    future = any(
+        k in q
+        for k in future_keywords
+    )
+
+    if not future:
+
+        return {
+
+            "future": False,
+
+            "year": None,
+
+            "rcp": None,
+
+            "env_layers":
+                ENV_LAYERS_DIR,
+
+            "default_used": False
+        }
+
+    # ----------------------------------
+    # YEAR
+    # ----------------------------------
+
+    if "2100" in q:
+
+        year = 2100
+
+    else:
+
+        year = 2050
+
+    # ----------------------------------
+    # RCP
+    # ----------------------------------
+
+    if (
+        "8.5" in q
+        or "rcp85" in q
+        or "rcp 8.5" in q
+    ):
+
+        rcp = "8.5"
+
+    else:
+
+        rcp = "4.5"
+
+    # ----------------------------------
+    # DEFAULT?
+    # ----------------------------------
+
+    default_used = (
+        "2050" not in q
+        and
+        "2100" not in q
+        and
+        "8.5" not in q
+        and
+        "4.5" not in q
+    )
+
+    env_layers = os.path.join(
+
+        BASE_DIR,
+
+        f"env_layers_{year}_rcp"
+        f"{rcp.replace('.', '')}"
+    )
+
+    return {
+
+        "future": True,
+
+        "year": year,
+
+        "rcp": rcp,
+
+        "env_layers":
+            env_layers,
+
+        "default_used":
+            default_used
+    }
 
 # ======================================================
 # MAXENT
@@ -275,7 +381,7 @@ def clean_output_dir(path: str):
     os.makedirs(path)
 
 
-def run_maxent(species_name: str):
+def run_maxent(species_name: str,env_layers_dir: str):
 
     ensure_directories()
 
@@ -302,7 +408,7 @@ def run_maxent(species_name: str):
         "-jar",
         MAXENT_JAR,
 
-        f"environmentallayers={ENV_LAYERS_DIR}",
+        f"environmentallayers={env_layers_dir}",
 
         f"samplesfile={presence_file}",
 
@@ -820,6 +926,13 @@ def run_enm_analysis(question: str):
         question
     )
 
+    scenario = parse_scenario(question)
+
+    print("\n[SCENARIO]")
+    print(scenario)
+
+
+
     if not species:
         raise ValueError(
             "Could not resolve species name"
@@ -839,7 +952,12 @@ def run_enm_analysis(question: str):
             f"match: {species}"
         )
 
-    output_dir, taxonomic_group = run_maxent(species)
+    output_dir, taxonomic_group = (
+        run_maxent(
+            species,
+            scenario["env_layers"]
+            )
+        )
 
     metrics = read_results(output_dir)
 
