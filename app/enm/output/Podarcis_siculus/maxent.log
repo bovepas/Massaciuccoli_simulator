@@ -1,0 +1,165 @@
+Tue May 26 13:03:36 UTC 2026
+MaxEnt version 3.4.4
+Checking header of /app/enm/env_layers_2050_rcp85/Conductivity.asc
+Checking header of /app/enm/env_layers_2050_rcp85/Precipitation.asc
+Checking header of /app/enm/env_layers_2050_rcp85/Temperature.asc
+Reading samples from Presence_Podarcis_siculus.csv
+Read samples: max memory 1073741824, total allocated 262144000, free 242700136, used 19443864, increment 19443864
+Extractor: max memory 1073741824, total allocated 262144000, free 242217768, used 19926232, increment 482368
+Extracting random background and sample data
+Warning: Sample at 10.28011, 43.91702 in Presence_Podarcis_siculus.csv is missing some environmental data (e.g. Conductivity)
+Warning: Skipping sample at 10.28011, 43.91702
+57224 points with values for all grids
+Adding samples to background in feature space
+Command line used:  environmentallayers=/app/enm/env_layers_2050_rcp85 samplesfile=/app/enm/presence/rettili_anfibi/Presence_Podarcis_siculus.csv outputdirectory=/app/enm/output/Podarcis_siculus autorun nowarnings responsecurves=true jackknife=true
+Command line to repeat: java density.MaxEnt nowarnings noprefixes responsecurves jackknife outputdirectory=/app/enm/output/Podarcis_siculus samplesfile=/app/enm/presence/rettili_anfibi/Presence_Podarcis_siculus.csv environmentallayers=/app/enm/env_layers_2050_rcp85 nowarnings autorun
+Species: Podarcis_siculus
+Layers: Conductivity Precipitation Temperature
+Layertypes: Continuous Continuous Continuous
+responsecurves: true
+jackknife: true
+outputdirectory: /app/enm/output/Podarcis_siculus
+samplesfile: /app/enm/presence/rettili_anfibi/Presence_Podarcis_siculus.csv
+environmentallayers: /app/enm/env_layers_2050_rcp85
+warnings: false
+autorun: true
+
+getSamples: max memory 1073741824, total allocated 262144000, free 237493664, used 24650336, increment 4724104
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 254673240, used 7470760, increment -17179576
+Podarcis_siculus: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 249133888, used 13010112, increment 5539352
+linearPredictor: max memory 1073741824, total allocated 262144000, free 249053744, used 13090256, increment 80144
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 249053744, used 13090256, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 249053744, used 13090256, increment 0
+Initial loss: 9.211939093339879
+Time since start: 1.294
+500: time = 1.002000 loss = 7.595678
+Resulting gain: 1.616261523782767
+Projecting...
+Writing file /app/enm/output/Podarcis_siculus/Podarcis_siculus.asc
+Writing /app/enm/output/Podarcis_siculus/plots/Podarcis_siculus.png
+Podarcis_siculus response curves
+Response curve: only Conductivity
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 134331640, used 127812360, increment 114722104
+Podarcis_siculus Conductivity: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 133312168, used 128831832, increment 1019472
+linearPredictor: max memory 1073741824, total allocated 262144000, free 133312168, used 128831832, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 133312168, used 128831832, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 133312168, used 128831832, increment 0
+Initial loss: 9.211939093339879
+100: time = 0.058000 loss = 8.806319
+Resulting gain: 0.40561975116437843
+Podarcis_siculus response curves
+Response curve: only Precipitation
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 130166440, used 131977560, increment 3145728
+Podarcis_siculus Precipitation: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 127545000, used 134599000, increment 2621440
+linearPredictor: max memory 1073741824, total allocated 262144000, free 127464856, used 134679144, increment 80144
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 127464856, used 134679144, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 127464856, used 134679144, increment 0
+Initial loss: 9.211939093339879
+Time since start: 2.791
+360: time = 0.520000 loss = 8.550686
+Resulting gain: 0.661252674183979
+Podarcis_siculus response curves
+Response curve: only Temperature
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 101436912, used 160707088, increment 26027944
+Podarcis_siculus Temperature: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 99906112, used 162237888, increment 1530800
+linearPredictor: max memory 1073741824, total allocated 262144000, free 99825968, used 162318032, increment 80144
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 99825968, used 162318032, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 99825968, used 162318032, increment 0
+Initial loss: 9.211939093339879
+180: time = 0.114000 loss = 8.774224
+Resulting gain: 0.43771508970800177
+Podarcis_siculus response curves
+Jackknife: leave Conductivity out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 227831192, used 34312808, increment -128005224
+Podarcis_siculus Conductivity: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 224292512, used 37851488, increment 3538680
+linearPredictor: max memory 1073741824, total allocated 262144000, free 224292512, used 37851488, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 224292512, used 37851488, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 224292512, used 37851488, increment 0
+Initial loss: 9.211939093339879
+Time since start: 3.801
+420: time = 0.686000 loss = 7.823921
+Jackknife: leave Precipitation out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 164033656, used 98110344, increment 60258856
+Podarcis_siculus Precipitation: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 161993520, used 100150480, increment 2040136
+linearPredictor: max memory 1073741824, total allocated 262144000, free 161913376, used 100230624, increment 80144
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 161913376, used 100230624, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 161913376, used 100230624, increment 0
+Initial loss: 9.211939093339879
+240: time = 0.174000 loss = 8.232030
+Jackknife: leave Temperature out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 98809488, used 163334512, increment 63103888
+Podarcis_siculus Temperature: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 96306672, used 165837328, increment 2502816
+linearPredictor: max memory 1073741824, total allocated 262144000, free 96226528, used 165917472, increment 80144
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 96226528, used 165917472, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 96226528, used 165917472, increment 0
+Initial loss: 9.211939093339879
+460: time = 0.642000 loss = 8.080877
+Jackknife: only Conductivity
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 188653656, used 73490344, increment -92427128
+Podarcis_siculus Conductivity: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 187619344, used 74524656, increment 1034312
+linearPredictor: max memory 1073741824, total allocated 262144000, free 187619344, used 74524656, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 187619344, used 74524656, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 187619344, used 74524656, increment 0
+Initial loss: 9.211939093339879
+100: time = 0.057000 loss = 8.806319
+Res.gain: 0.40561975116437843
+Jackknife: only Precipitation
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 185967792, used 76176208, increment 1651552
+Podarcis_siculus Precipitation: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 184449256, used 77694744, increment 1518536
+linearPredictor: max memory 1073741824, total allocated 262144000, free 184369112, used 77774888, increment 80144
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 184369112, used 77774888, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 184369112, used 77774888, increment 0
+Initial loss: 9.211939093339879
+Time since start: 5.243
+360: time = 0.514000 loss = 8.550686
+Res.gain: 0.661252674183979
+Jackknife: only Temperature
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 185043152, used 77100848, increment -674040
+Podarcis_siculus Temperature: 
+Regularization values: linear/quadratic/product: 0.423, categorical: 0.250, threshold: 1.790, hinge: 0.500
+21 samples
+Density: max memory 1073741824, total allocated 262144000, free 184029272, used 78114728, increment 1013880
+linearPredictor: max memory 1073741824, total allocated 262144000, free 184029272, used 78114728, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 184029272, used 78114728, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 184029272, used 78114728, increment 0
+Initial loss: 9.211939093339879
+180: time = 0.111000 loss = 8.774224
+Res.gain: 0.43771508970800177
+Ending

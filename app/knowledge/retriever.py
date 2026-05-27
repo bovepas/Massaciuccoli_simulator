@@ -57,7 +57,7 @@ OLLAMA_EMBED_URL = (
 
 EMBED_MODEL = "nomic-embed-text"
 
-TOP_K = 8
+TOP_K = 6
 
 DEBUG = True
 

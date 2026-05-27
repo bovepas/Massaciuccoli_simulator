@@ -33,7 +33,7 @@ from utils.logger import (
 
 DEBUG = True
 
-MAX_CONTEXT_CHARS = 3000
+MAX_CONTEXT_CHARS = 1500
 
 
 # ======================================================

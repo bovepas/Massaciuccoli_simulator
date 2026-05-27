@@ -50,6 +50,8 @@ ALLOWED STRUCTURES:
 
 STRICT RULES:
 - Keep original meaning
+- Preserve original environmental variables exactly as written
+- Preserve percentages, signs, and numeric values exactly
 - DO NOT summarize
 - DO NOT generalize
 - DO NOT remove comparison structure

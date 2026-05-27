@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Drivers — v7 (ecosystem pressure reasoning)
+RAG Drivers — v8
 
-✔ Environmental-science framing
-✔ Ecosystem-pressure interpretation
-✔ Softer non-causal language
-✔ Better KB alignment
-✔ Cleaner scientific UX
+✔ Reduced verbosity
+✔ Cleaner scientific grounding
+✔ More compact explanations
+✔ Less “ecosystem essay mode”
+✔ Preserved ecological interpretation
 ✔ Backward compatible
 """
 
@@ -17,6 +17,7 @@ DEBUG = True
 
 
 def debug_print(*args):
+
     if DEBUG:
         print(*args)
 
@@ -25,18 +26,22 @@ def debug_print(*args):
 # PROMPT
 # ======================================================
 
-def build_prompt(target, drivers):
+def build_prompt(
+    target,
+    drivers
+):
 
     drivers_text = "\n".join([
 
         f"- {d['feature']} "
-        f"({d['direction']}, {d['strength']})"
+        f"({d['direction']}, "
+        f"{d['strength']})"
 
-        for d in drivers
+        for d in drivers[:4]
     ])
 
     return f"""
-You are an environmental scientist analyzing ecosystem pressures in a lake system.
+You are an environmental scientist.
 
 TARGET VARIABLE:
 {target}
@@ -45,22 +50,24 @@ OBSERVED ENVIRONMENTAL ASSOCIATIONS:
 {drivers_text}
 
 TASK:
-Explain how the listed variables are environmentally associated with {target}.
+Provide a concise scientific interpretation
+of how the listed variables are associated
+with {target}.
 
-STRICT REQUIREMENTS:
-- Base the explanation on the listed variables
-- Use ecological and environmental interpretation
-- You may discuss ecosystem pressures, environmental stress, and interacting processes
-- Avoid unsupported causal claims
-- Do not invent variables that are not listed
-- Keep the explanation scientifically grounded and concise
+Use cautious ecological language and
+interpret associations rather than
+direct causality.
 
-STYLE:
-- 2 short paragraphs
-- Clear scientific language
-- Readable and natural tone
-- Emphasize ecosystem pressures and degradation patterns when relevant
-- Prefer ecosystem-oriented wording over statistical jargon
+Focus on:
+- biodiversity responses
+- hydrology
+- habitat conditions
+- ecosystem stress
+
+Write one compact paragraph
+using 3–5 sentences.
+
+Answer:
 """
 
 
@@ -90,9 +97,14 @@ def clean_output(text):
 
     text = text.strip()
 
-    text = text.replace("\n\n\n", "\n\n")
+    text = text.replace(
+        "\n\n\n",
+        "\n\n"
+    )
 
-    text = " ".join(text.split())
+    text = " ".join(
+        text.split()
+    )
 
     return text
 
@@ -101,7 +113,10 @@ def clean_output(text):
 # FALLBACK
 # ======================================================
 
-def fallback_explanation(target, drivers):
+def fallback_explanation(
+    target,
+    drivers
+):
 
     if not drivers:
 
@@ -135,9 +150,12 @@ def fallback_explanation(target, drivers):
 # MAIN
 # ======================================================
 
-def generate_drivers_explanation(target, drivers):
+def generate_drivers_explanation(
+    target,
+    drivers
+):
 
-    print("\n[RAG-DRIVERS v7] START")
+    print("\n[RAG-DRIVERS v8] START")
 
     try:
 
@@ -146,12 +164,25 @@ def generate_drivers_explanation(target, drivers):
             drivers
         )
 
-        debug_print("\n[RAG-DRIVERS] Prompt:")
+        debug_print(
+            "\n[RAG-DRIVERS] Prompt:"
+        )
+
         debug_print(prompt)
 
-        raw = call_llm(prompt)
+        print(
+            "    llm_prompt_length:",
+            len(prompt)
+        )
 
-        debug_print("\n[RAG-DRIVERS] Raw output:")
+        raw = call_llm(
+            prompt
+        )
+
+        debug_print(
+            "\n[RAG-DRIVERS] Raw output:"
+        )
+
         debug_print(raw)
 
         if not is_valid(raw):
@@ -161,16 +192,24 @@ def generate_drivers_explanation(target, drivers):
                 drivers
             )
 
-        cleaned = clean_output(raw)
+        cleaned = clean_output(
+            raw
+        )
 
-        debug_print("\n[RAG-DRIVERS] Final output:")
+        debug_print(
+            "\n[RAG-DRIVERS] Final output:"
+        )
+
         debug_print(cleaned)
 
         return cleaned
 
     except Exception as e:
 
-        print("\n🔥 RAG-DRIVERS ERROR:")
+        print(
+            "\n🔥 RAG-DRIVERS ERROR:"
+        )
+
         print(e)
 
         return fallback_explanation(

@@ -369,7 +369,10 @@ def handle_assessment(
 
         explanation = generate_assessment_explanation(
             question=question,
-            drivers=rag_drivers
+            drivers=rag_drivers,
+            primary_drivers=primary_drivers,
+            secondary_responses=secondary_drivers,
+            risk_delta=risk_delta
         )
 
     except Exception as e:

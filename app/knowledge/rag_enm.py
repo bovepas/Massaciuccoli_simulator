@@ -2,14 +2,16 @@
 
 """
 Massaciuccoli Digital Twin
-RAG ENM — Ecological Explanation Layer v7
+RAG ENM — Ecological Explanation Layer v8
 
 ✔ Uses centralized RAG pipeline
 ✔ Strong fallback
 ✔ Ecological interpretation only
 ✔ No repetition of ENM metrics
 ✔ Uses pre-computed driver interpretation
-✔ No driver ratios exposed to LLM
+✔ Uses scenario comparison
+✔ Interprets increase / decrease / stability
+✔ Prevents unsupported climate narratives
 """
 
 from knowledge.rag_pipeline import generate_answer
@@ -181,16 +183,55 @@ Do NOT repeat:
 - fragmentation level
 - suitability percentages
 - AUC values
+- comparison metrics
 
 These have already been reported.
 
 Your role is to explain WHY the species
-shows this distribution pattern.
+shows this distribution pattern and, when
+available, WHY the projected future pattern
+differs from current conditions.
+
+SCENARIO COMPARISON:
+
+Comparison information has already been
+computed and is reported in MODEL RESULTS.
+
+If comparison information indicates:
+
+- habitat_delta > 0:
+  explain the ecological reasons that may
+  support habitat expansion
+
+- habitat_delta < 0:
+  explain the ecological reasons that may
+  support habitat contraction
+
+- habitat_delta approximately 0:
+  explain why habitat suitability appears
+  broadly stable under the future scenario
+
+If comparison indicates little or no change:
+
+- describe the distribution as stable
+- do not describe major redistribution
+- do not describe strong range shifts
+
+Do not invent changes that are not supported
+by the comparison.
+
+Do not claim that temperature,
+precipitation, conductivity, salinity,
+fragmentation, connectivity, or habitat
+extent increase or decrease unless that
+change is explicitly supported by the
+provided results.
 
 Use:
 
 - PRECOMPUTED ECOLOGICAL INTERPRETATION
 - ENVIRONMENTAL DRIVERS
+- MODEL RESULTS
 - retrieved ecological knowledge
 
 The precomputed interpretation is already
@@ -207,6 +248,7 @@ supported by:
 
 - PRECOMPUTED ECOLOGICAL INTERPRETATION
 - ENVIRONMENTAL DRIVERS
+- MODEL RESULTS
 - retrieved ecological knowledge
 
 If information is not provided,
@@ -219,6 +261,7 @@ Focus on:
 - ecological requirements
 - environmental gradients
 - species-environment relationships
+- future habitat stability or change
 
 RULES:
 

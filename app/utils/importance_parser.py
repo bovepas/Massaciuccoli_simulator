@@ -20,8 +20,22 @@ def parse_top_k(question: str) -> int:
     # ----------------------------------------------
 
     match = re.search(
-        r"\b(\d+)\s+(environmental\s+)?(variables|factors|drivers)",
-        q
+        r"""
+        \b(\d+)\s+
+        (
+            environmental\s+
+        )?
+        (
+            variables|
+            factors|
+            drivers|
+            indicators|
+            pressures|
+            features
+        )
+        """,
+        q,
+        flags=re.VERBOSE
     )
 
     if match:

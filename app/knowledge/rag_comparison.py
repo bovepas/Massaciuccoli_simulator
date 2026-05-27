@@ -17,7 +17,7 @@ from tools.llm_client import call_llm
 from knowledge.retriever import retrieve_documents
 
 DEBUG = True
-MAX_CONTEXT_CHARS = 3000
+MAX_CONTEXT_CHARS = 1200
 
 
 def debug_print(*args):
@@ -206,17 +206,13 @@ def build_transition_query(drivers, delta):
         )
 
     query = f"""
-    lake ecosystem transition
+    lake ecosystem risk comparison
     {transition_type}
     {transition_text}
     hydrology
     biodiversity
     ecosystem resilience
     environmental stress
-    habitat fragmentation
-    ecological stability
-    restoration dynamics
-    degradation mechanisms
     """
 
     return query
@@ -349,36 +345,44 @@ def enhance_with_rag(base_text, drivers, delta):
     debug_print("[RAG] Docs:", len(retrieved))
 
     prompt = f"""
-You are an environmental scientist specialized in lake ecosystems.
+You are an environmental scientist.
 
-TASK:
-Interpret the ecological meaning of the quantitative risk difference between the two scenarios.
+QUESTION:
+Compare ecological risk between two ecosystem scenarios.
 
-QUANTITATIVE RESULT:
+MODEL RESULTS:
 {base_text}
 
 SCENARIO DRIVERS:
 {drivers}
 
-SCIENTIFIC CONTEXT:
+SCIENTIFIC KNOWLEDGE BASE:
 {context}
 
-INSTRUCTIONS:
-- The explanation must remain compatible with the quantitative result
-- Focus on ecological transitions, resilience mechanisms, and environmental tradeoffs
-- Explain the ecological mechanisms behind the risk difference
-- Use concepts from the scientific context
-- Discuss hydrology, biodiversity, ecosystem resilience, environmental stress, or habitat dynamics when relevant
-- Explain how the ecosystem transitions from one condition to another
-- Mention restoration or degradation dynamics if supported by the context
-- Do not simply restate the quantitative result
-- Avoid generic statements
-- Do NOT mention machine learning, SHAP, models, or predictions
-- Do NOT include meta-comments
-- Keep the explanation concise but scientifically grounded
-- Write as an environmental scientist interpreting ecosystem dynamics
+TASK
 
-OUTPUT:
+Provide a short scientific interpretation
+of the ecological differences between
+the two scenarios.
+
+Use the scientific knowledge base to
+explain possible ecological mechanisms
+associated with the identified drivers.
+
+Focus on:
+- ecosystem resilience
+- hydrology
+- biodiversity
+- environmental stress
+
+Interpret associations rather than
+assuming direct causality.
+
+Write a single compact paragraph.
+
+Use approximately 4–5 sentences.
+
+Answer:
 """
 
     try:

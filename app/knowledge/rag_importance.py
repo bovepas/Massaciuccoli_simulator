@@ -2,15 +2,14 @@
 
 """
 Massaciuccoli Digital Twin
-RAG — IMPORTANCE EXPLANATION v21
-(group-aware ecosystem risk attribution)
+RAG — IMPORTANCE EXPLANATION v22
 
-✔ Group-aware ecosystem interpretation
-✔ Semantic ecosystem domains
-✔ Improved scientific readability
-✔ Better ecosystem-level summaries
-✔ Preserves epistemic discipline
-✔ Keeps perturbation-aware attribution
+✔ Compact prompt architecture
+✔ Reduced verbosity
+✔ Cleaner ecosystem grounding
+✔ Faster generation
+✔ Better alignment with structured outputs
+✔ Preserved uncertainty handling
 """
 
 import re
@@ -85,21 +84,17 @@ def fallback_explanation(
         return (
             f"In the Massaciuccoli lake basin, "
             f"{group_text}-related variables "
-            f"appear to dominate ecosystem risk "
-            f"attribution. Variables such as "
-            f"{variables} are associated with "
-            f"hydrological dynamics, ecosystem "
-            f"stress, biodiversity conditions, "
-            f"and land-system pressures."
+            f"appear associated with ecosystem "
+            f"risk through interactions involving "
+            f"biodiversity, land-use dynamics, "
+            f"hydrology, and ecosystem resilience."
         )
 
     return (
         f"In the Massaciuccoli lake basin, "
         f"{variables} are associated with "
-        f"ecosystem risk through interactions "
-        f"affecting hydrological dynamics, "
-        f"climate pressures, biodiversity, "
-        f"and ecosystem resilience."
+        f"ecosystem risk through interacting "
+        f"ecological and environmental processes."
     )
 
 
@@ -113,13 +108,25 @@ def build_driver_block(drivers):
 
     for d in drivers:
 
+        delta = d.get(
+            "perturbation_delta",
+            "n/a"
+        )
+
+        if isinstance(delta, (int, float)):
+
+            delta = round(
+                abs(delta),
+                2
+            )
+
         rows.append(
 
             f"- {d['name']} | "
             f"group={d.get('group', 'other')} | "
             f"impact={round(d['impact'], 4)} | "
             f"strength={d.get('strength', 'unknown')} | "
-            f"delta={d.get('perturbation_delta', 'n/a')}"
+            f"delta={delta}"
         )
 
     return "\n".join(rows)
@@ -156,7 +163,7 @@ def generate_importance_explanation(
     group_scores=None
 ):
 
-    print("\n[RAG-IMPORTANCE v21] START\n")
+    print("\n[RAG-IMPORTANCE v22] START\n")
 
     if not drivers:
 
@@ -199,7 +206,9 @@ def generate_importance_explanation(
 
         focus = "stability"
 
-    print(f"[DEBUG] Detected focus: {focus}")
+    print(
+        f"[DEBUG] Detected focus: {focus}"
+    )
 
     # ======================================================
     # FILTER DRIVERS
@@ -336,9 +345,12 @@ RISK-REDUCING DRIVERS:
 
         group_names = list(
             group_scores.keys()
-        )[:3]
+        )[:2]
 
-    retrieval_terms = driver_names + group_names
+    retrieval_terms = (
+        driver_names +
+        group_names
+    )
 
     driver_text = ", ".join(
         retrieval_terms
@@ -348,15 +360,9 @@ RISK-REDUCING DRIVERS:
     {driver_text}
 
     ecosystem risk
-    Massaciuccoli lake basin
-    hydrology
+    lake ecosystem
     biodiversity
-    nutrient loading
-    water quality
-    climate stress
-    ecosystem resilience
-    land use dynamics
-    vegetation dynamics
+    land use
     """
 
     print("[DEBUG] RAG query:")
@@ -367,83 +373,38 @@ RISK-REDUCING DRIVERS:
     # ======================================================
 
     prompt = f"""
-You are analyzing ecosystem risk
-in a real lake ecosystem.
+You are an environmental scientist.
 
-TASK:
-Explain how the following environmental
-domains and variables are associated
-with ecosystem risk.
+QUESTION:
+What are the main factors influencing ecosystem risk?
+
+MODEL RESULTS:
 
 {impact_text}
 
-STRICT REQUIREMENTS:
+TASK
 
-- You MUST respect the direction
-  of influence
+Provide a concise scientific interpretation
+of the dominant ecosystem drivers.
 
-- You MUST distinguish between:
-  • modeled importance estimates
-  • ecological mechanisms
-  • ecosystem domains
+Use the scientific knowledge base to
+describe possible ecological mechanisms
+associated with the identified domains
+and variables.
 
-- The listed impacts represent:
-  perturbation-based sensitivity estimates
+Interpret associations rather than
+assuming direct causality.
 
-- Importance scores DO NOT prove
-  direct ecological causality
+Focus on:
+- biodiversity
+- land-use dynamics
+- ecosystem resilience
+- hydrology
 
-- Ecological mechanisms MUST come ONLY
-  from the retrieved context
+Write a compact paragraph
+of approximately 4–5 sentences.
 
-- You MUST explicitly mention
-  dominant ecosystem domains
-  when supported by the data
-
-- You MUST NOT introduce drivers
-  not listed above
-
-- Avoid deterministic causal language:
-  "drives"
-  "determines"
-  "directly causes"
-
-- Prefer cautious language:
-  "is associated with"
-  "may contribute to"
-  "appears related to"
-
-DOMAIN REQUIREMENTS:
-
-You MUST explicitly mention at least ONE:
-• hydrological dynamics
-• nutrient loading
-• water quality
-• anthropogenic pressures
-• climate-driven changes
-
-CONTEXT ANCHORING:
-- Refer explicitly to the
-  Massaciuccoli lake basin
-
-STYLE:
-- Scientific but readable
-- Natural language
-- No bullet points
-- No introductions like:
-  "As an environmental scientist..."
-- 3–5 sentences
-
-DO NOT:
-- Treat all drivers equally
-- Ignore dominant ecosystem domains
-- Invent unsupported mechanisms
-- Turn statistical importance
-  into proven causality
-
----
-
-Now explain the system.
+Answer:
 """
 
     # ======================================================
@@ -468,7 +429,7 @@ Now explain the system.
             print("\n[RAG-IMPORTANCE] Output:")
             print(cleaned)
 
-            print("[RAG-IMPORTANCE v21] END\n")
+            print("[RAG-IMPORTANCE v22] END\n")
 
             return cleaned
 

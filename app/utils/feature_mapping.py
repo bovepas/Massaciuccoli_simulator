@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """
-Feature Mapping — v6 (SEMANTIC PRESENTATION LAYER)
+Feature Mapping — v7
+(Expanded canonical dataset coverage)
 
 ✔ Supports synonyms
 ✔ Supports partial matching
 ✔ Handles unknown variables
 ✔ Supports abstract concepts
 ✔ Human-readable semantic labels
+✔ Expanded ecosystem variable coverage
 ✔ Backward compatible
 """
 
@@ -16,18 +18,81 @@ Feature Mapping — v6 (SEMANTIC PRESENTATION LAYER)
 # ======================================================
 
 FEATURE_MAPPING = {
-    "temperature": "Change in average temperature compared to a recent past",
-    "precipitation": "Cumulative change in precipitation compared to a recent past",
-    "evapotranspiration": "Relative change in the potential evapotranspiration compared to a recent past",
-    "tree cover": "Density of tree cover",
-    "imperviousness": "Density change in land imperviousness",
-    "species": "Number of species potentially living in the cell",
-    "biodiversity": "Number of species potentially living in the cell",
-    "productivity": "Index of total productivity by plant phenology",
-    "phenology": "Index of total productivity by plant phenology",
-    "grassland": "Presence of grassland",
-    "risk": "ecosystem_risk",
+
+    # --------------------------------------------------
+    # CLIMATE
+    # --------------------------------------------------
+
+    "temperature":
+        "Change in average temperature compared to a recent past",
+
+    "precipitation":
+        "Cumulative change in precipitation compared to a recent past",
+
+    "evapotranspiration":
+        "Relative change in the potential evapotranspiration compared to a recent past",
+
+    # --------------------------------------------------
+    # VEGETATION / HABITAT
+    # --------------------------------------------------
+
+    "tree cover":
+        "Density of tree cover",
+
+    "tree cover change":
+        "Change in tree cover density in the past decade",
+
+    "grassland":
+        "Presence of grassland",
+
+    "grassland change":
+        "Change in grassland presence in the past decade",
+
+    # --------------------------------------------------
+    # LAND USE
+    # --------------------------------------------------
+
+    "land use":
+        "Land use and cover",
+
+    "land use change":
+        "Change in land use and cover in the past decade",
+
+    # --------------------------------------------------
+    # PRODUCTIVITY
+    # --------------------------------------------------
+
+    "productivity":
+        "Index of total productivity by plant phenology",
+
+    "phenology":
+        "Index of total productivity by plant phenology",
+
+    # --------------------------------------------------
+    # BIODIVERSITY
+    # --------------------------------------------------
+
+    "species":
+        "Number of species potentially living in the cell",
+
+    "biodiversity":
+        "Number of species potentially living in the cell",
+
+    # --------------------------------------------------
+    # URBANIZATION
+    # --------------------------------------------------
+
+    "imperviousness":
+        "Density change in land imperviousness",
+
+    # --------------------------------------------------
+    # RISK
+    # --------------------------------------------------
+
+    "risk":
+        "ecosystem_risk",
 }
+
 
 # ======================================================
 # HUMAN-READABLE LABELS
@@ -49,8 +114,14 @@ FEATURE_LABELS = {
     "Density of tree cover":
         "tree cover density",
 
+    "Change in tree cover density in the past decade":
+        "tree cover change",
+
     "Presence of grassland":
         "grassland presence",
+
+    "Change in grassland presence in the past decade":
+        "grassland change",
 
     # Biodiversity
     "Number of species potentially living in the cell":
@@ -65,65 +136,144 @@ FEATURE_LABELS = {
         "land imperviousness",
 
     # Land use
-    "Change in land use and cover in the past decade anthropogenic change":
-        "anthropogenic land-use change",
+    "Land use and cover":
+        "land use",
 
-    "Change in land use and cover in the past decade no change or natural":
-        "stable natural land-use",
+    "Change in land use and cover in the past decade":
+        "land-use change",
 
     # Generic fallback
     "ecosystem_risk":
         "ecosystem risk"
 }
 
+
 # ======================================================
 # SYNONYMS
 # ======================================================
 
 SYNONYMS = {
+
+    # Climate
     "temp": "temperature",
+    "warming": "temperature",
+    "heat": "temperature",
+
     "rain": "precipitation",
     "rainfall": "precipitation",
+    "aridity": "precipitation",
+
     "evaporation": "evapotranspiration",
+
+    # Vegetation / habitat
     "tree density": "tree cover",
     "forest": "tree cover",
+    "forest cover": "tree cover",
+
+    "habitat": "grassland",
+
+    # Biodiversity
     "species richness": "species",
+
+    # Productivity
     "ecosystem productivity": "productivity",
     "vegetation productivity": "productivity",
+    "vegetation growth": "productivity",
+
+    # Urbanization
+    "urbanization": "imperviousness",
+    "urbanisation": "imperviousness",
+    "urban expansion": "imperviousness",
 }
+
 
 # ======================================================
 # KEYWORD MATCHING
 # ======================================================
 
 KEYWORD_MATCH = {
-    "temperature": ["temperature", "warming", "heat"],
-    "precipitation": ["precipitation", "rain", "rainfall"],
-    "evapotranspiration": ["evapotranspiration", "evaporation"],
-    "tree cover": ["tree", "forest"],
-    "imperviousness": ["impervious", "sealing", "urbanization"],
-    "species": ["species", "biodiversity", "richness"],
-    "productivity": ["productivity", "phenology", "vegetation"],
-    "grassland": ["grassland"],
+
+    "temperature": [
+        "temperature",
+        "warming",
+        "heat"
+    ],
+
+    "precipitation": [
+        "precipitation",
+        "rain",
+        "rainfall",
+        "aridity"
+    ],
+
+    "evapotranspiration": [
+        "evapotranspiration",
+        "evaporation"
+    ],
+
+    "tree cover": [
+        "tree",
+        "forest",
+        "tree cover"
+    ],
+
+    "imperviousness": [
+        "impervious",
+        "sealing",
+        "urbanization",
+        "urbanisation",
+        "urban"
+    ],
+
+    "species": [
+        "species",
+        "biodiversity",
+        "richness"
+    ],
+
+    "productivity": [
+        "productivity",
+        "phenology",
+        "vegetation",
+        "growth"
+    ],
+
+    "grassland": [
+        "grassland",
+        "habitat"
+    ],
+
+    "land use": [
+        "land use",
+        "land cover"
+    ]
 }
+
 
 # ======================================================
 # ABSTRACT FEATURES
 # ======================================================
 
 ABSTRACT_FEATURES = {
+
     "water availability": [
+
         "Cumulative change in precipitation compared to a recent past",
+
         "Relative change in the potential evapotranspiration compared to a recent past"
     ],
 
     "water level": [
+
         "Cumulative change in precipitation compared to a recent past",
+
         "Relative change in the potential evapotranspiration compared to a recent past"
     ],
 
     "hydrology": [
+
         "Cumulative change in precipitation compared to a recent past",
+
         "Relative change in the potential evapotranspiration compared to a recent past"
     ]
 }

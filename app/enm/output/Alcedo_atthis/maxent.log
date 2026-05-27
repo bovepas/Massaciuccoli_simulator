@@ -1,33 +1,18 @@
-Mon May 25 14:34:56 UTC 2026
+Tue May 26 12:54:03 UTC 2026
 MaxEnt version 3.4.4
-Checking header of /app/enm/env_layers_2100_rcp85/Conductivity.asc
-Checking header of /app/enm/env_layers_2100_rcp85/Precipitation.asc
-Checking header of /app/enm/env_layers_2100_rcp85/Temperature.asc
+Checking header of /app/enm/env_layers_2050_rcp85/Conductivity.asc
+Checking header of /app/enm/env_layers_2050_rcp85/Precipitation.asc
+Checking header of /app/enm/env_layers_2050_rcp85/Temperature.asc
 Reading samples from Presence_Alcedo_atthis.csv
-Read samples: max memory 1073741824, total allocated 262144000, free 242170352, used 19973648, increment 19973648
-Converting file /app/enm/env_layers_2100_rcp85/Conductivity.asc size 734441, max memory = 1073741824
-Reading file Conductivity.asc
-FLOAT, 57231 pixels with data
-readGrid: max memory 1073741824, total allocated 262144000, free 230636016, used 31507984, increment 11534336
-Writing file /app/enm/env_layers_2100_rcp85/maxent.cache/Conductivity.mxe
-Converting file /app/enm/env_layers_2100_rcp85/Precipitation.asc size 1650439, max memory = 1073741824
-Reading file Precipitation.asc
-FLOAT, 76706 pixels with data
-readGrid: max memory 1073741824, total allocated 262144000, free 231513056, used 30630944, increment -877040
-Writing file /app/enm/env_layers_2100_rcp85/maxent.cache/Precipitation.mxe
-Converting file /app/enm/env_layers_2100_rcp85/Temperature.asc size 1650198, max memory = 1073741824
-Reading file Temperature.asc
-FLOAT, 76690 pixels with data
-readGrid: max memory 1073741824, total allocated 262144000, free 184327136, used 77816864, increment 47185920
-Writing file /app/enm/env_layers_2100_rcp85/maxent.cache/Temperature.mxe
-Extractor: max memory 1073741824, total allocated 262144000, free 183786448, used 78357552, increment 540688
+Read samples: max memory 1073741824, total allocated 262144000, free 241667992, used 20476008, increment 20476008
+Extractor: max memory 1073741824, total allocated 262144000, free 241185624, used 20958376, increment 482368
 Extracting random background and sample data
 Warning: Sample at 10.35393, 43.83826 in Presence_Alcedo_atthis.csv is missing some environmental data (e.g. Conductivity)
 Warning: Skipping sample at 10.35393, 43.83826
 57224 points with values for all grids
 Adding samples to background in feature space
-Command line used:  environmentallayers=/app/enm/env_layers_2100_rcp85 samplesfile=/app/enm/presence/uccelli/Presence_Alcedo_atthis.csv outputdirectory=/app/enm/output/Alcedo_atthis autorun nowarnings responsecurves=true jackknife=true
-Command line to repeat: java density.MaxEnt nowarnings noprefixes responsecurves jackknife outputdirectory=/app/enm/output/Alcedo_atthis samplesfile=/app/enm/presence/uccelli/Presence_Alcedo_atthis.csv environmentallayers=/app/enm/env_layers_2100_rcp85 nowarnings autorun
+Command line used:  environmentallayers=/app/enm/env_layers_2050_rcp85 samplesfile=/app/enm/presence/uccelli/Presence_Alcedo_atthis.csv outputdirectory=/app/enm/output/Alcedo_atthis autorun nowarnings responsecurves=true jackknife=true
+Command line to repeat: java density.MaxEnt nowarnings noprefixes responsecurves jackknife outputdirectory=/app/enm/output/Alcedo_atthis samplesfile=/app/enm/presence/uccelli/Presence_Alcedo_atthis.csv environmentallayers=/app/enm/env_layers_2050_rcp85 nowarnings autorun
 Species: Alcedo_atthis
 Layers: Conductivity Precipitation Temperature
 Layertypes: Continuous Continuous Continuous
@@ -35,148 +20,146 @@ responsecurves: true
 jackknife: true
 outputdirectory: /app/enm/output/Alcedo_atthis
 samplesfile: /app/enm/presence/uccelli/Presence_Alcedo_atthis.csv
-environmentallayers: /app/enm/env_layers_2100_rcp85
+environmentallayers: /app/enm/env_layers_2050_rcp85
 warnings: false
 autorun: true
 
-getSamples: max memory 1073741824, total allocated 262144000, free 179084256, used 83059744, increment 4702192
+getSamples: max memory 1073741824, total allocated 262144000, free 255605680, used 6538320, increment -14420056
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 177554088, used 84589912, increment 1530168
+makeFeatures: max memory 1073741824, total allocated 262144000, free 254575208, used 7568792, increment 1030472
 Alcedo_atthis: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 171744224, used 90399776, increment 5809864
-linearPredictor: max memory 1073741824, total allocated 262144000, free 171663976, used 90480024, increment 80248
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 171663976, used 90480024, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 171663976, used 90480024, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 248606728, used 13537272, increment 5968480
+linearPredictor: max memory 1073741824, total allocated 262144000, free 248526480, used 13617520, increment 80248
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 248526480, used 13617520, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 248511104, used 13632896, increment 15376
 Initial loss: 9.213236175088209
-Time since start: 1.873
-500: time = 0.899000 loss = 8.319820
-Resulting gain: 0.8934163228729837
+Time since start: 1.139
+500: time = 0.861000 loss = 8.319847
+Resulting gain: 0.8933895006518249
 Projecting...
 Writing file /app/enm/output/Alcedo_atthis/Alcedo_atthis.asc
 Writing /app/enm/output/Alcedo_atthis/plots/Alcedo_atthis.png
-Time since start: 3.095
 Alcedo_atthis response curves
 Response curve: only Conductivity
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 164029296, used 98114704, increment 7634680
+makeFeatures: max memory 1073741824, total allocated 262144000, free 154391096, used 107752904, increment 94120008
 Alcedo_atthis Conductivity: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 163002864, used 99141136, increment 1026432
-linearPredictor: max memory 1073741824, total allocated 262144000, free 162922616, used 99221384, increment 80248
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 162922616, used 99221384, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 162922616, used 99221384, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 152847304, used 109296696, increment 1543792
+linearPredictor: max memory 1073741824, total allocated 262144000, free 152847304, used 109296696, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 152847304, used 109296696, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 152847304, used 109296696, increment 0
 Initial loss: 9.213236175088209
-60: time = 0.056000 loss = 8.966125
+60: time = 0.043000 loss = 8.966125
 Resulting gain: 0.2471115626528242
 Alcedo_atthis response curves
 Response curve: only Precipitation
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 160360328, used 101783672, increment 2562288
+makeFeatures: max memory 1073741824, total allocated 262144000, free 150721224, used 111422776, increment 2126080
 Alcedo_atthis Precipitation: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 158284272, used 103859728, increment 2076056
-linearPredictor: max memory 1073741824, total allocated 262144000, free 158204024, used 103939976, increment 80248
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 158204024, used 103939976, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 158204024, used 103939976, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 148128712, used 114015288, increment 2592512
+linearPredictor: max memory 1073741824, total allocated 262144000, free 148128712, used 114015288, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 148128712, used 114015288, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 148128712, used 114015288, increment 0
 Initial loss: 9.213236175088209
-Time since start: 4.36
-500: time = 0.822000 loss = 8.748185
-Resulting gain: 0.46505121095892754
+Time since start: 2.513
+500: time = 0.576000 loss = 8.748184
+Resulting gain: 0.4650521221215591
 Alcedo_atthis response curves
 Response curve: only Temperature
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 140484776, used 121659224, increment 17719248
+makeFeatures: max memory 1073741824, total allocated 262144000, free 138103808, used 124040192, increment 10024904
 Alcedo_atthis Temperature: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 138565264, used 123578736, increment 1919512
-linearPredictor: max memory 1073741824, total allocated 262144000, free 138565264, used 123578736, increment 0
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 138565264, used 123578736, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 138565264, used 123578736, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 136390696, used 125753304, increment 1713112
+linearPredictor: max memory 1073741824, total allocated 262144000, free 136390696, used 125753304, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 136390696, used 125753304, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 136390696, used 125753304, increment 0
 Initial loss: 9.213236175088209
-380: time = 0.312000 loss = 8.887831
-Resulting gain: 0.3254054388021288
+300: time = 0.181000 loss = 8.887807
+Resulting gain: 0.3254292260653706
 Alcedo_atthis response curves
 Jackknife: leave Conductivity out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 196664624, used 65479376, increment -58099360
+makeFeatures: max memory 1073741824, total allocated 262144000, free 158027392, used 104116608, increment -21636696
 Alcedo_atthis Conductivity: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 193048880, used 69095120, increment 3615744
-linearPredictor: max memory 1073741824, total allocated 262144000, free 192968632, used 69175368, increment 80248
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 192968632, used 69175368, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 192968632, used 69175368, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 154285880, used 107858120, increment 3741512
+linearPredictor: max memory 1073741824, total allocated 262144000, free 154285880, used 107858120, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 154285880, used 107858120, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 154285880, used 107858120, increment 0
 Initial loss: 9.213236175088209
-Time since start: 5.857
-500: time = 0.898000 loss = 8.463108
+Time since start: 3.567
+500: time = 0.685000 loss = 8.463145
 Jackknife: leave Precipitation out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 149353960, used 112790040, increment 43614672
+makeFeatures: max memory 1073741824, total allocated 262144000, free 160551192, used 101592808, increment -6265312
 Alcedo_atthis Precipitation: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 147027832, used 115116168, increment 2326128
-linearPredictor: max memory 1073741824, total allocated 262144000, free 147027832, used 115116168, increment 0
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 147027832, used 115116168, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 147027832, used 115116168, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 158502608, used 103641392, increment 2048584
+linearPredictor: max memory 1073741824, total allocated 262144000, free 158131080, used 104012920, increment 371528
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 158131080, used 104012920, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 158131080, used 104012920, increment 0
 Initial loss: 9.213236175088209
-280: time = 0.259000 loss = 8.585084
+220: time = 0.165000 loss = 8.585167
 Jackknife: leave Temperature out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 171353408, used 90790592, increment -24325576
+makeFeatures: max memory 1073741824, total allocated 262144000, free 114389328, used 147754672, increment 43741752
 Alcedo_atthis Temperature: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 168849248, used 93294752, increment 2504160
-linearPredictor: max memory 1073741824, total allocated 262144000, free 168769000, used 93375000, increment 80248
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 168769000, used 93375000, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 168769000, used 93375000, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 111846104, used 150297896, increment 2543224
+linearPredictor: max memory 1073741824, total allocated 262144000, free 111765856, used 150378144, increment 80248
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 111765856, used 150378144, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 111765856, used 150378144, increment 0
 Initial loss: 9.213236175088209
-440: time = 0.630000 loss = 8.647201
+440: time = 0.509000 loss = 8.647200
 Jackknife: only Conductivity
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 153143072, used 109000928, increment 15625928
+makeFeatures: max memory 1073741824, total allocated 262144000, free 245308520, used 16835480, increment -133542664
 Alcedo_atthis Conductivity: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 152111800, used 110032200, increment 1031272
-linearPredictor: max memory 1073741824, total allocated 262144000, free 152111800, used 110032200, increment 0
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 152111800, used 110032200, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 152111800, used 110032200, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 244292872, used 17851128, increment 1015648
+linearPredictor: max memory 1073741824, total allocated 262144000, free 244292872, used 17851128, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 244292872, used 17851128, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 244292872, used 17851128, increment 0
 Initial loss: 9.213236175088209
-Time since start: 6.863
-60: time = 0.051000 loss = 8.966125
+60: time = 0.042000 loss = 8.966125
 Res.gain: 0.2471115626528242
 Jackknife: only Precipitation
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 151562016, used 110581984, increment 549784
+makeFeatures: max memory 1073741824, total allocated 262144000, free 243273080, used 18870920, increment 1019792
 Alcedo_atthis Precipitation: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 149779600, used 112364400, increment 1782416
-linearPredictor: max memory 1073741824, total allocated 262144000, free 149699352, used 112444648, increment 80248
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 149699352, used 112444648, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 149699352, used 112444648, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 241804400, used 20339600, increment 1468680
+linearPredictor: max memory 1073741824, total allocated 262144000, free 241724152, used 20419848, increment 80248
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 241724152, used 20419848, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 241724152, used 20419848, increment 0
 Initial loss: 9.213236175088209
-500: time = 0.681000 loss = 8.748185
-Res.gain: 0.46505121095892754
+Time since start: 4.901
+500: time = 0.554000 loss = 8.748184
+Res.gain: 0.4650521221215591
 Jackknife: only Temperature
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 164753400, used 97390600, increment -15054048
+makeFeatures: max memory 1073741824, total allocated 262144000, free 97646584, used 164497416, increment 144077568
 Alcedo_atthis Temperature: 
 Regularization values: linear/quadratic/product: 0.236, categorical: 0.250, threshold: 1.650, hinge: 0.500
 35 samples
-Density: max memory 1073741824, total allocated 262144000, free 163712688, used 98431312, increment 1040712
-linearPredictor: max memory 1073741824, total allocated 262144000, free 163632440, used 98511560, increment 80248
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 163632440, used 98511560, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 163632440, used 98511560, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 96429512, used 165714488, increment 1217072
+linearPredictor: max memory 1073741824, total allocated 262144000, free 96090224, used 166053776, increment 339288
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 96090224, used 166053776, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 96090224, used 166053776, increment 0
 Initial loss: 9.213236175088209
-380: time = 0.275000 loss = 8.887831
-Res.gain: 0.3254054388021288
-Time since start: 7.884
+300: time = 0.193000 loss = 8.887807
+Res.gain: 0.3254292260653706
 Ending

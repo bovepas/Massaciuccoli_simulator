@@ -24,6 +24,24 @@ def detect_feature(text, unit=None):
     # --- safe unit inference ---
     if unit == "°c":
         return "Change in average temperature compared to a recent past"
+    
+    if "biodiversity" in text or "species" in text:
+        return "Number of species potentially living in the cell"
+
+    if "tree cover" in text or "forest" in text:
+        return "Density of tree cover"
+
+    if "grassland" in text:
+        return "Presence of grassland"
+
+    if "imperviousness" in text or "urbanization" in text:
+        return "Density change in land imperviousness"
+
+    if "productivity" in text or "phenology" in text:
+        return "Index of total productivity by plant phenology"
+
+    if "land use" in text or "land cover" in text:
+        return "Land use and cover"
 
     # ❗ DO NOT infer from % alone
     # it's ambiguous (temperature %, vegetation %, etc.)

@@ -264,6 +264,78 @@ def handle_enm(question: str):
             "driver_analysis",
             {}
         )
+        scenario = result.get(
+            "scenario",
+            {}
+        )
+
+        comparison = result.get(
+            "comparison"
+        )
+        
+        scenario_summary = ""
+
+        if scenario:
+
+            if not scenario.get("future"):
+
+                scenario_summary = (
+                    "Current environmental conditions."
+                )
+
+            else:
+
+                year = scenario.get("year")
+                rcp = scenario.get("rcp")
+
+                if scenario.get("default_used"):
+
+                    scenario_summary = (
+                        f"Future projection using "
+                        f"{year} RCP{rcp} "
+                        f"(default future scenario)."
+                    )
+
+                else:
+
+                    scenario_summary = (
+                        f"Future projection using "
+                        f"{year} RCP{rcp}."
+                    )
+        # ------------------------------------------
+        # COMPARISON SUMMARY
+        # ------------------------------------------
+
+        comparison_summary = ""
+
+        if comparison:
+
+            habitat_delta = comparison.get(
+                "habitat_delta",
+                0
+            )
+
+            core_delta = comparison.get(
+                "core_delta",
+                0
+            )
+
+            hotspot_delta = comparison.get(
+                "hotspot_delta",
+                0
+            )
+
+            comparison_summary = (
+                f"Compared with current conditions, "
+                f"habitat extent changes by "
+                f"{habitat_delta} percentage points, "
+                f"core habitat changes by "
+                f"{core_delta} percentage points, "
+                f"and hotspot number changes by "
+                f"{hotspot_delta}."
+            )
+
+
 
         # --------------------------------------------------
         # PRE-COMPUTED INTERPRETATIONS 
@@ -351,6 +423,17 @@ def handle_enm(question: str):
         # --------------------------------------------------
 
         interpretation_parts = []
+        if scenario_summary:
+
+            interpretation_parts.append(
+                scenario_summary
+            )
+
+        if comparison_summary:
+
+            interpretation_parts.append(
+                comparison_summary
+            )
 
         if clean_drivers:
 
@@ -472,28 +555,25 @@ def handle_enm(question: str):
         print("[DEBUG] Calling RAG ENM...")
 
         model_summary = f"""
-        AUC: {round(auc,3)}
-
-        Suitable habitat:
-        {pct_10}% of study area
-
-        Core habitat:
-        {pct_12}% of study area
-
-        Hotspots:
-        {num_hotspots}
-
-        Largest hotspot:
-        {round(largest_fraction * 100,1)}%
-
-        Habitat structure:
-        {structure_summary}
-
-        Connectivity:
-        {fragmentation_summary}
-
-        Driver interpretation:
-        {driver_summary}
+            Scenario:
+            {scenario_summary}
+            Comparison:
+            {comparison_summary}
+            AUC: {round(auc,3)}
+            Suitable habitat:
+            {pct_10}% of study area
+            Core habitat:
+            {pct_12}% of study area
+            Hotspots:
+            {num_hotspots}
+            Largest hotspot:
+            {round(largest_fraction * 100,1)}%
+            Habitat structure:
+            {structure_summary}
+            Connectivity:
+            {fragmentation_summary}
+            Driver interpretation:
+            {driver_summary}
         """
 
         rag_text = generate_enm_explanation(
@@ -536,6 +616,12 @@ def handle_enm(question: str):
 
                 "species":
                     species,
+
+                "scenario":
+                    scenario,
+
+                "comparison":
+                    comparison,
 
                 "resolution_method":
                     method,

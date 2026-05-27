@@ -242,6 +242,11 @@ def parse_scenario(question):
 
         "climate change",
         "cambiamento climatico",
+        "warming",
+        "global warming",
+        "climatico",
+        "climate",
+        "scenario",
 
         "rcp"
     ]
@@ -284,16 +289,16 @@ def parse_scenario(question):
     # ----------------------------------
 
     if (
-        "8.5" in q
-        or "rcp85" in q
-        or "rcp 8.5" in q
+        "4.5" in q
+        or "rcp45" in q
+        or "rcp 4.5" in q
     ):
 
-        rcp = "8.5"
+        rcp = "4.5"
 
     else:
 
-        rcp = "4.5"
+        rcp = "8.5"
 
     # ----------------------------------
     # DEFAULT?
@@ -916,6 +921,140 @@ def classify_driver_structure(
             driver_structure
     }
 
+def run_single_enm(
+    species,
+    method,
+    env_layers_dir
+):
+
+    output_dir, taxonomic_group = (
+        run_maxent(
+            species,
+            env_layers_dir
+        )
+    )
+
+    metrics = read_results(output_dir)
+
+    driver_analysis = (
+        classify_driver_structure(
+            metrics.get(
+                "feature_contributions",
+                {}
+            )
+        )
+    )
+
+    data, header, asc_path = (
+        load_suitability_map(
+            output_dir
+        )
+    )
+
+    fixed_threshold = (
+        metrics.get(
+            "fixed_threshold"
+        )
+    )
+
+    hotspots = (
+        detect_suitability_hotspots(
+            data,
+            fixed_threshold
+        )
+    )
+
+    suitability = (
+        compute_suitability_stats(
+            data,
+            fixed_threshold
+        )
+    )
+
+    return {
+
+        "species":
+            species,
+
+        "group":
+            taxonomic_group,
+
+        "resolution_method":
+            method,
+
+        "metrics":
+            metrics,
+
+        "hotspots":
+            hotspots,
+
+        "driver_analysis":
+            driver_analysis,
+
+        "suitability":
+            suitability,
+
+        "map": {
+            "shape":
+                data.shape
+        },
+
+        "artifacts": {
+            "asc_file":
+                asc_path
+        }
+    }
+
+
+def compare_scenarios(
+    baseline,
+    future
+):
+
+    habitat_delta = round(
+
+        future["suitability"]["pct_above_1_0T"]
+
+        -
+
+        baseline["suitability"]["pct_above_1_0T"],
+
+        2
+    )
+
+    core_delta = round(
+
+        future["suitability"]["pct_above_1_2T"]
+
+        -
+
+        baseline["suitability"]["pct_above_1_2T"],
+
+        2
+    )
+
+    hotspot_delta = (
+
+        future["hotspots"]["num_hotspots"]
+
+        -
+
+        baseline["hotspots"]["num_hotspots"]
+    )
+
+    return {
+
+        "habitat_delta":
+            habitat_delta,
+
+        "core_delta":
+            core_delta,
+
+        "hotspot_delta":
+            hotspot_delta
+    }
+
+
 # ======================================================
 # PUBLIC API
 # ======================================================
@@ -928,12 +1067,13 @@ def run_enm_analysis(question: str):
 
     scenario = parse_scenario(question)
 
+    comparison = None
+
     print("\n[SCENARIO]")
     print(scenario)
 
-
-
     if not species:
+
         raise ValueError(
             "Could not resolve species name"
         )
@@ -952,71 +1092,65 @@ def run_enm_analysis(question: str):
             f"match: {species}"
         )
 
-    output_dir, taxonomic_group = (
-        run_maxent(
+    # --------------------------------------------------
+    # CURRENT CONDITIONS
+    # --------------------------------------------------
+
+    if not scenario["future"]:
+
+        result = run_single_enm(
             species,
-            scenario["env_layers"]
-            )
-        )
-
-    metrics = read_results(output_dir)
-
-    driver_analysis = (
-        classify_driver_structure(
-            metrics.get(
-                "feature_contributions",
-                {}
-            )
-        )
-    )
-
-    data, header, asc_path = load_suitability_map(
-        output_dir
-    )
-
-    fixed_threshold = metrics.get(
-        "fixed_threshold"
-    )
-
-    hotspots = detect_suitability_hotspots(
-        data,
-        fixed_threshold
-    )
-
-    suitability = compute_suitability_stats(
-        data,
-        fixed_threshold
-    )
-
-    return {
-
-        "species":
-            species,
-
-        "group":
-            taxonomic_group,
-
-        "resolution_method":
             method,
+            ENV_LAYERS_DIR
+        )
 
-        "metrics":
-            metrics,
+    # --------------------------------------------------
+    # FUTURE SCENARIO
+    # --------------------------------------------------
 
-        "map": {
-            "shape":
-                data.shape
-        },
+    else:
 
-        "hotspots":
-            hotspots,
+        print(
+            "\n[ENM] Running baseline "
+            "scenario..."
+        )
 
-        "driver_analysis":
-            driver_analysis,
+        baseline_result = run_single_enm(
+            species,
+            method,
+            ENV_LAYERS_DIR
+        )
 
-        "suitability":
-            suitability,
+        print(
+            "\n[ENM] Running future "
+            "scenario..."
+        )
 
-        "artifacts": {
-            "asc_file": asc_path
-        }
-    }
+        future_result = run_single_enm(
+            species,
+            method,
+            scenario["env_layers"]
+        )
+
+        comparison = compare_scenarios(
+            baseline_result,
+            future_result
+        )
+
+        print(
+            "\n[COMPARISON]"
+        )
+
+        print(comparison)
+
+        result = future_result
+
+    # --------------------------------------------------
+    # ADD METADATA
+    # --------------------------------------------------
+
+    result["scenario"] = scenario
+
+    result["comparison"] = comparison
+
+    return result

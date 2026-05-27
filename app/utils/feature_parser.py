@@ -21,23 +21,96 @@ import re
 # ======================================================
 
 FEATURE_MAP = {
-    "temperature": "Change in average temperature compared to a recent past",
 
-    "temperature change": "Change in average temperature compared to a recent past",
+    # --------------------------------------------------
+    # CLIMATE
+    # --------------------------------------------------
 
-    "precipitation": "Cumulative change in precipitation compared to a recent past",
+    "temperature":
+        "Change in average temperature compared to a recent past",
 
-    "precipitation change": "Cumulative change in precipitation compared to a recent past",
+    "temperature change":
+        "Change in average temperature compared to a recent past",
 
-    "biodiversity": "Number of species potentially living in the cell",
+    "precipitation":
+        "Cumulative change in precipitation compared to a recent past",
 
-    "species richness": "Number of species potentially living in the cell",
+    "precipitation change":
+        "Cumulative change in precipitation compared to a recent past",
 
-    "tree cover": "Density of tree cover",
+    "evapotranspiration":
+        "Relative change in the potential evapotranspiration compared to a recent past",
 
-    "grassland": "Presence of grassland",
+    # --------------------------------------------------
+    # BIODIVERSITY
+    # --------------------------------------------------
 
-    "evapotranspiration": "Relative change in the potential evapotranspiration compared to a recent past"
+    "biodiversity":
+        "Number of species potentially living in the cell",
+
+    "species richness":
+        "Number of species potentially living in the cell",
+
+    "species":
+        "Number of species potentially living in the cell",
+
+    # --------------------------------------------------
+    # VEGETATION / HABITAT
+    # --------------------------------------------------
+
+    "tree cover":
+        "Density of tree cover",
+
+    "tree cover change":
+        "Change in tree cover density in the past decade",
+
+    "grassland":
+        "Presence of grassland",
+
+    "grassland change":
+        "Change in grassland presence in the past decade",
+
+    # --------------------------------------------------
+    # PRODUCTIVITY
+    # --------------------------------------------------
+
+    "phenology":
+        "Index of total productivity by plant phenology",
+
+    "productivity":
+        "Index of total productivity by plant phenology",
+
+    "vegetation productivity":
+        "Index of total productivity by plant phenology",
+
+    # --------------------------------------------------
+    # URBANIZATION
+    # --------------------------------------------------
+
+    "imperviousness":
+        "Density change in land imperviousness",
+
+    "urbanization":
+        "Density change in land imperviousness",
+
+    "urbanisation":
+        "Density change in land imperviousness",
+
+    "urban expansion":
+        "Density change in land imperviousness",
+
+    # --------------------------------------------------
+    # LAND USE
+    # --------------------------------------------------
+
+    "land use":
+        "Land use and cover",
+
+    "land cover":
+        "Land use and cover",
+
+    "land use change":
+        "Change in land use and cover in the past decade"
 }
 
 
@@ -46,18 +119,53 @@ FEATURE_MAP = {
 # ======================================================
 
 SEMANTIC_MAP = {
+
+    # --------------------------------------------------
+    # TEMPERATURE
+    # --------------------------------------------------
+
     "warmer": ("temperature", 1.0),
     "hotter": ("temperature", 1.0),
     "cooler": ("temperature", -1.0),
+
+    # --------------------------------------------------
+    # PRECIPITATION
+    # --------------------------------------------------
 
     "drier": ("precipitation", -1.0),
     "dryer": ("precipitation", -1.0),
     "wetter": ("precipitation", 1.0),
 
+    # --------------------------------------------------
+    # BIODIVERSITY
+    # --------------------------------------------------
+
     "more biodiversity": ("biodiversity", 10.0),
     "less biodiversity": ("biodiversity", -10.0),
-}
 
+    # --------------------------------------------------
+    # TREE COVER
+    # --------------------------------------------------
+
+    "more tree cover": ("tree cover", 10.0),
+    "less tree cover": ("tree cover", -10.0),
+
+    # --------------------------------------------------
+    # GRASSLAND
+    # --------------------------------------------------
+
+    "more grassland": ("grassland", 1.0),
+    "less grassland": ("grassland", -1.0),
+
+    # --------------------------------------------------
+    # IMPERVIOUSNESS / URBANIZATION
+    # --------------------------------------------------
+
+    "urbanized": ("imperviousness", 10.0),
+    "urbanised": ("imperviousness", 10.0),
+    "more urbanization": ("imperviousness", 10.0),
+    "more urbanisation": ("imperviousness", 10.0),
+}
 
 # ======================================================
 # QUALITATIVE ADJECTIVES

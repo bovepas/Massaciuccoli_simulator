@@ -420,28 +420,7 @@ def handle_comparison(
             (feature, None, impact)
         )
 
-    # ==================================================
-    # COMPARATIVE STATEMENT
-    # ==================================================
 
-    comparative_statement = ""
-
-    primary_a = list(
-        analysis_A["primary_drivers"].keys()
-    )
-
-    primary_b = list(
-        analysis_B["primary_drivers"].keys()
-    )
-
-    if primary_a and primary_b:
-
-        comparative_statement = (
-            f"Compared to the "
-            f"{primary_b[0].lower()} scenario, "
-            f"the {primary_a[0].lower()} scenario "
-            f"shows different ecosystem stress dynamics. "
-        )
 
     # ==================================================
     # RAG
@@ -452,9 +431,7 @@ def handle_comparison(
         delta=delta
     )
 
-    interpretation = (
-        comparative_statement + rag_text
-    )
+    interpretation = rag_text
 
     # ==================================================
     # SUMMARY

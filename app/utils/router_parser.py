@@ -6,13 +6,45 @@ import re
 
 
 VARIABLES = [
+
+    # Climate
     "temperature",
+    "warming",
+    "heat",
+
     "precipitation",
-    "biodiversity",
-    "tree cover",
-    "grassland",
+    "rainfall",
+    "rain",
+
     "evapotranspiration",
-    "productivity"
+    "evaporation",
+
+    # Biodiversity
+    "biodiversity",
+    "species richness",
+    "species",
+
+    # Vegetation / habitat
+    "tree cover",
+    "forest cover",
+    "forest",
+
+    "grassland",
+
+    # Productivity
+    "productivity",
+    "phenology",
+    "vegetation productivity",
+
+    # Urbanization
+    "imperviousness",
+    "urbanization",
+    "urbanisation",
+    "urban expansion",
+
+    # Land use
+    "land use",
+    "land cover"
 ]
 
 

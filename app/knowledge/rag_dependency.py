@@ -1,16 +1,24 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Dependency Explanation — v13 (epistemically grounded dependency reasoning)
+RAG Dependency Explanation — v14
 
-✔ Uses dependency evidence
-✔ Separates statistical interaction from ecological mechanisms
-✔ KB-grounded ecological interpretation
-✔ Strong uncertainty handling
-✔ Preserves existing architecture
+✔ Reduced prompt verbosity
+✔ Smaller retrieval context
+✔ Cleaner dependency grounding
+✔ Faster generation
+✔ Preserved uncertainty handling
+✔ More compact scientific explanations
 """
 
 from knowledge.rag_pipeline import generate_answer
+
+
+# ======================================================
+# CONFIG
+# ======================================================
+
+MAX_CONTEXT_CHARS = 1000
 
 
 # ======================================================
@@ -63,10 +71,10 @@ No quantitative dependency evidence available.
     return f"""
 DEPENDENCY EVIDENCE:
 
-- Dependency strength:
+- Strength:
   {dependency_info.get('strength')}
 
-- Dependency score:
+- Score:
   {dependency_info.get('score')}
 
 - Interaction type:
@@ -91,7 +99,7 @@ def generate_dependency_explanation(
     dependency_info=None
 ) -> str:
 
-    print("\n[RAG-DEPENDENCY v13] START")
+    print("\n[RAG-DEPENDENCY v14] START")
 
     target_for_query = normalize_target_for_query(
         target
@@ -108,78 +116,39 @@ def generate_dependency_explanation(
     if target and target != "risk_score":
 
         extra_prompt = f"""
-You are analyzing interactions within a lake ecosystem.
+You are an environmental scientist.
 
-TASK:
-Explain how {source} influences {target}.
+QUESTION:
+How does {source} influence {target}?
 
+MODEL RESULTS:
 {dependency_block}
 
-STRICT REQUIREMENTS:
-- You MUST use information from the provided context
-- You MUST explicitly refer to BOTH {source} and {target}
-- You MUST ground ecological mechanisms ONLY in the retrieved context
-- You MUST use the dependency evidence as a quantitative constraint
-- You MUST NOT contradict the dependency evidence
-- You MUST avoid unsupported causal claims
+TASK
 
-DEPENDENCY INTERPRETATION:
+Provide a concise scientific explanation
+of the observed ecological association.
 
-- The dependency evidence ONLY measures
-  statistical interaction strength between variables.
+Use the scientific knowledge base to
+describe possible ecological mechanisms.
 
-- The dependency score does NOT prove
-  direct causality.
+Interpret the relationship as an association,
+not as direct causality.
 
-- Ecological mechanisms MUST come ONLY
-  from the retrieved context.
+Use cautious scientific language such as:
+- "is associated with"
+- "may contribute to"
+- "appears related to"
 
-- Statistical interaction strength
-  MUST NOT be described as proven causality.
+Focus on:
+- biodiversity
+- hydrology
+- climate interactions
+- ecosystem stress
 
-- Avoid verbs implying causal certainty such as:
-  "drives"
-  "determines"
-  "directly causes"
-  "controls"
+Write 3–4 concise sentences.
 
-- Prefer cautious language such as:
-  "is associated with"
-  "may contribute to"
-  "is linked to"
-  "appears related to"
-
-- Clearly distinguish between:
-  • modeled statistical interaction
-  • ecological mechanisms discussed in the literature
-
-- Strong dependencies:
-  • indicate stronger modeled interactions
-  • but do NOT automatically imply direct causation
-
-- Moderate dependencies:
-  • may reflect indirect or context-dependent interactions
-
-- Weak dependencies:
-  • should be interpreted cautiously
-  • may reflect limited influence or noisy interactions
-
-- Unsupported dependencies:
-  • explicitly state that quantitative support is limited
-  • avoid forcing explanations
-
-CONTEXT USAGE:
-- Prefer mechanisms grounded in retrieved documents
-- Refer to hydrology, biodiversity, vegetation, climate, or nutrient dynamics when relevant
-- Avoid generic textbook ecology
-
-STYLE:
-- Scientific but readable
-- Natural language
-- No introductory phrases like:
-  "As an environmental scientist..."
-- 3–5 sentences
-- Suitable for both academic and non-technical users
+Answer:
 """
 
     # ======================================================
@@ -189,49 +158,34 @@ STYLE:
     else:
 
         extra_prompt = f"""
-You are analyzing interactions within a lake ecosystem.
+You are an environmental scientist.
 
-TASK:
-Explain how {source} affects ecosystem risk.
+QUESTION:
+How does {source} affect ecosystem risk?
 
+MODEL RESULTS:
 {dependency_block}
 
-STRICT REQUIREMENTS:
-- You MUST use information from the provided context
-- You MUST explicitly refer to {source}
-- You MUST use the dependency evidence as a quantitative constraint
-- You MUST avoid unsupported causal claims
+TASK
 
-DEPENDENCY INTERPRETATION:
+Provide a concise scientific explanation
+of the observed ecological association.
 
-- The dependency evidence ONLY measures
-  modeled interaction strength.
+Use the scientific knowledge base to
+describe possible ecological mechanisms.
 
-- The dependency score does NOT prove
-  direct causality.
+Interpret the relationship as an association,
+not as direct causality.
 
-- Ecological mechanisms MUST come ONLY
-  from the retrieved context.
+Focus on:
+- ecosystem stress
+- biodiversity
+- hydrology
+- environmental pressures
 
-- Strong interaction scores:
-  • indicate stronger modeled relationships
-  • but NOT guaranteed direct ecological causation
+Write 3–4 concise sentences.
 
-- Weak or unsupported interactions:
-  • should be interpreted cautiously
-  • may indicate limited evidence
-
-DOMAIN REQUIREMENTS:
-- Explicitly discuss ecosystem stressors when relevant
-- Prefer concrete mechanisms from the retrieved context
-- Refer to hydrological dynamics, biodiversity, vegetation, or climate pressures when relevant
-
-STYLE:
-- Scientific but readable
-- Natural language
-- No introductory phrases like:
-  "As an environmental scientist..."
-- 3–5 sentences
+Answer:
 """
 
     # ======================================================
@@ -246,13 +200,7 @@ STYLE:
         lake ecosystem
         {source}
         {target_for_query}
-
-        interaction dynamics
-        hydrology
-        biodiversity
-        nutrient loading
-        climate processes
-        ecosystem stress
+        biodiversity interaction
         """
 
     print("[RAG] Final query:")
@@ -275,7 +223,7 @@ STYLE:
         print("\n[RAG-DEPENDENCY] Output:")
         print(answer)
 
-        print("[RAG-DEPENDENCY v13] END\n")
+        print("[RAG-DEPENDENCY v14] END\n")
 
         return answer
 
