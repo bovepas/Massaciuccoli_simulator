@@ -85,7 +85,9 @@ def generate_assessment_explanation(
     drivers: list,
     primary_drivers: dict = None,
     secondary_responses: dict = None,
-    risk_delta: float = None
+    risk_delta: float = None,
+    features: list = None
+
 ):
 
     print("\n[RAG-ASSESSMENT v3] START")
@@ -167,6 +169,7 @@ def generate_assessment_explanation(
 
     print("\n[RAG] RISK DELTA")
     print(risk_delta)
+
 
     # --------------------------------------------------
     # PROMPT

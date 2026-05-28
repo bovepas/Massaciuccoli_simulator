@@ -449,7 +449,25 @@ def handle_importance(
 
             for d in negative
         ])
+    # ======================================================
+    # SEMANTIC FEATURES
+    # ======================================================
 
+    semantic_features = [
+
+        d["name"]
+
+        for d in top
+    ]
+
+    print(
+        "[DEBUG] semantic_features:"
+    )
+
+    print(
+        semantic_features
+    )
+    
     # ======================================================
     # RAG
     # ======================================================
@@ -459,7 +477,8 @@ def handle_importance(
         explanation = generate_importance_explanation(
             top,
             question,
-            group_scores=group_scores
+            group_scores=group_scores,
+            features=semantic_features
         )
 
     except Exception as e:

@@ -189,7 +189,9 @@ def prioritize_modified_features(
 
     return {
         "primary": primary,
-        "secondary": secondary
+        "secondary": secondary,
+        "modified": list(modified_candidates)
+
     }
 
 
@@ -333,6 +335,8 @@ def handle_assessment(
 
     secondary_drivers = driver_groups["secondary"]
 
+    modified_features = driver_groups["modified"]
+
     # --------------------------------------------------
     # Backward-compatible flat list
     # --------------------------------------------------
@@ -372,8 +376,8 @@ def handle_assessment(
             drivers=rag_drivers,
             primary_drivers=primary_drivers,
             secondary_responses=secondary_drivers,
-            risk_delta=risk_delta
-        )
+            risk_delta=risk_delta,
+            features=modified_features        )
 
     except Exception as e:
 

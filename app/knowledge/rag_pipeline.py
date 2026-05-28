@@ -26,6 +26,10 @@ from utils.logger import (
     log_data
 )
 
+from utils.feature_semantics import (
+    build_semantic_context
+)
+
 
 # ======================================================
 # CONFIG
@@ -167,6 +171,7 @@ def fallback_answer(question: str):
 
 def generate_answer(
     question: str,
+    features=None,
     extra_prompt: str = ""
 ):
 
@@ -236,12 +241,35 @@ def generate_answer(
 
     start_timer("prompt_building")
 
+    # ==================================================
+    # SEMANTIC CONTEXT
+    # ==================================================
+
+    semantic_context = ""
+
+    if features:
+
+        semantic_context = build_semantic_context(
+            features
+        )
+        
+        debug_print(
+            "\n[RAG] Semantic context:"
+        )
+
+        debug_print(
+            semantic_context
+        )
+        
+
     prompt = f"""
 You are an environmental scientist.
 
 TASK:
 Provide a clear and concise explanation
 based ONLY on the provided context.
+
+{semantic_context}
 
 {extra_prompt}
 

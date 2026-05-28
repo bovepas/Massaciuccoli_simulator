@@ -15,7 +15,9 @@ RAG — IMPORTANCE EXPLANATION v22
 import re
 
 from knowledge.rag_pipeline import generate_answer
-
+from utils.feature_semantics import (
+    build_semantic_context
+)
 
 # ======================================================
 # CLEAN OUTPUT
@@ -160,7 +162,9 @@ def generate_importance_explanation(
     drivers,
     question,
     mode="absolute",
-    group_scores=None
+    group_scores=None,
+    features=None
+
 ):
 
     print("\n[RAG-IMPORTANCE v22] START\n")
@@ -368,6 +372,7 @@ RISK-REDUCING DRIVERS:
     print("[DEBUG] RAG query:")
     print(rag_query)
 
+
     # ======================================================
     # PROMPT
     # ======================================================
@@ -416,6 +421,8 @@ Answer:
         result = generate_answer(
 
             question=rag_query,
+
+            features=features,
 
             extra_prompt=prompt
         )

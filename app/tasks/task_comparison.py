@@ -420,7 +420,21 @@ def handle_comparison(
             (feature, None, impact)
         )
 
+    # ==================================================
+    # SEMANTIC FEATURES
+    # ==================================================
 
+    semantic_features = list(
+        set(
+            list(normalized_A.keys()) +
+            list(normalized_B.keys())
+        )
+    )
+
+    debug_print(
+        "[DEBUG] Semantic features:",
+        semantic_features
+    )
 
     # ==================================================
     # RAG
@@ -428,7 +442,9 @@ def handle_comparison(
 
     rag_text = generate_comparison_explanation(
         drivers=structured_drivers,
-        delta=delta
+        delta=delta,
+        features=semantic_features
+
     )
 
     interpretation = rag_text

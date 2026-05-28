@@ -12,6 +12,9 @@ RAG Drivers — v8
 """
 
 from tools.llm_client import call_llm
+from utils.feature_semantics import (
+    build_semantic_context
+)
 
 DEBUG = True
 
@@ -28,7 +31,8 @@ def debug_print(*args):
 
 def build_prompt(
     target,
-    drivers
+    drivers,
+    semantic_context
 ):
 
     drivers_text = "\n".join([
@@ -48,6 +52,9 @@ TARGET VARIABLE:
 
 OBSERVED ENVIRONMENTAL ASSOCIATIONS:
 {drivers_text}
+
+ECOLOGICAL INTERPRETATION NOTES:
+{semantic_context}
 
 TASK:
 Provide a concise scientific interpretation
@@ -152,16 +159,37 @@ def fallback_explanation(
 
 def generate_drivers_explanation(
     target,
-    drivers
+    drivers,
+    features=None
 ):
 
     print("\n[RAG-DRIVERS v8] START")
 
     try:
+        # ======================================================
+        # SEMANTIC CONTEXT
+        # ======================================================
+
+        semantic_context = ""
+
+        if features:
+
+            semantic_context = build_semantic_context(
+                features
+            )
+
+            print(
+                "\n[RAG] SEMANTIC CONTEXT"
+            )
+
+            print(
+                semantic_context
+            )
 
         prompt = build_prompt(
             target,
-            drivers
+            drivers,
+            semantic_context
         )
 
         debug_print(

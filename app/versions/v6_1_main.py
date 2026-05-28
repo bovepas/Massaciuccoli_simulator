@@ -107,7 +107,12 @@ def asks_driver_analysis(q: str):
         "top variables",
         "which factors",
         "which variables",
-        "what drives"
+        "what drives",
+        "associated with",
+        "associated",
+        "related to",
+        "linked to",
+        "correlated with"
     ]
 
     if any(p in q for p in patterns):

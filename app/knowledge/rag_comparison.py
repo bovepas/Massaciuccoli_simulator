@@ -15,6 +15,9 @@ RAG Comparison v10 — TRANSITION-AWARE ECOLOGICAL REASONING
 
 from tools.llm_client import call_llm
 from knowledge.retriever import retrieve_documents
+from utils.feature_semantics import (
+    build_semantic_context
+)
 
 DEBUG = True
 MAX_CONTEXT_CHARS = 1200
@@ -328,8 +331,12 @@ def is_coherent(base_text: str, generated: str):
 # RAG ENHANCEMENT
 # ======================================================
 
-def enhance_with_rag(base_text, drivers, delta):
-
+def enhance_with_rag(
+    base_text,
+    drivers,
+    delta,
+    features=None
+):
     query = build_transition_query(
         drivers,
         delta
@@ -341,6 +348,26 @@ def enhance_with_rag(base_text, drivers, delta):
     retrieved, _ = retrieve_documents(query)
 
     context = build_context(retrieved)
+    
+    # --------------------------------------------------
+    # SEMANTIC CONTEXT
+    # --------------------------------------------------
+
+    semantic_context = ""
+
+    if features:
+
+        semantic_context = build_semantic_context(
+            features
+        )
+
+        debug_print(
+            "\n[RAG] SEMANTIC CONTEXT"
+        )
+
+        debug_print(
+            semantic_context
+        )    
 
     debug_print("[RAG] Docs:", len(retrieved))
 
@@ -355,6 +382,9 @@ MODEL RESULTS:
 
 SCENARIO DRIVERS:
 {drivers}
+
+ECOLOGICAL INTERPRETATION NOTES:
+{semantic_context}
 
 SCIENTIFIC KNOWLEDGE BASE:
 {context}
@@ -411,7 +441,11 @@ Answer:
 # MAIN
 # ======================================================
 
-def generate_comparison_explanation(drivers, delta):
+def generate_comparison_explanation(
+    drivers,
+    delta,
+    features=None
+):
 
     print("\n[RAG-COMPARISON v10] START")
 
@@ -425,7 +459,9 @@ def generate_comparison_explanation(drivers, delta):
     final = enhance_with_rag(
         base,
         drivers,
-        delta
+        delta,
+        features=features
+
     )
 
     debug_print("[FINAL]:", final)

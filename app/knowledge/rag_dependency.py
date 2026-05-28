@@ -96,7 +96,8 @@ def generate_dependency_explanation(
     question: str,
     source=None,
     target=None,
-    dependency_info=None
+    dependency_info=None,
+    features=None
 ) -> str:
 
     print("\n[RAG-DEPENDENCY v14] START")
@@ -216,8 +217,12 @@ Answer:
     try:
 
         answer = generate_answer(
-            rag_query,
-            extra_prompt
+
+            question=rag_query,
+
+            features=features,
+
+            extra_prompt=extra_prompt
         )
 
         print("\n[RAG-DEPENDENCY] Output:")

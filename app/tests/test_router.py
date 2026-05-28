@@ -121,7 +121,7 @@ TESTS = [
     ("What drives precipitation change?", "drivers"),
 
     # 🔥 NEW DRIVERS
-    ("What factors drive biodiversity loss in the lake system?", "drivers"),
+    ("What environmental factors are associated with reduced precipitation in the lake ecosystem?", "drivers"),
 
     # ======================
     # ENM

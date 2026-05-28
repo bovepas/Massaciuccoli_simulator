@@ -149,10 +149,37 @@ def handle_drivers(question: str):
         "target": target,
         "drivers": top
     }
+    # ======================================================
+    # SEMANTIC FEATURES
+    # ======================================================
+
+    semantic_features = [
+
+        target
+
+    ] + [
+
+        d["feature"]
+
+        for d in top
+    ]
+
+    print(
+        "[DEBUG] semantic_features:"
+    )
+
+    print(
+        semantic_features
+    )
+
 
     # 🔥 RAG
-    explanation = generate_drivers_explanation(target, top)
-
+    explanation = generate_drivers_explanation(
+        target,
+        top,
+        features=semantic_features
+    )
+    
     # ======================================================
     # 🔥 POST-PROCESS FIX (GRAMMAR SAFE)
     # ======================================================

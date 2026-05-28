@@ -422,6 +422,27 @@ def handle_dependency(question, route):
     print(dependency_info)
 
     # --------------------------------------------------
+    # SEMANTIC FEATURES
+    # --------------------------------------------------
+
+    semantic_features = []
+
+    if source:
+        semantic_features.append(source)
+
+    semantic_features.extend(
+        resolved_targets
+    )
+
+    print(
+        "[DEBUG] semantic_features:"
+    )
+
+    print(
+        semantic_features
+    )
+
+    # --------------------------------------------------
     # RAG INTERPRETATION
     # --------------------------------------------------
 
@@ -433,7 +454,10 @@ def handle_dependency(question, route):
 
         target=target,
 
-        dependency_info=dependency_info
+        dependency_info=dependency_info,
+
+        features=semantic_features
+
     )
 
     # --------------------------------------------------
