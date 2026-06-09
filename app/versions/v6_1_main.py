@@ -51,16 +51,29 @@ def is_data_query(q: str):
 # TARGET DETECTION
 # ======================================================
 
+ECOSYSTEM_STATE_TERMS = [
+
+    "ecosystem risk",
+    "ecosystem health",
+    "ecosystem condition",
+    "ecosystem functioning",
+    "ecosystem resilience",
+    "ecosystem vulnerability"
+
+]
+
 def detect_target(q: str):
 
     risk_patterns = [
-        "ecosystem risk",
         "risk level",
         "risk score",
         "risk"
     ]
 
-    if any(p in q for p in risk_patterns):
+    if (
+        any(p in q for p in risk_patterns)
+        or any(p in q for p in ECOSYSTEM_STATE_TERMS)
+    ):
         return "risk"
 
     if "ecosystem" in q:
@@ -74,6 +87,8 @@ def detect_target(q: str):
         "tree cover",
         "grassland",
         "evapotranspiration",
+        "land use",
+        "land cover",
         "productivity"
     ]
 
@@ -112,7 +127,23 @@ def asks_driver_analysis(q: str):
         "associated",
         "related to",
         "linked to",
-        "correlated with"
+        "strongest impact",
+        "greatest impact",
+        "largest impact",
+        "highest impact",
+        "priority",
+        "priorities",
+        "prioritize",
+        "prioritized",
+        "should be prioritized",
+        "main factors",
+        "top factors",
+        "correlated with",
+        "explains most",
+        "best explains",
+        "most important for",
+        "contributes most",
+        "contribute most"
     ]
 
     if any(p in q for p in patterns):
@@ -125,7 +156,12 @@ def asks_driver_analysis(q: str):
     ranking_patterns = [
         "most",
         "top",
-        "main"
+        "main",
+
+        "strongest",
+        "greatest",
+        "highest",
+        "largest"
     ]
 
     variable_patterns = [
@@ -152,6 +188,11 @@ def asks_risk_estimation(q: str):
     patterns = [
         "risk level",
         "ecosystem risk",
+        "ecosystem health",
+        "ecosystem condition",
+        "ecosystem functioning",
+        "ecosystem resilience",
+        "ecosystem vulnerability",
         "estimate risk",
         "estimate the ecosystem risk",
         "assess ecosystem risk",
@@ -176,7 +217,18 @@ def has_comparison(q: str):
         " vs ",
         " versus ",
         "compare",
-        "comparison"
+        "comparison",
+        "which is worse",
+        "which is better",
+        "which contributes more",
+        "which contributes most",
+        "which has greater impact",
+        "which has the greater impact",
+        "which has stronger impact",
+        "which has a stronger effect",
+        "which is more effective",
+        "more effective",
+        "greater ecological impact"
     ]
 
     if any(p in q for p in patterns):
@@ -198,7 +250,13 @@ def asks_dependency(q: str):
         "affect",
         "influence",
         "impact",
-        "effect"
+        "effect",
+        "cause",
+        "causes",
+        "determine",
+        "determines",
+        "control",
+        "controls"
     ]
 
     if any(p in q for p in dependency_patterns):
@@ -348,8 +406,8 @@ print(
 def asks_enm(q: str):
 
     patterns = [
-        "habitat",
-        "suitability",
+        "habitat suitability",
+        "suitable habitat",
         "species distribution",
         "ecological niche"
     ]
@@ -465,9 +523,10 @@ def route_question(question: str):
     # --------------------------------------------------
 
     if (
-        range_detected
-        and not baseline_reference
+        scenario_detected
+        and num_modified == 1
         and target == "risk"
+        and not comparison_detected
     ):
 
         scores["delta"] += 350
@@ -479,6 +538,8 @@ def route_question(question: str):
     if (
         scenario_detected
         and risk_estimation
+        and num_modified > 1
+
     ):
 
         scores["assessment"] += 300
@@ -499,11 +560,7 @@ def route_question(question: str):
     # DEPENDENCY
     # --------------------------------------------------
 
-    if (
-        dependency_detected
-        and target != "risk"
-    ):
-
+    if dependency_detected:
         scores["dependency"] += 180
 
     # --------------------------------------------------
@@ -538,8 +595,8 @@ def route_question(question: str):
 
     if (
         delta_reasoning
-        and range_detected
-        and not baseline_reference
+        and scenario_detected
+        and num_modified == 1
         and target == "risk"
     ):
 

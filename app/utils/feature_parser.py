@@ -45,10 +45,10 @@ FEATURE_MAP = {
     # BIODIVERSITY
     # --------------------------------------------------
 
-    "biodiversity":
+    "species richness":
         "Number of species potentially living in the cell",
 
-    "species richness":
+    "biodiversity":
         "Number of species potentially living in the cell",
 
     "species":
@@ -58,36 +58,39 @@ FEATURE_MAP = {
     # VEGETATION / HABITAT
     # --------------------------------------------------
 
-    "tree cover":
-        "Density of tree cover",
-
     "tree cover change":
         "Change in tree cover density in the past decade",
 
-    "grassland":
-        "Presence of grassland",
+    "tree cover":
+        "Density of tree cover",
 
     "grassland change":
         "Change in grassland presence in the past decade",
+
+    "grassland cover":
+        "Presence of grassland",
+
+    "grassland":
+        "Presence of grassland",
 
     # --------------------------------------------------
     # PRODUCTIVITY
     # --------------------------------------------------
 
-    "phenology":
+    "vegetation productivity":
         "Index of total productivity by plant phenology",
 
     "productivity":
         "Index of total productivity by plant phenology",
 
-    "vegetation productivity":
+    "phenology":
         "Index of total productivity by plant phenology",
 
     # --------------------------------------------------
     # URBANIZATION
     # --------------------------------------------------
 
-    "imperviousness":
+    "urban expansion":
         "Density change in land imperviousness",
 
     "urbanization":
@@ -96,21 +99,21 @@ FEATURE_MAP = {
     "urbanisation":
         "Density change in land imperviousness",
 
-    "urban expansion":
+    "imperviousness":
         "Density change in land imperviousness",
 
     # --------------------------------------------------
     # LAND USE
     # --------------------------------------------------
 
+    "land use change":
+        "Change in land use and cover in the past decade",
+
     "land use":
         "Land use and cover",
 
     "land cover":
-        "Land use and cover",
-
-    "land use change":
-        "Change in land use and cover in the past decade"
+        "Land use and cover"
 }
 
 
@@ -302,7 +305,7 @@ def parse_features(question: str, return_metadata=False):
     numeric_pattern = rf"""
     ({FEATURE_REGEX})
     \s+
-    (increases|decreases)
+    (increases|decreases|declines|decline)
     \s+by\s+
     ([+\-]?\d+\.?\d*)
     """
@@ -317,7 +320,7 @@ def parse_features(question: str, return_metadata=False):
 
         value = float(value)
 
-        if direction == "decreases":
+        if direction in ["decreases", "decline", "declines"]:
             value = -value
 
         _apply_delta(
@@ -534,10 +537,11 @@ def parse_features(question: str, return_metadata=False):
 
     qualitative_pattern = rf"""
     ({FEATURE_REGEX})
-    .*?
-    (increase|decrease|increases|decreases)
-    .*?
-    (slightly|moderately|significantly|strongly|severely|extremely)
+    \s+
+    (?:also\s+)?
+    (increase|decrease|increases|decreases|decline|declines)
+    \s+
+    (slightly|moderately|significantly|strongly|severely|extremely|substantially)
     """
 
     qualitative_matches = re.findall(
@@ -545,6 +549,8 @@ def parse_features(question: str, return_metadata=False):
         q,
         flags=re.VERBOSE
     )
+
+    print("QUALITATIVE MATCHES:", qualitative_matches)
 
     for var, direction, magnitude in qualitative_matches:
 
@@ -565,7 +571,7 @@ def parse_features(question: str, return_metadata=False):
     # ==================================================
 
     adjective_pattern = r"""
-    (slightly|moderately|significantly|strongly|severely|extremely)
+    (slightly|moderately|significantly|strongly|severely|extremely|substantially)
     \s+
     (warmer|hotter|cooler|drier|dryer|wetter)
     """
@@ -624,7 +630,7 @@ def parse_features(question: str, return_metadata=False):
 
         mapped = FEATURE_MAP[var]
 
-        if f"{var} increases" in q:
+        if re.search(rf"\b{re.escape(var)}\b\s+increases\b", q):
 
             if mapped not in explicitly_modified:
 
@@ -632,7 +638,23 @@ def parse_features(question: str, return_metadata=False):
 
                 modified_features.add(mapped)
 
-        if f"{var} decreases" in q:
+        if re.search(rf"\b{re.escape(var)}\b\s+decreases\b", q):
+
+            if mapped not in explicitly_modified:
+
+                features[mapped] -= 1.0
+
+                modified_features.add(mapped)
+
+        if re.search(rf"\b{re.escape(var)}\b\s+reduced\b", q):
+
+            if mapped not in explicitly_modified:
+
+                features[mapped] -= 1.0
+
+                modified_features.add(mapped)
+
+        if re.search(rf"\b{re.escape(var)}\b\s+is\s+reduced\b", q):
 
             if mapped not in explicitly_modified:
 
@@ -665,8 +687,10 @@ def parse_features(question: str, return_metadata=False):
 
         "qualitative_changes": qualitative_changes
     }
-
+    print("MODIFIED FEATURES:", modified_features)
+    print("NUM MODIFIED:", len(modified_features))
     if return_metadata:
         return metadata
+   
 
     return features
