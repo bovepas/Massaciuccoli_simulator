@@ -19,6 +19,13 @@ from utils.feature_semantics import (
     build_semantic_context
 )
 
+from config.llm_profiles import (
+    LLM_PROFILE,
+    LLM_STYLE
+)
+
+
+
 # ======================================================
 # CLEAN OUTPUT
 # ======================================================
@@ -168,6 +175,11 @@ def generate_importance_explanation(
 ):
 
     print("\n[RAG-IMPORTANCE v22] START\n")
+    print(
+    f"[RAG-IMPORTANCE] "
+    f"profile={LLM_PROFILE} "
+    f"style={LLM_STYLE}"
+)
 
     if not drivers:
 

@@ -58,19 +58,140 @@ def compute_baseline(dataset: pd.DataFrame) -> dict:
 # BUILD INPUT DF
 # ======================================================
 
-def build_input_df(values: dict, dataset: pd.DataFrame) -> pd.DataFrame:
+def build_input_df(
+    values: dict,
+    dataset: pd.DataFrame,
+    interpret_percentages=False
+) -> pd.DataFrame:
 
     baseline = compute_baseline(dataset)
 
-    baseline.update(values)
+    # ----------------------------------
+    # Standard behavior
+    # ----------------------------------
 
+    if not interpret_percentages:
+
+        baseline.update(values)
+
+    # ----------------------------------
+    # Scenario behavior
+    # ----------------------------------
+
+    else:
+
+        for k, v in values.items():
+
+            # ----------------------------------
+            # New structured modifications
+            # ----------------------------------
+
+            if isinstance(v, dict):
+
+                mod_type = v.get("type")
+
+                mod_value = v.get("value")
+                print(
+                    "[DEBUG]",
+                    k,
+                    mod_type,
+                    mod_value
+                )
+
+                if (
+                    mod_type == "percentage_change"
+                    and k in baseline
+                ):
+
+                    baseline[k] = (
+                        baseline[k]
+                        * (1 + mod_value / 100)
+                    )
+
+                elif (
+                    mod_type == "numeric"
+                    and k in baseline
+                ):
+
+                    baseline[k] += mod_value
+
+                else:
+
+                    baseline[k] = mod_value
+
+                continue
+
+            # ----------------------------------
+            # Legacy behaviour
+            # ----------------------------------
+
+            if (
+                k in baseline
+                and isinstance(v, (int, float))
+            ):
+
+                if abs(v) <= 5:
+
+                    baseline[k] += v
+
+                else:
+
+                    baseline[k] *= (
+                        1 + v / 100
+                    )
+
+            else:
+
+                baseline[k] = v
+
+    # print("\n[DEBUG] Scenario values:")
+    # print(values)
+
+    # print("\n[DEBUG] Final scenario:")
+    # print(baseline)
+    
     df = pd.DataFrame([baseline])
 
-    df = df[NUM_FEATURES + CAT_FEATURES]
+    df = df[
+        NUM_FEATURES + CAT_FEATURES
+    ]
 
     df = preprocess_semantic_features(df)
 
     return df
+
+# ======================================================
+# FEATURE STATISTICS
+# ======================================================
+
+def compute_feature_statistics(
+    dataset: pd.DataFrame
+) -> dict:
+
+    dataset = clean_dataset(dataset)
+
+    stats = {}
+
+    for col in NUM_FEATURES:
+
+        values = pd.to_numeric(
+            dataset[col],
+            errors="coerce"
+        )
+
+        stats[col] = {
+
+            "mean": float(
+                values.mean()
+            ),
+
+            "std": float(
+                values.std()
+            )
+        }
+
+    return stats
+
 
 
 # ======================================================

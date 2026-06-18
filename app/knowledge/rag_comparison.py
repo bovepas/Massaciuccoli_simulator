@@ -374,8 +374,6 @@ def enhance_with_rag(
     prompt = f"""
 You are an environmental scientist.
 
-QUESTION:
-Compare ecological risk between two ecosystem scenarios.
 
 MODEL RESULTS:
 {base_text}
@@ -391,26 +389,47 @@ SCIENTIFIC KNOWLEDGE BASE:
 
 TASK
 
-Provide a short scientific interpretation
-of the ecological differences between
-the two scenarios.
+The model comparison has already been computed.
 
-Use the scientific knowledge base to
-explain possible ecological mechanisms
-associated with the identified drivers.
+Do NOT compare the scenarios again.
 
-Focus on:
-- ecosystem resilience
-- hydrology
-- biodiversity
-- environmental stress
+Do NOT determine which scenario is better.
 
-Interpret associations rather than
-assuming direct causality.
+Do not repeat the model result.
 
-Write a single compact paragraph.
+Start directly from the ecological interpretation.
 
-Use approximately 4–5 sentences.
+Explain the ecological implications of the identified drivers
+within the current ecosystem scenario.
+
+Use only concepts that are explicitly supported
+by the retrieved scientific knowledge and by the
+semantic descriptions of the variables.
+
+Do NOT introduce:
+- additional stressors
+- management actions
+- land-use changes
+- water-quality effects
+- conservation recommendations
+
+unless they explicitly appear in the retrieved context.
+
+Do not infer interactions or relationships
+between the drivers unless they are explicitly
+supported by the retrieved knowledge.
+
+Interpret ecological associations rather than
+assuming direct causal relationships.
+
+If the retrieved knowledge contains only limited
+ecological information, do not elaborate further.
+
+Write a single compact paragraph of 2-3 concise sentences.
+
+When the retrieved knowledge is limited,
+prefer a shorter explanation rather than
+adding unsupported ecological details
 
 Answer:
 """

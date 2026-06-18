@@ -63,6 +63,7 @@ def infer_simple_range(question):
         "tree cover",
         "impervious",
         "productivity",
+        "grassland",
         "land use"
     ]
 
@@ -123,6 +124,8 @@ def recover_feature_from_question(question):
 
     if "precipitation" in q:
         return normalize_feature_name("precipitation")
+    if "grassland" in q:
+        return normalize_feature_name("grassland")
 
     return None
 
@@ -131,83 +134,303 @@ def recover_feature_from_question(question):
 # MAIN
 # ======================================================
 
-def handle_delta(question, range_info, model):
+def handle_delta(
+    question,
+    range_info,
+    features,
+    parsed,
+    model
+):
 
     print("\n========== DELTA TASK START ==========")
 
-    # 🔥 FALLBACK ATTIVO
-    if not range_info:
-        print("[DEBUG] No range detected → using implicit range")
-        range_info = infer_simple_range(question)
+    # --------------------------------------------------
+    # Build implicit delta from parsed features
+    # --------------------------------------------------
 
-        if not range_info:
-            return {
-                "summary": "Range not recognized",
-                "data": {},
-                "drivers": [],
-                "interpretation": "Could not parse range"
+    if not range_info and features:
+
+        print(
+            "[DEBUG] Building delta from parsed modifications"
+        )
+
+        mods = parsed.get(
+            "modifications",
+            []
+        )
+
+        if mods:
+
+            mod = mods[0]
+
+            feature = mod["variable"]
+
+            value = mod["value"]
+
+            print(
+                "[DEBUG] Modification:",
+                mod
+            )
+
+            print(
+                "[DEBUG] Delta type:",
+                mod.get("type")
+            )
+            
+            range_info = {
+
+                "feature": feature,
+
+                "mode": "baseline_delta",
+
+                "delta": value
             }
 
-    feature = range_info["feature"]
-    v_from = range_info["from"]
-    v_to = range_info["to"]
+    # --------------------------------------------------
+    # Legacy fallback
+    # --------------------------------------------------
 
-    # 🔥 RECOVERY
-    if feature is None:
-        print("[DEBUG] Recovering feature from question...")
-        feature = recover_feature_from_question(question)
+    if not range_info:
+
+        print(
+            "[DEBUG] No range detected → using implicit range"
+        )
+
+        range_info = infer_simple_range(
+            question
+        )
+
+        if not range_info:
+
+            return {
+
+                "summary":
+                    "Range not recognized",
+
+                "data":
+                    {},
+
+                "drivers":
+                    [],
+
+                "interpretation":
+                    "Could not parse range"
+            }
+
+    # --------------------------------------------------
+    # Feature recovery
+    # --------------------------------------------------
+
+    feature = range_info.get(
+        "feature"
+    )
 
     if feature is None:
+
+        print(
+            "[DEBUG] Recovering feature from question..."
+        )
+
+        feature = recover_feature_from_question(
+            question
+        )
+
+    if feature is None:
+
         return {
-            "summary": "Feature not recognized",
-            "data": {},
-            "drivers": [],
-            "interpretation": "Could not identify the environmental variable."
+
+            "summary":
+                "Feature not recognized",
+
+            "data":
+                {},
+
+            "drivers":
+                [],
+
+            "interpretation":
+                "Could not identify the environmental variable."
         }
+
+    # --------------------------------------------------
+    # Build scenarios
+    # --------------------------------------------------
 
     base = get_base_scenario()
 
-    scenario_a = base.copy()
-    scenario_b = base.copy()
+    # ----------------------------------------------
+    # Case 1:
+    # baseline → modified baseline
+    # ----------------------------------------------
 
-    scenario_a[feature] = v_from
-    scenario_b[feature] = v_to
+    if range_info.get(
+        "mode"
+    ) == "baseline_delta":
 
-    print(f"[DEBUG] Feature: {feature}")
-    print(f"[DEBUG] Range: {v_from} → {v_to}")
+        delta_value = range_info[
+            "delta"
+        ]
 
-    df_a = pd.DataFrame([scenario_a])
-    df_b = pd.DataFrame([scenario_b])
+        baseline_value = base[
+            feature
+        ]
 
-    score_a = float(model.predict(df_a)[0])
-    score_b = float(model.predict(df_b)[0])
+        scenario_a = base.copy()
+        scenario_b = base.copy()
 
-    delta = round(score_b - score_a, 3)
+        scenario_b[feature] = (
 
-    print(f"[DEBUG] Scores: {score_a} → {score_b} | Δ = {delta}")
+            baseline_value
 
-    drivers = [(feature, v_from, v_to)]
+            * (
 
-    risk_from = risk_level_from_score(score_a)
-    risk_to = risk_level_from_score(score_b)
+                1
+                + delta_value / 100
+            )
+        )
+
+        v_from = baseline_value
+
+        v_to = scenario_b[
+            feature
+        ]
+
+        print(
+
+            "[DEBUG] Baseline delta:",
+
+            baseline_value,
+
+            "->",
+
+            v_to
+        )
+
+    # ----------------------------------------------
+    # Case 2:
+    # explicit range
+    # ----------------------------------------------
+
+    else:
+
+        v_from = range_info[
+            "from"
+        ]
+
+        v_to = range_info[
+            "to"
+        ]
+
+        scenario_a = base.copy()
+        scenario_b = base.copy()
+
+        scenario_a[
+            feature
+        ] = v_from
+
+        scenario_b[
+            feature
+        ] = v_to
+
+    # --------------------------------------------------
+    # Prediction
+    # --------------------------------------------------
+
+    print(
+        f"[DEBUG] Feature: {feature}"
+    )
+
+    print(
+        f"[DEBUG] Range: {v_from} → {v_to}"
+    )
+
+    df_a = pd.DataFrame(
+        [scenario_a]
+    )
+
+    df_b = pd.DataFrame(
+        [scenario_b]
+    )
+
+    print("\n[DEBUG SCENARIO A]")
+    print(df_a.T)
+
+    print("\n[DEBUG SCENARIO B]")
+    print(df_b.T)
+
+    score_a = float(
+        model.predict(df_a)[0]
+    )
+
+    score_b = float(
+        model.predict(df_b)[0]
+    )
+
+    delta = round(
+        score_b - score_a,
+        3
+    )
+
+    # --------------------------------------------------
+    # Output
+    # --------------------------------------------------
+
+    drivers = [
+
+        (
+            feature,
+            v_from,
+            v_to
+        )
+    ]
+
+    risk_from = risk_level_from_score(
+        score_a
+    )
+
+    risk_to = risk_level_from_score(
+        score_b
+    )
 
     interpretation = generate_delta_explanation(
+
         question,
+
         drivers,
+
         delta
     )
 
-    print("========== DELTA TASK END ==========\n")
+    print(
+        "========== DELTA TASK END ==========\n"
+    )
 
     return {
-        "summary": "Change in ecosystem risk (range analysis)",
+
+        "summary":
+            "Change in ecosystem risk (range analysis)",
+
         "data": {
-            "score_from": round(score_a, 3),
-            "score_to": round(score_b, 3),
-            "delta": delta,
-            "risk_from": risk_from,
-            "risk_to": risk_to
+
+            "score_from":
+                round(score_a, 3),
+
+            "score_to":
+                round(score_b, 3),
+
+            "delta":
+                delta,
+
+            "risk_from":
+                risk_from,
+
+            "risk_to":
+                risk_to
         },
-        "drivers": drivers,
-        "interpretation": interpretation
+
+        "drivers":
+            drivers,
+
+        "interpretation":
+            interpretation
     }

@@ -39,6 +39,12 @@ from knowledge.rag_comparison import (
     generate_comparison_explanation
 )
 
+from utils.model_input_builder import (
+    compute_feature_statistics
+)
+
+
+
 DEBUG = True
 
 
@@ -124,11 +130,20 @@ def analyze_scenario(
         baseline_values,
         dataset
     )
+    print("\n[DEBUG] Scenario features:")
+    print(scenario_features)
+
+    print("\n[DEBUG] Baseline:")
+    print(compute_baseline(dataset))
 
     df_scenario = build_input_df(
         scenario_features,
-        dataset
+        dataset,
+        interpret_percentages=True
     )
+
+    print("\n[DEBUG] Scenario DF:")
+    print(df_scenario.T)
 
     # --------------------------------------------------
     # PREDICTIONS
@@ -293,6 +308,8 @@ def build_summary(score_a, score_b):
 # MAIN
 # ======================================================
 
+
+
 def handle_comparison(
     question,
     model,
@@ -300,6 +317,10 @@ def handle_comparison(
 ):
 
     print("\n========== COMPARISON TASK START ==========")
+
+    feature_stats = compute_feature_statistics(
+    dataset
+)
 
     # ==================================================
     # SAFETY
@@ -320,8 +341,11 @@ def handle_comparison(
     # PARSING
     # ==================================================
 
-    scenario_A, scenario_B = parse_comparison_scenarios(
-        question
+    scenario_A, scenario_B = (
+        parse_comparison_scenarios(
+            question,
+            feature_stats
+        )
     )
 
     debug_print(

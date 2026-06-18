@@ -142,18 +142,40 @@ def build_facts(drivers):
 
                 facts += [
                     "tree cover increases",
-                    "vegetation density increases",
-                    "habitat conditions may change",
-                    "ecosystem dynamics may be altered",
+                    "forest habitats may be better preserved",
+                    "ecosystem resilience may increase",
+                    "ecosystem structure may change",
                 ]
 
             else:
 
                 facts += [
                     "tree cover decreases",
-                    "vegetation density decreases",
-                    "habitat conditions may change",
-                    "ecosystem dynamics may be altered",
+                    "vegetation density may decrease",
+                    "habitat conditions may deteriorate",
+                    "ecosystem structure may change",
+                ]
+
+        # --------------------------------------------------
+        # GRASSLAND
+        # --------------------------------------------------
+
+        elif "grassland" in name:
+
+            if delta > 0:
+
+                facts += [
+                    "grassland extent increases",
+                    "open habitat availability may increase",
+                    "ecosystem composition may change",
+                ]
+
+            else:
+
+                facts += [
+                    "grassland extent decreases",
+                    "open habitat availability may decrease",
+                    "ecosystem composition may change",
                 ]
 
         # --------------------------------------------------
@@ -178,8 +200,79 @@ def build_facts(drivers):
                     "ecosystem stress may increase",
                 ]
 
-    # remove duplicates
-    return list(dict.fromkeys(facts))
+        # --------------------------------------------------
+        # PRODUCTIVITY
+        # --------------------------------------------------
+
+        elif "productivity" in name or "phenology" in name:
+
+            if delta > 0:
+
+                facts += [
+                    "vegetation productivity increases",
+                    "primary production may increase",
+                    "ecosystem functioning may change",
+                ]
+
+            else:
+
+                facts += [
+                    "vegetation productivity decreases",
+                    "primary production may decrease",
+                    "ecosystem functioning may change",
+                ]
+
+        # --------------------------------------------------
+        # IMPERVIOUSNESS / URBANIZATION
+        # --------------------------------------------------
+
+        elif "impervious" in name:
+
+            if delta > 0:
+
+                facts += [
+                    "land imperviousness increases",
+                    "surface sealing may increase",
+                    "hydrological processes may be altered",
+                ]
+
+            else:
+
+                facts += [
+                    "land imperviousness decreases",
+                    "surface sealing may decrease",
+                    "hydrological processes may change",
+                ]
+
+        # --------------------------------------------------
+        # LAND USE CHANGE
+        # --------------------------------------------------
+
+        elif "land use" in name:
+
+            if delta > 0:
+
+                facts += [
+                    "land use change increases",
+                    "ecosystem conditions may become more altered",
+                    "ecological dynamics may change",
+                ]
+
+            else:
+
+                facts += [
+                    "land use change decreases",
+                    "ecosystem conditions may remain more stable",
+                    "ecological dynamics may change",
+                ]
+
+    # --------------------------------------------------
+    # REMOVE DUPLICATES
+    # --------------------------------------------------
+
+    return list(
+        dict.fromkeys(facts)
+    )
 
 
 # ======================================================
@@ -193,23 +286,34 @@ def build_prompt(facts):
     )
 
     return f"""
-Rewrite the following facts into a concise environmental explanation.
+    Rewrite the following facts into a concise environmental explanation.
 
-FACTS:
-{fact_text}
+    FACTS:
+    {fact_text}
 
-RULES:
-- Use ONLY these facts
-- Combine them into 1–2 sentences
-- Do NOT introduce new concepts
-- Do NOT present associations as proven causal mechanisms
-- Distinguish between ecological interpretation and model prediction
-- Use cautious scientific language
-- Keep it concise and natural
-- No introductions
-- Do NOT independently invent ecosystem risk changes.
-- Risk predictions may be added separately by the system.
-"""
+    RULES:
+
+    - Use ONLY these facts.
+    - Do NOT introduce ecological processes that are not explicitly supported by the facts.
+    - Do NOT introduce new concepts.
+
+    - Avoid generic statements such as:
+    - overall ecosystem health
+    - environmental changes
+    - ecological balance
+    - ecosystem functioning
+
+    unless these concepts are explicitly supported by the provided facts.
+
+    - Combine the facts into 1–2 concise sentences.
+    - Do NOT present associations as proven causal mechanisms.
+    - Distinguish between ecological interpretation and model prediction.
+    - Use cautious scientific language.
+    - Keep the explanation concise and natural.
+    - Do not use introductions.
+    - Do NOT independently invent ecosystem risk changes.
+    - Risk predictions may be added separately by the system.
+    """
 
 
 # ======================================================
@@ -348,7 +452,7 @@ def add_risk_alignment(text, delta, drivers=None):
               f"increase in ecosystem risk "
               f"under this scenario, "
               f"with {confidence}."
-            + deviation_text
+#           + deviation_text
         )
 
     elif delta < 0:
@@ -359,7 +463,7 @@ def add_risk_alignment(text, delta, drivers=None):
               f"decrease in ecosystem risk "
               f"under this scenario, "
               f"with {confidence}."
-            + deviation_text
+#            + deviation_text
         )
 
     else:
@@ -369,7 +473,7 @@ def add_risk_alignment(text, delta, drivers=None):
             + " The model predicts no "
               "substantial change in "
               "ecosystem risk."
-            + deviation_text
+#            + deviation_text
         )
 
 # ======================================================

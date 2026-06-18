@@ -1,31 +1,45 @@
 services:
+
   massaciuccoli_app:
+
     build:
       context: ./app
       dockerfile: Dockerfile
+
     container_name: massaciuccoli_app
+
     stdin_open: true
     tty: true
+
     volumes:
       - ./app:/app
+
+    env_file:
+      - LLM.env
+
     depends_on:
       - ollama
-    environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
+
     command: python -m versions.v6_1_orchestrator
 
+
   ollama:
+
     image: ollama/ollama
+
     container_name: ollama
+
     ports:
       - "11434:11434"
+
     volumes:
       - ollama_data:/root/.ollama
+
     restart: unless-stopped
 
-    # 🔥 FIX CRITICO
     healthcheck:
       disable: true
+
 
 volumes:
   ollama_data:

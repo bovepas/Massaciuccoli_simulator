@@ -22,6 +22,9 @@ Design goals:
 
 import re
 
+from utils.feature_mapping import (
+    normalize_feature_name
+)
 
 # ======================================================
 # CANONICAL FEATURES
@@ -219,14 +222,22 @@ def split_first_second(q):
 def split_one_and_one(q):
 
     pattern = (
-        r"one\s+with\s+(.*?)"
+        r"(?:a\s+scenario\s+with|one\s+with)\s+(.*?)"
         r"\s+and\s+one\s+with\s+(.*)"
     )
 
     match = re.search(pattern, q)
 
     if match:
+
+        print("[DEBUG split_one_and_one MATCH]")
+        print("A =", match.group(1))
+        print("B =", match.group(2))
+
         return match.group(1), match.group(2)
+
+    print("[DEBUG split_one_and_one NO MATCH]")
+    print(q)
 
     return None, None
 
@@ -235,34 +246,321 @@ def split_one_and_one(q):
 # GENERIC SCENARIO PARSER
 # ======================================================
 
-def parse_simple(text):
+def scenario_to_legacy_dict(
+    modifications,
+    feature_stats=None
+):
 
-    text = normalize_question(text)
+    print(
+        "[DEBUG] scenario_to_legacy_dict:",
+        modifications
+    )
 
     result = {}
+
+    for mod in modifications:
+
+        print(
+            "[DEBUG] Processing mod:",
+            mod
+        )
+
+        # ------------------------------
+        # Numeric / percentage modifications
+        # ------------------------------
+
+        if mod.get("type") in [
+
+            "numeric",
+
+            "percentage_change"
+
+        ]:
+
+            result[
+                mod["variable"]
+            ] = mod
+
+        # ------------------------------
+        # Qualitative modifications
+        # ------------------------------
+
+        elif "direction" in mod:
+
+            if feature_stats is None:
+
+                continue
+
+            result[
+                mod["variable"]
+            ] = {
+
+                "type": "qualitative",
+
+                "value": qualitative_to_delta(
+
+                    variable=mod["variable"],
+
+                    direction=mod["direction"],
+
+                    magnitude=mod.get(
+                        "magnitude",
+                        "default"
+                    ),
+
+                    feature_stats=feature_stats
+                )
+            }
+
+    print(
+        "[DEBUG] scenario_to_legacy_dict result:",
+        result
+    )
+
+    return result
+
+def qualitative_to_delta(
+    variable,
+    direction,
+    magnitude,
+    feature_stats
+):
+
+    MAGNITUDE_MULTIPLIER = {
+
+        "slight": 0.5,
+
+        "default": 1.0,
+
+        "significant": 2.0,
+
+        "extreme": 3.0
+    }
+
+    SPECIAL_DELTAS = {
+
+        "temperature": 1.0,
+
+        "precipitation": 10.0,
+
+        "evapotranspiration": 10.0
+    }
+
+    # ----------------------------------
+    # NORMALIZE FEATURE NAME
+    # ----------------------------------
+
+    variable = variable.replace(
+        "_",
+        " "
+    )
+
+    dataset_feature = normalize_feature_name(
+        variable
+    )
+
+    if not dataset_feature:
+
+        raise ValueError(
+            f"Unknown feature: {variable}"
+        )
+
+    # ----------------------------------
+    # BASE DELTA
+    # ----------------------------------
+
+    if variable in SPECIAL_DELTAS:
+
+        delta = (
+            SPECIAL_DELTAS[variable]
+            *
+            MAGNITUDE_MULTIPLIER.get(
+                magnitude,
+                1.0
+            )
+        )
+
+    else:
+
+        delta = (
+            feature_stats[
+                dataset_feature
+            ]["std"]
+            *
+            MAGNITUDE_MULTIPLIER.get(
+                magnitude,
+                1.0
+            )
+        )
+
+    # ----------------------------------
+    # DIRECTION
+    # ----------------------------------
+
+    if direction == "decrease":
+
+        delta = -delta
+
+    return delta
+
+
+def parse_numeric_modifications(text):
+
+    modifications = []
 
     feature = detect_feature(text)
 
     if not feature:
-        return None
+        return modifications
 
     numbers = extract_numbers(text)
 
     if not numbers:
-        return None
-
-    value = numbers[0]
+        return modifications
 
     value = apply_directional_sign(
-        value,
+        numbers[0],
         text
     )
 
-    result[feature] = value
+    modification_type = "numeric"
 
-    return result
+    if "%" in text:
+
+        modification_type = (
+            "percentage_change"
+        )
+
+    print("\n[DEBUG NUMERIC PARSER]")
+    print("text:", text)
+    print("feature:", feature)
+    print("numbers:", numbers)
+    print("value:", value)
+    print("type:", modification_type)
+
+    modifications.append({
+
+        "variable": feature,
+
+        "type": modification_type,
+
+        "value": value
+    })
+
+    return modifications
 
 
+
+
+def parse_scenario(text):
+
+    text = normalize_question(text)
+
+    modifications = []
+
+    modifications.extend(
+        parse_numeric_modifications(text)
+    )
+
+    for alias, canonical in FEATURE_ALIASES.items():
+
+        if alias not in text:
+            continue
+
+        direction = None
+
+        if any(x in text for x in [
+            "increase",
+            "increased",
+            "increasing",
+            "higher",
+            "rise",
+            "rising"
+        ]):
+
+            direction = "increase"
+
+        elif any(x in text for x in [
+            "decrease",
+            "decreased",
+            "decreasing",
+            "reduced",
+            "reduction",
+            "lower",
+            "loss",
+            "decline"
+        ]):
+
+            direction = "decrease"
+
+        if not direction:
+            continue
+
+        magnitude = "default"
+
+        if any(x in text for x in [
+            "slight",
+            "slightly",
+            "small"
+        ]):
+
+            magnitude = "slight"
+
+        elif any(x in text for x in [
+            "significant",
+            "strong",
+            "substantial"
+        ]):
+
+            magnitude = "significant"
+
+        elif any(x in text for x in [
+            "extreme",
+            "dramatic",
+            "very large"
+        ]):
+
+            magnitude = "extreme"
+
+        # ----------------------------------
+        # Skip qualitative modification
+        # if numeric modification already
+        # exists for the same variable
+        # ----------------------------------
+
+        # ----------------------------------
+        # Skip qualitative modification
+        # if a numeric-like modification
+        # already exists for the same variable
+        # ----------------------------------
+
+        if any(
+
+            m["variable"] == canonical
+
+            and m.get("type") in [
+
+                "numeric",
+
+                "percentage_change"
+
+            ]
+
+            for m in modifications
+
+        ):
+            continue
+
+        modifications.append({
+
+            "variable": canonical,
+
+            "direction": direction,
+
+            "magnitude": magnitude
+        })
+
+    return modifications
 # ======================================================
 # PARSE FROM → TO
 # ======================================================
@@ -303,14 +601,32 @@ def parse_from_to(q):
 # ======================================================
 # MAIN
 # ======================================================
+def split_scenario_and_scenario(q):
+
+    pattern = (
+        r"scenario\s+with\s+(.*?)"
+        r"\s+and\s+(?:a\s+)?scenario\s+with\s+(.*)"
+    )
+
+    match = re.search(pattern, q)
+
+    if match:
+        return match.group(1), match.group(2)
+
+    return None, None
+
 
 def parse_comparison_scenarios(
-    question: str
+    question: str,
+    feature_stats=None
 ):
 
     q = normalize_question(question)
 
     print("[PARSER v8 DEBUG]")
+
+    a = None
+    b = None
 
     # --------------------------------------------------
     # 1. FROM → TO
@@ -344,8 +660,30 @@ def parse_comparison_scenarios(
 
     if a and b:
 
-        scen_A = parse_simple(a)
-        scen_B = parse_simple(b)
+        print("\n[DEBUG] Scenario A text:")
+        print(a)
+
+        print("\n[DEBUG] Scenario B text:")
+        print(b)
+
+        mods_A = parse_scenario(a)
+        mods_B = parse_scenario(b)
+
+        print("\n[DEBUG] Scenario A modifications:")
+        print(mods_A)
+
+        print("\n[DEBUG] Scenario B modifications:")
+        print(mods_B)
+
+        scen_A = scenario_to_legacy_dict(
+            mods_A,
+            feature_stats
+        )
+
+        scen_B = scenario_to_legacy_dict(
+            mods_B,
+            feature_stats
+        )
 
         print(
             "Detected FIRST/SECOND"
@@ -372,8 +710,30 @@ def parse_comparison_scenarios(
 
     if a and b:
 
-        scen_A = parse_simple(a)
-        scen_B = parse_simple(b)
+        print("\n[DEBUG] Scenario A text:")
+        print(a)
+
+        print("\n[DEBUG] Scenario B text:")
+        print(b)
+
+        mods_A = parse_scenario(a)
+        mods_B = parse_scenario(b)
+
+        print("\n[DEBUG] Scenario A modifications:")
+        print(mods_A)
+
+        print("\n[DEBUG] Scenario B modifications:")
+        print(mods_B)
+
+        scen_A = scenario_to_legacy_dict(
+            mods_A,
+            feature_stats
+        )
+
+        scen_B = scenario_to_legacy_dict(
+            mods_B,
+            feature_stats
+        )
 
         print(
             "Detected ONE/AND"
@@ -393,15 +753,87 @@ def parse_comparison_scenarios(
             return scen_A, scen_B
 
     # --------------------------------------------------
-    # 4. VS / OR
+    # 4. SCENARIO / SCENARIO
+    # --------------------------------------------------
+
+    a, b = split_scenario_and_scenario(q)
+
+    if a and b:
+
+        print("\n[DEBUG] Scenario A text:")
+        print(a)
+
+        print("\n[DEBUG] Scenario B text:")
+        print(b)
+
+        mods_A = parse_scenario(a)
+        mods_B = parse_scenario(b)
+
+        print("\n[DEBUG] Scenario A modifications:")
+        print(mods_A)
+
+        print("\n[DEBUG] Scenario B modifications:")
+        print(mods_B)
+
+        scen_A = scenario_to_legacy_dict(
+            mods_A,
+            feature_stats
+        )
+
+        scen_B = scenario_to_legacy_dict(
+            mods_B,
+            feature_stats
+        )
+
+        print(
+            "Detected SCENARIO/SCENARIO"
+        )
+
+        print(
+            "Parsed A:",
+            scen_A
+        )
+
+        print(
+            "Parsed B:",
+            scen_B
+        )
+
+        if scen_A and scen_B:
+            return scen_A, scen_B
+
+    # --------------------------------------------------
+    # 5. VS / OR
     # --------------------------------------------------
 
     a, b = split_vs(q)
 
     if a and b:
 
-        scen_A = parse_simple(a)
-        scen_B = parse_simple(b)
+        print("\n[DEBUG] Scenario A text:")
+        print(a)
+
+        print("\n[DEBUG] Scenario B text:")
+        print(b)
+
+        mods_A = parse_scenario(a)
+        mods_B = parse_scenario(b)
+
+        print("\n[DEBUG] Scenario A modifications:")
+        print(mods_A)
+
+        print("\n[DEBUG] Scenario B modifications:")
+        print(mods_B)
+
+        scen_A = scenario_to_legacy_dict(
+            mods_A,
+            feature_stats
+        )
+
+        scen_B = scenario_to_legacy_dict(
+            mods_B,
+            feature_stats
+        )
 
         print(
             "Detected VS/OR"

@@ -70,6 +70,8 @@ from tasks.task_comparison import handle_comparison
 
 from tasks.task_enm import handle_enm
 
+from tasks.task_importance_compare import handle_importance_compare
+
 
 # ======================================================
 # ROUTER
@@ -172,6 +174,14 @@ def run():
         ]:
             break
 
+        if question.lower() == "cls":
+
+            os.system(
+                "cls" if os.name == "nt" else "clear"
+            )
+
+            continue
+
         # ==================================================
         # TOTAL REQUEST TIMER
         # ==================================================
@@ -240,6 +250,8 @@ def run():
                     return_metadata=True
                 )
 
+               
+                
                 features = parsed["features"]
 
                 range_info = parse_range(
@@ -351,6 +363,10 @@ def run():
 
                     range_info,
 
+                    features,
+                    
+                    parsed,
+
                     model
                 )
 
@@ -411,6 +427,20 @@ def run():
                 result = handle_enm(
                     question
                 )
+            # --------------------------------------------------
+            # IMPORTANCE COMPARE
+            # --------------------------------------------------
+
+            elif task_type == "importance_compare":
+
+                result = handle_importance_compare(
+
+                    question=question,
+
+                    model=model,
+
+                    dataset=dataset
+                )   
                 
             # --------------------------------------------------
             # CHAT

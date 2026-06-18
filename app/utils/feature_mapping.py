@@ -175,10 +175,22 @@ SYNONYMS = {
     # Biodiversity
     "species richness": "species",
 
+    "biodiversity decline": "biodiversity",
+    "biodiversity conservation": "biodiversity",
+    "biodiversity stress": "biodiversity",
+
+    #land use
+    "land-use change": "land use change",
+
     # Productivity
     "ecosystem productivity": "productivity",
     "vegetation productivity": "productivity",
     "vegetation growth": "productivity",
+
+    # Vegetation / habitat
+    "tree-cover restoration": "tree cover",
+    "tree cover restoration": "tree cover",
+    "forest restoration": "tree cover",
 
     # Urbanization
     "urbanization": "imperviousness",
@@ -264,6 +276,22 @@ ABSTRACT_FEATURES = {
     ],
 
     "water level": [
+
+        "Cumulative change in precipitation compared to a recent past",
+
+        "Relative change in the potential evapotranspiration compared to a recent past"
+    ],
+
+    "climate stress": [
+
+        "Change in average temperature compared to a recent past",
+
+        "Cumulative change in precipitation compared to a recent past",
+
+        "Relative change in the potential evapotranspiration compared to a recent past"
+    ],
+
+    "hydrological stress": [
 
         "Cumulative change in precipitation compared to a recent past",
 

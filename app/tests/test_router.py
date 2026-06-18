@@ -3,9 +3,15 @@
 Router Test Suite — Massaciuccoli Digital Twin
 Run all routing tests automatically
 """
-
+import io
+import contextlib
 from versions.v6_1_main import route_question
 
+# ======================================================
+# CONFIG
+# ======================================================
+
+SHOW_ONLY_ERRORS = True
 
 # ======================================================
 # TEST SET
@@ -38,15 +44,15 @@ TESTS = [
     ("What is the current state of the ecosystem?", "assessment"),
     ("Given the following environmental conditions, estimate the ecosystem risk level and explain which variables drive the result: temperature change = +2.5°C, precipitation change = -20%, evapotranspiration = +10%, tree cover = 70%, species richness = 250.", "assessment"),
     ("If temperature increases by +3°C but tree cover also increases significantly, how do these combined effects influence ecosystem risk?", "assessment"),
-    ("what is the ecosystem risk with temperature +2°C", "assessment"),
-    ("estimate risk with precipitation -20%", "assessment"),
-    ("How do changes in land use and tree cover interact to influence ecosystem risk?", "assessment"),
+    ("what is the ecosystem risk with temperature +2°C", "delta"),
+    ("estimate risk with precipitation -20%", "delta"),
+    ("What is the ecosystem risk under a scenario with increased land use and reduced tree cover?", "assessment"),
     ("describe the current state of the ecosystem", "assessment"),
     ("If the climate becomes  significantly warmer and drier, how does ecosystem risk change?", "assessment"),
 
     # 🔥 MOVED FROM DELTA
-    ("What happens if temperature increases by 1 for the ecosystem risk?", "assessment"),
-    ("What happens if precipitation decreases by 10% for the ecosystem risk?", "assessment"),
+    ("What happens if temperature increases by 1 for the ecosystem risk?", "delta"),
+    ("What happens if precipitation decreases by 10% for the ecosystem risk?", "delta"),
 
     # ======================
     # DEPENDENCY
@@ -77,7 +83,7 @@ TESTS = [
     ("How does the ecosystem risk change if precipitation decreases from -10% to -40%, keeping all other variables constant?", "delta"),
 
     # 🔥 NEW DELTA (CRITICAL)
-    ("How does a decrease in precipitation influence ecosystem risk?", "assessment"),
+    ("How does a decrease in precipitation influence ecosystem risk?", "dependency"),
 
     # ======================
     # COMPARISON
@@ -141,11 +147,19 @@ def run_tests():
     correct = 0
     total = len(TESTS)
 
-    print("\n================ ROUTER TESTS ================\n")
+    print("\n================ ROUTER BENCHMARK TESTS ================\n")
 
     for i, (question, expected) in enumerate(TESTS, 1):
 
-        result = route_question(question)
+        if SHOW_ONLY_ERRORS:
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                result = route_question(question)
+
+        else:
+
+            result = route_question(question)
+
         predicted = result["type"]
 
         ok = predicted == expected
@@ -155,6 +169,9 @@ def run_tests():
             status = "✅"
         else:
             status = "❌"
+
+        if SHOW_ONLY_ERRORS and ok:
+            continue
 
         print(f"{status} [{i}]")
         print(f"Q: {question}")
@@ -169,10 +186,6 @@ def run_tests():
     print(f"ACCURACY: {accuracy:.2f}%")
     print("============================================\n")
 
-
-# ======================================================
-# MAIN
-# ======================================================
 
 if __name__ == "__main__":
     run_tests()

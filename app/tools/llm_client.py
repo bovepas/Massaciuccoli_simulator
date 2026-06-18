@@ -16,6 +16,7 @@ Centralized LLM Client (Ollama) — v4
 import requests
 import os
 import time
+import re
 
 from utils.logger import (
 
@@ -34,31 +35,13 @@ MODEL = os.getenv(
     "llama3.2:3b"
 )
 
-# ======================================================
-# ENVIRONMENT DETECTION
-# ======================================================
-
-if os.path.exists("/.dockerenv"):
-
-    BASE_URL = os.getenv(
-
-        "OLLAMA_BASE_URL",
-
-        "http://ollama:11434"
-    )
-
-else:
-
-    BASE_URL = os.getenv(
-
-        "OLLAMA_BASE_URL",
-
-        "http://localhost:11434"
-    )
-
-GENERATE_URL = f"{BASE_URL}/api/generate"
+GENERATE_URL = os.getenv(
+    "LLM_ENDPOINT",
+    "http://localhost:11434/api/generate"
+)
 
 DEBUG = True
+
 
 # ======================================================
 # PERFORMANCE SETTINGS
@@ -71,8 +54,10 @@ RETRY_DELAY = 1
 TIMEOUT = 60
 
 MAX_PREDICT = 256
+#MAX_PREDICT = 1024
 
 TEMPERATURE = 0
+
 
 # ======================================================
 # PERSISTENT SESSION
@@ -129,14 +114,10 @@ def call_llm(prompt: str) -> str:
             )
 
             # ==================================================
-            # OLLAMA REQUEST TIMER
+            # REQUEST TIMER
             # ==================================================
 
             start_timer("ollama_request")
-
-            # --------------------------------------------------
-            # REQUEST
-            # --------------------------------------------------
 
             response = SESSION.post(
 
@@ -175,6 +156,10 @@ def call_llm(prompt: str) -> str:
 
             data = response.json()
 
+            # print("\n========== FULL RESPONSE ==========")
+            # print(data)
+            # print("===================================\n")
+
             print(
                 "[LLM CLIENT] done_reason:",
                 data.get("done_reason")
@@ -195,10 +180,23 @@ def call_llm(prompt: str) -> str:
                 data.get("eval_count")
             )
 
-            output = data.get(
+            raw_output = data.get(
                 "response",
                 ""
             ).strip()
+
+            output = re.sub(
+                r"<think>.*?</think>",
+                "",
+                raw_output,
+                flags=re.DOTALL | re.IGNORECASE
+            ).strip()
+
+            if raw_output != output:
+
+                print(
+                    "[LLM CLIENT] Removed reasoning block"
+                )
 
             if data.get("done_reason") == "length":
 

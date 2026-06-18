@@ -75,6 +75,21 @@ def detect_target(q: str):
         or any(p in q for p in ECOSYSTEM_STATE_TERMS)
     ):
         return "risk"
+    
+    # NEW
+    if any(
+        p in q
+        for p in [
+            "which intervention",
+            "risk mitigation",
+            "mitigation strategy",
+            "mitigation strategies"
+        ]
+    ):
+        return "risk"
+
+    if "ecosystem" in q:
+        return "ecosystem"
 
     if "ecosystem" in q:
         return "ecosystem"
@@ -106,10 +121,6 @@ def detect_target(q: str):
 
 def asks_driver_analysis(q: str):
 
-    # --------------------------------------------------
-    # DIRECT DRIVER KEYWORDS
-    # --------------------------------------------------
-
     patterns = [
         "drivers",
         "drive",
@@ -117,6 +128,8 @@ def asks_driver_analysis(q: str):
         "important",
         "importance",
         "influential",
+        "influence",
+        "influences",
         "main factors",
         "top factors",
         "top variables",
@@ -124,9 +137,6 @@ def asks_driver_analysis(q: str):
         "which variables",
         "what drives",
         "associated with",
-        "associated",
-        "related to",
-        "linked to",
         "strongest impact",
         "greatest impact",
         "largest impact",
@@ -136,9 +146,6 @@ def asks_driver_analysis(q: str):
         "prioritize",
         "prioritized",
         "should be prioritized",
-        "main factors",
-        "top factors",
-        "correlated with",
         "explains most",
         "best explains",
         "most important for",
@@ -148,6 +155,8 @@ def asks_driver_analysis(q: str):
 
     if any(p in q for p in patterns):
         return True
+
+    return False
 
     # --------------------------------------------------
     # SEMANTIC RANKING STRUCTURE
@@ -207,6 +216,8 @@ def asks_risk_estimation(q: str):
     return any(p in q for p in patterns)
 
 
+
+
 # ======================================================
 # COMPARISON DETECTION
 # ======================================================
@@ -246,7 +257,39 @@ def has_comparison(q: str):
 
 def asks_dependency(q: str):
 
+    # --------------------------------------------------
+    # EXCLUDE RANKING / IMPORTANCE QUESTIONS
+    # --------------------------------------------------
+
+    ranking_patterns = [
+
+        "which variables",
+        "which environmental variables",
+        "which factors",
+        "top variables",
+        "top factors",
+        "main factors",
+        "most important",
+        "most influence",
+        "contributes most",
+        "contribute most",
+        "strongest impact",
+        "greatest impact",
+        "largest impact",
+        "highest impact",
+        "three environmental variables"
+
+    ]
+
+    if any(p in q for p in ranking_patterns):
+        return False
+
+    # --------------------------------------------------
+    # RELATIONSHIP KEYWORDS
+    # --------------------------------------------------
+
     dependency_patterns = [
+
         "affect",
         "influence",
         "impact",
@@ -257,12 +300,64 @@ def asks_dependency(q: str):
         "determines",
         "control",
         "controls"
+
     ]
 
-    if any(p in q for p in dependency_patterns):
+    # --------------------------------------------------
+    # EXPLICIT RELATIONSHIP STRUCTURES
+    # --------------------------------------------------
+
+    relationship_patterns = [
+
+        r"how is .* associated with .*",
+        r"how are .* associated with .*",
+
+        r"how is .* related to .*",
+        r"how are .* related to .*",
+
+        r"how is .* linked to .*",
+        r"how are .* linked to .*",
+
+        r"how is .* correlated with .*",
+        r"how are .* correlated with .*",
+
+        r"what is the relationship between .* and .*",
+
+        r"how does .* affect .*",
+        r"how does .* influence .*",
+        r"how does .* impact .*",
+
+        r"how do .* affect .*",
+        r"how do .* influence .*",
+        r"how do .* impact .*",
+
+        r"how could .* affect .*",
+        r"how could .* influence .*",
+        r"how could .* impact .*"
+
+    ]
+
+    if any(
+        re.search(pattern, q)
+        for pattern in relationship_patterns
+    ):
         return True
 
-    if re.search(r"how does .* change", q):
+    # --------------------------------------------------
+    # FALLBACK:
+    # SINGLE RELATIONSHIP VERBS
+    # --------------------------------------------------
+
+    if any(
+        p in q
+        for p in dependency_patterns
+    ):
+        return True
+
+    if re.search(
+        r"how does .* change",
+        q
+    ):
         return True
 
     return False
@@ -466,6 +561,11 @@ def route_question(question: str):
         return_metadata=True
     )
 
+    modifications = parsed.get(
+        "modifications",
+        []
+    )
+
     scenario_detected = parsed["scenario_detected"]
 
     num_modified = parsed["num_modified_features"]
@@ -483,6 +583,15 @@ def route_question(question: str):
     dependency_detected = asks_dependency(q)
 
     driver_analysis = asks_driver_analysis(q)
+
+    importance_compare_detected = (
+
+        comparison_detected
+
+        and not scenario_detected
+
+        and target == "risk"
+    )
 
     delta_reasoning = asks_delta_reasoning(q)
 
@@ -502,6 +611,7 @@ def route_question(question: str):
         "delta": 0,
         "comparison": 0,
         "importance": 0,
+        "importance_compare": 0,
         "drivers": 0,
         "enm": 0
     }
@@ -511,10 +621,18 @@ def route_question(question: str):
     # ==================================================
 
     # --------------------------------------------------
+    # IMPORTANCE COMPARE
+    # --------------------------------------------------
+
+    if importance_compare_detected:
+
+        scores["importance_compare"] += 450
+
+    # --------------------------------------------------
     # COMPARISON
     # --------------------------------------------------
 
-    if comparison_detected:
+    if (comparison_detected and not importance_compare_detected):
 
         scores["comparison"] += 400
 
@@ -567,7 +685,7 @@ def route_question(question: str):
     # DRIVER FAMILY
     # --------------------------------------------------
 
-    if driver_analysis:
+    if driver_analysis and not dependency_detected:
 
         if target == "risk":
 
@@ -610,7 +728,7 @@ def route_question(question: str):
     # COMPARISON DOMINATES
     # --------------------------------------------------
 
-    if comparison_detected:
+    if (comparison_detected and not importance_compare_detected):
 
         scores["comparison"] += 100
 
@@ -644,17 +762,72 @@ def route_question(question: str):
     print("num_modified:", num_modified)
     print("range_detected:", range_detected)
     print("baseline_reference:", baseline_reference)
+
     print("target:", target)
+
     print("comparison_detected:", comparison_detected)
     print("dependency_detected:", dependency_detected)
+
+    print(
+        "importance_compare_detected:",
+        importance_compare_detected
+    )
+
     print("driver_analysis:", driver_analysis)
     print("risk_estimation:", risk_estimation)
 
     print("--------------------------")
 
+    # --------------------------------------------------
+    # IMPORTANCE DEBUG
+    # --------------------------------------------------
+
+    if (
+        driver_analysis
+        or importance_compare_detected
+    ):
+
+        print("\n===== IMPORTANCE DEBUG =====")
+
+        print(
+            "dependency_detected =",
+            dependency_detected
+        )
+
+        print(
+            "comparison_detected =",
+            comparison_detected
+        )
+
+        print(
+            "importance_compare_detected =",
+            importance_compare_detected
+        )
+
+        print(
+            "driver_analysis =",
+            driver_analysis
+        )
+
+        print(
+            "target =",
+            target
+        )
+
+        print(
+            "num_modified =",
+            num_modified
+        )
+
+        print("============================\n")
+
     print("---- SCORE BREAKDOWN ----")
 
-    for k, v in sorted(scores.items(), key=lambda x: x[1], reverse=True):
+    for k, v in sorted(
+        scores.items(),
+        key=lambda x: x[1],
+        reverse=True
+    ):
 
         print(f"{k}: {v}")
 

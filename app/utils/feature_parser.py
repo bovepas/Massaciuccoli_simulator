@@ -242,7 +242,7 @@ FEATURE_REGEX = "|".join(
 # INTERNAL HELPERS
 # ======================================================
 
-def _apply_delta(features, modified, explicit, var_name, delta):
+def _apply_delta(features, modified, explicit, modifications, var_name, delta):
 
     mapped = FEATURE_MAP.get(var_name)
 
@@ -250,6 +250,15 @@ def _apply_delta(features, modified, explicit, var_name, delta):
         return
 
     features[mapped] += delta
+
+    modifications.append({
+
+        "variable": mapped,
+
+        "type": "delta",
+
+        "value": delta
+    })
 
     modified.add(mapped)
 
@@ -288,6 +297,7 @@ def parse_features(question: str, return_metadata=False):
     assigned_variables = set()
 
     qualitative_changes = []
+    modifications = []
 
     # ==================================================
     # RANGE METADATA
@@ -308,6 +318,8 @@ def parse_features(question: str, return_metadata=False):
     (increases|decreases|declines|decline)
     \s+by\s+
     ([+\-]?\d+\.?\d*)
+    \s*
+    (%|°c)?
     """
 
     numeric_matches = re.findall(
@@ -316,20 +328,58 @@ def parse_features(question: str, return_metadata=False):
         flags=re.VERBOSE
     )
 
-    for var, direction, value in numeric_matches:
+    for var, direction, value, unit in numeric_matches:
 
         value = float(value)
 
-        if direction in ["decreases", "decline", "declines"]:
+        if direction in [
+            "decreases",
+            "decline",
+            "declines"
+        ]:
             value = -value
 
-        _apply_delta(
-            features,
-            modified_features,
-            explicitly_modified,
-            var,
-            value
-        )
+        mapped = FEATURE_MAP.get(var)
+
+        if not mapped:
+            continue
+
+        # ----------------------------------
+        # percentage change
+        # ----------------------------------
+
+        if unit == "%":
+
+            features[mapped] += value
+
+            modifications.append({
+
+                "variable": mapped,
+
+                "type": "percentage_change",
+
+                "value": value
+            })
+
+        # ----------------------------------
+        # absolute delta
+        # ----------------------------------
+
+        else:
+
+            features[mapped] += value
+
+            modifications.append({
+
+                "variable": mapped,
+
+                "type": "absolute_delta",
+
+                "value": value
+            })
+
+        modified_features.add(mapped)
+        explicitly_modified.add(mapped)
 
     # ==================================================
     # SEMANTIC DELTA
@@ -360,6 +410,7 @@ def parse_features(question: str, return_metadata=False):
             features,
             modified_features,
             explicitly_modified,
+            modifications,
             var,
             value
         )
@@ -459,6 +510,7 @@ def parse_features(question: str, return_metadata=False):
             features,
             modified_features,
             explicitly_modified,
+            modifications,
             var,
             value
         )
@@ -618,6 +670,7 @@ def parse_features(question: str, return_metadata=False):
             features,
             modified_features,
             explicitly_modified,
+            modifications,
             var,
             delta
         )
@@ -670,6 +723,8 @@ def parse_features(question: str, return_metadata=False):
         len(modified_features) > 0
         or len(qualitative_changes) > 0
     )
+    print("\n[DEBUG MODIFICATIONS]")
+    print(modifications)
 
     metadata = {
         "features": features,
@@ -685,7 +740,8 @@ def parse_features(question: str, return_metadata=False):
         "range_start": range_start,
         "range_end": range_end,
 
-        "qualitative_changes": qualitative_changes
+        "qualitative_changes": qualitative_changes,
+        "modifications": modifications
     }
     print("MODIFIED FEATURES:", modified_features)
     print("NUM MODIFIED:", len(modified_features))
