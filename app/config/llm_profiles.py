@@ -8,13 +8,15 @@ import os
 
 LLM_STYLES = {
 
-    "qwen": "narrative",
+    "qwen": "scientific",
 
-    "scout": "literal",
+    "scout": "scientific",
 
-    "gemini": "literal",
+    "gemini": "scientific",
 
-    "llama70b": "literal"
+    "llama70b": "scientific",
+
+    "llama3.2": "scientific"
 }
 
 # ======================================================
@@ -23,7 +25,7 @@ LLM_STYLES = {
 
 LLM_PROFILE = os.getenv(
     "LLM_PROFILE",
-    "qwen"
+    "llama3.2"
 )
 
 # ======================================================
@@ -32,5 +34,5 @@ LLM_PROFILE = os.getenv(
 
 LLM_STYLE = LLM_STYLES.get(
     LLM_PROFILE,
-    "literal"
+    "scientific"
 )

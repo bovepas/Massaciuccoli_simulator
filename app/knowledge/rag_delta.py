@@ -16,6 +16,11 @@ RAG Delta — v38 (epistemic + significance-aware)
 import re
 from tools.llm_client import call_llm
 
+from utils.prompt_builder import (
+    build_prompt,
+    USE_LEGACY_PROMPTS
+)
+
 DEBUG = True
 
 
@@ -279,7 +284,7 @@ def build_facts(drivers):
 # PROMPT
 # ======================================================
 
-def build_prompt(facts):
+def build_legacy_prompt(facts):
 
     fact_text = "\n".join(
         [f"- {f}" for f in facts]
@@ -491,7 +496,70 @@ def fallback(facts, delta):
         sentence,
         delta
     )
+# ======================================================
+# LEGACY PROMPT
+# ======================================================
 
+def build_legacy_prompt(
+    question,
+    comparison_statement
+):
+
+    return f"""
+You are an environmental scientist.
+
+QUESTION
+
+{question}
+
+COMPUTED RESULT
+
+{comparison_statement}
+
+IMPORTANT
+
+The comparison has already been computed.
+
+Accept the computed result exactly as provided.
+
+Do NOT determine which driver is stronger.
+
+Do NOT compare the scores.
+
+Do NOT reverse the ranking.
+
+Do NOT restate the computed result.
+
+TASK
+
+Explain the ecological meaning of the computed result.
+
+Focus primarily on plausible ecological mechanisms
+associated with the higher-ranked driver.
+
+You may briefly mention the lower-ranked driver,
+but do NOT describe it as unimportant,
+ineffective, negligible, or irrelevant.
+
+A lower score only indicates lower sensitivity
+within the current predictive model.
+
+Interpret associations rather than direct causality.
+
+Avoid generic conclusions.
+
+Do not finish with statements such as:
+
+- overall...
+- these findings highlight...
+- both drivers are important...
+
+Start directly with the ecological interpretation.
+
+Write approximately 3–4 concise sentences.
+
+Answer:
+"""
 
 # ======================================================
 # MAIN
@@ -515,21 +583,40 @@ def generate_delta_explanation(
             "pattern detected."
         )
 
-    prompt = build_prompt(facts)
+    if USE_LEGACY_PROMPTS:
 
-    debug_print(
-        "\n[PROMPT]:\n",
-        prompt
-    )
+        prompt = build_legacy_prompt(
+            facts
+        )
+
+    else:
+
+        fact_text = "\n".join(
+            f"- {f}"
+            for f in facts
+        )
+
+        prompt = (
+            build_prompt("delta")
+            + f"""
+
+FACTS:
+{fact_text}
+
+"""
+        )
 
     try:
+        if DEBUG:
+            print("\n========== FINAL PROMPT ==========\n")
+            print(prompt)
+            print("\n==================================\n")
 
-        raw = call_llm(prompt)
-
-        debug_print(
-            "\n[RAW]:",
-            raw
+        raw = call_llm(
+            prompt
         )
+
+        print("[RAW]:", raw)
 
         if not is_valid(raw):
 

@@ -15,7 +15,12 @@ RAG ENM — Ecological Explanation Layer v8
 """
 
 from knowledge.rag_pipeline import generate_answer
+from utils.prompt_builder import (
+    build_prompt,
+    USE_LEGACY_PROMPTS
+)
 
+DEBUG = True
 
 # ======================================================
 # FALLBACK
@@ -102,50 +107,17 @@ def build_driver_interpretation(
 
     return ""
 
-
 # ======================================================
-# MAIN
+# PROMPT
 # ======================================================
 
-def generate_enm_explanation(
-    question,
-    drivers,
+def build_legacy_prompt(
     species,
-    model_summary=None,
-    driver_analysis=None
+    model_summary,
+    driver_interpretation,
+    driver_text
 ):
-
-    print("\n[RAG-ENM] START")
-
-    # --------------------------------------------------
-    # FORMAT DRIVERS
-    # --------------------------------------------------
-
-    driver_text = "\n".join(
-        [f"- {d}" for d in drivers]
-    )
-
-    if model_summary is None:
-
-        model_summary = (
-            "No model summary available."
-        )
-
-    # --------------------------------------------------
-    # PRECOMPUTED DRIVER INTERPRETATION
-    # --------------------------------------------------
-
-    driver_interpretation = (
-        build_driver_interpretation(
-            driver_analysis
-        )
-    )
-
-    # --------------------------------------------------
-    # PROMPT
-    # --------------------------------------------------
-
-    extra_prompt = f"""
+    return f"""
 You are an ecological modeler.
 
 SPECIES:
@@ -275,11 +247,92 @@ RULES:
 - Do not invent variables not listed
 """
 
+
+# ======================================================
+# MAIN
+# ======================================================
+
+def generate_enm_explanation(
+    question,
+    drivers,
+    species,
+    model_summary=None,
+    driver_analysis=None
+):
+
+    print("\n[RAG-ENM] START")
+
+    # --------------------------------------------------
+    # FORMAT DRIVERS
+    # --------------------------------------------------
+
+    driver_text = "\n".join(
+        [f"- {d}" for d in drivers]
+    )
+
+    if model_summary is None:
+
+        model_summary = (
+            "No model summary available."
+        )
+
+    # --------------------------------------------------
+    # PRECOMPUTED DRIVER INTERPRETATION
+    # --------------------------------------------------
+
+    driver_interpretation = (
+        build_driver_interpretation(
+            driver_analysis
+        )
+    )
+
+    # --------------------------------------------------
+    # PROMPT
+    # --------------------------------------------------
+
+    if USE_LEGACY_PROMPTS:
+
+        extra_prompt = build_legacy_prompt(
+            species,
+            model_summary,
+            driver_interpretation,
+            driver_text
+        )
+
+    else:
+
+        extra_prompt = (
+            build_prompt("enm")
+            + f"""
+
+    SPECIES:
+    {species}
+
+    MODEL RESULTS:
+    {model_summary}
+
+    PRECOMPUTED ECOLOGICAL INTERPRETATION:
+
+    {driver_interpretation}
+
+    ENVIRONMENTAL DRIVERS:
+    (sorted by importance)
+
+    {driver_text}
+
+    """
+    )
+
     # --------------------------------------------------
     # CALL RAG
     # --------------------------------------------------
 
     try:
+        if DEBUG:
+
+            print("\n========== EXTRA PROMPT ==========\n")
+            print(extra_prompt)
+            print("\n==================================\n")
 
         answer = generate_answer(
             question=question,

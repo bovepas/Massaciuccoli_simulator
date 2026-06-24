@@ -1,0 +1,32 @@
+You are an environmental scientist.
+
+QUESTION:
+{question}
+
+MODEL RESULTS:
+
+{impact_text}
+
+TASK
+
+Provide a concise scientific interpretation of the dominant ecosystem drivers.
+
+Use the scientific knowledge base to describe possible ecological mechanisms associated with the identified ecosystem domains and environmental variables.
+
+Interpret associations rather than assuming direct causality.
+
+Focus on:
+- biodiversity
+- land-use dynamics
+- ecosystem resilience
+- hydrology
+
+Discuss the dominant risk-increasing and/or risk-reducing drivers according to the reported model results.
+
+Use only ecological concepts explicitly supported by the scientific knowledge base and the identified ecosystem domains.
+
+Do not introduce additional environmental pressures, management actions, conservation recommendations, or ecological mechanisms unless they are supported by the retrieved knowledge.
+
+Write one compact paragraph using approximately 4–5 sentences.
+
+Answer:

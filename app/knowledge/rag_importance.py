@@ -15,9 +15,9 @@ RAG — IMPORTANCE EXPLANATION v22
 import re
 
 from knowledge.rag_pipeline import generate_answer
-from utils.feature_semantics import (
-    build_semantic_context
-)
+# from utils.feature_semantics import (
+#     build_semantic_context
+# )
 
 from config.llm_profiles import (
     LLM_PROFILE,
@@ -25,7 +25,12 @@ from config.llm_profiles import (
 )
 
 
+from utils.prompt_builder import (
+    build_prompt,
+    USE_LEGACY_PROMPTS
+)
 
+DEBUG = True
 # ======================================================
 # CLEAN OUTPUT
 # ======================================================
@@ -159,6 +164,48 @@ def build_group_block(group_scores):
         )
 
     return "\n".join(rows)
+
+# ======================================================
+# LEGACY PROMPT 
+# ======================================================
+def build_legacy_prompt(
+    impact_text
+):
+
+    return f"""
+You are an environmental scientist.
+
+QUESTION:
+What are the main factors influencing ecosystem risk?
+
+MODEL RESULTS:
+
+{impact_text}
+
+TASK
+
+Provide a concise scientific interpretation
+of the dominant ecosystem drivers.
+
+Use the scientific knowledge base to
+describe possible ecological mechanisms
+associated with the identified domains
+and variables.
+
+Interpret associations rather than
+assuming direct causality.
+
+Focus on:
+- biodiversity
+- land-use dynamics
+- ecosystem resilience
+- hydrology
+
+Write a compact paragraph
+of approximately 4–5 sentences.
+
+Answer:
+"""
 
 
 # ======================================================
@@ -389,46 +436,38 @@ RISK-REDUCING DRIVERS:
     # PROMPT
     # ======================================================
 
-    prompt = f"""
-You are an environmental scientist.
+    if USE_LEGACY_PROMPTS:
 
-QUESTION:
-What are the main factors influencing ecosystem risk?
+        prompt = build_legacy_prompt(
+            impact_text
+        )
 
-MODEL RESULTS:
+    else:
 
-{impact_text}
+        prompt = (
+            build_prompt("importance")
+            + f"""
 
-TASK
+    QUESTION:
+    What are the main factors influencing ecosystem risk?
 
-Provide a concise scientific interpretation
-of the dominant ecosystem drivers.
+    MODEL RESULTS:
 
-Use the scientific knowledge base to
-describe possible ecological mechanisms
-associated with the identified domains
-and variables.
+    {impact_text}
 
-Interpret associations rather than
-assuming direct causality.
-
-Focus on:
-- biodiversity
-- land-use dynamics
-- ecosystem resilience
-- hydrology
-
-Write a compact paragraph
-of approximately 4–5 sentences.
-
-Answer:
-"""
+    """
+        )
 
     # ======================================================
     # CALL
     # ======================================================
 
     try:
+        if DEBUG:
+
+            print("\n========== EXTRA PROMPT ==========\n")
+            print(prompt)
+            print("\n==================================\n")
 
         result = generate_answer(
 

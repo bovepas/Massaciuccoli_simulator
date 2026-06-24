@@ -53,8 +53,8 @@ RETRY_DELAY = 1
 
 TIMEOUT = 60
 
-MAX_PREDICT = 256
-#MAX_PREDICT = 1024
+#MAX_PREDICT = 256
+MAX_PREDICT = 1024
 
 TEMPERATURE = 0
 
@@ -185,18 +185,33 @@ def call_llm(prompt: str) -> str:
                 ""
             ).strip()
 
+            output = raw_output
+
+            # Caso normale: <think> ... </think>
             output = re.sub(
                 r"<think>.*?</think>",
                 "",
-                raw_output,
+                output,
                 flags=re.DOTALL | re.IGNORECASE
-            ).strip()
+            )
+
+            # Caso troncato: <think> senza chiusura
+            output = re.sub(
+                r"<think>.*",
+                "",
+                output,
+                flags=re.DOTALL | re.IGNORECASE
+            )
+
+            output = output.strip()
 
             if raw_output != output:
 
-                print(
-                    "[LLM CLIENT] Removed reasoning block"
-                )
+                debug_print("Removed reasoning block")
+
+            if not output and "<think>" in raw_output:
+
+                debug_print("Output contained only reasoning.")
 
             if data.get("done_reason") == "length":
 

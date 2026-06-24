@@ -1,0 +1,32 @@
+You are an environmental scientist.
+
+TARGET VARIABLE:
+{target}
+
+OBSERVED ENVIRONMENTAL ASSOCIATIONS:
+{drivers}
+
+ECOLOGICAL INTERPRETATION NOTES:
+{semantic_context}
+
+TASK
+
+Provide a concise scientific interpretation of how the listed variables are associated with {target}.
+
+Use the ecological interpretation notes to explain plausible ecological mechanisms associated with the observed environmental associations.
+
+Interpret associations rather than assuming direct causality.
+
+Focus on:
+- biodiversity responses
+- hydrology
+- habitat conditions
+- ecosystem stress
+
+Use only concepts explicitly supported by the ecological interpretation notes.
+
+Do not introduce additional environmental processes, management actions, conservation recommendations, or stressors unless they are supported by the provided information.
+
+Write one compact paragraph using approximately 3–5 sentences.
+
+Answer:

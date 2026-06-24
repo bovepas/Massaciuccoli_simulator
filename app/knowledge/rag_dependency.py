@@ -13,13 +13,17 @@ RAG Dependency Explanation — v14
 
 from knowledge.rag_pipeline import generate_answer
 
+from utils.prompt_builder import (
+    build_prompt,
+    USE_LEGACY_PROMPTS
+)
 
 # ======================================================
 # CONFIG
 # ======================================================
 
 MAX_CONTEXT_CHARS = 1000
-
+DEBUG = True
 
 # ======================================================
 # TARGET NORMALIZATION FOR RETRIEVAL
@@ -87,36 +91,17 @@ DEPENDENCY EVIDENCE:
   {dependency_info.get('direction')}
 """
 
-
 # ======================================================
-# MAIN
+# LEGACY PROMPT (FEATURE)
 # ======================================================
 
-def generate_dependency_explanation(
-    question: str,
-    source=None,
-    target=None,
-    dependency_info=None,
-    features=None
-) -> str:
+def build_legacy_feature_prompt(
+    source,
+    target,
+    dependency_block
+):
 
-    print("\n[RAG-DEPENDENCY v14] START")
-
-    target_for_query = normalize_target_for_query(
-        target
-    )
-
-    dependency_block = build_dependency_block(
-        dependency_info
-    )
-
-    # ======================================================
-    # CASE 1: FEATURE → FEATURE / ABSTRACT TARGET
-    # ======================================================
-
-    if target and target != "risk_score":
-
-        extra_prompt = f"""
+    return f"""
 You are an environmental scientist.
 
 QUESTION:
@@ -147,18 +132,21 @@ Focus on:
 - climate interactions
 - ecosystem stress
 
-Write 3–4 concise sentences.
+Write 3-4 concise sentences.
 
 Answer:
 """
 
-    # ======================================================
-    # CASE 2: FEATURE → RISK
-    # ======================================================
+# ======================================================
+# LEGACY PROMPT (RISK)
+# ======================================================
 
-    else:
+def build_legacy_risk_prompt(
+    source,
+    dependency_block
+):
 
-        extra_prompt = f"""
+    return f"""
 You are an environmental scientist.
 
 QUESTION:
@@ -184,10 +172,86 @@ Focus on:
 - hydrology
 - environmental pressures
 
-Write 3–4 concise sentences.
+Write 3-4 concise sentences.
 
 Answer:
 """
+
+
+# ======================================================
+# MAIN
+# ======================================================
+
+def generate_dependency_explanation(
+    question: str,
+    source=None,
+    target=None,
+    dependency_info=None,
+    features=None
+) -> str:
+
+    print("\n[RAG-DEPENDENCY v14] START")
+
+    target_for_query = normalize_target_for_query(
+        target
+    )
+
+    dependency_block = build_dependency_block(
+        dependency_info
+    )
+
+    # ======================================================
+    # CASE 1: FEATURE → FEATURE / ABSTRACT TARGET
+    # ======================================================
+
+    if target and target != "risk_score":
+
+        if USE_LEGACY_PROMPTS:
+
+            extra_prompt = build_legacy_feature_prompt(
+                source,
+                target,
+                dependency_block
+            )
+
+        else:
+
+            extra_prompt = (
+                build_prompt("dependency")
+                + f"""
+
+    QUESTION:
+    How does {source} influence {target}?
+
+    MODEL RESULTS:
+    {dependency_block}
+
+    """
+            )
+
+    else:
+
+        if USE_LEGACY_PROMPTS:
+
+            extra_prompt = build_legacy_risk_prompt(
+                source,
+                dependency_block
+            )
+
+        else:
+
+            extra_prompt = (
+                build_prompt("dependency")
+                + f"""
+
+    QUESTION:
+    How does {source} affect ecosystem risk?
+
+    MODEL RESULTS:
+    {dependency_block}
+
+    """
+            )
 
     # ======================================================
     # QUERY
@@ -215,6 +279,11 @@ Answer:
     # ======================================================
 
     try:
+        if DEBUG:
+
+            print("\n========== EXTRA PROMPT ==========\n")
+            print(extra_prompt)
+            print("\n==================================\n")
 
         answer = generate_answer(
 

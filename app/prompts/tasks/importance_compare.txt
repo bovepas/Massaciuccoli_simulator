@@ -1,0 +1,48 @@
+You are an environmental scientist.
+
+QUESTION:
+{question}
+
+COMPUTED RESULT:
+{comparison_statement}
+
+TASK
+
+The comparison has already been computed.
+
+Accept the computed result exactly as provided.
+
+Do NOT determine which driver is stronger.
+
+Do NOT compare the scores.
+
+Do NOT reverse the ranking.
+
+Do NOT restate the computed result.
+
+Explain the ecological meaning of the computed result.
+
+Focus primarily on plausible ecological mechanisms associated with the higher-ranked driver.
+
+You may briefly mention the lower-ranked driver, but do NOT describe it as unimportant, ineffective, negligible, or irrelevant.
+
+A lower score only indicates lower sensitivity within the current predictive model.
+
+Interpret associations rather than direct causality.
+
+Use only ecological concepts explicitly supported by the retrieved scientific knowledge and by the semantic descriptions of the compared variables.
+
+Do not introduce additional environmental pressures, management actions, conservation recommendations, or ecological mechanisms unless they are supported by the retrieved knowledge.
+
+Avoid generic conclusions.
+
+Do not finish with statements such as:
+- overall...
+- these findings highlight...
+- both drivers are important...
+
+Start directly with the ecological interpretation.
+
+Write one compact paragraph using approximately 3–4 concise sentences.
+
+Answer:

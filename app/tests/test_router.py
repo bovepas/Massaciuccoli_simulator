@@ -105,9 +105,6 @@ TESTS = [
     ("What are the top 3 most influential variables affecting ecosystem risk under baseline conditions?", "importance"),
     ("What are the 3 environmental variables that most influence ecosystem risk?", "importance"),
 
-    # 🔥 REMOVED (SEMANTICALLY AMBIGUOUS)
-    # ("What are the main drivers if temperature increases by 2?", "importance"),
-    # ("Which variables are most influential if precipitation decreases by 20%?", "importance"),
 
     ("Which variables reduce ecosystem risk the most?", "importance"),
     ("Which factors increase ecosystem risk the most?", "importance"),

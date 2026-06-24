@@ -15,7 +15,10 @@ from tools.llm_client import call_llm
 from utils.feature_semantics import (
     build_semantic_context
 )
-
+from utils.prompt_builder import (
+    build_prompt,
+    USE_LEGACY_PROMPTS
+)
 DEBUG = True
 
 
@@ -29,7 +32,7 @@ def debug_print(*args):
 # PROMPT
 # ======================================================
 
-def build_prompt(
+def build_legacy_prompt(
     target,
     drivers,
     semantic_context
@@ -186,17 +189,48 @@ def generate_drivers_explanation(
                 semantic_context
             )
 
-        prompt = build_prompt(
-            target,
-            drivers,
-            semantic_context
-        )
+        if USE_LEGACY_PROMPTS:
 
-        debug_print(
-            "\n[RAG-DRIVERS] Prompt:"
-        )
+            prompt = build_legacy_prompt(
+                target,
+                drivers,
+                semantic_context
+            )
 
-        debug_print(prompt)
+        else:
+
+            drivers_text = "\n".join([
+
+                f"- {d['feature']} "
+                f"({d['direction']}, "
+                f"{d['strength']})"
+
+                for d in drivers[:4]
+            ])
+
+            prompt = (
+                build_prompt("drivers")
+                + f"""
+
+        TARGET VARIABLE:
+        {target}
+
+        OBSERVED ENVIRONMENTAL ASSOCIATIONS:
+        {drivers_text}
+
+        ECOLOGICAL INTERPRETATION NOTES:
+        {semantic_context}
+
+        """
+            )
+
+
+
+        if DEBUG:
+
+            print("\n========== FINAL PROMPT ==========\n")
+            print(prompt)
+            print("\n==================================\n")
 
         print(
             "    llm_prompt_length:",

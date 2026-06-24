@@ -16,6 +16,11 @@ RAG Assessment — v3
 from knowledge.retriever import retrieve_documents
 from tools.llm_client import call_llm
 import re
+from utils.prompt_builder import (
+    build_prompt,
+    USE_LEGACY_PROMPTS
+)
+
 
 
 # ======================================================
@@ -23,7 +28,7 @@ import re
 # ======================================================
 
 MAX_CONTEXT_CHARS = 1500
-DEBUG = False
+DEBUG = True
 
 
 # ======================================================
@@ -74,6 +79,70 @@ def fallback():
         "interacting effects on hydrology, habitat structure, "
         "ecological resilience, and biodiversity."
     )
+
+# ======================================================
+# PROMPT
+# ======================================================
+def build_legacy_prompt(
+    question,
+    risk_text,
+    primary_text,
+    secondary_text,
+    context
+):
+    return f"""
+You are an environmental scientist.
+
+QUESTION:
+{question}
+
+MODEL RESULTS
+
+Risk increase:
+{risk_text}
+
+Primary drivers:
+{primary_text}
+
+Secondary ecosystem responses:
+{secondary_text}
+
+SCIENTIFIC KNOWLEDGE BASE:
+{context}
+
+TASK
+
+Provide a short scientific interpretation
+of the scenario.
+
+The primary drivers identify the factors
+most strongly associated with the increase
+in ecosystem risk.
+
+The secondary ecosystem responses identify
+ecosystem components most strongly associated
+with the scenario.
+
+Use the scientific knowledge base to explain
+the ecological mechanisms that may connect
+the primary drivers and the secondary
+responses.
+
+Interpret associations rather than assuming
+that variables necessarily increase or
+decrease.
+
+Focus on ecological processes, ecosystem
+functioning, resilience and biodiversity
+when supported by the scientific context.
+
+Write a single coherent paragraph.
+
+Use approximately 4–6 sentences.
+
+Answer:
+"""
+
 
 
 # ======================================================
@@ -175,65 +244,52 @@ def generate_assessment_explanation(
     # PROMPT
     # --------------------------------------------------
 
-    prompt = f"""
-You are an environmental scientist.
+    if USE_LEGACY_PROMPTS:
 
-QUESTION:
-{question}
+        prompt = build_legacy_prompt(
+            question,
+            risk_text,
+            primary_text,
+            secondary_text,
+            context
+        )
 
-MODEL RESULTS
+    else:
 
-Risk increase:
-{risk_text}
+        prompt = (
+            build_prompt("assessment")
+            + f"""
 
-Primary drivers:
-{primary_text}
+    QUESTION:
+    {question}
 
-Secondary ecosystem responses:
-{secondary_text}
+    MODEL RESULTS
 
-SCIENTIFIC KNOWLEDGE BASE:
-{context}
+    Risk increase:
+    {risk_text}
 
-TASK
+    Primary drivers:
+    {primary_text}
 
-Provide a short scientific interpretation
-of the scenario.
+    Secondary ecosystem responses:
+    {secondary_text}
 
-The primary drivers identify the factors
-most strongly associated with the increase
-in ecosystem risk.
+    SCIENTIFIC KNOWLEDGE BASE:
+    {context}
 
-The secondary ecosystem responses identify
-ecosystem components most strongly associated
-with the scenario.
-
-Use the scientific knowledge base to explain
-the ecological mechanisms that may connect
-the primary drivers and the secondary
-responses.
-
-Interpret associations rather than assuming
-that variables necessarily increase or
-decrease.
-
-Focus on ecological processes, ecosystem
-functioning, resilience and biodiversity
-when supported by the scientific context.
-
-Write a single coherent paragraph.
-
-Use approximately 4–6 sentences.
-
-Answer:
-"""
+    """
+        )
 
     # --------------------------------------------------
     # LLM
     # --------------------------------------------------
 
     try:
+        if DEBUG:
 
+            print("\n========== FINAL PROMPT ==========\n")
+            print(prompt)
+            print("\n==================================\n")
         raw = call_llm(
             prompt
         )

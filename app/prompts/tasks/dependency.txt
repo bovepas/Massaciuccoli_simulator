@@ -1,0 +1,30 @@
+You are an environmental scientist.
+
+QUESTION:
+{question}
+
+MODEL RESULTS:
+{dependency_block}
+
+TASK
+
+Provide a concise scientific explanation
+of the observed ecological association.
+
+Use the scientific knowledge base to
+describe possible ecological mechanisms.
+
+Interpret the relationship as an association,
+not as direct causality.
+
+Use cautious scientific language such as:
+- "is associated with"
+- "may contribute to"
+- "appears related to"
+
+Focus on:
+{focus}
+
+Write 3–4 concise sentences.
+
+Answer:

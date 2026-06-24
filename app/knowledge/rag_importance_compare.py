@@ -20,6 +20,11 @@ from config.llm_profiles import (
     LLM_STYLE
 )
 
+from utils.prompt_builder import (
+    build_prompt,
+    USE_LEGACY_PROMPTS
+)
+DEBUG = True
 
 # ======================================================
 # CLEAN OUTPUT
@@ -58,6 +63,70 @@ def feature_to_text(feature):
 
     return str(feature)
 
+# ======================================================
+# LEGACY PROMPT
+# ======================================================
+
+def build_legacy_prompt(
+    question,
+    comparison_statement
+):
+
+    return f"""
+You are an environmental scientist.
+
+QUESTION
+
+{question}
+
+COMPUTED RESULT
+
+{comparison_statement}
+
+IMPORTANT
+
+The comparison has already been computed.
+
+Accept the computed result exactly as provided.
+
+Do NOT determine which driver is stronger.
+
+Do NOT compare the scores.
+
+Do NOT reverse the ranking.
+
+Do NOT restate the computed result.
+
+TASK
+
+Explain the ecological meaning of the computed result.
+
+Focus primarily on plausible ecological mechanisms
+associated with the higher-ranked driver.
+
+You may briefly mention the lower-ranked driver,
+but do NOT describe it as unimportant,
+ineffective, negligible, or irrelevant.
+
+A lower score only indicates lower sensitivity
+within the current predictive model.
+
+Interpret associations rather than direct causality.
+
+Avoid generic conclusions.
+
+Do not finish with statements such as:
+
+- overall...
+- these findings highlight...
+- both drivers are important...
+
+Start directly with the ecological interpretation.
+
+Write approximately 3–4 concise sentences.
+
+Answer:
+"""
 
 # ======================================================
 # FALLBACK
@@ -223,67 +292,37 @@ def generate_importance_compare_explanation(
     # PROMPT
     # --------------------------------------------------
 
-    prompt = f"""
-You are an environmental scientist.
+    if USE_LEGACY_PROMPTS:
 
-QUESTION
+            prompt = build_legacy_prompt(
+                question,
+                comparison_statement
+            )
 
-{question}
+    else:
 
-COMPUTED RESULT
+            prompt = (
+                build_prompt("importance_compare")
+                + f"""
 
-{comparison_statement}
+    QUESTION:
+    {question}
 
-IMPORTANT
+    COMPUTED RESULT:
+    {comparison_statement}
 
-The comparison has already been computed.
-
-Accept the computed result exactly as provided.
-
-Do NOT determine which driver is stronger.
-
-Do NOT compare the scores.
-
-Do NOT reverse the ranking.
-
-Do NOT restate the computed result.
-
-TASK
-
-Explain the ecological meaning of the computed result.
-
-Focus primarily on plausible ecological mechanisms
-associated with the higher-ranked driver.
-
-You may briefly mention the lower-ranked driver,
-but do NOT describe it as unimportant,
-ineffective, negligible, or irrelevant.
-
-A lower score only indicates lower sensitivity
-within the current predictive model.
-
-Interpret associations rather than direct causality.
-
-Avoid generic conclusions.
-
-Do not finish with statements such as:
-
-- overall...
-- these findings highlight...
-- both drivers are important...
-
-Start directly with the ecological interpretation.
-
-Write approximately 3–4 concise sentences.
-
-Answer:
-"""
+    """
+            )
 
     # --------------------------------------------------
     # CALL
     # --------------------------------------------------
 
     try:
+        if DEBUG:
+            print("\n========== EXTRA PROMPT ==========\n")
+            print(prompt)
+            print("\n==================================\n")
 
         result = generate_answer(
 

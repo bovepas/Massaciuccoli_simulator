@@ -18,6 +18,11 @@ from knowledge.retriever import retrieve_documents
 from utils.feature_semantics import (
     build_semantic_context
 )
+from utils.prompt_builder import (
+    build_prompt,
+    USE_LEGACY_PROMPTS
+)
+
 
 DEBUG = True
 MAX_CONTEXT_CHARS = 1200
@@ -371,70 +376,95 @@ def enhance_with_rag(
 
     debug_print("[RAG] Docs:", len(retrieved))
 
-    prompt = f"""
-You are an environmental scientist.
+    if USE_LEGACY_PROMPTS:
+        prompt = f"""
+    You are an environmental scientist.
 
 
-MODEL RESULTS:
-{base_text}
+    MODEL RESULTS:
+    {base_text}
 
-SCENARIO DRIVERS:
-{drivers}
+    SCENARIO DRIVERS:
+    {drivers}
 
-ECOLOGICAL INTERPRETATION NOTES:
-{semantic_context}
+    ECOLOGICAL INTERPRETATION NOTES:
+    {semantic_context}
 
-SCIENTIFIC KNOWLEDGE BASE:
-{context}
+    SCIENTIFIC KNOWLEDGE BASE:
+    {context}
 
-TASK
+    TASK
 
-The model comparison has already been computed.
+    The model comparison has already been computed.
 
-Do NOT compare the scenarios again.
+    Do NOT compare the scenarios again.
 
-Do NOT determine which scenario is better.
+    Do NOT determine which scenario is better.
 
-Do not repeat the model result.
+    Do not repeat the model result.
 
-Start directly from the ecological interpretation.
+    Start directly from the ecological interpretation.
 
-Explain the ecological implications of the identified drivers
-within the current ecosystem scenario.
+    Explain the ecological implications of the identified drivers
+    within the current ecosystem scenario.
 
-Use only concepts that are explicitly supported
-by the retrieved scientific knowledge and by the
-semantic descriptions of the variables.
+    Use only concepts that are explicitly supported
+    by the retrieved scientific knowledge and by the
+    semantic descriptions of the variables.
 
-Do NOT introduce:
-- additional stressors
-- management actions
-- land-use changes
-- water-quality effects
-- conservation recommendations
+    Do NOT introduce:
+    - additional stressors
+    - management actions
+    - land-use changes
+    - water-quality effects
+    - conservation recommendations
 
-unless they explicitly appear in the retrieved context.
+    unless they explicitly appear in the retrieved context.
 
-Do not infer interactions or relationships
-between the drivers unless they are explicitly
-supported by the retrieved knowledge.
+    Do not infer interactions or relationships
+    between the drivers unless they are explicitly
+    supported by the retrieved knowledge.
 
-Interpret ecological associations rather than
-assuming direct causal relationships.
+    Interpret ecological associations rather than
+    assuming direct causal relationships.
 
-If the retrieved knowledge contains only limited
-ecological information, do not elaborate further.
+    If the retrieved knowledge contains only limited
+    ecological information, do not elaborate further.
 
-Write a single compact paragraph of 2-3 concise sentences.
+    Write a single compact paragraph of 2-3 concise sentences.
 
-When the retrieved knowledge is limited,
-prefer a shorter explanation rather than
-adding unsupported ecological details
+    When the retrieved knowledge is limited,
+    prefer a shorter explanation rather than
+    adding unsupported ecological details
 
-Answer:
-"""
+    Answer:
+    """
+    else:
+        prompt = (
+            build_prompt("comparison")
+            + f"""
+
+    MODEL RESULTS:
+    {base_text}
+
+    SCENARIO DRIVERS:
+    {drivers}
+
+    ECOLOGICAL INTERPRETATION NOTES:
+    {semantic_context}
+
+    SCIENTIFIC KNOWLEDGE BASE:
+    {context}
+
+    Answer:
+    """
+        )
 
     try:
+        if DEBUG:
+            print("\n========== FINAL PROMPT ==========\n")
+            print(prompt)
+            print("\n==================================\n")
 
         raw = call_llm(prompt)
 

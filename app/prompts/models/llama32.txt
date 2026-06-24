@@ -1,0 +1,7 @@
+Do not introduce concepts, ecological mechanisms, or conclusions that are not explicitly supported.
+
+Remain conservative when information is limited.
+
+Prefer concise explanations over extended narratives.
+
+Avoid generic concluding statements.

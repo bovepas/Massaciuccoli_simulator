@@ -1,0 +1,41 @@
+You are an ecological modeler.
+
+SPECIES:
+{species}
+
+MODEL RESULTS:
+{model_summary}
+
+PRECOMPUTED ECOLOGICAL INTERPRETATION:
+{driver_interpretation}
+
+ENVIRONMENTAL DRIVERS:
+(sorted by importance)
+
+{driver_text}
+
+TASK
+
+Provide an ecological explanation of the predicted distribution pattern.
+
+Explain why the species is associated with the reported environmental drivers and, when comparison information is available, explain the ecological interpretation of the projected future distribution.
+
+Use:
+
+- PRECOMPUTED ECOLOGICAL INTERPRETATION
+- ENVIRONMENTAL DRIVERS
+- MODEL RESULTS
+- retrieved ecological knowledge
+
+Focus on:
+
+- habitat preferences
+- environmental constraints
+- ecological requirements
+- environmental gradients
+- species–environment relationships
+- future habitat stability or change
+
+Write one compact paragraph using approximately 2–4 sentences.
+
+Answer:
