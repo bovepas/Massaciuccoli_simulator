@@ -29,16 +29,28 @@ FEATURE_MAP = {
     "temperature":
         "Change in average temperature compared to a recent past",
 
+    "average temperature":
+        "Change in average temperature compared to a recent past",
+
+    "air temperature":
+        "Change in average temperature compared to a recent past",
+
     "temperature change":
         "Change in average temperature compared to a recent past",
 
     "precipitation":
         "Cumulative change in precipitation compared to a recent past",
 
+    "rainfall":
+        "Cumulative change in precipitation compared to a recent past",
+
     "precipitation change":
         "Cumulative change in precipitation compared to a recent past",
 
     "evapotranspiration":
+        "Relative change in the potential evapotranspiration compared to a recent past",
+
+    "potential evapotranspiration":
         "Relative change in the potential evapotranspiration compared to a recent past",
 
     # --------------------------------------------------
@@ -287,6 +299,14 @@ def parse_features(question: str, return_metadata=False):
 
     q = question.lower()
 
+    mentioned_features = set()
+
+    for var, mapped in FEATURE_MAP.items():
+
+        if re.search(rf"\b{re.escape(var)}\b", q):
+
+            mentioned_features.add(mapped)
+
     features = build_default_features()
 
     modified_features = set()
@@ -377,6 +397,131 @@ def parse_features(question: str, return_metadata=False):
 
                 "value": value
             })
+
+        modified_features.add(mapped)
+        explicitly_modified.add(mapped)
+    
+    
+    
+    # ==================================================
+    # GERUND DELTA
+    # ==================================================
+
+    gerund_pattern = rf"""
+    (increasing|decreasing)
+    .*?
+    ({FEATURE_REGEX})
+    .*?
+    by
+    \s+
+    ([+\-]?\d+\.?\d*)
+    \s*
+    (%|°c)?
+    """
+
+    gerund_matches = re.findall(
+        gerund_pattern,
+        q,
+        flags=re.VERBOSE
+    )
+
+    for direction, var, value, unit in gerund_matches:
+
+        value = float(value)
+
+        if direction == "decreasing":
+            value = -value
+
+        mapped = FEATURE_MAP.get(var)
+
+        if not mapped:
+            continue
+
+        if unit == "%":
+
+            modifications.append({
+
+                "variable": mapped,
+
+                "type": "percentage_change",
+
+                "value": value
+            })
+
+        else:
+
+            modifications.append({
+
+                "variable": mapped,
+
+                "type": "absolute_delta",
+
+                "value": value
+            })
+
+        features[mapped] += value
+
+        modified_features.add(mapped)
+        explicitly_modified.add(mapped)
+
+    # ==================================================
+    # INVERTED NUMERIC DELTA
+    # (e.g. "2°C increase in temperature")
+    # ==================================================
+
+    inverted_pattern = rf"""
+    ([+\-]?\d+\.?\d*)
+    \s*
+    (%|°c)?
+    \s+
+    (increase|increases|decrease|decreases)
+    \s+
+    (?:in|of)
+    \s+
+    ({FEATURE_REGEX})
+    """
+
+    inverted_matches = re.findall(
+        inverted_pattern,
+        q,
+        flags=re.VERBOSE
+    )
+
+    for value, unit, direction, var in inverted_matches:
+
+        value = float(value)
+
+        if direction.startswith("decrease"):
+            value = -value
+
+        mapped = FEATURE_MAP.get(var)
+
+        if not mapped:
+            continue
+
+        if unit == "%":
+
+            modifications.append({
+
+                "variable": mapped,
+
+                "type": "percentage_change",
+
+                "value": value
+            })
+
+        else:
+
+            modifications.append({
+
+                "variable": mapped,
+
+                "type": "absolute_delta",
+
+                "value": value
+            })
+
+        features[mapped] += value
 
         modified_features.add(mapped)
         explicitly_modified.add(mapped)
@@ -732,9 +877,10 @@ def parse_features(question: str, return_metadata=False):
         "scenario_detected": scenario_detected,
 
         "modified_features": list(modified_features),
+        "explicitly_modified": list(explicitly_modified),
 
         "num_modified_features": len(modified_features),
-
+        "mentioned_features": list(mentioned_features),
         "range_detected": range_detected,
         "range_feature": range_feature,
         "range_start": range_start,

@@ -8,14 +8,27 @@ MODEL RESULTS:
 
 TASK
 
-Provide a concise scientific explanation
-of the observed ecological association.
+The dependency analysis has already been computed.
 
-Use the scientific knowledge base to
-describe possible ecological mechanisms.
+Do NOT infer a stronger relationship than the reported model result.
 
-Interpret the relationship as an association,
-not as direct causality.
+Your role is only to explain the ecological meaning of the reported association.
+
+Use the reported dependency evidence to qualify your explanation.
+
+Interpret the relationship as an association, not as direct causality.
+
+When the reported relationship is unsupported, do not reinterpret uncertainty as a possible ecological association.
+
+If the reported evidence indicates low confidence or an unsupported relationship, state this explicitly rather than proposing additional ecological mechanisms.
+
+If the reported dependency is unsupported or has low confidence, do not speculate about possible ecological implications or indirect pathways. Simply state that the available evidence does not support the requested relationship and that no ecological interpretation can be drawn beyond the reported uncertainty.
+
+Use ecological concepts only when they are explicitly supported by the retrieved scientific knowledge.
+
+Do not introduce additional environmental processes, interactions, or causal chains that are not supported by the provided evidence.
+
+Do not introduce generic ecological concepts that are not explicitly supported by the reported dependency evidence or the retrieved scientific knowledge, including ecosystem stability, ecosystem functioning, resilience, ecological integrity, habitat quality, species distribution, species abundance, environmental modification, or broader ecosystem interactions.
 
 Use cautious scientific language such as:
 - "is associated with"
@@ -25,6 +38,6 @@ Use cautious scientific language such as:
 Focus on:
 {focus}
 
-Write 3–4 concise sentences.
+Write a single compact paragraph of 2–3 concise sentences.
 
 Answer:

@@ -1,19 +1,31 @@
 TASK
 
-Provide a short scientific interpretation of the scenario.
+The ecosystem risk prediction has already been computed.
 
-The primary drivers identify the factors most strongly associated with the increase in ecosystem risk.
+Accept the reported model results exactly as provided.
 
-The secondary ecosystem responses identify ecosystem components most strongly associated with the scenario.
+Do NOT restate the reported risk prediction.
 
-Use the scientific knowledge base to explain the ecological mechanisms that may connect the primary drivers and the secondary responses.
+Never repeat the reported risk value or risk delta in your answer. Assume these values are already presented to the user.
 
-Interpret associations rather than assuming that variables necessarily increase or decrease.
+Do NOT reinterpret the reported association scores.
 
-Focus on ecological processes, ecosystem functioning, resilience and biodiversity when supported by the scientific context.
+The environmental modifications explicitly described in the user question are the only known changes in the scenario.
 
-Write a single coherent paragraph.
+Primary drivers identify the variables most strongly associated with the predicted ecosystem risk.
 
-Use approximately 4–6 sentences.
+Secondary ecosystem responses identify variables statistically associated with the predicted scenario. They do not indicate that these variables increased, decreased, expanded, contracted, or otherwise changed.
+
+Your role is only to explain the ecological meaning of the reported model results.
+
+Use the scientific knowledge base only to explain ecological mechanisms that are consistent with the reported model results.
+
+Interpret associations rather than direct causality.
+
+Do not infer additional environmental changes, ecological responses, or causal relationships unless they are explicitly supported by the reported model results and by the retrieved scientific knowledge.
+
+If the available ecological information is limited, keep the explanation concise.
+
+Write one compact paragraph of 2–3 concise sentences.
 
 Answer:

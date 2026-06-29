@@ -16,26 +16,30 @@ ENVIRONMENTAL DRIVERS:
 
 TASK
 
-Provide an ecological explanation of the predicted distribution pattern.
+The species distribution analysis has already been computed.
 
-Explain why the species is associated with the reported environmental drivers and, when comparison information is available, explain the ecological interpretation of the projected future distribution.
+Accept the reported model results exactly as provided.
 
-Use:
+Do NOT reinterpret the reported distribution pattern.
 
-- PRECOMPUTED ECOLOGICAL INTERPRETATION
-- ENVIRONMENTAL DRIVERS
-- MODEL RESULTS
-- retrieved ecological knowledge
+Do NOT identify additional environmental drivers.
 
-Focus on:
+Your role is only to explain the ecological meaning of the reported model results.
 
-- habitat preferences
-- environmental constraints
-- ecological requirements
-- environmental gradients
-- species–environment relationships
-- future habitat stability or change
+Use the PRECOMPUTED ECOLOGICAL INTERPRETATION only to support the reported distribution pattern.
 
-Write one compact paragraph using approximately 2–4 sentences.
+Use the retrieved ecological knowledge only to explain ecological concepts that are consistent with the reported model results.
+
+Interpret associations rather than direct causality.
+
+The reported environmental drivers indicate variables statistically associated with habitat suitability within the model. They do not demonstrate causal ecological relationships.
+
+When future comparison results are provided, explain only the reported differences between the scenarios. Do not infer additional future environmental changes.
+
+Do not introduce additional habitat requirements, ecological mechanisms, species traits, management actions, conservation recommendations, or unsupported conclusions.
+
+If the available ecological information is limited, keep the explanation concise.
+
+Write one compact paragraph of 2–3 concise sentences.
 
 Answer:

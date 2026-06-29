@@ -310,7 +310,7 @@ def build_legacy_prompt(facts):
 
     unless these concepts are explicitly supported by the provided facts.
 
-    - Combine the facts into 1–2 concise sentences.
+    - Combine the facts into 1-2 concise sentences.
     - Do NOT present associations as proven causal mechanisms.
     - Distinguish between ecological interpretation and model prediction.
     - Use cautious scientific language.

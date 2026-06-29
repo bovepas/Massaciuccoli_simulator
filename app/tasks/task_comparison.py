@@ -358,7 +358,7 @@ def handle_comparison(
         scenario_B
     )
 
-    if not scenario_A or not scenario_B:
+    if scenario_A is None or scenario_B is None:
 
         return {
             "summary": "Comparison not recognized",

@@ -129,7 +129,6 @@ def recover_feature_from_question(question):
 
     return None
 
-
 # ======================================================
 # MAIN
 # ======================================================
@@ -176,14 +175,16 @@ def handle_delta(
                 "[DEBUG] Delta type:",
                 mod.get("type")
             )
-            
+
             range_info = {
 
                 "feature": feature,
 
                 "mode": "baseline_delta",
 
-                "delta": value
+                "delta": value,
+
+                "delta_type": mod.get("type")
             }
 
     # --------------------------------------------------
@@ -271,6 +272,11 @@ def handle_delta(
             "delta"
         ]
 
+        delta_type = range_info.get(
+            "delta_type",
+            "percentage_change"
+        )
+
         baseline_value = base[
             feature
         ]
@@ -278,16 +284,56 @@ def handle_delta(
         scenario_a = base.copy()
         scenario_b = base.copy()
 
-        scenario_b[feature] = (
+        # ------------------------------------------
+        # Absolute variation
+        # Example:
+        # temperature +2°C
+        # ------------------------------------------
 
-            baseline_value
+        if delta_type == "absolute_delta":
 
-            * (
+            scenario_b[
+                feature
+            ] = baseline_value + delta_value
 
-                1
-                + delta_value / 100
-            )
-        )
+        # ------------------------------------------
+        # Percentage variation
+        # Example:
+        # biodiversity -30%
+        # ------------------------------------------
+
+        else:
+
+                change_variables = {
+
+                        "Relative change in the potential evapotranspiration compared to a recent past",
+
+                        "Cumulative change in precipitation compared to a recent past"
+
+                }
+
+                if feature in change_variables:
+
+                    scenario_b[
+                        feature
+                    ] = baseline_value + delta_value
+
+                else:
+
+                    scenario_b[
+                        feature
+                    ] = (
+
+                        baseline_value
+
+                        * (
+
+                            1
+                            + delta_value / 100
+
+                            )
+
+                        )
 
         v_from = baseline_value
 

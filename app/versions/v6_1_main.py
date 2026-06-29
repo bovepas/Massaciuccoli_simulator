@@ -255,7 +255,11 @@ def has_comparison(q: str):
 # DEPENDENCY DETECTION
 # ======================================================
 
-def asks_dependency(q: str):
+def asks_dependency(
+    q: str,
+    mentioned_features,
+    target
+):
 
     # --------------------------------------------------
     # EXCLUDE RANKING / IMPORTANCE QUESTIONS
@@ -266,10 +270,12 @@ def asks_dependency(q: str):
         "which variables",
         "which environmental variables",
         "which factors",
+        "environmental factors",
         "top variables",
         "top factors",
         "main factors",
         "most important",
+        "most influential",
         "most influence",
         "contributes most",
         "contribute most",
@@ -277,6 +283,7 @@ def asks_dependency(q: str):
         "greatest impact",
         "largest impact",
         "highest impact",
+        "top 3",
         "three environmental variables"
 
     ]
@@ -285,55 +292,68 @@ def asks_dependency(q: str):
         return False
 
     # --------------------------------------------------
-    # RELATIONSHIP KEYWORDS
-    # --------------------------------------------------
-
-    dependency_patterns = [
-
-        "affect",
-        "influence",
-        "impact",
-        "effect",
-        "cause",
-        "causes",
-        "determine",
-        "determines",
-        "control",
-        "controls"
-
-    ]
-
-    # --------------------------------------------------
-    # EXPLICIT RELATIONSHIP STRUCTURES
+    # EXPLICIT RELATIONSHIP PATTERNS
     # --------------------------------------------------
 
     relationship_patterns = [
 
+        # affect
+        r"how does .* affect .*",
+        r"how do .* affect .*",
+        r"does .* affect .*",
+        r"do .* affect .*",
+        r"how could .* affect .*",
+
+        # influence
+        r"how does .* influence .*",
+        r"how do .* influence .*",
+        r"does .* influence .*",
+        r"do .* influence .*",
+        r"how could .* influence .*",
+
+        # impact
+        r"how does .* impact .*",
+        r"how do .* impact .*",
+        r"does .* impact .*",
+        r"do .* impact .*",
+        r"how could .* impact .*",
+
+        # cause
+        r"does .* cause .*",
+        r"do .* cause .*",
+        r"how does .* cause .*",
+
+        # determine
+        r"does .* determine .*",
+        r"do .* determine .*",
+        r"how does .* determine .*",
+
+        # control
+        r"does .* control .*",
+        r"do .* control .*",
+        r"how does .* control .*",
+
+        # effect
+        r"what is the effect of .* on .*",
+        r"what effect does .* have on .*",
+
+        # impact
+        r"what is the impact of .* on .*",
+        r"what impact does .* have on .*",
+
+        # association
+        r"what is the relationship between .* and .*",
         r"how is .* associated with .*",
         r"how are .* associated with .*",
-
         r"how is .* related to .*",
         r"how are .* related to .*",
-
         r"how is .* linked to .*",
         r"how are .* linked to .*",
-
         r"how is .* correlated with .*",
         r"how are .* correlated with .*",
 
-        r"what is the relationship between .* and .*",
-
-        r"how does .* affect .*",
-        r"how does .* influence .*",
-        r"how does .* impact .*",
-
-        r"how do .* affect .*",
-        r"how do .* influence .*",
-        r"how do .* impact .*",
-
-        r"how could .* affect .*",
-        r"how could .* influence .*",
-        r"how could .* impact .*"
+        # benchmark typo
+        r"how is .* affect .*"
 
     ]
 
@@ -341,24 +361,7 @@ def asks_dependency(q: str):
         re.search(pattern, q)
         for pattern in relationship_patterns
     ):
-        return True
-
-    # --------------------------------------------------
-    # FALLBACK:
-    # SINGLE RELATIONSHIP VERBS
-    # --------------------------------------------------
-
-    if any(
-        p in q
-        for p in dependency_patterns
-    ):
-        return True
-
-    if re.search(
-        r"how does .* change",
-        q
-    ):
-        return True
+        return len(mentioned_features) >= 1
 
     return False
 
@@ -561,6 +564,12 @@ def route_question(question: str):
         return_metadata=True
     )
 
+    print("\n[DEBUG EXPLICIT FEATURES]")
+    print(parsed["explicitly_modified"])
+
+    print("\n[DEBUG MENTIONED FEATURES]")
+    print(parsed["mentioned_features"])
+
     modifications = parsed.get(
         "modifications",
         []
@@ -580,8 +589,11 @@ def route_question(question: str):
 
     comparison_detected = has_comparison(q)
 
-    dependency_detected = asks_dependency(q)
-
+    dependency_detected = asks_dependency(
+        q,
+        parsed["mentioned_features"],
+        target
+    )
     driver_analysis = asks_driver_analysis(q)
 
     importance_compare_detected = (

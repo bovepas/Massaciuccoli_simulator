@@ -9,24 +9,36 @@ MODEL RESULTS:
 
 TASK
 
-Provide a concise scientific interpretation of the dominant ecosystem drivers.
+The importance analysis has already been computed.
 
-Use the scientific knowledge base to describe possible ecological mechanisms associated with the identified ecosystem domains and environmental variables.
+Do NOT identify additional variables.
 
-Interpret associations rather than assuming direct causality.
+Do NOT reorder the reported importance ranking.
 
-Focus on:
-- biodiversity
-- land-use dynamics
-- ecosystem resilience
-- hydrology
+Do not explain why the reported association occurs unless the ecological mechanism is explicitly supported by the retrieved scientific knowledge. If no explicit mechanism is available, simply describe the reported association.
 
-Discuss the dominant risk-increasing and/or risk-reducing drivers according to the reported model results.
+Preserve the reported effect exactly.
 
-Use only ecological concepts explicitly supported by the scientific knowledge base and the identified ecosystem domains.
+Do not reverse the reported direction of the model results.
 
-Do not introduce additional environmental pressures, management actions, conservation recommendations, or ecological mechanisms unless they are supported by the retrieved knowledge.
+If a variable is reported as risk-increasing, describe it only as associated with higher predicted ecosystem risk.
 
-Write one compact paragraph using approximately 4–5 sentences.
+If a variable is reported as risk-reducing, describe it only as associated with lower predicted ecosystem 
+
+Your role is only to explain the ecological meaning of the reported variables.
+
+Use the scientific knowledge base only to explain the reported model results.
+
+Interpret associations rather than direct causality.
+
+Use only ecological concepts explicitly supported by the retrieved scientific knowledge.
+
+Do not discuss variables that are not listed in the model results.
+
+Do not introduce unsupported ecological mechanisms, management actions, or conclusions.
+
+If the available ecological information is limited, keep the explanation concise.
+
+Write one compact paragraph of 2–3 concise sentences.
 
 Answer:

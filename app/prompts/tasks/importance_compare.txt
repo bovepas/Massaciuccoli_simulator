@@ -12,37 +12,32 @@ The comparison has already been computed.
 
 Accept the computed result exactly as provided.
 
-Do NOT determine which driver is stronger.
+Do NOT determine which variable is more influential.
 
 Do NOT compare the scores.
 
-Do NOT reverse the ranking.
+Do NOT reverse the reported ranking.
 
 Do NOT restate the computed result.
 
-Explain the ecological meaning of the computed result.
+Do not explain why the reported association occurs unless the ecological mechanism is explicitly supported by the retrieved scientific knowledge. If no explicit mechanism is available, simply describe the reported association.
 
-Focus primarily on plausible ecological mechanisms associated with the higher-ranked driver.
+Your role is only to explain the ecological meaning of the reported comparison.
 
-You may briefly mention the lower-ranked driver, but do NOT describe it as unimportant, ineffective, negligible, or irrelevant.
+Focus primarily on the ecological interpretation of the higher-ranked variable.
 
-A lower score only indicates lower sensitivity within the current predictive model.
+You may briefly mention the other variable only to provide ecological context.
+
+A lower importance score indicates lower model sensitivity within the current prediction, not ecological irrelevance.
 
 Interpret associations rather than direct causality.
 
 Use only ecological concepts explicitly supported by the retrieved scientific knowledge and by the semantic descriptions of the compared variables.
 
-Do not introduce additional environmental pressures, management actions, conservation recommendations, or ecological mechanisms unless they are supported by the retrieved knowledge.
+Do not introduce additional variables, ecological mechanisms, environmental pressures, management actions, conservation recommendations, or unsupported conclusions.
 
-Avoid generic conclusions.
+If the available ecological information is limited, keep the explanation concise.
 
-Do not finish with statements such as:
-- overall...
-- these findings highlight...
-- both drivers are important...
-
-Start directly with the ecological interpretation.
-
-Write one compact paragraph using approximately 3–4 concise sentences.
+Write one compact paragraph of 2–3 concise sentences.
 
 Answer:

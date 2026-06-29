@@ -209,14 +209,16 @@ def generate_assessment_explanation(
     if primary_drivers:
 
         primary_text = "\n".join(
-            f"- {k}: {abs(v):.2f}"
+            f"- {k}\n"
+            f"  association score: {abs(v):.2f}"
             for k, v in primary_drivers.items()
         )
 
     if secondary_responses:
 
         secondary_text = "\n".join(
-            f"- {k}: {abs(v):.2f}"
+            f"- {k}\n"
+            f"  association score: {abs(v):.2f}"
             for k, v in secondary_responses.items()
         )
 
@@ -264,7 +266,9 @@ def generate_assessment_explanation(
     {question}
 
     MODEL RESULTS
-
+    The reported association scores indicate the relative importance of variables
+    within the model. They are not measurements and do not indicate that a variable
+    has increased or decreased.
     Risk increase:
     {risk_text}
 

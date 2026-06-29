@@ -853,6 +853,49 @@ def parse_comparison_scenarios(
             return scen_A, scen_B
 
     # --------------------------------------------------
+    # 6. BASELINE → SCENARIO
+    # --------------------------------------------------
+
+    m = re.search(
+        r"(?:current ecosystem|current conditions|baseline).*?"
+        r"scenario\s+"
+        r"(?:where|with|combining|including|that\s+combines)?"
+        r"\s*(.*)",
+        q,
+        flags=re.IGNORECASE | re.DOTALL
+    )
+
+    if m:
+
+        print("Detected BASELINE/SCENARIO")
+
+        scenario_text = m.group(1).strip()
+
+        print("\n[DEBUG] Scenario B text:")
+        print(scenario_text)
+
+        mods_B = parse_scenario(
+            scenario_text
+        )
+
+        print("\n[DEBUG] Scenario B modifications:")
+        print(mods_B)
+
+        scen_A = {}
+
+        scen_B = scenario_to_legacy_dict(
+            mods_B,
+            feature_stats
+        )
+
+        print("Parsed A:", scen_A)
+        print("Parsed B:", scen_B)
+
+        if scen_B:
+
+            return scen_A, scen_B
+
+    # --------------------------------------------------
     # FAIL
     # --------------------------------------------------
 

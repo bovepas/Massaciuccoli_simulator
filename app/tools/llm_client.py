@@ -118,7 +118,13 @@ def call_llm(prompt: str) -> str:
             # ==================================================
 
             start_timer("ollama_request")
+            # --------------------------------------------------
+            # Disable Qwen reasoning
+            # --------------------------------------------------
 
+            if not prompt.rstrip().endswith("/no_think"):
+                prompt = prompt.rstrip() + "\n\n/no_think"
+                
             response = SESSION.post(
 
                 GENERATE_URL,

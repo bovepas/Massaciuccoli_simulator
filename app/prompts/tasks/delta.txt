@@ -1,13 +1,26 @@
-Rewrite the following facts into a concise environmental explanation.
+TASK
+
+Combine the following facts into a single concise scientific explanation.
 
 FACTS:
 {facts}
 
 RULES:
 
-- Use ONLY these facts.
+- Use ONLY the provided facts.
 - Do NOT introduce ecological processes that are not explicitly supported by the facts.
-- Do NOT introduce new concepts.
+- Do NOT introduce new ecological concepts.
+
+- Combine the facts into one coherent explanation rather than listing them individually.
+
+- Interpret associations rather than direct causal relationships.
+
+- Use cautious scientific language (e.g. "may", "is associated with", "may contribute to").
+
+- Do not infer additional environmental changes beyond those explicitly stated in the facts.
+
+- Do NOT mention ecosystem risk or model predictions.
+  These are added separately by the system.
 
 - Avoid generic statements such as:
   - overall ecosystem health
@@ -15,13 +28,8 @@ RULES:
   - ecological balance
   - ecosystem functioning
 
-unless these concepts are explicitly supported by the provided facts.
+unless they are explicitly supported by the provided facts.
 
-- Combine the facts into 1–2 concise sentences.
-- Do NOT present associations as proven causal mechanisms.
-- Distinguish between ecological interpretation and model prediction.
-- Use cautious scientific language.
-- Keep the explanation concise and natural.
-- Do not use introductions.
-- Do NOT independently invent ecosystem risk changes.
-- Risk predictions may be added separately by the system.
+- Write 1–2 concise sentences.
+
+Answer:

@@ -11,22 +11,32 @@ ECOLOGICAL INTERPRETATION NOTES:
 
 TASK
 
-Provide a concise scientific interpretation of how the listed variables are associated with {target}.
+The environmental association analysis has already been computed.
 
-Use the ecological interpretation notes to explain plausible ecological mechanisms associated with the observed environmental associations.
+Do NOT identify additional associated variables.
 
-Interpret associations rather than assuming direct causality.
+Do NOT reinterpret the reported associations.
 
-Focus on:
-- biodiversity responses
-- hydrology
-- habitat conditions
-- ecosystem stress
+Your role is only to explain the ecological meaning of the reported associations.
 
-Use only concepts explicitly supported by the ecological interpretation notes.
+Use the ecological interpretation notes only to support the reported associations.
 
-Do not introduce additional environmental processes, management actions, conservation recommendations, or stressors unless they are supported by the provided information.
+Interpret associations rather than direct causality.
 
-Write one compact paragraph using approximately 3–5 sentences.
+Do not interpret a positive or negative association as evidence that a variable increased or decreased.
+
+Association direction refers only to the statistical relationship reported by the model and does not indicate observed environmental change.
+
+Describe variables as being positively or negatively associated with {target}, rather than describing them as increasing, decreasing, improving, deteriorating, expanding, or contracting unless such changes are explicitly reported by the model results.
+
+Use only ecological concepts explicitly supported by the ecological interpretation notes.
+
+Do not discuss variables, ecological processes, environmental changes, or ecological mechanisms that are not explicitly supported by the reported associations or by the ecological interpretation notes.
+
+Do not introduce unsupported management actions, conservation recommendations, or conclusions.
+
+If the available ecological information is limited, keep the explanation concise.
+
+Write one compact paragraph of 2–3 concise sentences.
 
 Answer:

@@ -28,6 +28,7 @@ DEBUG = True
 MAX_CONTEXT_CHARS = 1200
 
 
+
 def debug_print(*args):
     if DEBUG:
         print(*args)
@@ -376,10 +377,23 @@ def enhance_with_rag(
 
     debug_print("[RAG] Docs:", len(retrieved))
 
+    model_result_header = """
+    The following model result is authoritative.
+
+    Do not contradict it.
+
+    Use the ecological notes only to explain the reported result.
+
+    Never infer a different outcome from the ecological notes.
+    """
+
+
+
     if USE_LEGACY_PROMPTS:
         prompt = f"""
     You are an environmental scientist.
 
+    {model_result_header}
 
     MODEL RESULTS:
     {base_text}
@@ -444,6 +458,8 @@ def enhance_with_rag(
             build_prompt("comparison")
             + f"""
 
+    {model_result_header}
+    
     MODEL RESULTS:
     {base_text}
 
