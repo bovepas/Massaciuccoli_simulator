@@ -78,8 +78,8 @@ def build_driver_interpretation(
     ):
 
         return (
-            f"Habitat suitability is overwhelmingly "
-            f"controlled by {dominant_driver}."
+            f"Habitat suitability is primarily  "
+            f"associated  with {dominant_driver}."
         )
 
     elif (
@@ -88,9 +88,10 @@ def build_driver_interpretation(
     ):
 
         return (
-            f"{dominant_driver} is the primary "
-            f"environmental driver, although "
-            f"other variables also contribute."
+            f"{dominant_driver} is the dominant "
+            f"environmental variable associated with "
+            f"habitat suitability, although other "
+            f"variables also contribute."
         )
 
     elif (
@@ -99,13 +100,121 @@ def build_driver_interpretation(
     ):
 
         return (
-            "Habitat suitability results from "
-            "the interaction of multiple "
-            "environmental drivers, with no "
-            "single dominant factor."
+            "Multiple environmental drivers are "
+            "similarly associated with habitat suitability, "
+            "with no single dominant factor."
         )
 
     return ""
+
+# ======================================================
+# QUESTION FOCUS
+# ======================================================
+
+def build_focus_text(question):
+
+    q = question.lower()
+
+    # ----------------------------------------------
+    # Driver importance
+    # ----------------------------------------------
+
+    if any(k in q for k in [
+
+        "driver",
+        "drivers",
+
+        "dominant",
+        "dominate",
+
+        "importance",
+        "important",
+
+        "control",
+        "controls",
+        "controlled",
+
+        "environmental factor",
+        "main factor",
+        "primary factor",
+
+        "most important"
+
+    ]):
+
+        return """
+Focus on the reported environmental drivers.
+
+Explain only the reported driver structure and the ecological meaning of the reported driver associations.
+Assume that the reported driver ranking has already been presented to the user.
+
+Do not repeat or enumerate the reported drivers unless this is necessary to answer the question.
+
+Do not discuss habitat distribution, habitat topology, or model performance unless they are necessary to answer the question.
+"""
+
+    # ----------------------------------------------
+    # Model performance
+    # ----------------------------------------------
+
+    if any(k in q for k in [
+
+        "auc",
+        "accuracy",
+        "performance",
+        "reliable",
+        "reliability",
+        "confidence"
+
+    ]):
+
+        return """
+Focus on the reported model performance.
+
+Explain what the reported evaluation metrics indicate about model reliability.
+
+Assume that the reported metric values have already been presented to the user.
+
+Do not repeat or summarize the reported metric values unless necessary to answer the question.
+
+Do not discuss habitat distribution, habitat topology, or environmental drivers unless they are directly relevant to model performance.
+"""
+
+    # ----------------------------------------------
+    # Habitat topology
+    # ----------------------------------------------
+
+    if any(k in q for k in [
+
+        "fragment",
+        "fragmentation",
+        "connectivity",
+        "connected",
+        "hotspot",
+        "patch",
+        "topology"
+
+    ]):
+
+        return """
+Focus on the reported habitat topology.
+
+Interpret hotspot organization, connectivity, and fragmentation.
+
+Do not discuss model performance or environmental drivers unless they directly explain the reported spatial pattern.
+"""
+
+    # ----------------------------------------------
+    # Habitat distribution
+    # ----------------------------------------------
+
+    return """
+Focus on the reported habitat distribution.
+
+Interpret the reported habitat suitability pattern.
+
+Do not discuss model performance, habitat topology, or environmental drivers unless they directly explain the reported distribution.
+"""
 
 # ======================================================
 # PROMPT
@@ -286,6 +395,10 @@ def generate_enm_explanation(
         )
     )
 
+    question_focus = build_focus_text(
+        question
+    )
+
     # --------------------------------------------------
     # PROMPT
     # --------------------------------------------------
@@ -319,6 +432,10 @@ def generate_enm_explanation(
     (sorted by importance)
 
     {driver_text}
+
+    QUESTION FOCUS:
+
+    {question_focus}
 
     """
     )

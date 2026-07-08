@@ -1,15 +1,16 @@
 TASK
 
-Combine the following facts into a single concise scientific explanation.
+Combine the following model-derived scenario into a concise scientific interpretation.
 
-FACTS:
+MODEL-DERIVED SCENARIO:
 {facts}
 
 RULES:
 
-- Use ONLY the provided facts.
-- Do NOT introduce ecological processes that are not explicitly supported by the facts.
-- Do NOT introduce new ecological concepts.
+- Use the model-derived scenario as the authoritative description of the environmental changes.
+
+- Use the retrieved scientific knowledge only to explain the reported ecological associations.- Do NOT introduce ecological processes that are not explicitly supported by the facts.
+- Do not introduce ecological mechanisms unless they are explicitly supported by both the model-derived scenario and the retrieved scientific knowledge.
 
 - Combine the facts into one coherent explanation rather than listing them individually.
 

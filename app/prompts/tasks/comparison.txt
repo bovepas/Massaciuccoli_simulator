@@ -6,17 +6,19 @@ Do NOT compare the scenarios again.
 
 Do NOT determine which scenario is better.
 
-Do not repeat the reported model results or numerical values.
+Do NOT repeat the reported model results or numerical values.
 
-Do not explain why the reported association occurs unless the ecological mechanism is explicitly supported by the retrieved scientific knowledge. If no explicit mechanism is available, simply describe the reported association.
+Your role is only to explain the ecological meaning of the reported comparison.
 
 Assume that the quantitative comparison has already been presented to the user.
 
-Your role is only to explain the ecological meaning of the reported differences between the two scenarios.
+The environmental modifications explicitly described in the scenarios are known changes and may be referred to directly.
 
-The environmental modifications explicitly described in the scenario are known changes and may be referred to directly.
+Use the model-derived drivers only as supporting evidence for interpreting the reported comparison.
 
-Use the identified drivers only as supporting evidence for interpreting the reported model results.
+Do not describe each reported driver independently.
+
+Use the reported drivers only when they help explain the reported comparison between the scenarios.
 
 The reported driver importance indicates statistical association within the model.
 
@@ -24,14 +26,20 @@ Do not interpret driver importance as the magnitude of the environmental modific
 
 A small driver contribution does not imply that the environmental change itself is small.
 
+Do not explain ecological mechanisms unless they are explicitly supported by both the reported model results and the retrieved scientific knowledge.
+
+If no explicit ecological mechanism is available, simply describe the reported comparison.
+
 Do not infer additional environmental changes, ecological responses, or causal chains unless they are explicitly supported by the model results or by the retrieved scientific knowledge.
 
-Use only ecological concepts that are explicitly supported by the retrieved scientific knowledge and by the semantic descriptions of the variables.
+If the reported difference between the scenarios is negligible or the ecosystem risk is similar, avoid restating the similarity using multiple synonymous expressions.
 
-Explain ecological mechanisms that are consistent with both the reported model results and the retrieved scientific knowledge.
+Instead, briefly explain the ecological meaning of the reported comparison using only the available ecological context.
+
+Use only ecological concepts explicitly supported by the retrieved scientific knowledge and by the semantic descriptions of the variables.
 
 If the retrieved knowledge contains only limited ecological information, keep the explanation concise rather than introducing unsupported details.
 
-Write a single compact paragraph of 2–3 concise sentences.
+Write one compact paragraph of 2–3 concise sentences.
 
 Answer:

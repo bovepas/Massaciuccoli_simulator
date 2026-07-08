@@ -14,7 +14,7 @@ RAG Delta — v38 (epistemic + significance-aware)
 """
 
 import re
-from tools.llm_client import call_llm
+from knowledge.rag_pipeline import generate_answer
 
 from utils.prompt_builder import (
     build_prompt,
@@ -293,7 +293,7 @@ def build_legacy_prompt(facts):
     return f"""
     Rewrite the following facts into a concise environmental explanation.
 
-    FACTS:
+    MODEL-DERIVED SCENARIO:    
     {fact_text}
 
     RULES:
@@ -496,70 +496,7 @@ def fallback(facts, delta):
         sentence,
         delta
     )
-# ======================================================
-# LEGACY PROMPT
-# ======================================================
 
-def build_legacy_prompt(
-    question,
-    comparison_statement
-):
-
-    return f"""
-You are an environmental scientist.
-
-QUESTION
-
-{question}
-
-COMPUTED RESULT
-
-{comparison_statement}
-
-IMPORTANT
-
-The comparison has already been computed.
-
-Accept the computed result exactly as provided.
-
-Do NOT determine which driver is stronger.
-
-Do NOT compare the scores.
-
-Do NOT reverse the ranking.
-
-Do NOT restate the computed result.
-
-TASK
-
-Explain the ecological meaning of the computed result.
-
-Focus primarily on plausible ecological mechanisms
-associated with the higher-ranked driver.
-
-You may briefly mention the lower-ranked driver,
-but do NOT describe it as unimportant,
-ineffective, negligible, or irrelevant.
-
-A lower score only indicates lower sensitivity
-within the current predictive model.
-
-Interpret associations rather than direct causality.
-
-Avoid generic conclusions.
-
-Do not finish with statements such as:
-
-- overall...
-- these findings highlight...
-- both drivers are important...
-
-Start directly with the ecological interpretation.
-
-Write approximately 3–4 concise sentences.
-
-Answer:
-"""
 
 # ======================================================
 # MAIN
@@ -568,7 +505,8 @@ Answer:
 def generate_delta_explanation(
     question,
     drivers,
-    delta=None
+    delta=None,
+    features=None
 ):
 
     print("\n[RAG-DELTA v38] START")
@@ -582,6 +520,17 @@ def generate_delta_explanation(
             "No clear environmental "
             "pattern detected."
         )
+
+    # --------------------------------------------------
+    # RETRIEVAL QUERY
+    # --------------------------------------------------
+
+    feature = drivers[0][0]
+    rag_query = feature
+
+    # --------------------------------------------------
+    # PROMPT
+    # --------------------------------------------------
 
     if USE_LEGACY_PROMPTS:
 
@@ -600,20 +549,31 @@ def generate_delta_explanation(
             build_prompt("delta")
             + f"""
 
-FACTS:
+MODEL-DERIVED SCENARIO:
 {fact_text}
 
 """
         )
 
     try:
+
         if DEBUG:
+
             print("\n========== FINAL PROMPT ==========\n")
             print(prompt)
-            print("\n==================================\n")
 
-        raw = call_llm(
-            prompt
+            print("\n========== RETRIEVAL QUERY ==========\n")
+            print(rag_query)
+
+            print("\n=====================================\n")
+
+        raw = generate_answer(
+
+            question=rag_query,
+
+            features=features,
+
+            extra_prompt=prompt
         )
 
         print("[RAW]:", raw)

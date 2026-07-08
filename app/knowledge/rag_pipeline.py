@@ -37,6 +37,8 @@ from utils.feature_semantics import (
 
 DEBUG = True
 
+USE_SEMANTIC_CONTEXT = True
+
 MAX_CONTEXT_CHARS = 1500
 
 
@@ -191,6 +193,22 @@ def generate_answer(
         question
     )
 
+    if DEBUG:
+
+        print("\n[RAG] Retrieved documents:")
+
+        for i, doc in enumerate(retrieved, 1):
+
+            print(f"\n--- Document {i} ---")
+
+            print(
+                f"{doc['source']} "
+                f"(page {doc['page']}) "
+                f"distance={doc['distance']:.2f}"
+            )
+
+            print(doc["text"][:300])
+
     end_timer("retrieval")
 
     # ==================================================
@@ -247,39 +265,45 @@ def generate_answer(
 
     semantic_context = ""
 
-    if features:
+    if USE_SEMANTIC_CONTEXT and features:
 
-        semantic_context = build_semantic_context(
-            features
-        )
+
+         semantic_context = build_semantic_context(
+             features
+         )
         
-        debug_print(
-            "\n[RAG] Semantic context:"
-        )
+         debug_print(
+             "\n[RAG] Semantic context:"
+         )
 
-        debug_print(
-            semantic_context
-        )
+         debug_print(
+             semantic_context
+         )
         
 
     prompt = f"""
-You are an environmental scientist.
+You are an environmental scientist assisting
+the Massaciuccoli Digital Twin.
 
 TASK:
-Provide a clear and concise explanation
-based ONLY on the provided context.
+Provide a clear and concise scientific interpretation.
+
+Use the retrieved scientific knowledge to interpret
+the environmental model outputs provided below.
+
+Do not introduce unsupported ecological claims.
 
 {semantic_context}
 
 {extra_prompt}
 
-Question:
+User Question:
 {question}
 
-Context:
+Retrieved Scientific Knowledge:
 {context}
 
-Answer:
+Scientific Interpretation:
 """
 
     end_timer("prompt_building")

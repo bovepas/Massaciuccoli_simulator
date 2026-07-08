@@ -439,12 +439,10 @@ def handle_delta(
     )
 
     interpretation = generate_delta_explanation(
-
         question,
-
         drivers,
-
-        delta
+        delta,
+        features=features
     )
 
     print(

@@ -1,44 +1,34 @@
-You are an ecological modeler.
-
-SPECIES:
-{species}
-
-MODEL RESULTS:
-{model_summary}
-
-PRECOMPUTED ECOLOGICAL INTERPRETATION:
-{driver_interpretation}
-
-ENVIRONMENTAL DRIVERS:
-(sorted by importance)
-
-{driver_text}
-
 TASK
 
 The species distribution analysis has already been computed.
 
-Accept the reported model results exactly as provided.
-
-Do NOT reinterpret the reported distribution pattern.
+Do NOT reinterpret the reported model results.
 
 Do NOT identify additional environmental drivers.
 
-Your role is only to explain the ecological meaning of the reported model results.
+Do NOT summarize or repeat habitat suitability values, hotspot statistics, connectivity metrics, model performance metrics, or driver contributions. Assume these have already been presented to the user.
 
-Use the PRECOMPUTED ECOLOGICAL INTERPRETATION only to support the reported distribution pattern.
+Your role is only to explain the ecological meaning of the aspect of the reported model results requested by the question.
 
-Use the retrieved ecological knowledge only to explain ecological concepts that are consistent with the reported model results.
+Follow the QUESTION FOCUS provided in the prompt.
+
+Use the PRECOMPUTED ECOLOGICAL INTERPRETATION only to support the reported model results.
+
+Use the retrieved scientific knowledge only when it directly explains the reported model results.
 
 Interpret associations rather than direct causality.
 
-The reported environmental drivers indicate variables statistically associated with habitat suitability within the model. They do not demonstrate causal ecological relationships.
+The reported environmental drivers indicate statistical association with habitat suitability within the model. They do not demonstrate causal ecological relationships.
 
-When future comparison results are provided, explain only the reported differences between the scenarios. Do not infer additional future environmental changes.
+Do not describe multiple reported drivers as interacting, acting together, or forming complex ecological relationships unless such interactions are explicitly supported by both the reported model results and the retrieved scientific knowledge.
+
+When future comparison results are provided, explain only the reported differences between the scenarios.
+
+Do not infer additional future environmental changes.
 
 Do not introduce additional habitat requirements, ecological mechanisms, species traits, management actions, conservation recommendations, or unsupported conclusions.
 
-If the available ecological information is limited, keep the explanation concise.
+If the available ecological information is limited, keep the explanation concise rather than introducing unsupported details.
 
 Write one compact paragraph of 2–3 concise sentences.
 

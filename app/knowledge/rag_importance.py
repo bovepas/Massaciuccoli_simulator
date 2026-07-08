@@ -424,8 +424,7 @@ RISK-REDUCING DRIVERS:
 
     ecosystem risk
     lake ecosystem
-    biodiversity
-    land use
+    
     """
 
     print("[DEBUG] RAG query:")

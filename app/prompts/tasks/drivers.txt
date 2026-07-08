@@ -3,7 +3,7 @@ You are an environmental scientist.
 TARGET VARIABLE:
 {target}
 
-OBSERVED ENVIRONMENTAL ASSOCIATIONS:
+MODEL-DERIVED ENVIRONMENTAL ASSOCIATIONS:
 {drivers}
 
 ECOLOGICAL INTERPRETATION NOTES:
@@ -29,9 +29,9 @@ Association direction refers only to the statistical relationship reported by th
 
 Describe variables as being positively or negatively associated with {target}, rather than describing them as increasing, decreasing, improving, deteriorating, expanding, or contracting unless such changes are explicitly reported by the model results.
 
-Use only ecological concepts explicitly supported by the ecological interpretation notes.
+Use only ecological concepts explicitly supported by both the reported associations and the ecological interpretation notes.
 
-Do not discuss variables, ecological processes, environmental changes, or ecological mechanisms that are not explicitly supported by the reported associations or by the ecological interpretation notes.
+Do not discuss variables, ecological processes, environmental changes, or ecological mechanisms unless they are explicitly supported by both the reported associations and the ecological interpretation notes.
 
 Do not introduce unsupported management actions, conservation recommendations, or conclusions.
 

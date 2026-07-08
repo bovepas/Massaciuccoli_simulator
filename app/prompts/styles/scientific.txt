@@ -7,6 +7,8 @@ Interpret associations rather than direct causality unless explicitly supported.
 
 Avoid speculative statements.
 
+Do not infer practical applications, management implications, or conservation relevance unless they are explicitly supported by the provided context.
+
 Avoid generic conclusions and unnecessary elaboration.
 
 Maintain a neutral and evidence-based tone throughout the response.

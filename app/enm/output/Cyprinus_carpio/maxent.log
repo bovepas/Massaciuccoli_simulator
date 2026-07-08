@@ -1,11 +1,11 @@
-Mon Jun 29 13:10:31 UTC 2026
+Thu Jul 02 11:46:30 UTC 2026
 MaxEnt version 3.4.4
 Checking header of /app/enm/env_layers/Conductivity.asc
 Checking header of /app/enm/env_layers/Precipitation.asc
 Checking header of /app/enm/env_layers/Temperature.asc
 Reading samples from Presence_Cyprinus_carpio.csv
-Read samples: max memory 1073741824, total allocated 262144000, free 241201520, used 20942480, increment 20942480
-Extractor: max memory 1073741824, total allocated 262144000, free 241201520, used 20942480, increment 0
+Read samples: max memory 1073741824, total allocated 262144000, free 241127272, used 21016728, increment 21016728
+Extractor: max memory 1073741824, total allocated 262144000, free 241127272, used 21016728, increment 0
 Extracting random background and sample data
 57224 points with values for all grids
 Adding samples to background in feature space
@@ -22,138 +22,138 @@ environmentallayers: /app/enm/env_layers
 warnings: false
 autorun: true
 
-getSamples: max memory 1073741824, total allocated 262144000, free 237011288, used 25132712, increment 4190232
+getSamples: max memory 1073741824, total allocated 262144000, free 236927472, used 25216528, increment 4199800
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 254798704, used 7345296, increment -17787416
+makeFeatures: max memory 1073741824, total allocated 262144000, free 254312784, used 7831216, increment -17385312
 Cyprinus_carpio: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 254546976, used 7597024, increment 251728
-linearPredictor: max memory 1073741824, total allocated 262144000, free 254466944, used 7677056, increment 80032
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 254466944, used 7677056, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 254215160, used 7928840, increment 251784
+Density: max memory 1073741824, total allocated 262144000, free 254065400, used 8078600, increment 247384
+linearPredictor: max memory 1073741824, total allocated 262144000, free 253985368, used 8158632, increment 80032
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 253985368, used 8158632, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 253969992, used 8174008, increment 15376
 Initial loss: 9.21054035197885
-80: time = 0.052000 loss = 8.209363
+80: time = 0.064000 loss = 8.209363
 Resulting gain: 1.0011772925660978
 Projecting...
 Writing file /app/enm/output/Cyprinus_carpio/Cyprinus_carpio.asc
-Time since start: 1.197
+Time since start: 1.295
 Writing /app/enm/output/Cyprinus_carpio/plots/Cyprinus_carpio.png
 Cyprinus_carpio response curves
 Response curve: only Conductivity
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 221762944, used 40381056, increment 32452216
+makeFeatures: max memory 1073741824, total allocated 262144000, free 217934384, used 44209616, increment 36035608
 Cyprinus_carpio Conductivity: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 221682912, used 40461088, increment 80032
-linearPredictor: max memory 1073741824, total allocated 262144000, free 221602880, used 40541120, increment 80032
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 221602880, used 40541120, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 221602880, used 40541120, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 217520632, used 44623368, increment 413752
+linearPredictor: max memory 1073741824, total allocated 262144000, free 217440600, used 44703400, increment 80032
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 217440600, used 44703400, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 217440600, used 44703400, increment 0
 Initial loss: 9.21054035197885
-20: time = 0.008000 loss = 9.210540
+20: time = 0.007000 loss = 9.210540
 Resulting gain: 0.0
 Cyprinus_carpio response curves
 Response curve: only Precipitation
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 219945248, used 42198752, increment 1657632
+makeFeatures: max memory 1073741824, total allocated 262144000, free 215473008, used 46670992, increment 1967592
 Cyprinus_carpio Precipitation: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 219945248, used 42198752, increment 0
-linearPredictor: max memory 1073741824, total allocated 262144000, free 219865216, used 42278784, increment 80032
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 219865216, used 42278784, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 219865216, used 42278784, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 215473008, used 46670992, increment 0
+linearPredictor: max memory 1073741824, total allocated 262144000, free 215473008, used 46670992, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 215473008, used 46670992, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 215473008, used 46670992, increment 0
 Initial loss: 9.21054035197885
-60: time = 0.019000 loss = 8.312508
+60: time = 0.014000 loss = 8.312508
 Resulting gain: 0.8980320901016015
 Cyprinus_carpio response curves
 Response curve: only Temperature
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 217243776, used 44900224, increment 2621440
+makeFeatures: max memory 1073741824, total allocated 262144000, free 213370256, used 48773744, increment 2102752
 Cyprinus_carpio Temperature: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 217163744, used 44980256, increment 80032
-linearPredictor: max memory 1073741824, total allocated 262144000, free 217083712, used 45060288, increment 80032
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 217083712, used 45060288, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 217083712, used 45060288, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 213290224, used 48853776, increment 80032
+linearPredictor: max memory 1073741824, total allocated 262144000, free 213210192, used 48933808, increment 80032
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 213210192, used 48933808, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 213210192, used 48933808, increment 0
 Initial loss: 9.21054035197885
-60: time = 0.014000 loss = 9.099704
+60: time = 0.012000 loss = 9.099704
 Resulting gain: 0.11083594633853089
 Cyprinus_carpio response curves
 Jackknife: leave Conductivity out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 201799328, used 60344672, increment 15284384
+makeFeatures: max memory 1073741824, total allocated 262144000, free 197647216, used 64496784, increment 15562976
 Cyprinus_carpio Conductivity: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 201719296, used 60424704, increment 80032
-linearPredictor: max memory 1073741824, total allocated 262144000, free 201639264, used 60504736, increment 80032
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 201639264, used 60504736, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 201639264, used 60504736, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 197647216, used 64496784, increment 0
+linearPredictor: max memory 1073741824, total allocated 262144000, free 197567184, used 64576816, increment 80032
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197567184, used 64576816, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 197567184, used 64576816, increment 0
 Initial loss: 9.21054035197885
 80: time = 0.016000 loss = 8.209363
 Jackknife: leave Precipitation out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 200703368, used 61440632, increment 935896
+makeFeatures: max memory 1073741824, total allocated 262144000, free 196389048, used 65754952, increment 1178136
 Cyprinus_carpio Precipitation: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 200623336, used 61520664, increment 80032
-linearPredictor: max memory 1073741824, total allocated 262144000, free 200543304, used 61600696, increment 80032
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 200543304, used 61600696, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 200543304, used 61600696, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 195994320, used 66149680, increment 394728
+linearPredictor: max memory 1073741824, total allocated 262144000, free 195914288, used 66229712, increment 80032
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 195914288, used 66229712, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 195914288, used 66229712, increment 0
 Initial loss: 9.21054035197885
-60: time = 0.019000 loss = 9.099704
+60: time = 0.017000 loss = 9.099704
 Jackknife: leave Temperature out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 199574808, used 62569192, increment 968496
+makeFeatures: max memory 1073741824, total allocated 262144000, free 195056272, used 67087728, increment 858016
 Cyprinus_carpio Temperature: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 199574808, used 62569192, increment 0
-linearPredictor: max memory 1073741824, total allocated 262144000, free 199494776, used 62649224, increment 80032
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 199417984, used 62726016, increment 76792
-Sequential: max memory 1073741824, total allocated 262144000, free 199417984, used 62726016, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 194976240, used 67167760, increment 80032
+linearPredictor: max memory 1073741824, total allocated 262144000, free 194896208, used 67247792, increment 80032
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 194896208, used 67247792, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 194896208, used 67247792, increment 0
 Initial loss: 9.21054035197885
-60: time = 0.022000 loss = 8.312508
+60: time = 0.018000 loss = 8.312508
 Jackknife: only Conductivity
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 198526224, used 63617776, increment 891760
+makeFeatures: max memory 1073741824, total allocated 262144000, free 194007656, used 68136344, increment 888552
 Cyprinus_carpio Conductivity: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 198526224, used 63617776, increment 0
-linearPredictor: max memory 1073741824, total allocated 262144000, free 198526224, used 63617776, increment 0
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 198526224, used 63617776, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 198526224, used 63617776, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 194007656, used 68136344, increment 0
+linearPredictor: max memory 1073741824, total allocated 262144000, free 194007656, used 68136344, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 194007656, used 68136344, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 194007656, used 68136344, increment 0
 Initial loss: 9.21054035197885
 20: time = 0.006000 loss = 9.210540
 Res.gain: 0.0
 Jackknife: only Precipitation
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 198446192, used 63697808, increment 80032
+makeFeatures: max memory 1073741824, total allocated 262144000, free 193927624, used 68216376, increment 80032
 Cyprinus_carpio Precipitation: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 198289376, used 63854624, increment 156816
-linearPredictor: max memory 1073741824, total allocated 262144000, free 198209344, used 63934656, increment 80032
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 198209344, used 63934656, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 198209344, used 63934656, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 193847592, used 68296408, increment 80032
+linearPredictor: max memory 1073741824, total allocated 262144000, free 193767560, used 68376440, increment 80032
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 193767560, used 68376440, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 193767560, used 68376440, increment 0
 Initial loss: 9.21054035197885
-60: time = 0.018000 loss = 8.312508
+60: time = 0.017000 loss = 8.312508
 Res.gain: 0.8980320901016015
 Jackknife: only Temperature
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 197400864, used 64743136, increment 808480
+makeFeatures: max memory 1073741824, total allocated 262144000, free 192928624, used 69215376, increment 838936
 Cyprinus_carpio Temperature: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.605, threshold: 1.970, hinge: 0.500
 3 samples
-Density: max memory 1073741824, total allocated 262144000, free 197400864, used 64743136, increment 0
-linearPredictor: max memory 1073741824, total allocated 262144000, free 197400864, used 64743136, increment 0
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197400864, used 64743136, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 197400864, used 64743136, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 192928624, used 69215376, increment 0
+linearPredictor: max memory 1073741824, total allocated 262144000, free 192928624, used 69215376, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 192928624, used 69215376, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 192928624, used 69215376, increment 0
 Initial loss: 9.21054035197885
 60: time = 0.015000 loss = 9.099704
 Res.gain: 0.11083594633853089

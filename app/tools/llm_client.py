@@ -51,13 +51,21 @@ MAX_RETRIES = 3
 
 RETRY_DELAY = 1
 
-TIMEOUT = 60
+TIMEOUT = int(
+    os.getenv(
+        "LLM_TIMEOUT",
+        60
+    )
+)
 
-#MAX_PREDICT = 256
-MAX_PREDICT = 1024
+MAX_PREDICT = int(
+    os.getenv(
+        "LLM_MAX_PREDICT",
+        1024
+    )
+)
 
 TEMPERATURE = 0
-
 
 # ======================================================
 # PERSISTENT SESSION
