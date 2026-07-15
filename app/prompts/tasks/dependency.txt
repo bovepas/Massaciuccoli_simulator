@@ -30,6 +30,8 @@ If the reported dependency is unsupported or has low confidence, do not speculat
 
 Use ecological concepts only when they are explicitly supported by both the reported dependency analysis and the retrieved scientific knowledge.
 
+Do not summarize or restate retrieved scientific knowledge unless it is strictly necessary to explain the reported model result.
+
 Do not introduce additional environmental processes, interactions, or causal chains that are not supported by the provided evidence.
 
 Do not introduce generic ecological concepts that are not explicitly supported by the reported dependency evidence or the retrieved scientific knowledge, including ecosystem stability, ecosystem functioning, resilience, ecological integrity, habitat quality, species distribution, species abundance, environmental modification, or broader ecosystem interactions.

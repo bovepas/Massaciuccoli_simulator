@@ -2,31 +2,31 @@ TASK
 
 The ecosystem risk prediction has already been computed.
 
-Accept the reported model results exactly as provided.
+Assume that the reported risk values and association scores are already visible to the user.
 
-Do NOT restate the reported risk prediction.
+Your task is to explain the ecological meaning of the reported scenario rather than to repeat the reported model outputs.
 
-Do not summarize, paraphrase, or repeat the reported model results. Assume the user has already read them.
+Do not repeat or paraphrase the reported risk value, risk delta, or association scores.
 
-Never repeat the reported risk value or risk delta in your answer. Assume these values are already presented to the user.
-
-Do NOT reinterpret the reported association scores.
-
-Only the environmental modifications explicitly described in the user question should be considered part of the scenario.
+Use the reported primary drivers and secondary ecosystem associations only when they help explain the ecological interpretation.
 
 Primary drivers identify the variables most strongly associated with the predicted ecosystem risk.
 
-Secondary ecosystem associations identify variables statistically associated with the predicted scenario.
-They do not indicate that these variables increased, decreased, expanded, contracted, or otherwise changed.
+Secondary ecosystem associations identify variables statistically associated with the predicted scenario. They do not indicate that these variables increased, decreased, expanded, contracted, or otherwise changed.
 
-Your role is only to explain the ecological meaning of the reported model results.
+Only the environmental modifications explicitly described in the user question should be considered part of the scenario.
 
-Use the retrieved scientific knowledge only to explain ecological mechanisms that are consistent with the reported model results.
 Interpret associations rather than direct causality.
 
-Do not infer additional environmental changes, ecological responses, or causal relationships unless they are explicitly supported by both the reported model results and the retrieved scientific knowledge.
+Use retrieved scientific knowledge only to explain the ecological relevance of variables already reported by the model. Do not describe additional ecosystem processes, habitat changes, or species responses unless they are explicitly reported by the model outputs.
 
-If the available ecological information is limited, keep the explanation concise.
+Retrieved scientific knowledge may explain why a reported variable is ecologically relevant, but it must not be used to extend the reported scenario.
+
+Do not introduce ecological mechanisms that are unsupported by either the reported model results or the retrieved scientific knowledge.
+
+Do not simply enumerate the reported primary drivers or secondary ecosystem associations. Instead, provide a concise ecological interpretation of the scenario they describe.
+
+If the retrieved scientific knowledge adds no direct support, rely only on the reported model results.
 
 Write one compact paragraph of 2–3 concise sentences.
 

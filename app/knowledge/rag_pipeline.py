@@ -41,6 +41,14 @@ USE_SEMANTIC_CONTEXT = True
 
 MAX_CONTEXT_CHARS = 1500
 
+# ======================================================
+# DEBUG FLAGS
+# ======================================================
+
+DEBUG = True
+
+DEBUG_DISABLE_RAG = False
+
 
 # ======================================================
 # DEBUG PRINT
@@ -232,9 +240,19 @@ def generate_answer(
 
     start_timer("context_building")
 
-    context = build_context(
-        retrieved
-    )
+    if DEBUG_DISABLE_RAG:
+
+        debug_print(
+            "[RAG] DEBUG: Retrieval context disabled."
+        )
+
+        context = ""
+
+    else:
+
+        context = build_context(
+            retrieved
+        )
 
     end_timer("context_building")
 
@@ -244,14 +262,22 @@ def generate_answer(
 
     if not context.strip():
 
-        debug_print(
-            "[RAG] Empty context "
-            "after build → fallback"
-        )
+        if DEBUG_DISABLE_RAG:
 
-        end_timer("rag_total")
+            debug_print(
+                "[RAG] DEBUG: Continuing with empty retrieval context."
+            )
 
-        return fallback_answer(question)
+        else:
+
+            debug_print(
+                "[RAG] Empty context "
+                "after build → fallback"
+            )
+
+            end_timer("rag_total")
+
+            return fallback_answer(question)
 
     # ==================================================
     # PROMPT BUILDING
@@ -325,6 +351,11 @@ Scientific Interpretation:
     log_data(
         "prompt_length",
         len(prompt)
+    )
+
+    log_data(
+        "rag_enabled",
+        not DEBUG_DISABLE_RAG
     )
 
     # ==================================================

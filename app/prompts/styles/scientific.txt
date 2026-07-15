@@ -18,3 +18,5 @@ Do not infer environmental changes that are not explicitly reported.
 Do not infer the direction of change of a variable unless it is explicitly supported by the provided results.
 
 Treat model-derived importance as an indicator of association, not as evidence that a variable increased or decreased.
+
+Do not describe reported variables as changing, varying, increasing, decreasing, or responding unless the model explicitly reports that change. Variables reported as associations should be described only as associated with the predicted scenario.

@@ -30,6 +30,15 @@ from utils.prompt_builder import (
 MAX_CONTEXT_CHARS = 1500
 DEBUG = True
 
+# ======================================================
+# DEBUG FLAGS
+# ======================================================
+
+DEBUG = True
+
+DEBUG_DISABLE_RAG = False
+
+MAX_CONTEXT_CHARS = 1500
 
 # ======================================================
 # UTILS
@@ -181,23 +190,35 @@ def generate_assessment_explanation(
         query
     )
 
-    retrieved, _ = retrieve_documents(
-        query
-    )
+    if DEBUG_DISABLE_RAG:
 
-    context = build_context(
-        retrieved
-    )
+        print(
+            "[RAG] DEBUG: Retrieval context disabled."
+        )
 
-    print(
-        "[RAG] Retrieved documents:",
-        len(retrieved)
-    )
+        retrieved = []
 
-    print(
-        "[RAG] Context length:",
-        len(context)
-    )
+        context = ""
+
+    else:
+
+        retrieved, _ = retrieve_documents(
+            query
+        )
+
+        context = build_context(
+            retrieved
+        )
+
+        print(
+            "[RAG] Retrieved documents:",
+            len(retrieved)
+        )
+
+        print(
+            "[RAG] Context length:",
+            len(context)
+        )
 
     # --------------------------------------------------
     # MODEL RESULTS
