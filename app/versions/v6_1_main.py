@@ -846,6 +846,18 @@ def route_question(question: str):
     print("-------------------------")
 
     # ==================================================
+    # FALLBACK TO CHAT
+    # ==================================================
+
+    if max(scores.values()) == 0:
+
+        log_route("CHAT (fallback)")
+
+        return {
+            "type": "chat"
+        }
+
+    # ==================================================
     # FINAL SELECTION
     # ==================================================
 
@@ -853,12 +865,6 @@ def route_question(question: str):
 
     log_route(f"{best.upper()} (score={scores[best]})")
 
-    return {"type": best}
-
-
-# ======================================================
-# LEGACY
-# ======================================================
-
-def explain_with_shap(*args, **kwargs):
-    return None
+    return {
+        "type": best
+    }

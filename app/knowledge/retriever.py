@@ -194,6 +194,61 @@ def expand_query(query: str) -> List[str]:
     return expansions
 
 
+
+
+# ======================================================
+# LIGHT LEXICAL RE-RANKING
+# ======================================================
+
+def rerank_results(query: str, results: List[Dict]) -> List[Dict]:
+
+    q = query.lower()
+
+    keyword_groups = {
+        "method": [
+            "method","methodology","approach","framework",
+            "workflow","pipeline","algorithm","analysis",
+            "variational autoencoder","multi k-means"
+        ],
+        "result": [
+            "result","finding","conclusion","performance","accuracy"
+        ]
+    }
+
+    active_terms = []
+
+    for terms in keyword_groups.values():
+        for term in terms:
+            if term in q:
+                active_terms.append(term)
+
+    if not active_terms:
+        return results
+
+    reranked = []
+
+    for r in results:
+
+        score = r["distance"]
+
+        text = r["text"].lower()
+
+        for term in active_terms:
+            if term in text:
+                score -= 20
+
+        rr = dict(r)
+        rr["ranking_score"] = score
+
+        reranked.append(rr)
+
+    reranked.sort(
+        key=lambda x: x["ranking_score"]
+    )
+
+    return reranked
+
+
 # ======================================================
 # RETRIEVAL
 # ======================================================
@@ -440,11 +495,11 @@ def retrieve_documents(
 
     start_timer("result_sorting")
 
-    sorted_results = sorted(
+    sorted_results = rerank_results(
 
-        filtered_results,
+        query,
 
-        key=lambda x: x["distance"]
+        filtered_results
     )
 
     top_results = sorted_results[:TOP_K]

@@ -2,84 +2,60 @@
 
 """
 Massaciuccoli Digital Twin
-Task: CHAT (v3 - RAG + LLM fallback safe)
+
+Task: CHAT
+
+Scientific Question Answering over the
+Massaciuccoli Knowledge Base.
+
+This task is executed only when no specialized
+Digital Twin task matches the user's request.
+
+It provides direct access to the scientific
+knowledge base underlying the Digital Twin.
 """
 
 from knowledge.rag_chat import generate_chat_answer
-from tools.llm_client import call_llm
 
 
 # ======================================================
-# LLM FALLBACK
-# ======================================================
-
-def generate_fallback_chat(question):
-
-    prompt = f"""
-You are the Massaciuccoli Digital Twin assistant.
-
-IMPORTANT RULES:
-- Be friendly and natural
-- DO NOT invent capabilities
-- ONLY mention what the system actually does:
-  - ecosystem risk assessment
-  - biodiversity analysis
-  - environmental scenario evaluation
-- If greeted, introduce yourself briefly
-- Keep answers concise
-
-USER QUESTION:
-{question}
-
-ANSWER:
-"""
-
-    try:
-        response = call_llm(prompt)
-
-        if response:
-            return response.strip()
-
-    except Exception as e:
-        print("[LLM FALLBACK ERROR]", e)
-
-    return (
-        "Hello! I'm the Massaciuccoli Digital Twin assistant. "
-        "I can help you explore ecosystem risk, biodiversity, and environmental changes."
-    )
-
-
-# ======================================================
-# MAIN (⚠️ QUESTA È QUELLA CHE SERVE ALL'ORCHESTRATOR)
+# MAIN
 # ======================================================
 
 def handle_chat(question):
 
-    print("\n========== CHAT TASK ==========")
+    print("\n========== SCIENTIFIC QA ==========")
 
     try:
 
-        rag_response = generate_chat_answer(question)
-
-        if (
-            not rag_response or
-            "No relevant information" in rag_response
-        ):
-            print("[CHAT] Switching to LLM fallback")
-            response = generate_fallback_chat(question)
-        else:
-            response = rag_response
+        response = generate_chat_answer(
+            question
+        )
 
     except Exception as e:
 
-        print("[CHAT ERROR]", e)
+        print(
+            "[CHAT ERROR]",
+            e
+        )
 
-        response = generate_fallback_chat(question)
+        response = (
+            "The scientific knowledge base "
+            "could not be queried."
+        )
 
     return {
+
         "type": "chat",
-        "summary": "General interaction",
+
+        "summary":
+            "Scientific knowledge query",
+
         "data": {},
+
         "drivers": [],
-        "interpretation": response
+
+        "interpretation":
+            response
+
     }

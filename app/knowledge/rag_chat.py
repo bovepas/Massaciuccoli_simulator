@@ -2,18 +2,20 @@
 
 """
 Massaciuccoli Digital Twin
-RAG Chat — v2 (centralized LLM + safe + docker-ready)
 
-✔ Uses centralized llm_client for generation
-✔ Keeps embedding logic (Ollama)
-✔ Works in Docker + local
-✔ Safe fallback
+RAG Chat — v5
+
+Scientific Question Answering over the
+Massaciuccoli Knowledge Base.
+
+Uses the shared retrieval infrastructure
+and a dedicated prompt builder.
 """
 
-import requests
-import chromadb
 import os
+import re
 
+from knowledge.retriever import retrieve_documents
 from tools.llm_client import call_llm
 
 
@@ -21,178 +23,230 @@ from tools.llm_client import call_llm
 # CONFIG
 # ======================================================
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-CHROMA_PATH = os.path.join(BASE_DIR, "chroma_db")
+DEBUG = True
 
-COLLECTION_NAME = "massaciuccoli_knowledge"
+MAX_CONTEXT_CHARS = 2000
 
-# 🔥 embedding endpoint (keep separate)
-if os.path.exists("/.dockerenv"):
-    OLLAMA_EMBED_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434") + "/api/embeddings"
-else:
-    OLLAMA_EMBED_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434") + "/api/embeddings"
+BASE_DIR = os.path.dirname(
+    os.path.dirname(__file__)
+)
 
-EMBED_MODEL = "nomic-embed-text"
+PROMPTS_DIR = os.path.join(
+    BASE_DIR,
+    "prompts"
+)
 
-TOP_K = 8
-SIMILARITY_THRESHOLD = 320
+MODELS_DIR = os.path.join(
+    PROMPTS_DIR,
+    "models"
+)
+
+STYLES_DIR = os.path.join(
+    PROMPTS_DIR,
+    "styles"
+)
+
+TASKS_DIR = os.path.join(
+    PROMPTS_DIR,
+    "tasks"
+)
 
 
 # ======================================================
-# CHROMA
+# UTILS
 # ======================================================
 
-client = chromadb.PersistentClient(path=CHROMA_PATH)
-collection = client.get_or_create_collection(COLLECTION_NAME)
+def clean_text(text):
+
+    if not text:
+        return ""
+
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
+
+
+def build_context(retrieved):
+
+    if not retrieved:
+        return ""
+
+    context = "\n\n".join(
+        r["text"] for r in retrieved
+    )
+
+    if len(context) > MAX_CONTEXT_CHARS:
+
+        context = context[:MAX_CONTEXT_CHARS]
+
+    return context
 
 
 # ======================================================
-# EMBEDDING
+# PROMPT BUILDER
 # ======================================================
 
-def get_embedding(text):
+def load_prompt(path):
 
-    try:
-        response = requests.post(
-            OLLAMA_EMBED_URL,
-            json={
-                "model": EMBED_MODEL,
-                "prompt": text
-            },
-            timeout=60
+    with open(
+        path,
+        "r",
+        encoding="utf-8"
+    ) as f:
+
+        return f.read().strip()
+
+
+def build_chat_prompt(question, context):
+
+    base = load_prompt(
+        os.path.join(
+            MODELS_DIR,
+            "base.txt"
         )
+    )
 
-        response.raise_for_status()
-        return response.json()["embedding"]
-
-    except Exception as e:
-        print("[EMBED ERROR]", e)
-        return None
-
-
-# ======================================================
-# QUERY EXPANSION
-# ======================================================
-
-def expand_query(query):
-
-    expansions = [query]
-
-    q = query.lower()
-
-    if "pressioni" in q or "antropiche" in q:
-        expansions += [
-            "human impact on Massaciuccoli lake",
-            "land use change",
-            "agricultural runoff",
-            "nutrient loading",
-            "urbanization",
-            "pollution sources"
-        ]
-
-    if "eutrof" in q:
-        expansions += [
-            "nutrient enrichment",
-            "phosphorus concentration",
-            "nitrogen loading",
-            "algal bloom",
-            "water quality degradation"
-        ]
-
-    return expansions
-
-
-# ======================================================
-# RETRIEVAL
-# ======================================================
-
-def retrieve_documents(query):
-
-    if collection.count() == 0:
-        return []
-
-    expanded_queries = expand_query(query)
-    all_results = []
-
-    for q in expanded_queries:
-
-        embedding = get_embedding(q)
-        if embedding is None:
-            continue
-
-        results = collection.query(
-            query_embeddings=[embedding],
-            n_results=TOP_K
+    style = load_prompt(
+        os.path.join(
+            STYLES_DIR,
+            "scientific.txt"
         )
+    )
 
-        for i in range(len(results["documents"][0])):
+    task = load_prompt(
+        os.path.join(
+            TASKS_DIR,
+            "chat.txt"
+        )
+    )
 
-            distance = results["distances"][0][i]
+    prompt = f"""
+[BASE]
 
-            if distance <= SIMILARITY_THRESHOLD:
-                all_results.append({
-                    "text": results["documents"][0][i],
-                    "distance": distance
-                })
+{base}
 
-    unique_results = {r["text"]: r for r in all_results}.values()
-    sorted_results = sorted(unique_results, key=lambda x: x["distance"])
+[STYLE]
 
-    return [r["text"] for r in sorted_results]
+{style}
 
+[TASK]
 
-# ======================================================
-# PROMPT
-# ======================================================
-
-def build_prompt(query, documents):
-
-    context = "\n\n".join(documents[:5])
-
-    return f"""
-You are an expert in lake ecosystems.
-
-Answer the question using ONLY the provided context.
-If the answer is not contained in the context, say so clearly.
-
-CONTEXT:
-{context}
+{task}
 
 QUESTION:
-{query}
+{question}
 
-ANSWER:
+SCIENTIFIC KNOWLEDGE:
+{context}
 """
 
+    if DEBUG:
+
+        print(
+            "\n========== COMPOSED PROMPT ==========\n"
+        )
+
+        print(prompt)
+
+        print(
+            "\n=====================================\n"
+        )
+
+    return prompt
+
 
 # ======================================================
-# MAIN GENERATION
+# MAIN
 # ======================================================
 
-def generate_chat_answer(query):
+def generate_chat_answer(question):
 
-    print("\n[RAG-CHAT] START")
+    print("\n[RAG-CHAT v5] START")
 
-    docs = retrieve_documents(query)
+    retrieved, _ = retrieve_documents(
+        question
+    )
 
-    print("[RAG-CHAT] Retrieved docs:", len(docs))
+    print(
+        "[RAG-CHAT] Retrieved documents:",
+        len(retrieved)
+    )
 
-    if not docs:
-        return "No relevant information found in the knowledge base."
+    if DEBUG:
 
-    prompt = build_prompt(query, docs)
+        for i, doc in enumerate(retrieved, 1):
+
+            print(
+                f"\n----- DOCUMENT {i} -----"
+            )
+
+            print(
+                doc["text"][:600]
+            )
+
+            print(
+                "------------------------"
+            )
+
+    context = build_context(
+        retrieved
+    )
+
+    if not context:
+
+        return (
+            "The scientific knowledge base "
+            "does not contain information relevant "
+            "to this question."
+        )
+
+    prompt = build_chat_prompt(
+        question,
+        context
+    )
+
+    print(
+        "[RAG-CHAT] Prompt length:",
+        len(prompt)
+    )
 
     try:
 
-        raw = call_llm(prompt)
+        raw = call_llm(
+            prompt
+        )
 
-        if not raw or "Interpretation not available" in raw:
-            return "The system could not generate a reliable answer from the available data."
+        if (
+            not raw
+            or
+            "Interpretation not available"
+            in raw
+        ):
 
-        return raw.strip()
+            return (
+                "The available scientific knowledge "
+                "does not provide sufficient evidence "
+                "to answer this question."
+            )
+
+        answer = clean_text(
+            raw
+        )
+
+        print(
+            "\n[RAG-CHAT] END"
+        )
+
+        return answer
 
     except Exception as e:
 
-        print("[RAG-CHAT ERROR]", e)
+        print(
+            "[RAG-CHAT ERROR]",
+            e
+        )
 
-        return "An error occurred while generating the answer."
+        return (
+            "An error occurred while querying "
+            "the scientific knowledge base."
+        )
