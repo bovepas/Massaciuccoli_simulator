@@ -41,6 +41,28 @@ GENERATE_URL = os.getenv(
     "http://localhost:11434/api/generate"
 )
 
+FALLBACK_PROFILE = os.getenv(
+    "LLM_FALLBACK_PROFILE",
+    "fallback"
+)
+
+FALLBACK_MODEL = os.getenv(
+    "LLM_FALLBACK_MODEL",
+    "llama3.2:3b"
+)
+
+FALLBACK_ENDPOINT = os.getenv(
+    "LLM_FALLBACK_ENDPOINT",
+    "http://ollama:11434/api/generate"
+)
+
+FALLBACK_MAX_PREDICT = int(
+    os.getenv(
+        "LLM_FALLBACK_MAX_PREDICT",
+        256
+    )
+)
+
 DEBUG = True
 DEBUG_SAVE_PROMPTS = True
 
@@ -84,6 +106,66 @@ def debug_print(*args):
 # ======================================================
 # MAIN CALL
 # ======================================================
+
+def call_fallback_llm(prompt: str) -> str:
+
+    print("\n========================================")
+    print("PRIMARY LLM UNAVAILABLE")
+    print(f"Switching to fallback profile: {FALLBACK_PROFILE}")
+    print(f"Model   : {FALLBACK_MODEL}")
+    print(f"Endpoint: {FALLBACK_ENDPOINT}")
+    print("========================================\n")
+
+    response = SESSION.post(
+
+        FALLBACK_ENDPOINT,
+
+        json={
+
+            "model": FALLBACK_MODEL,
+
+            "prompt": prompt,
+
+            "stream": False,
+
+            "options": {
+
+                "temperature": TEMPERATURE,
+
+                "num_predict": FALLBACK_MAX_PREDICT
+
+            }
+        },
+
+        timeout=TIMEOUT
+
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    output = data.get(
+        "response",
+        ""
+    ).strip()
+
+    output = re.sub(
+        r"<think>.*?</think>",
+        "",
+        output,
+        flags=re.DOTALL | re.IGNORECASE
+    )
+
+    output = re.sub(
+        r"<think>.*",
+        "",
+        output,
+        flags=re.DOTALL | re.IGNORECASE
+    ).strip()
+
+    return output if output else "No response generated."
+
 
 def call_llm(prompt: str) -> str:
 
@@ -333,12 +415,23 @@ def call_llm(prompt: str) -> str:
                     "All retries failed."
                 )
 
+
     # ======================================================
-    # FINAL SAFE FALLBACK
+    # TRY LOCAL FALLBACK
     # ======================================================
 
-    return (
+    try:
 
-        "Interpretation not available "
-        "(LLM unavailable)."
-    )
+        return call_fallback_llm(prompt)
+
+    except Exception as e:
+
+        print("\n🔥 FALLBACK LLM UNAVAILABLE")
+
+        print(e)
+
+        return (
+
+            "Interpretation not available "
+            "(LLM unavailable)."
+        )
