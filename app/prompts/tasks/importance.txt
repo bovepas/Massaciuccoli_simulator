@@ -1,48 +1,70 @@
-You are an environmental scientist.
-
-USER QUESTION:
-{question}
-
-MODEL-DERIVED DRIVER ANALYSIS:
-
-{impact_text}
-
 TASK
 
-The importance analysis has already been computed.
+The user asks the Massaciuccoli Digital Twin to identify
+the environmental variables most strongly associated with
+ecosystem risk.
 
-Do NOT identify additional variables.
+The Digital Twin has already analysed the environmental
+variables and ranked them according to their statistical
+association with the predicted ecosystem risk.
 
-Do NOT reorder the reported importance ranking.
+Your task is not to identify additional variables or
+recompute their importance.
 
-Preserve the reported effect exactly.
+Your task is to explain the reported importance analysis
+using the scientific information provided below.
 
-Do not reverse the reported direction of the model results.
+To prepare your answer, the Digital Twin provides three
+complementary sources of information.
 
-If a variable is reported as risk-increasing, describe it only as associated with higher predicted ecosystem risk.
+1. DIGITAL TWIN IMPORTANCE REPORT
 
-If a variable is reported as risk-reducing, describe it only as associated with lower predicted ecosystem 
+This report identifies:
 
-Your role is only to explain the ecological meaning of the reported variables.
+- the dominant environmental domains;
+- the variables most strongly associated with ecosystem risk;
+- the variables associated with lower ecosystem risk.
 
-Use the retrieved scientific knowledge only to explain the reported model results.
+Treat the Importance Report as the authoritative
+description of the Digital Twin analysis.
 
-Interpret associations rather than direct causality.
+Do not modify the reported ranking.
 
-Do not reinterpret the reported statistical associations as observed environmental conditions or ecological responses.
+Do not introduce additional variables.
 
-Describe only the reported association between each variable and ecosystem risk.
+2. ECOLOGICAL INTERPRETATION NOTES
 
-Do not infer why the reported association exists unless the ecological mechanism is explicitly supported by both the reported model results and the retrieved scientific knowledge.
+The reported variables represent statistical associations
+identified by the Digital Twin.
 
-Use only ecological concepts explicitly supported by the retrieved scientific knowledge.
+Risk-increasing variables are statistically associated
+with higher predicted ecosystem risk.
 
-Do not discuss variables that are not listed in the model results.
+Risk-reducing variables are statistically associated
+with lower predicted ecosystem risk.
 
-Do not introduce unsupported ecological mechanisms, management actions, or conclusions.
+These associations do not represent observed environmental
+changes and should not be interpreted as direct ecological
+causality.
 
-If the available ecological information is limited, keep the explanation concise.
+3. RETRIEVED SCIENTIFIC EVIDENCE
 
-Write one compact paragraph of 2–3 concise sentences.
+These excerpts were retrieved from the curated scientific
+knowledge base describing the Massaciuccoli Lake ecosystem.
 
-Answer:
+Use the retrieved scientific evidence only to explain the
+ecological relevance of the reported variables.
+
+Do not infer ecological mechanisms unless they are
+supported by both the Digital Twin outputs and the
+retrieved scientific evidence.
+
+Do not introduce additional environmental variables,
+ecological processes, management actions or conclusions
+that are unsupported by the provided information.
+
+Focus on explaining why the reported variables are
+ecologically relevant rather than repeating the ranking.
+
+Write one concise scientific explanation that directly
+answers the user's question.

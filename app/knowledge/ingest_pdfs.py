@@ -1,230 +1,64 @@
-# -*- coding: utf-8 -*-
+# Semantic ingestion template v3
+# See chat for rationale.
 
-"""
-Massaciuccoli Digital Twin
-Knowledge Base Ingestion Script — v2
-
-✔ Timing instrumentation
-✔ KB initialization observability
-✔ Embedding timing
-✔ PDF processing timing
-✔ Chunking observability
-✔ Keeps ingestion logic unchanged
-"""
-
-import os
-import re
-import requests
-import chromadb
-
-from pypdf import PdfReader
-
+import os,re,requests,chromadb
 from uuid import uuid4
+from utils.logger import start_timer,end_timer,log_data
 
-from utils.logger import (
+BASE_DIR=os.path.dirname(os.path.dirname(__file__))
+PDF_FOLDER=os.path.join(BASE_DIR,"knowledge","rag_sources")
+CHROMA_PATH=os.path.join(BASE_DIR,"chroma_db")
+COLLECTION_NAME="massaciuccoli_knowledge"
+OLLAMA_BASE_URL=os.getenv("OLLAMA_BASE_URL","http://ollama:11434")
+OLLAMA_EMBED_URL=f"{OLLAMA_BASE_URL}/api/embeddings"
+EMBED_MODEL="nomic-embed-text"
+MAX_SECTION_SIZE=2500
 
-    start_timer,
-    end_timer,
-    log_data
-)
+def split_sections(text):
+    p=re.compile(r'={10,}\s*\n([A-Z0-9 \-/()]+?)\s*\n={10,}',re.MULTILINE)
+    m=list(p.finditer(text))
+    if not m:return [{"title":"FULL_DOCUMENT","text":text.strip()}]
+    out=[]
+    for i,x in enumerate(m):
+        s=x.end();e=m[i+1].start() if i+1<len(m) else len(text)
+        b=text[s:e].strip()
+        if b: out.append({"title":x.group(1).strip(),"text":b})
+    return out
 
-
-# ======================================================
-# CONFIG
-# ======================================================
-
-BASE_DIR = os.path.dirname(
-    os.path.dirname(__file__)
-)
-
-PDF_FOLDER = os.path.join(
-    BASE_DIR,
-    "knowledge",
-    "pdfs"
-)
-
-CHROMA_PATH = os.path.join(
-    BASE_DIR,
-    "chroma_db"
-)
-
-COLLECTION_NAME = (
-    "massaciuccoli_knowledge"
-)
-
-OLLAMA_BASE_URL = os.getenv(
-    "OLLAMA_BASE_URL",
-    "http://ollama:11434"
-)
-
-OLLAMA_EMBED_URL = (
-    f"{OLLAMA_BASE_URL}/api/embeddings"
-)
-
-EMBED_MODEL = "nomic-embed-text"
-
-CHUNK_SIZE = 600
-
-CHUNK_OVERLAP = 150
-
-MIN_CHUNK_LENGTH = 200
-
-
-# ======================================================
-# TEXT CLEANING
-# ======================================================
-
-def clean_text(text):
-
-    text = re.sub(
-        r'\s+',
-        ' ',
-        text
-    )
-
-    text = re.sub(
-        r'http\S+',
-        '',
-        text
-    )
-
-    text = re.sub(
-        r'\[\d+\]',
-        '',
-        text
-    )
-
-    text = re.sub(
-        r'Figure \d+.*?',
-        '',
-        text
-    )
-
-    text = re.sub(
-        r'Table \d+.*?',
-        '',
-        text
-    )
-
-    text = re.sub(
-        r'Fig\. \d+.*?',
-        '',
-        text
-    )
-
-    text = re.sub(
-        r'\bdoi:.*?\b',
-        '',
-        text,
-        flags=re.IGNORECASE
-    )
-
-    return text.strip()
-
-
-# ======================================================
-# CHUNKING
-# ======================================================
-
-def chunk_text(text):
-
-    start_timer("chunking")
-
-    sentences = re.split(
-        r'(?<=[.!?]) +',
-        text
-    )
-
-    chunks = []
-
-    current_chunk = ""
-
-    for sentence in sentences:
-
-        if (
-            len(current_chunk)
-            + len(sentence)
-            < CHUNK_SIZE
-        ):
-
-            current_chunk += " " + sentence
-
+def split_large_section(sec):
+    if len(sec["text"])<=MAX_SECTION_SIZE:return [sec]
+    ss=re.split(r'(?<=[.!?])\s+',sec["text"]);out=[];cur="";i=1
+    for s in ss:
+        if len(cur)+len(s)<MAX_SECTION_SIZE: cur+=" "+s
         else:
+            out.append({"title":f'{sec["title"]} ({i})',"text":cur.strip()})
+            i+=1;cur=s
+    if cur.strip(): out.append({"title":f'{sec["title"]} ({i})',"text":cur.strip()})
+    return out
 
-            if (
-                len(current_chunk)
-                >= MIN_CHUNK_LENGTH
-            ):
+def get_embedding(t):
+    r=requests.post(OLLAMA_EMBED_URL,json={"model":EMBED_MODEL,"prompt":t},timeout=30)
+    r.raise_for_status();return r.json()["embedding"]
 
-                chunks.append(
-                    current_chunk.strip()
-                )
+def ingest_pdfs(force=False):
+    client=chromadb.PersistentClient(path=CHROMA_PATH)
+    if force:
+        try: client.delete_collection(COLLECTION_NAME)
+        except: pass
+    col=client.get_or_create_collection(COLLECTION_NAME)
+    total=0
+    for fn in sorted(os.listdir(PDF_FOLDER)):
+        if not fn.endswith(".txt"): continue
+        with open(os.path.join(PDF_FOLDER,fn),encoding="utf-8") as f: txt=f.read()
+        chunks=[]
+        for s in split_sections(txt): chunks.extend(split_large_section(s))
+        log_data(f"chunks::{fn}",len(chunks))
+        for c in chunks:
+            emb=get_embedding(c["text"])
+            col.add(ids=[str(uuid4())],embeddings=[emb],documents=[c["text"]],metadatas=[{"source":fn,"document":os.path.splitext(fn)[0],"section":c["title"]}])
+            total+=1
+    print(f"Knowledge Base rebuilt. Total chunks: {total}")
 
-            current_chunk = sentence
-
-    if (
-        len(current_chunk)
-        >= MIN_CHUNK_LENGTH
-    ):
-
-        chunks.append(
-            current_chunk.strip()
-        )
-
-    end_timer("chunking")
-
-    return chunks
-
-
-# ======================================================
-# EMBEDDING
-# ======================================================
-
-def get_embedding(text):
-
-    try:
-
-        start_timer("ingest_embedding")
-
-        response = requests.post(
-
-            OLLAMA_EMBED_URL,
-
-            json={
-
-                "model": EMBED_MODEL,
-
-                "prompt": text
-            },
-
-            timeout=30
-        )
-
-        response.raise_for_status()
-
-        data = response.json()
-
-        emb = data.get(
-            "embedding",
-            None
-        )
-
-        end_timer("ingest_embedding")
-
-        if not emb:
-            return None
-
-        return emb
-
-    except Exception as e:
-
-        end_timer("ingest_embedding")
-
-        print(
-            f"⚠️ Embedding error: {e}"
-        )
-
-        return None
 
 
 # ======================================================
@@ -233,8 +67,6 @@ def get_embedding(text):
 
 def is_kb_empty():
 
-    start_timer("kb_empty_check")
-
     client = chromadb.PersistentClient(
         path=CHROMA_PATH
     )
@@ -244,181 +76,9 @@ def is_kb_empty():
     )
 
     try:
-
-        count = collection.count()
-
-        end_timer("kb_empty_check")
-
-        log_data(
-            "kb_chunk_count",
-            count
-        )
-
-        return count == 0
-
+        return collection.count() == 0
     except:
-
-        end_timer("kb_empty_check")
-
         return True
-
-
-# ======================================================
-# INGEST
-# ======================================================
-
-def ingest_pdfs(force=False):
-
-    start_timer("pdf_ingestion_total")
-
-    client = chromadb.PersistentClient(
-        path=CHROMA_PATH
-    )
-
-    # --------------------------------------------------
-    # RESET COLLECTION
-    # --------------------------------------------------
-
-    if force:
-
-        try:
-
-            client.delete_collection(
-                COLLECTION_NAME
-            )
-
-        except:
-            pass
-
-    collection = client.get_or_create_collection(
-        COLLECTION_NAME
-    )
-
-    total_chunks = 0
-
-    # ==================================================
-    # PDF LOOP
-    # ==================================================
-
-    for filename in os.listdir(PDF_FOLDER):
-
-        if not filename.lower().endswith(
-            ".pdf"
-        ):
-            continue
-
-        start_timer(f"pdf::{filename}")
-
-        print(
-            f"\n📄 Processing "
-            f"{filename}..."
-        )
-
-        filepath = os.path.join(
-            PDF_FOLDER,
-            filename
-        )
-
-        # --------------------------------------------------
-        # PDF READ
-        # --------------------------------------------------
-
-        start_timer("pdf_read")
-
-        reader = PdfReader(filepath)
-
-        full_text = ""
-
-        for page in reader.pages:
-
-            text = page.extract_text()
-
-            if text:
-                full_text += text + " "
-
-        end_timer("pdf_read")
-
-        # --------------------------------------------------
-        # CLEANING
-        # --------------------------------------------------
-
-        start_timer("text_cleaning")
-
-        full_text = clean_text(
-            full_text
-        )
-
-        end_timer("text_cleaning")
-
-        # --------------------------------------------------
-        # CHUNKING
-        # --------------------------------------------------
-
-        chunks = chunk_text(
-            full_text
-        )
-
-        log_data(
-            f"chunks::{filename}",
-            len(chunks)
-        )
-
-        print(
-            f"   → Chunk generati: "
-            f"{len(chunks)}"
-        )
-
-        # --------------------------------------------------
-        # EMBEDDING + INSERTION
-        # --------------------------------------------------
-
-        start_timer("chunk_insertion")
-
-        for chunk in chunks:
-
-            embedding = get_embedding(
-                chunk
-            )
-
-            if embedding is None:
-                continue
-
-            collection.add(
-
-                ids=[str(uuid4())],
-
-                embeddings=[embedding],
-
-                documents=[chunk],
-
-                metadatas=[{
-                    "source": filename
-                }]
-            )
-
-            total_chunks += 1
-
-        end_timer("chunk_insertion")
-
-        end_timer(f"pdf::{filename}")
-
-    # ==================================================
-    # FINAL
-    # ==================================================
-
-    print("\n✅ Ingestion completata.")
-
-    print(
-        "Totale chunk nel DB:",
-        total_chunks
-    )
-
-    log_data(
-        "total_chunks",
-        total_chunks
-    )
-
-    end_timer("pdf_ingestion_total")
 
 
 # ======================================================
@@ -427,13 +87,10 @@ def ingest_pdfs(force=False):
 
 def ensure_kb_ready():
 
-    start_timer("ensure_kb_ready")
-
     if is_kb_empty():
 
         print(
-            "\n📚 Knowledge base empty "
-            "→ running ingestion...\n"
+            "\n📚 Knowledge base empty → running ingestion...\n"
         )
 
         ingest_pdfs(force=True)
@@ -441,17 +98,12 @@ def ensure_kb_ready():
     else:
 
         print(
-            "\n✅ Knowledge base "
-            "already populated.\n"
+            "\n✅ Knowledge base already populated.\n"
         )
-
-    end_timer("ensure_kb_ready")
-
-
+        
 # ======================================================
 # RUN
 # ======================================================
 
-if __name__ == "__main__":
-
+if __name__=="__main__":
     ingest_pdfs(force=True)

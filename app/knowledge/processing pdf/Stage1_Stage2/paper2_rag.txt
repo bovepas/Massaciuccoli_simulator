@@ -1,0 +1,881 @@
+======================================================================
+DOCUMENT
+======================================================================
+
+TITLE
+
+A multi-model generalisable ecosystem risk assessment methodology for
+the Massaciuccoli Lake basin wetland
+
+SOURCE
+Scientific article
+CASE STUDY
+Massaciuccoli Lake basin (Tuscany, Italy)
+DOMAIN
+Wetland ecosystem risk assessment
+PURPOSE
+
+This curated document preserves the scientific content of the original
+publication while reorganising it into semantically coherent sections
+optimised for Retrieval-Augmented Generation (RAG).
+
+Editorial artefacts, bibliographic references, manuscript-specific
+elements and publication metadata have been removed without modifying
+the scientific meaning of the original work.
+
+======================================================================
+ABSTRACT
+======================================================================
+
+Wetlands are among the ecosystems most exposed to degradation due to
+the combined action of anthropogenic pressures and climate-related
+stressors, particularly in highly anthropised landscapes.
+
+This study presents a multi-model methodology for assessing and mapping
+the risk of forest and grassland habitat degradation together with the
+associated biodiversity loss in wetland ecosystems.
+
+The framework integrates three complementary unsupervised approaches:
+
+• deterministic cumulative risk assessment;
+
+• multivariate clustering analysis;
+
+• deep-learning risk assessment based on a Variational Autoencoder
+  combined with cluster analysis.
+
+The methodology is applied to the Massaciuccoli Lake basin, a
+Ramsar-listed wetland characterised by high ecological value and strong
+land-use pressure.
+
+Risk assessment is based on twelve environmental stressor variables
+describing ecological fragility and harmful driving forces at
+approximately 50 m spatial resolution.
+
+The three models generate spatially explicit ecosystem-risk maps that
+identify complementary hotspot distributions.
+
+Areas consistently classified as medium or high risk across multiple
+models represent robust ecosystem-risk hotspots, whereas divergent
+classifications indicate transitional or uncertain ecological
+conditions requiring further investigation.
+
+The proposed methodology is reproducible, scalable and transferable to
+other wetland ecosystems, providing scientific support for conservation
+planning, environmental management and spatial decision-making.
+
+======================================================================
+KEYWORDS
+======================================================================
+
+Ecosystem risk assessment
+
+Environmental stressors
+
+Geospatial data
+
+Cumulative impacts
+
+Unsupervised learning
+
+Anomaly detection
+
+Deep learning
+
+Wetlands
+
+Massaciuccoli Lake basin
+
+======================================================================
+INTRODUCTION
+======================================================================
+
+Wetlands are among the most productive ecosystems on Earth and provide
+essential ecosystem services including biodiversity conservation, water
+purification, flood regulation, carbon storage and climate regulation.
+
+Despite their ecological importance, wetlands are increasingly exposed
+to multiple anthropogenic pressures, including land-use change,
+urbanisation, agricultural intensification, habitat fragmentation and
+climate change.
+
+The simultaneous action of multiple stressors produces cumulative
+ecological effects that are often difficult to quantify using
+traditional environmental assessment methods.
+
+The complexity of wetland ecosystems therefore requires integrated
+approaches capable of combining heterogeneous environmental
+information into coherent ecosystem-risk indicators.
+
+======================================================================
+ECOSYSTEM RISK ASSESSMENT
+======================================================================
+
+Ecosystem Risk Assessment (ERA) aims to identify, quantify and map the
+probability that ecological systems experience degradation due to
+natural or anthropogenic stressors.
+
+Risk is generally interpreted as the combination of ecosystem exposure,
+ecological vulnerability and the intensity of environmental stressors.
+
+Spatial ecosystem-risk assessment supports environmental monitoring,
+conservation planning and prioritisation of management actions by
+identifying areas characterised by different ecological risk levels.
+
+======================================================================
+LIMITATIONS OF TRADITIONAL APPROACHES
+======================================================================
+
+Traditional ecosystem-risk assessment methods frequently rely on
+deterministic models or on individual environmental indicators that may
+be insufficient to describe the complexity of ecological systems.
+
+Single-model approaches may fail to capture complementary aspects of
+ecosystem behaviour, particularly when environmental variables exhibit
+non-linear relationships or complex interactions.
+
+The integration of multiple modelling approaches may therefore provide
+a more comprehensive representation of ecosystem risk.
+
+======================================================================
+MULTI-MODEL RISK ASSESSMENT
+======================================================================
+
+Different modelling approaches describe different characteristics of
+ecosystem behaviour.
+
+Deterministic cumulative-risk models quantify the combined effect of
+multiple environmental stressors.
+
+Clustering techniques identify groups of areas characterised by similar
+ecological conditions.
+
+Deep-learning models detect complex non-linear environmental patterns
+that may not be identified through traditional statistical methods.
+
+The integration of multiple independent models allows complementary
+sources of ecological information to contribute to ecosystem-risk
+assessment.
+
+======================================================================
+MASSACIUCCOLI LAKE BASIN
+======================================================================
+
+The Massaciuccoli Lake basin represents a complex wetland ecosystem
+characterised by high biodiversity, heterogeneous environmental
+conditions and multiple anthropogenic pressures.
+
+The coexistence of natural habitats, agricultural areas and urbanised
+zones makes the basin particularly suitable for evaluating integrated
+ecosystem-risk assessment methodologies.
+
+Its ecological relevance and the availability of detailed environmental
+datasets make the basin an appropriate case study for developing and
+evaluating reproducible ecosystem-risk assessment frameworks.
+
+======================================================================
+OBJECTIVES OF THE STUDY
+======================================================================
+
+This study proposes a multi-model ecosystem-risk assessment framework
+that combines deterministic cumulative-risk analysis, clustering
+techniques and deep-learning models.
+
+The objective is to produce spatially explicit ecosystem-risk maps able
+to identify robust ecological hotspots and to characterise areas
+affected by different levels of environmental risk.
+
+The proposed methodology is evaluated through its application to the
+Massaciuccoli Lake basin and is designed to be reproducible and
+transferable to other wetland ecosystems.
+
+======================================================================
+ECOSYSTEM RISK ASSESSMENT (ERA)
+======================================================================
+
+Ecosystem Risk Assessment (ERA) is a methodological framework for
+identifying, characterising and spatially representing the likelihood
+that an ecosystem undergoes a critical transition from one ecological
+state to another due to natural or anthropogenic pressures.
+
+Unlike traditional impact assessments focused on individual stressors,
+ERA explicitly considers the simultaneous action of multiple pressure
+factors, their interactions across different spatial and temporal
+scales, and the non-linear responses of ecological systems.
+
+In wetland ecosystems, ERA is particularly relevant because ecological
+dynamics emerge from the interaction among hydrology, vegetation,
+biodiversity, climate variability and land-use practices. These same
+interactions also increase ecosystem vulnerability to cumulative
+anthropogenic pressures and irreversible ecological transitions.
+
+======================================================================
+DETERMINISTIC RISK ASSESSMENT
+======================================================================
+
+Deterministic ecosystem-risk assessment methods are among the most
+widely adopted approaches because of their transparency,
+interpretability and ease of communication for environmental planning
+and policy support.
+
+These methodologies generally rely on cumulative impact maps,
+multi-criteria decision analysis and the spatial aggregation of
+standardised environmental stressors.
+
+Although robust and easily interpretable, deterministic approaches
+often require subjective weighting schemes, assume simplified
+relationships among stressors and may have limited transferability
+across heterogeneous ecological contexts.
+
+======================================================================
+STATISTICAL AND MULTIVARIATE APPROACHES
+======================================================================
+
+Statistical and multivariate methodologies aim to identify recurring
+ecological conditions and emergent environmental gradients directly
+from observational data.
+
+Clustering techniques and latent-variable analyses reduce part of the
+subjectivity associated with deterministic methods by identifying
+co-occurrence patterns among environmental stressors.
+
+However, these approaches are generally descriptive and may have
+limited capability to represent highly non-linear ecological
+relationships.
+
+======================================================================
+MACHINE LEARNING AND DEEP LEARNING
+======================================================================
+
+The increasing availability of harmonised geospatial datasets has
+favoured the adoption of machine-learning and deep-learning techniques
+for ecosystem risk assessment.
+
+Unsupervised approaches, including advanced clustering, anomaly
+detection and deep generative models based on autoencoders, enable the
+identification of latent ecological structures, emergent gradients and
+early-warning signals associated with ecosystem change.
+
+These approaches improve the representation of non-linear ecological
+relationships and facilitate the integration of heterogeneous
+environmental variables.
+
+Nevertheless, single-model approaches still present limitations in
+terms of ecological interpretability, result comparability and overall
+assessment robustness.
+
+======================================================================
+MULTI-MODEL ECOSYSTEM RISK ASSESSMENT
+======================================================================
+
+Recent studies increasingly support integrated ecosystem-risk
+assessment frameworks that combine deterministic, structural and
+data-driven methodologies within a common analytical architecture.
+
+The complementary nature of these approaches improves the reliability,
+interpretability and robustness of ecosystem-risk assessments while
+reducing methodological bias associated with any individual modelling
+strategy.
+
+======================================================================
+PREVIOUS STUDIES ON THE MASSACIUCCOLI LAKE BASIN
+======================================================================
+
+Previous ecosystem studies on the Massaciuccoli Lake basin have mainly
+focused on specific environmental components or restricted portions of
+the territory.
+
+These investigations include:
+
+• hydrological dynamics and water quality;
+
+• anthropogenic pressures associated with agriculture, urbanisation
+  and habitat fragmentation;
+
+• habitats of community interest and vegetation dynamics;
+
+• biodiversity conservation;
+
+• ecological effects of climate change.
+
+Despite the richness of these thematic investigations, no previous
+study has provided a comprehensive, spatially explicit ecosystem-risk
+assessment integrating anthropogenic pressures, climatic drivers,
+ecological fragility and biodiversity indicators across the entire
+Massaciuccoli Lake basin.
+
+======================================================================
+NOVELTY OF THE PROPOSED FRAMEWORK
+======================================================================
+
+The proposed methodology represents the first multi-model comparative
+ecosystem-risk assessment conducted for the entire Massaciuccoli Lake
+basin.
+
+Its main novelty lies in the explicit integration and systematic
+comparison of three complementary analytical paradigms:
+
+• deterministic cumulative assessment;
+
+• structural analysis based on clustering;
+
+• predictive analysis based on a Variational Autoencoder integrated
+  with cluster analysis.
+
+Rather than identifying a single optimal model, the methodology
+analyses agreements and disagreements among complementary models to
+produce a more robust hierarchical representation of ecosystem risk.
+
+Areas consistently classified as high risk by multiple models identify
+priority ecosystem-risk hotspots, whereas divergent classifications
+highlight transitional or uncertain ecological conditions requiring
+further investigation.
+
+The resulting framework is reproducible, scalable and transferable to
+other wetland ecosystems characterised by heterogeneous environmental
+stressors and harmonised geospatial datasets.
+
+======================================================================
+METHODOLOGICAL FRAMEWORK
+======================================================================
+
+The ecosystem risk assessment methodology was designed as a
+multi-phase analytical framework integrating deterministic,
+clustering, statistical and deep-learning approaches.
+
+The workflow was developed to maximise analytical robustness,
+transparency and reproducibility while maintaining ecological
+interpretability.
+
+The methodology consists of three main phases:
+
+• spatial and temporal characterisation of the study area;
+
+• ecosystem risk modelling through complementary analytical models;
+
+• interpretation and comparison of the resulting ecosystem-risk
+  assessments.
+  
+======================================================================
+DATA COLLECTION
+======================================================================
+
+Data collection combines environmental, climatic, biological and
+anthropogenic geospatial information describing the
+Massaciuccoli Lake basin.
+
+The workflow includes:
+
+• spatial and temporal characterisation of environmental conditions;
+
+• identification of ecosystem fragility variables and harmful driving
+  forces;
+
+• harmonisation, standardisation and spatial alignment of all
+  environmental variables.
+
+The resulting dataset provides a unified environmental representation
+suitable for multivariate ecosystem-risk assessment.
+
+======================================================================
+FAIR ENVIRONMENTAL DATA
+======================================================================
+
+The methodology relies on a publicly available environmental knowledge
+base describing the Massaciuccoli Lake basin.
+
+The environmental repository follows FAIR principles and contains
+harmonised raster and vector datasets accompanied by standardised
+metadata.
+
+All environmental layers share a common coordinate reference system,
+consistent spatial resolution and harmonised spatial alignment.
+
+The repository provides an integrated representation of climatic,
+environmental, pedological, anthropogenic and biological conditions
+within the basin.
+
+======================================================================
+ENVIRONMENTAL KNOWLEDGE BASE
+======================================================================
+
+The environmental knowledge base constitutes a spatially explicit
+representation of the Massaciuccoli Lake basin designed to support both
+exploratory analyses and ecosystem-risk assessment.
+
+The harmonised dataset integrates multiple environmental domains into
+a common analytical framework, allowing heterogeneous variables to be
+analysed jointly through deterministic, statistical and machine-learning
+models.
+
+The unified environmental representation enables direct comparison
+among complementary ecosystem-risk assessment methodologies.
+
+======================================================================
+SPATIO-TEMPORAL REPRESENTATION
+======================================================================
+
+The environmental dataset describes both historical ecosystem
+conditions and future environmental scenarios.
+
+Spatial harmonisation allows all environmental variables to be analysed
+at a common spatial resolution, ensuring consistency among the
+different modelling approaches.
+
+The resulting geospatial representation supports ecosystem-risk
+assessment over the entire Massaciuccoli Lake basin.
+
+======================================================================
+DETERMINISTIC ECOSYSTEM RISK MODEL
+======================================================================
+
+The deterministic model estimates ecosystem risk through the cumulative
+combination of multiple environmental stressors describing ecological
+fragility and harmful driving forces acting within the
+Massaciuccoli Lake basin.
+
+Each environmental variable is normalised to a common scale before
+being combined into a cumulative ecosystem-risk indicator.
+
+The deterministic assessment provides a transparent and easily
+interpretable representation of ecosystem risk, facilitating ecological
+interpretation and environmental decision-making.
+
+The resulting risk map represents the spatial distribution of
+cumulative environmental pressure throughout the study area.
+
+======================================================================
+CLUSTERING-BASED RISK ASSESSMENT
+======================================================================
+
+The clustering approach identifies groups of spatial cells sharing
+similar environmental characteristics without requiring predefined
+ecosystem-risk classes.
+
+Environmental similarity is evaluated simultaneously across all
+available environmental variables, allowing natural ecological
+structures to emerge directly from the data.
+
+The resulting clusters describe areas characterised by comparable
+environmental conditions and provide an alternative representation of
+ecosystem-risk patterns independent of deterministic assumptions.
+
+======================================================================
+DEEP-LEARNING RISK ASSESSMENT
+======================================================================
+
+The third analytical component is based on a Variational Autoencoder
+(VAE), an unsupervised deep-learning architecture designed to identify
+latent environmental structures within high-dimensional datasets.
+
+The VAE learns a compressed representation of the environmental
+conditions characterising each spatial location while preserving the
+most informative ecological patterns.
+
+Latent representations generated by the VAE are subsequently analysed
+through clustering techniques in order to identify ecosystem-risk
+classes associated with similar environmental behaviour.
+
+This approach enables the detection of complex non-linear ecological
+relationships that may not be captured by deterministic or traditional
+statistical methods.
+
+======================================================================
+LATENT REPRESENTATION
+======================================================================
+
+The latent space generated by the Variational Autoencoder provides a
+compact representation of the environmental state of each spatial cell.
+
+Neighbouring points in the latent space correspond to spatial locations
+sharing similar ecological characteristics, even when these
+relationships are difficult to identify within the original
+high-dimensional environmental space.
+
+The latent representation therefore facilitates the identification of
+hidden ecological gradients and transitional ecosystem conditions.
+
+======================================================================
+MODEL COMPARISON
+======================================================================
+
+Rather than selecting a single preferred methodology, the proposed
+framework compares the results generated by three complementary
+ecosystem-risk assessment approaches.
+
+Agreements among independent models increase confidence in the
+identified ecosystem-risk patterns.
+
+Conversely, disagreements highlight environmentally transitional or
+uncertain areas that may require additional ecological investigation.
+
+The comparison therefore provides information not only on ecosystem
+risk itself, but also on the robustness of the assessment.
+
+======================================================================
+ECOSYSTEM RISK HOTSPOTS
+======================================================================
+
+Areas consistently classified as medium or high risk by multiple
+independent models are interpreted as robust ecosystem-risk hotspots.
+
+These areas represent locations where different analytical approaches
+independently identify elevated ecological vulnerability.
+
+Conversely, areas receiving inconsistent classifications indicate
+transitional environmental conditions or higher modelling uncertainty.
+
+The joint interpretation of multiple models therefore provides a more
+robust ecosystem-risk assessment than any individual modelling
+approach considered separately.
+
+======================================================================
+ENVIRONMENTAL STRESSOR VARIABLES
+======================================================================
+
+The ecosystem-risk assessment is based on twelve environmental
+variables describing ecological fragility and harmful driving forces
+within the Massaciuccoli Lake basin.
+
+The variables were selected to represent complementary ecological
+processes influencing habitat quality, ecosystem resilience and
+environmental degradation.
+
+The complete set of variables provides a harmonised environmental
+description suitable for deterministic, statistical and deep-learning
+ecosystem-risk assessment.
+
+======================================================================
+ECOLOGICAL FRAGILITY
+======================================================================
+
+Ecological fragility is represented through environmental variables
+describing the intrinsic susceptibility of ecosystems to degradation.
+
+These variables characterise habitat conditions, vegetation,
+biodiversity and environmental resources that influence ecosystem
+resilience under natural and anthropogenic pressures.
+
+Fragility indicators describe the current ecological state rather than
+the external processes responsible for environmental degradation.
+
+======================================================================
+HARMFUL DRIVING FORCES
+======================================================================
+
+Harmful driving forces represent environmental processes capable of
+increasing ecosystem degradation.
+
+These drivers include anthropogenic pressures, climatic trends and land
+transformations that progressively modify ecosystem conditions.
+
+The interaction between ecological fragility and harmful driving forces
+determines the overall ecosystem-risk pattern estimated by the proposed
+framework.
+
+======================================================================
+VARIABLE HARMONISATION
+======================================================================
+
+All environmental variables are harmonised before ecosystem-risk
+assessment.
+
+The harmonisation process includes spatial alignment, standardisation
+of coordinate systems, common spatial resolution and numerical
+normalisation of the environmental variables.
+
+This procedure guarantees methodological consistency among the three
+independent ecosystem-risk assessment models.
+
+======================================================================
+MULTI-MODEL CONSISTENCY
+======================================================================
+
+The same harmonised environmental dataset is provided as input to the
+deterministic model, the clustering analysis and the Variational
+Autoencoder.
+
+Using a common environmental representation allows differences among
+the resulting ecosystem-risk maps to be attributed to the modelling
+approaches rather than to differences in the input data.
+
+This common analytical basis enables meaningful comparison among the
+three ecosystem-risk assessment methodologies.
+
+======================================================================
+COMPARATIVE INTERPRETATION
+======================================================================
+
+The comparison among independent ecosystem-risk models represents an
+integral component of the proposed methodology.
+
+Agreement among complementary models increases confidence in the
+identified ecosystem-risk hotspots.
+
+Disagreement among models identifies transitional ecological
+conditions, complex environmental gradients or areas characterised by
+greater modelling uncertainty.
+
+The comparative analysis therefore provides additional ecological
+information beyond the individual predictions generated by each model.
+
+======================================================================
+RESULTS
+======================================================================
+
+The proposed methodology produces three independent ecosystem-risk
+maps describing the spatial distribution of ecological risk within the
+Massaciuccoli Lake basin.
+
+Each modelling approach captures different characteristics of the
+environmental system while sharing the same harmonised environmental
+dataset.
+
+The comparison among the three resulting maps provides additional
+information on the robustness and consistency of the identified
+ecosystem-risk patterns.
+
+======================================================================
+DETERMINISTIC RISK MAP
+======================================================================
+
+The deterministic cumulative-risk model identifies ecosystem-risk
+patterns through the aggregation of environmental stressors.
+
+The resulting map provides an interpretable representation of the
+spatial distribution of cumulative environmental pressure throughout
+the study area.
+
+The deterministic assessment constitutes the reference model against
+which the remaining methodologies are compared.
+
+======================================================================
+CLUSTERING RESULTS
+======================================================================
+
+The clustering methodology identifies spatial groups characterised by
+similar environmental conditions without imposing predefined ecosystem-
+risk classes.
+
+The resulting environmental clusters reveal coherent ecological
+structures that complement the deterministic assessment.
+
+Cluster boundaries identify transitions among different environmental
+conditions and contribute to the interpretation of ecosystem-risk
+patterns.
+
+======================================================================
+VARIATIONAL AUTOENCODER RESULTS
+======================================================================
+
+The Variational Autoencoder identifies latent environmental patterns
+that are not directly observable within the original environmental
+variables.
+
+The latent representation captures complex non-linear ecological
+structures and highlights ecosystem-risk configurations that differ
+from those detected through deterministic aggregation alone.
+
+The VAE therefore provides an additional perspective on ecosystem
+risk by exploiting the intrinsic structure of the environmental data.
+
+======================================================================
+MODEL AGREEMENT
+======================================================================
+
+Agreement among the three independent methodologies identifies areas
+where ecosystem-risk estimates are consistently supported by different
+analytical paradigms.
+
+These locations represent the most reliable ecosystem-risk hotspots
+within the Massaciuccoli Lake basin because they are independently
+identified through deterministic, statistical and deep-learning
+approaches.
+
+======================================================================
+MODEL DISAGREEMENT
+======================================================================
+
+Disagreement among the three ecosystem-risk models identifies spatial
+areas characterised by transitional environmental conditions or by
+greater modelling uncertainty.
+
+Rather than representing contradictory results, these differences
+provide complementary ecological information regarding the complexity
+of ecosystem behaviour.
+
+The comparison among independent methodologies therefore becomes an
+additional analytical layer supporting ecosystem-risk interpretation.
+
+======================================================================
+ECOSYSTEM-RISK HOTSPOTS
+======================================================================
+
+Areas consistently classified as medium or high ecosystem risk across
+multiple independent models are interpreted as robust ecosystem-risk
+hotspots.
+
+These hotspot areas represent the highest-priority locations for
+ecosystem monitoring because they are supported by multiple analytical
+approaches rather than by a single methodology.
+
+The spatial coincidence among different models increases confidence in
+the resulting ecosystem-risk assessment.
+
+======================================================================
+TRANSITIONAL AREAS
+======================================================================
+
+Areas receiving different classifications from the three ecosystem-risk
+models represent transitional environmental conditions located between
+well-defined ecological states.
+
+These areas may indicate gradual ecosystem transitions or situations in
+which additional environmental information could improve ecosystem-risk
+characterisation.
+
+Their identification complements hotspot analysis by highlighting
+locations where ecosystem dynamics appear more heterogeneous.
+
+======================================================================
+DISCUSSION
+======================================================================
+
+The comparison among deterministic, clustering and deep-learning
+approaches demonstrates that ecosystem risk cannot be fully described
+through a single analytical methodology.
+
+Each model captures different characteristics of the environmental
+system and therefore contributes complementary ecological information.
+
+The integration of multiple independent methodologies produces a more
+robust ecosystem-risk assessment than any individual model considered
+in isolation.
+
+======================================================================
+INTERPRETATION OF MODEL AGREEMENT
+======================================================================
+
+Agreement among independent ecosystem-risk models represents a strong
+indicator of assessment robustness.
+
+Spatial coincidence among deterministic, statistical and deep-learning
+predictions increases confidence that the identified ecosystem-risk
+hotspots correspond to persistent environmental conditions rather than
+to methodological artefacts.
+
+Model agreement therefore provides an additional measure of confidence
+for ecosystem-risk interpretation.
+
+======================================================================
+INTERPRETATION OF MODEL DISAGREEMENT
+======================================================================
+
+Differences among ecosystem-risk models should not be interpreted as
+conflicting results.
+
+Instead, they indicate environmental situations characterised by
+greater ecological complexity or by gradual transitions between
+different environmental states.
+
+These areas may benefit from additional environmental observations and
+future ecological investigation.
+
+======================================================================
+ADVANTAGES OF THE MULTI-MODEL FRAMEWORK
+======================================================================
+
+The proposed methodology combines the transparency of deterministic
+assessment, the descriptive capability of clustering techniques and the
+pattern-recognition capability of deep-learning models.
+
+The complementary nature of these methodologies increases the
+robustness of ecosystem-risk assessment while preserving ecological
+interpretability.
+
+The framework therefore supports a more comprehensive representation of
+ecosystem risk than approaches relying on a single analytical model.
+
+======================================================================
+MODEL LIMITATIONS
+======================================================================
+
+The proposed methodology estimates ecosystem risk through environmental
+indicators and therefore depends on the quality, completeness and
+spatial consistency of the available environmental datasets.
+
+As with any modelling framework, uncertainty associated with input
+data, environmental assumptions and modelling choices may influence the
+resulting ecosystem-risk maps.
+
+The generated maps should therefore be interpreted as scientific
+decision-support tools rather than deterministic representations of
+future ecosystem evolution.
+
+======================================================================
+TRANSFERABILITY
+======================================================================
+
+The methodological framework is independent of the specific
+Massaciuccoli Lake application.
+
+Because the workflow relies on harmonised environmental datasets,
+reproducible analytical procedures and publicly available information,
+it can be adapted to other wetland ecosystems characterised by similar
+environmental variables.
+
+Only the environmental datasets require replacement when applying the
+methodology to a different study area.
+
+======================================================================
+TRANSFERABILITY
+======================================================================
+
+The methodological framework is independent of the specific
+Massaciuccoli Lake application.
+
+Because the workflow relies on harmonised environmental datasets,
+reproducible analytical procedures and publicly available information,
+it can be adapted to other wetland ecosystems characterised by similar
+environmental variables.
+
+Only the environmental datasets require replacement when applying the
+methodology to a different study area.
+
+======================================================================
+OPEN SCIENCE
+======================================================================
+
+The proposed framework follows FAIR principles through the use of
+harmonised environmental datasets, reproducible analytical procedures
+and publicly available biodiversity and environmental information.
+
+The methodology is designed to maximise transparency, reproducibility
+and reuse in future ecosystem-risk assessment studies.
+
+======================================================================
+CORE SCIENTIFIC CONTRIBUTIONS
+======================================================================
+
+• Multi-model ecosystem risk assessment methodology.
+
+• Comparative integration of deterministic, clustering and
+  Variational Autoencoder models.
+
+• Ecosystem-risk assessment based on twelve harmonised environmental
+  stressor variables.
+
+• Identification of robust ecosystem-risk hotspots through
+  model agreement.
+
+• Identification of transitional ecological conditions through
+  model disagreement.
+
+• FAIR geospatial environmental knowledge base.
+
+• Reproducible workflow for wetland ecosystem risk assessment.
+
+• Transferable methodology for ecosystem-risk analysis in other
+  wetland ecosystems.
+  
+  

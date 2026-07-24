@@ -13,6 +13,8 @@ Task: Comparison v8 (DUAL ASSESSMENT LITE)
 """
 
 import pandas as pd
+from pprint import pprint
+
 
 from utils.feature_mapping import (
     normalize_feature_name,
@@ -210,11 +212,29 @@ def analyze_scenario(
         modified_candidates
     )
 
+    scenario_values = {}
+
+    for feature in scenario_features:
+
+        scenario_values[feature] = float(df_scenario.iloc[0][feature])
+
+    baseline_modified_values = {}
+
+    for feature in scenario_features:
+
+        baseline_modified_values[feature] = baseline_values[feature]
+
     return {
 
-        "risk": round(scenario_pred, 4),
+        "requested_modifications": scenario_features,
 
-        "delta": round(delta, 4),
+        "baseline_values": baseline_modified_values,
+
+        "scenario_values": scenario_values,
+
+        "risk": scenario_pred,
+
+        "delta": delta,
 
         "primary_drivers": primary,
 
@@ -222,7 +242,6 @@ def analyze_scenario(
 
         "shap_values": shap_values
     }
-
 
 # ======================================================
 # DRIVER FORMATTER
@@ -463,12 +482,19 @@ def handle_comparison(
     # ==================================================
     # RAG
     # ==================================================
+    print("\n========== SCENARIO A ==========")
+    pprint(analysis_A)
+
+    print("\n========== SCENARIO B ==========")
+    pprint(analysis_B)
+
 
     rag_text = generate_comparison_explanation(
-        drivers=structured_drivers,
-        delta=delta,
+        question=question,
+        scenario_a=analysis_A,
+        scenario_b=analysis_B,
+        risk_difference=delta,
         features=semantic_features
-
     )
 
     interpretation = rag_text

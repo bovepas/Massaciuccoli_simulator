@@ -1,43 +1,74 @@
-You are an environmental scientist.
-
-USER QUESTION:
-{question}
-
-MODEL-DERIVED IMPORTANCE COMPARISON:
-{comparison_statement}
-
 TASK
 
-The comparison has already been computed.
+The user asks the Massaciuccoli Digital Twin to compare
+the relative importance of two environmental variables
+with respect to predicted ecosystem risk.
 
-Accept the computed result exactly as provided.
+The Digital Twin has already computed the comparison.
 
-Do NOT determine which variable is more influential.
+Your task is not to compare the variables again.
 
-Do NOT compare the scores.
+Your task is to explain the reported comparison using
+the scientific information provided below.
 
-Do NOT reverse the reported ranking.
+To prepare your answer, the Digital Twin provides three
+complementary sources of information.
 
-Do NOT restate the computed result.
+1. DIGITAL TWIN IMPORTANCE COMPARISON REPORT
 
-Do not explain why the reported association occurs explicitly supported by both the reported model results and the retrieved scientific knowledge. If no explicit mechanism is available, simply describe the reported association.
+This report identifies:
 
-Your role is only to explain the ecological meaning of the reported comparison.
+- the compared environmental variables;
+- their importance scores;
+- the variable showing the stronger statistical
+  association with predicted ecosystem risk.
 
-Focus primarily on the ecological interpretation of the higher-ranked variable.
+Treat the Importance Comparison Report as the
+authoritative description of the Digital Twin analysis.
 
-You may briefly mention the other variable only to provide ecological context.
+Do not modify the reported comparison.
 
-A lower importance score indicates lower model sensitivity within the current prediction, not ecological irrelevance.
+Do not determine a different ranking.
 
-Interpret associations rather than direct causality.
+Do not compare the scores beyond what is already
+reported by the Digital Twin.
 
-Use only ecological concepts explicitly supported by the retrieved scientific knowledge and by the semantic descriptions of the compared variables.
+2. ECOLOGICAL INTERPRETATION NOTES
 
-Do not introduce additional variables, ecological mechanisms, environmental pressures, management actions, conservation recommendations, or unsupported conclusions.
+The reported importance scores describe the relative
+statistical sensitivity of the compared variables
+within the current Digital Twin prediction.
 
-If the available ecological information is limited, keep the explanation concise.
+A higher importance score indicates a stronger
+statistical association with predicted ecosystem risk.
 
-Write one compact paragraph of 2–3 concise sentences.
+The reported comparison does not represent observed
+environmental changes and should not be interpreted
+as direct ecological causality.
 
-Answer:
+3. RETRIEVED SCIENTIFIC EVIDENCE
+
+These excerpts were retrieved from the curated
+scientific knowledge base describing the
+Massaciuccoli Lake ecosystem.
+
+Use the retrieved scientific evidence only to explain
+the ecological relevance of the reported variables.
+
+Focus primarily on the ecological interpretation of
+the higher-ranked variable.
+
+The second variable may be mentioned only to provide
+ecological context.
+
+Do not infer ecological mechanisms unless they are
+supported by both the Digital Twin outputs and the
+retrieved scientific evidence.
+
+Do not introduce additional environmental variables,
+ecological processes, management actions,
+conservation recommendations or unsupported
+conclusions.
+
+Write one concise scientific explanation that directly
+answers the user's question.

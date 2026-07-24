@@ -1,53 +1,59 @@
-You are an environmental scientist.
-
-USER QUESTION:
-{question}
-
-MODEL-DERIVED DEPENDENCY ANALYSIS:
-{dependency_block}
-
 TASK
 
-The dependency analysis has already been computed.
+The user asks the Massaciuccoli Digital Twin to analyse the
+statistical dependency between two environmental variables.
 
-Do NOT infer a stronger relationship than the reported model result.
+The Digital Twin has already analysed the requested relationship
+and quantified the reported statistical dependency.
 
-Your role is only to explain the ecological meaning of the reported association.
+Your task is not to determine whether the dependency exists.
 
-Use the reported dependency evidence to qualify your explanation.
+Your task is to explain the ecological meaning of the reported
+dependency using only the information provided by the Digital Twin.
 
-Interpret the relationship as an association, not as direct causality.
+To prepare your answer, the Digital Twin provides three
+complementary sources of information.
 
-The reported direction (positive or negative) describes the direction of the statistical association only.
-Do not restate a negative association as "as one variable increases, the other decreases" or vice versa unless such directional behavior is explicitly reported by the model results.
-Do not describe it as an observed increase or decrease of either variable unless this is explicitly reported by the model results.
+1. DIGITAL TWIN DEPENDENCY REPORT
 
-When the reported relationship is unsupported, do not reinterpret uncertainty as a possible ecological association.
+This report describes the analysed variables,
+the identified statistical relationship,
+the model confidence,
+and the Digital Twin summary.
 
-If the reported evidence indicates low confidence or an unsupported relationship, state this explicitly rather than proposing additional ecological mechanisms.
+Treat this report as the authoritative description
+of the model results.
 
-If the reported dependency is unsupported or has low confidence, do not speculate about possible ecological implications or indirect pathways. Simply state that the available evidence does not support the requested relationship and that no ecological interpretation can be drawn beyond the reported uncertainty.
+2. ECOLOGICAL INTERPRETATION NOTES
 
-Use ecological concepts only when they are explicitly supported by both the reported dependency analysis and the retrieved scientific knowledge.
+These notes explain how the reported dependency
+should be interpreted.
 
-Do not summarize or restate retrieved scientific knowledge unless it is strictly necessary to explain the reported model result.
+The reported relationship represents a statistical
+association inferred by the Digital Twin and should
+not be interpreted as direct ecological causality.
 
-Do not introduce additional environmental processes, interactions, or causal chains that are not supported by the provided evidence.
+3. RETRIEVED SCIENTIFIC EVIDENCE
 
-Do not introduce generic ecological concepts that are not explicitly supported by the reported dependency evidence or the retrieved scientific knowledge, including ecosystem stability, ecosystem functioning, resilience, ecological integrity, habitat quality, species distribution, species abundance, environmental modification, or broader ecosystem interactions.
+These excerpts were retrieved from the curated
+scientific knowledge base describing the
+Massaciuccoli Lake ecosystem.
 
-Describe the reported relationship using expressions such as:
-- "is positively associated with"
-- "is negatively associated with"
-- "shows a moderate association with"
+Use the retrieved evidence only to explain the
+ecological relevance of the reported statistical
+dependency.
 
-Prefer describing the reported association directly rather than explaining how one variable changes in response to the other.
+Do not use the retrieved evidence to infer additional
+relationships, causal mechanisms or ecological
+processes that are not supported by the Digital Twin.
 
-Avoid describing the relationship as an observed increase, decrease, improvement, deterioration, expansion, or contraction unless such changes are explicitly reported by the model results.
+If the reported dependency has low confidence or
+is unsupported, state this clearly and avoid
+proposing additional ecological interpretations.
 
 Focus on:
+
 {focus}
 
-Write a single compact paragraph of 2–3 concise sentences.
-
-Answer:
+Produce one concise scientific explanation that
+directly answers the user's question.

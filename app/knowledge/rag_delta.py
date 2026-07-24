@@ -279,6 +279,103 @@ def build_facts(drivers):
         dict.fromkeys(facts)
     )
 
+# ======================================================
+# DELTA REPORT
+# ======================================================
+
+def build_delta_report(
+    drivers,
+    facts,
+    delta
+):
+
+    feature, value_from, value_to = drivers[0]
+
+    if delta is None:
+
+        risk_change = "Unknown"
+
+    elif delta > 0:
+
+        risk_change = "Increase"
+
+    elif delta < 0:
+
+        risk_change = "Decrease"
+
+    else:
+
+        risk_change = "No substantial change"
+
+    effects = "\n".join(
+        f"• {f}"
+        for f in facts
+    )
+
+    report = f"""
+============================================================
+DIGITAL TWIN DELTA REPORT
+============================================================
+
+MODIFIED ENVIRONMENTAL VARIABLE
+------------------------------------------------------------
+
+{feature}
+
+============================================================
+APPLIED MODIFICATION
+------------------------------------------------------------
+
+Initial value:
+{value_from}
+
+Modified value:
+{value_to}
+
+============================================================
+EXPECTED ENVIRONMENTAL EFFECTS
+------------------------------------------------------------
+
+{effects}
+
+============================================================
+MODEL RESULTS
+------------------------------------------------------------
+
+Predicted ecosystem risk variation:
+{risk_change}
+
+Estimated ecosystem risk difference:
+{delta}
+"""
+
+    return report
+
+# ======================================================
+# ECOLOGICAL NOTES
+# ======================================================
+
+def build_delta_notes(drivers):
+
+    feature, _, _ = drivers[0]
+
+    return f"""
+============================================================
+ECOLOGICAL INTERPRETATION NOTES
+============================================================
+
+The reported environmental effects describe the
+expected ecological implications of modifying
+{feature} between two baseline-derived scenarios.
+
+The retrieved scientific evidence should only be
+used to explain the ecological relevance of the
+reported environmental effects.
+
+Do not infer additional environmental modifications,
+ecological mechanisms or ecosystem responses that
+are not reported by the Digital Twin.
+"""
 
 # ======================================================
 # PROMPT
@@ -540,19 +637,32 @@ def generate_delta_explanation(
 
     else:
 
-        fact_text = "\n".join(
-            f"- {f}"
-            for f in facts
+        delta_report = build_delta_report(
+            drivers,
+            facts,
+            delta
+        )
+
+        delta_notes = build_delta_notes(
+            drivers
         )
 
         prompt = (
             build_prompt("delta")
             + f"""
 
-MODEL-DERIVED SCENARIO:
-{fact_text}
+    QUESTION:
+    {question}
 
-"""
+    {delta_report}
+
+    {delta_notes}
+
+    ============================================================
+    RETRIEVED SCIENTIFIC EVIDENCE
+    ============================================================
+
+    """
         )
 
     try:

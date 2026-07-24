@@ -1,36 +1,66 @@
 TASK
 
-Combine the following model-derived scenario into a concise scientific interpretation.
+The user asks the Massaciuccoli Digital Twin to evaluate
+the ecological implications of modifying a single
+environmental variable between two baseline-derived
+ecosystem scenarios.
 
-MODEL-DERIVED SCENARIO:
-{facts}
+The Digital Twin has already simulated the requested
+environmental modification and estimated its effect
+on the ecosystem.
 
-RULES:
+Your task is not to evaluate the scenario again.
 
-- Use the model-derived scenario as the authoritative description of the environmental changes.
+Your task is to explain the reported environmental
+effects using the scientific information provided below.
 
-- Use the retrieved scientific knowledge only to explain the reported ecological associations.- Do NOT introduce ecological processes that are not explicitly supported by the facts.
-- Do not introduce ecological mechanisms unless they are explicitly supported by both the model-derived scenario and the retrieved scientific knowledge.
+To prepare your answer, the Digital Twin provides
+three complementary sources of information.
 
-- Combine the facts into one coherent explanation rather than listing them individually.
+1. DIGITAL TWIN DELTA REPORT
 
-- Interpret associations rather than direct causal relationships.
+This report describes:
 
-- Use cautious scientific language (e.g. "may", "is associated with", "may contribute to").
+- the environmental variable that was modified;
+- the applied environmental modification;
+- the expected environmental effects;
+- the predicted ecosystem risk variation.
 
-- Do not infer additional environmental changes beyond those explicitly stated in the facts.
+Treat the Delta Report as the authoritative
+description of the simulated scenario.
 
-- Do NOT mention ecosystem risk or model predictions.
-  These are added separately by the system.
+2. ECOLOGICAL INTERPRETATION NOTES
 
-- Avoid generic statements such as:
-  - overall ecosystem health
-  - environmental changes
-  - ecological balance
-  - ecosystem functioning
+These notes explain how the reported environmental
+effects should be interpreted.
 
-unless they are explicitly supported by the provided facts.
+The reported effects describe the expected ecological
+implications of modifying a single environmental
+variable.
 
-- Write 1–2 concise sentences.
+3. RETRIEVED SCIENTIFIC EVIDENCE
 
-Answer:
+These excerpts were retrieved from the curated
+scientific knowledge base describing the
+Massaciuccoli Lake ecosystem.
+
+Use the retrieved scientific evidence only to explain
+the ecological relevance of the reported environmental
+effects.
+
+Do not infer additional environmental modifications,
+ecological mechanisms or ecosystem responses that are
+not supported by the Digital Twin.
+
+Interpret the reported environmental effects using
+cautious scientific language.
+
+Focus on explaining the ecological significance of the
+reported environmental modification rather than
+repeating the report.
+
+Do not mention ecosystem risk or model predictions.
+These are added separately by the system.
+
+Produce one concise scientific explanation that
+directly answers the user's question.

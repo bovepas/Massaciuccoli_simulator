@@ -1,33 +1,79 @@
 TASK
 
-The ecosystem risk prediction has already been computed.
+The user asks the Massaciuccoli Digital Twin to evaluate how a
+hypothetical environmental scenario differs from the current
+ecosystem conditions.
 
-Assume that the reported risk values and association scores are already visible to the user.
+The current ecosystem state is used as the baseline reference.
 
-Your task is to explain the ecological meaning of the reported scenario rather than to repeat the reported model outputs.
+The Digital Twin has already simulated the requested environmental
+scenario and compared it with the baseline ecosystem.
 
-Do not repeat or paraphrase the reported risk value, risk delta, or association scores.
+Your task is not to perform the assessment again.
 
-Use the reported primary drivers and secondary ecosystem associations only when they help explain the ecological interpretation.
+Your task is to explain the ecological meaning of the reported
+assessment using only the information provided by the Digital Twin.
 
-Primary drivers identify the variables most strongly associated with the predicted ecosystem risk.
+To prepare your answer, the Digital Twin provides three complementary
+sources of information.
 
-Secondary ecosystem associations identify variables statistically associated with the predicted scenario. They do not indicate that these variables increased, decreased, expanded, contracted, or otherwise changed.
+1. DIGITAL TWIN ASSESSMENT REPORT
 
-Only the environmental modifications explicitly described in the user question should be considered part of the scenario.
+This report contains the simulated environmental scenario,
+the predicted ecosystem response,
+the primary model drivers,
+and the secondary ecosystem associations.
 
-Interpret associations rather than direct causality.
+Treat this report as the authoritative description of the
+simulation results.
 
-Use retrieved scientific knowledge only to explain the ecological relevance of variables already reported by the model. Do not describe additional ecosystem processes, habitat changes, or species responses unless they are explicitly reported by the model outputs.
+2. ECOLOGICAL INTERPRETATION NOTES
 
-Retrieved scientific knowledge may explain why a reported variable is ecologically relevant, but it must not be used to extend the reported scenario.
+These notes explain the ecological role of the environmental
+variables reported by the Digital Twin.
 
-Do not introduce ecological mechanisms that are unsupported by either the reported model results or the retrieved scientific knowledge.
+They help interpret the reported drivers and ecosystem
+associations but do not modify the simulation results.
 
-Do not simply enumerate the reported primary drivers or secondary ecosystem associations. Instead, provide a concise ecological interpretation of the scenario they describe.
+3. RETRIEVED SCIENTIFIC EVIDENCE
 
-If the retrieved scientific knowledge adds no direct support, rely only on the reported model results.
+These excerpts were retrieved from the curated scientific
+knowledge base describing the Massaciuccoli Lake ecosystem.
 
-Write one compact paragraph of 2–3 concise sentences.
+Use the retrieved scientific evidence only to explain
+the ecological relevance of variables already reported
+by the Digital Twin.
 
-Answer:
+Do not extend the simulated scenario by introducing
+additional ecological consequences that are not
+explicitly reported in the Assessment Report.
+
+Use the retrieved scientific evidence only to explain
+the ecological meaning of the variables already
+identified by the Digital Twin.
+
+The retrieved evidence must support the reported
+assessment.
+
+It must not be used to predict additional ecological
+effects.
+
+When the retrieved evidence supports the reported model
+drivers or ecosystem associations, integrate that evidence
+naturally into your explanation.
+
+Do not introduce ecological mechanisms that are unsupported
+by the retrieved scientific evidence.
+
+Remember that secondary ecosystem associations describe
+variables statistically associated with the simulated
+environmental scenario.
+
+They do not necessarily indicate variables that increased,
+decreased or otherwise changed during the simulation.
+
+Focus your explanation on the ecological implications of the
+comparison between the simulated scenario and the baseline
+ecosystem rather than repeating numerical values.
+
+Produce a concise scientific explanation that directly answers the user's original question.

@@ -1,0 +1,400 @@
+#######################################################################
+KNOWLEDGE BASE PREPROCESSING PROTOCOL
+Version 2.0
+#######################################################################
+
+
+The best RAG document is not the one that has been rewritten the most. It is the one that has lost only the information that the RAG cannot use.
+
+PURPOSE
+-----------------------------------------------------------------------
+
+This protocol defines the standard workflow for converting scientific
+papers into Retrieval-Augmented Generation (RAG) knowledge sources.
+
+The objective is NOT to rewrite scientific papers.
+
+The objective is to preserve the original scientific knowledge while
+removing editorial artefacts that reduce retrieval quality.
+
+The resulting documents are intended to become permanent components of
+the project Knowledge Base.
+
+#######################################################################
+CORE PHILOSOPHY
+#######################################################################
+
+The published paper has already undergone peer review.
+
+The preprocessing phase must therefore never attempt to improve,
+reinterpret or simplify the scientific contribution.
+
+The curator is not acting as an author.
+
+The curator is acting as a scientific editor.
+
+Every modification must improve retrieval quality without modifying
+scientific meaning.
+
+Whenever possible, preserve the original wording.
+
+Editorial cleaning has priority over rewriting.
+
+#######################################################################
+EDITORIAL PRINCIPLES
+#######################################################################
+
+KEEP
+
+• scientific definitions
+
+• scientific explanations
+
+• methodology
+
+• motivation
+
+• assumptions
+
+• ecological interpretation
+
+• limitations
+
+• discussion
+
+• conclusions
+
+• scientific terminology
+
+• numerical experimental results
+
+• performance metrics
+
+• case-study description
+
+• scientific contributions
+
+• transferable methodological knowledge
+
+------------------------------------------------------------
+
+REMOVE
+
+• bibliography
+
+• citations
+
+• DOI
+
+• author list
+
+• affiliations
+
+• acknowledgements
+
+• funding
+
+• publisher metadata
+
+• copyright
+
+• manuscript history
+
+• section references
+
+• figure references
+
+• table references
+
+• appendix references
+
+• supplementary material references
+
+• page headers
+
+• page footers
+
+• manuscript navigation text
+
+• "Section X"
+
+• "Figure X"
+
+• "Table X"
+
+• "This paper is organised..."
+
+• similar editorial artefacts
+
+#######################################################################
+REWRITING POLICY
+#######################################################################
+
+Never rewrite scientific content simply to improve style.
+
+Rewrite only when required to:
+
+• remove editorial references
+
+• improve chunk coherence
+
+• remove broken PDF sentences
+
+• merge incomplete paragraphs
+
+• remove duplicated fragments
+
+Scientific terminology must remain unchanged.
+
+Scientific reasoning must remain unchanged.
+
+Interpretation must remain unchanged.
+
+Discussion should remain as close as possible to the published article.
+
+Conclusions should remain as close as possible to the published article.
+
+#######################################################################
+DOCUMENT STRUCTURE
+#######################################################################
+
+Whenever possible, organise the document into semantic sections.
+
+Typical structure:
+
+DOCUMENT
+
+SOURCE
+
+CASE STUDY
+
+DOMAIN
+
+PURPOSE
+
+ABSTRACT
+
+KEY CONCEPTS
+
+INTRODUCTION
+
+OVERVIEW
+
+METHODOLOGY
+
+DATA
+
+MODELS
+
+RESULTS
+
+DISCUSSION
+
+LIMITATIONS
+
+TRANSFERABILITY
+
+OPEN SCIENCE (only if scientifically useful)
+
+OVERALL CONCLUSIONS
+
+CORE SCIENTIFIC CONTRIBUTIONS
+
+The exact structure may vary depending on the paper.
+
+Semantic coherence has priority over structural uniformity.
+
+#######################################################################
+SECTION TITLES
+#######################################################################
+
+Section titles should be short.
+
+Section titles should describe knowledge.
+
+Examples:
+
+GOOD
+
+ROLE OF SPECIES PREVALENCE
+
+FEATURE EXTRACTION
+
+MODEL COMPARISON
+
+ECOSYSTEM RISK HOTSPOTS
+
+TRANSFERABILITY
+
+BAD
+
+Additional Considerations
+
+Some Further Notes
+
+Discussion about Figure 7
+
+#######################################################################
+LISTS
+#######################################################################
+
+Preserve lists whenever they represent scientific classification.
+
+Do not convert lists into paragraphs.
+
+Lists improve retrieval.
+
+Examples:
+
+• environmental variables
+
+• workflow phases
+
+• model components
+
+• scientific contributions
+
+• prevalence classes
+
+#######################################################################
+CASE STUDY
+#######################################################################
+
+Always preserve the case study.
+
+Case-study information provides essential context.
+
+The Digital Twin must always remember that the framework has been
+developed for the Massaciuccoli Lake ecosystem.
+
+Never remove information describing:
+
+• Massaciuccoli Lake basin
+
+• ecological characteristics
+
+• datasets
+
+• GBIF
+
+• environmental variables
+
+• biodiversity
+
+#######################################################################
+DISCUSSION
+#######################################################################
+
+Discussion should undergo editorial cleaning only.
+
+Do not simplify.
+
+Do not reinterpret.
+
+Do not rewrite unless strictly necessary.
+
+#######################################################################
+CONCLUSIONS
+#######################################################################
+
+Conclusions should remain extremely close to the published paper.
+
+Only editorial artefacts may be removed.
+
+#######################################################################
+CORE SCIENTIFIC CONTRIBUTIONS
+#######################################################################
+
+At the end of every document create:
+
+CORE SCIENTIFIC CONTRIBUTIONS
+
+This section is not copied verbatim.
+
+It is extracted from the paper.
+
+It summarises the scientific contribution using concise bullet points.
+
+This section improves retrieval while preserving scientific meaning.
+
+#######################################################################
+CHUNK OPTIMISATION
+#######################################################################
+
+Each section should represent one coherent scientific concept.
+
+Avoid mixing unrelated concepts.
+
+One chunk should ideally answer one scientific question.
+
+Examples:
+
+"What is prevalence?"
+
+"Why use VAE?"
+
+"What is ecological fragility?"
+
+"Why compare three models?"
+
+#######################################################################
+RAG ORIENTATION
+#######################################################################
+
+Always ask:
+
+Could this paragraph become an answer?
+
+If YES
+
+KEEP.
+
+If NO
+
+Remove it.
+
+#######################################################################
+FINAL REVIEW
+#######################################################################
+
+Before ingestion verify:
+
+□ No bibliography
+
+□ No citations
+
+□ No figures
+
+□ No tables
+
+□ No editorial references
+
+□ No duplicated sections
+
+□ Consistent section titles
+
+□ Scientific terminology preserved
+
+□ Numerical results preserved
+
+□ Original scientific interpretation preserved
+
+□ Core Scientific Contributions present
+
+□ Case-study information preserved
+
+□ Transferability section preserved (if present)
+
+#######################################################################
+FINAL OBJECTIVE
+#######################################################################
+
+The final document must read like an expert scientific handbook rather
+than a PDF exported to text.
+
+The resulting Knowledge Base should preserve the voice of the authors
+while maximising semantic coherence for Retrieval-Augmented Generation.
+
+#######################################################################
+END OF PROTOCOL
+#######################################################################

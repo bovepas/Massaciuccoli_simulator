@@ -1,0 +1,265 @@
+ ===========================================================
+KNOWLEDGE BASE PREPROCESSING PROTOCOL
+Digital Twin of the Massaciuccoli Lake Ecosystem
+===========================================================
+
+Version: 1.0
+
+Purpose
+-------
+
+This document defines the standard procedure used to transform
+scientific publications into retrieval-ready knowledge sources
+for the Digital Twin Knowledge Base.
+
+The objective is not to summarize, simplify or reinterpret the
+scientific literature.
+
+The objective is to preserve the complete scientific content
+while improving its retrieval and usability by the Retrieval
+Augmented Generation (RAG) pipeline.
+
+This protocol is intentionally independent from the current case
+study and can be applied to future Digital Twin knowledge bases.
+
+===========================================================
+GENERAL PRINCIPLES
+===========================================================
+
+Rule 1
+The original scientific publications are never modified.
+
+Original PDF files are archived separately and remain the
+authoritative source.
+
+-----------------------------------------------------------
+
+Rule 2
+The preprocessing stage must never alter the scientific meaning
+of the document.
+
+No scientific statement may be rewritten, summarized or
+interpreted.
+
+-----------------------------------------------------------
+
+Rule 3
+Preprocessing may only improve document structure,
+readability and retrieval quality.
+
+Scientific information must remain unchanged.
+
+-----------------------------------------------------------
+
+Rule 4
+Metadata added during preprocessing must never introduce new
+scientific knowledge.
+
+Added metadata may only improve document navigation or retrieval.
+
+===========================================================
+PREPROCESSING PIPELINE
+===========================================================
+
+Step 0
+Original PDF
+
+↓
+
+Step 1
+Raw text extraction
+
+↓
+
+Step 2
+Editorial cleaning
+
+↓
+
+Step 3
+Structural reorganization
+
+↓
+
+Step 4
+Semantic enrichment
+
+↓
+
+Step 5
+Terminology normalization
+
+↓
+
+Step 6
+Scientific validation
+
+↓
+
+Step 7
+Knowledge Base ingestion
+
+===========================================================
+STEP 1 — RAW TEXT EXTRACTION
+===========================================================
+
+Objective
+
+Extract the complete textual content of the publication.
+
+Allowed operations
+
+• remove page headers
+• remove page footers
+• remove page numbers
+• repair broken lines
+• repair hyphenated words
+• normalize whitespace
+
+No scientific content may be removed.
+
+===========================================================
+STEP 2 — EDITORIAL CLEANING
+===========================================================
+
+Objective
+
+Remove editorial material that is irrelevant for scientific
+retrieval.
+
+Examples
+
+• author list
+• affiliations
+• email addresses
+• ORCID identifiers
+• DOI
+• copyright notices
+• publication history
+• acknowledgements
+• funding statements
+• references
+• bibliography
+
+The scientific body of the paper must remain unchanged.
+
+===========================================================
+STEP 3 — STRUCTURAL REORGANIZATION
+===========================================================
+
+Objective
+
+Improve document organization for semantic chunking.
+
+Section titles should become explicit semantic delimiters.
+
+Example
+
+SECTION
+Environmental Variables
+
+instead of
+
+2.3 Environmental variables
+
+Scientific paragraphs must remain unchanged.
+
+===========================================================
+STEP 4 — SEMANTIC ENRICHMENT
+===========================================================
+
+Objective
+
+Add retrieval-oriented metadata without modifying scientific
+content.
+
+Examples
+
+TOPICS
+
+MAIN VARIABLES
+
+MODELS
+
+DATA SOURCES
+
+SCENARIOS
+
+The added metadata must only describe existing content.
+
+===========================================================
+STEP 5 — TERMINOLOGY NORMALIZATION
+===========================================================
+
+Objective
+
+Use consistent terminology throughout the Knowledge Base.
+
+Examples
+
+Representative Concentration Pathway (RCP)
+
+Maximum Entropy (MaxEnt)
+
+Evapotranspiration (ET)
+
+Water Surplus (WS)
+
+The first occurrence of each abbreviation should include both
+the complete name and its abbreviation.
+
+===========================================================
+STEP 6 — SCIENTIFIC VALIDATION
+===========================================================
+
+The curated document must be compared against the original
+publication.
+
+Validation checklist
+
+□ No scientific information removed
+
+□ No scientific meaning modified
+
+□ No unsupported interpretation introduced
+
+□ Mathematical expressions preserved
+
+□ Numerical values preserved
+
+□ Figures and tables removed only if their content is not
+required for retrieval
+
+===========================================================
+STEP 7 — KNOWLEDGE BASE INGESTION
+===========================================================
+
+Only validated curated documents are indexed into the vector
+database.
+
+The ingestion pipeline performs:
+
+• chunk generation
+
+• embedding computation
+
+• vector indexing
+
+===========================================================
+DESIGN PHILOSOPHY
+===========================================================
+
+The Knowledge Base is intentionally curated.
+
+This is not considered a limitation of the system.
+
+The Digital Twin is designed around a specific ecological case
+study, therefore its scientific knowledge base is also domain-
+specific.
+
+Curating the source documents improves retrieval quality while
+preserving the original scientific evidence.
+
+The objective is not to create a generic document retrieval
+system, but a reliable scientific knowledge base dedicated to
+the Massaciuccoli Digital Twin. 

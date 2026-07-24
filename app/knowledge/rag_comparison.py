@@ -25,7 +25,7 @@ from utils.prompt_builder import (
 
 
 DEBUG = True
-MAX_CONTEXT_CHARS = 1200
+MAX_CHUNK_CHARS = 700
 
 
 
@@ -38,69 +38,260 @@ def debug_print(*args):
 # CONTEXT
 # ======================================================
 
+def clean_chunk(text):
+
+    import re
+
+    text = text.replace("\n", " ")
+
+    text = re.sub(
+        r"\s+",
+        " ",
+        text
+    )
+
+    return text.strip()
+
+
 def build_context(retrieved):
 
     if not retrieved:
         return ""
 
-    chunks = [r["text"] for r in retrieved]
+    report = []
 
-    context = "\n\n".join(chunks)
+    report.append("=" * 60)
+    report.append("SCIENTIFIC EVIDENCE")
+    report.append("=" * 60)
 
-    if len(context) > MAX_CONTEXT_CHARS:
-        context = context[:MAX_CONTEXT_CHARS]
+    for i, r in enumerate(retrieved, start=1):
 
-    return context
+        chunk = clean_chunk(r["text"])
+
+        # ----------------------------------------------
+        # LIMIT EACH CHUNK
+        # ----------------------------------------------
+
+        if len(chunk) > MAX_CHUNK_CHARS:
+
+            chunk = (
+                chunk[:MAX_CHUNK_CHARS].rsplit(" ", 1)[0]
+                + " ..."
+            )
+
+        report.append("")
+        report.append(f"Evidence {i}")
+
+        report.append("-" * 60)
+
+        report.append(
+            f"Source: {r['source']}"
+        )
+
+        report.append(
+            f"Page: {r['page']}"
+        )
+
+        report.append("")
+
+        report.append("Scientific excerpt:")
+
+        report.append(chunk)
+
+        report.append("")
+        report.append("=" * 60)
+
+    return "\n".join(report)
+
 
 
 # ======================================================
-# BASE EXPLANATION
+# COMPARISON REPORT
 # ======================================================
 
-def build_base_explanation(drivers, delta):
+def build_comparison_report(
+    scenario_a,
+    scenario_b,
+    risk_difference
+):
 
-    if abs(delta) < 0.01:
+    report = []
 
-        base = "The two scenarios show similar ecosystem risk."
+    report.append("=" * 60)
+    report.append("DIGITAL TWIN COMPARISON REPORT")
+    report.append("=" * 60)
 
-    elif delta > 0:
+    # ==================================================
+    # SCENARIO A
+    # ==================================================
 
-        base = "The second scenario shows higher ecosystem risk."
+    report.append("")
+    report.append("SCENARIO A")
+    report.append("-" * 60)
 
-    else:
+    report.append("")
+    report.append("Requested environmental modification")
 
-        base = "The first scenario shows higher ecosystem risk."
+    for feature, mod in scenario_a["requested_modifications"].items():
 
-    explanations = []
+        direction = (
+            "Increase"
+            if mod["value"] >= 0
+            else "Reduce"
+        )
 
-    for feature, a, b in drivers:
+        report.append(
+            f"• {direction} {feature} by "
+            f"{abs(mod['value']):.1f}%"
+        )
 
-        if a is None or b is None:
-            continue
+    report.append("")
+    report.append("Baseline ecosystem state")
 
-        if b > a:
-            explanations.append(f"{feature} increases")
+    for feature, value in scenario_a["baseline_values"].items():
 
-        elif b < a:
-            explanations.append(f"{feature} decreases")
+        report.append(
+            f"• {feature}: {value:.2f}"
+        )
 
-    if explanations:
+    report.append("")
+    report.append("Simulated ecosystem state")
 
-        driver_sentence = (
-            " This difference is mainly associated with "
-            + ", ".join(explanations[:3]) + "."
+    for feature, value in scenario_a["scenario_values"].items():
+
+        report.append(
+            f"• {feature}: {value:.2f}"
+        )
+
+    report.append("")
+    report.append("Predicted ecosystem response")
+
+    report.append(
+        f"• Ecosystem risk: "
+        f"{scenario_a['risk']:.4f}"
+    )
+
+    report.append("")
+    report.append("Main model drivers")
+
+    for feature, impact in scenario_a["primary_drivers"].items():
+
+        report.append(
+            f"• {feature} ({impact:+.5f})"
+        )
+
+    # ==================================================
+    # SCENARIO B
+    # ==================================================
+
+    report.append("")
+    report.append("=" * 60)
+    report.append("SCENARIO B")
+    report.append("-" * 60)
+
+    report.append("")
+    report.append("Requested environmental modification")
+
+    for feature, mod in scenario_b["requested_modifications"].items():
+
+        direction = (
+            "Increase"
+            if mod["value"] >= 0
+            else "Reduce"
+        )
+
+        report.append(
+            f"• {direction} {feature} by "
+            f"{abs(mod['value']):.1f}%"
+        )
+
+    report.append("")
+    report.append("Baseline ecosystem state")
+
+    for feature, value in scenario_b["baseline_values"].items():
+
+        report.append(
+            f"• {feature}: {value:.2f}"
+        )
+
+    report.append("")
+    report.append("Simulated ecosystem state")
+
+    for feature, value in scenario_b["scenario_values"].items():
+
+        report.append(
+            f"• {feature}: {value:.2f}"
+        )
+
+    report.append("")
+    report.append("Predicted ecosystem response")
+
+    report.append(
+        f"• Ecosystem risk: "
+        f"{scenario_b['risk']:.4f}"
+    )
+
+    report.append("")
+    report.append("Main model drivers")
+
+    for feature, impact in scenario_b["primary_drivers"].items():
+
+        report.append(
+            f"• {feature} ({impact:+.5f})"
+        )
+
+    # ==================================================
+    # MODEL COMPARISON SUMMARY
+    # ==================================================
+
+    report.append("")
+    report.append("=" * 60)
+    report.append("MODEL COMPARISON SUMMARY")
+    report.append("=" * 60)
+
+    report.append("")
+    report.append(
+        f"Difference in predicted ecosystem risk: "
+        f"{abs(risk_difference):.4f}"
+    )
+
+    report.append("")
+
+    if abs(risk_difference) < 0.01:
+
+        report.append(
+            "Model conclusion:"
+        )
+
+        report.append(
+            "• The two simulated scenarios produce "
+            "very similar predicted ecosystem risk."
+        )
+
+    elif risk_difference > 0:
+
+        report.append(
+            "Model conclusion:"
+        )
+
+        report.append(
+            "• Scenario B produces a higher predicted "
+            "ecosystem risk than Scenario A."
         )
 
     else:
 
-        driver_sentence = ""
+        report.append(
+            "Model conclusion:"
+        )
 
-    context = (
-        " Higher ecosystem risk reflects increased ecological fragility, "
-        "environmental stress, and reduced ecosystem resilience."
-    )
+        report.append(
+            "• Scenario A produces a higher predicted "
+            "ecosystem risk than Scenario B."
+        )
 
-    return base + driver_sentence + context
+    return "\n".join(report)
+
 
 
 # ======================================================
@@ -178,50 +369,90 @@ def classify_transition(feature, value):
     return feature
 
 
-def build_transition_query(drivers, delta):
+def build_transition_query(
+    scenario_a,
+    scenario_b,
+    risk_difference
+):
 
     transition_terms = []
 
-    for feature, a, b in drivers:
+    # --------------------------------------------------
+    # SCENARIO A
+    # --------------------------------------------------
 
-        if a is not None:
-            transition_terms.append(
-                classify_transition(feature, a)
+    for feature, mod in scenario_a["requested_modifications"].items():
+
+        transition_terms.append(
+
+            classify_transition(
+                feature,
+                mod["value"]
             )
 
-        if b is not None:
-            transition_terms.append(
-                classify_transition(feature, b)
+        )
+
+    # --------------------------------------------------
+    # SCENARIO B
+    # --------------------------------------------------
+
+    for feature, mod in scenario_b["requested_modifications"].items():
+
+        transition_terms.append(
+
+            classify_transition(
+                feature,
+                mod["value"]
             )
+
+        )
+
+    # --------------------------------------------------
+    # REMOVE DUPLICATES
+    # --------------------------------------------------
 
     transition_text = " vs ".join(
-        list(dict.fromkeys(transition_terms))
+
+        dict.fromkeys(transition_terms)
+
     )
 
-    if abs(delta) < 0.01:
+    # --------------------------------------------------
+    # COMPARISON TYPE
+    # --------------------------------------------------
 
-        transition_type = "ecosystem stability comparison"
+    if abs(risk_difference) < 0.01:
 
-    elif delta > 0:
+        comparison_type = (
+            "ecosystem stability comparison"
+        )
 
-        transition_type = (
-            "ecosystem degradation transition"
+    elif risk_difference > 0:
+
+        comparison_type = (
+            "ecosystem degradation comparison"
         )
 
     else:
 
-        transition_type = (
-            "ecosystem resilience transition"
+        comparison_type = (
+            "ecosystem resilience comparison"
         )
 
+    # --------------------------------------------------
+    # QUERY
+    # --------------------------------------------------
+
     query = f"""
-    lake ecosystem risk comparison
-    {transition_type}
+    Massaciuccoli Lake ecosystem comparison
+    {comparison_type}
     {transition_text}
-    hydrology
+    ecosystem risk
+    ecological drivers
     biodiversity
+    vegetation
+    hydrology
     ecosystem resilience
-    environmental stress
     """
 
     return query
@@ -338,14 +569,21 @@ def is_coherent(base_text: str, generated: str):
 # ======================================================
 
 def enhance_with_rag(
-    base_text,
-    drivers,
-    delta,
+    question,
+    comparison_report,
+    scenario_a,
+    scenario_b,
     features=None
 ):
+    risk_difference = (
+        scenario_b["risk"]
+        - scenario_a["risk"]
+    )
+
     query = build_transition_query(
-        drivers,
-        delta
+        scenario_a,
+        scenario_b,
+        risk_difference
     )
 
     debug_print("[RAG] Transition Query:")
@@ -378,9 +616,11 @@ def enhance_with_rag(
     debug_print("[RAG] Docs:", len(retrieved))
 
     model_result_header = """
-    The following model result is authoritative.
+    The following comparison report was generated by the Digital Twin.
 
-    Do not contradict it.
+    Do not recompute the comparison.
+
+    Treat the reported values as authoritative model outputs.
 
     Use the ecological notes only to explain the reported result.
 
@@ -395,11 +635,8 @@ def enhance_with_rag(
 
     {model_result_header}
 
-    MODEL RESULTS:
-    {base_text}
-
-    SCENARIO DRIVERS:
-    {drivers}
+    COMPARISON REPORT:
+    {comparison_report}
 
     ECOLOGICAL INTERPRETATION NOTES:
     {semantic_context}
@@ -455,16 +692,13 @@ def enhance_with_rag(
     """
     else:
         prompt = (
-            build_prompt("comparison")
+            build_prompt("comparison", question=question)
             + f"""
 
     {model_result_header}
     
-    MODEL RESULTS:
-    {base_text}
-
-    SCENARIO DRIVERS:
-    {drivers}
+    COMPARISON REPORT:
+    {comparison_report}
 
     ECOLOGICAL INTERPRETATION NOTES:
     {semantic_context}
@@ -485,21 +719,21 @@ def enhance_with_rag(
         raw = call_llm(prompt)
 
         if not raw:
-            return base_text
+            return comparison_report
 
         cleaned = clean_output(raw)
 
         if cleaned is None:
-            return base_text
+            return comparison_report
 
-        if not is_coherent(base_text, cleaned):
-            return base_text
+        if not is_coherent(comparison_report, cleaned):
+            return comparison_report
 
         return cleaned
 
     except Exception:
 
-        return base_text
+        return comparison_report
 
 
 # ======================================================
@@ -507,26 +741,29 @@ def enhance_with_rag(
 # ======================================================
 
 def generate_comparison_explanation(
-    drivers,
-    delta,
+    question,
+    scenario_a,
+    scenario_b,
+    risk_difference,
     features=None
 ):
 
     print("\n[RAG-COMPARISON v10] START")
 
-    base = build_base_explanation(
-        drivers,
-        delta
+    comparison_report = build_comparison_report(
+        scenario_a,
+        scenario_b,
+        risk_difference
     )
 
-    debug_print("[BASE]:", base)
+    debug_print("[BASE]:", comparison_report)
 
     final = enhance_with_rag(
-        base,
-        drivers,
-        delta,
+        question,
+        comparison_report,
+        scenario_a,
+        scenario_b,
         features=features
-
     )
 
     debug_print("[FINAL]:", final)

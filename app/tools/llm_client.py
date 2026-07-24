@@ -17,6 +17,7 @@ import requests
 import os
 import time
 import re
+from datetime import datetime
 
 from utils.logger import (
 
@@ -41,7 +42,7 @@ GENERATE_URL = os.getenv(
 )
 
 DEBUG = True
-
+DEBUG_SAVE_PROMPTS = True
 
 # ======================================================
 # PERFORMANCE SETTINGS
@@ -132,7 +133,46 @@ def call_llm(prompt: str) -> str:
 
             if not prompt.rstrip().endswith("/no_think"):
                 prompt = prompt.rstrip() + "\n\n/no_think"
-                
+
+            # ==================================================
+            # DEBUG: SAVE EXACT PROMPT
+            # ==================================================
+
+            if DEBUG_SAVE_PROMPTS:
+
+                folder = os.path.join(
+                    "debug_prompts",
+                    MODEL.replace(":", "_")
+                )
+
+                os.makedirs(folder, exist_ok=True)
+
+                timestamp = datetime.now().strftime(
+                    "%Y%m%d_%H%M%S"
+                )
+
+                filename = os.path.join(
+                    folder,
+                    f"{timestamp}.txt"
+                )
+
+                with open(
+                    filename,
+                    "w",
+                    encoding="utf-8"
+                ) as f:
+
+                    f.write(prompt)
+
+                print(
+                    f"[LLM CLIENT] Prompt saved -> "
+                    f"{filename} "
+                    f"({len(prompt)} chars)"
+                )
+
+
+
+
             response = SESSION.post(
 
                 GENERATE_URL,

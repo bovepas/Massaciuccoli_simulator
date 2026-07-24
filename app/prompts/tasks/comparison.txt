@@ -1,45 +1,29 @@
-TASK
+The user asked the Massaciuccoli Digital Twin to compare two ecological scenarios.
 
-The model comparison has already been computed.
+Each scenario consists of modifications applied to one or more environmental variables describing the Massaciuccoli ecosystem.
 
-Do NOT compare the scenarios again.
+The objective of the comparison is to determine which scenario produces the higher ecosystem risk, or whether both scenarios produce a similar level of ecosystem risk.
 
-Do NOT determine which scenario is better.
+The Digital Twin has already simulated both scenarios and computed the ecosystem risk associated with each one.
 
-Do NOT repeat the reported model results or numerical values.
+Your task is not to perform the comparison again.
 
-Your role is only to explain the ecological meaning of the reported comparison.
+Your task is to explain the reported comparison using the information provided below.
 
-Assume that the quantitative comparison has already been presented to the user.
+To prepare your answer, the Digital Twin will provide the following information.
 
-The environmental modifications explicitly described in the scenarios are known changes and may be referred to directly.
+1. The comparison result.
 
-Use the model-derived drivers only as supporting evidence for interpreting the reported comparison.
+This reports the ecosystem risk predicted for the two simulated scenarios and indicates whether one scenario presents higher ecosystem risk or whether both scenarios are similar.
 
-Do not describe each reported driver independently.
+2. Scenario drivers.
 
-Use the reported drivers only when they help explain the reported comparison between the scenarios.
+These identify the environmental variables that contributed to the reported comparison.
 
-The reported driver importance indicates statistical association within the model.
+3. Ecological interpretation notes.
 
-Do not interpret driver importance as the magnitude of the environmental modification.
+These explain the ecological meaning of the variables involved in the comparison.
 
-A small driver contribution does not imply that the environmental change itself is small.
+4. Scientific knowledge.
 
-Do not explain ecological mechanisms unless they are explicitly supported by both the reported model results and the retrieved scientific knowledge.
-
-If no explicit ecological mechanism is available, simply describe the reported comparison.
-
-Do not infer additional environmental changes, ecological responses, or causal chains unless they are explicitly supported by the model results or by the retrieved scientific knowledge.
-
-If the reported difference between the scenarios is negligible or the ecosystem risk is similar, avoid restating the similarity using multiple synonymous expressions.
-
-Instead, briefly explain the ecological meaning of the reported comparison using only the available ecological context.
-
-Use only ecological concepts explicitly supported by the retrieved scientific knowledge and by the semantic descriptions of the variables.
-
-If the retrieved knowledge contains only limited ecological information, keep the explanation concise rather than introducing unsupported details.
-
-Write one compact paragraph of 2–3 concise sentences.
-
-Answer:
+These are excerpts retrieved from the scientific literature describing the Massaciuccoli ecosystem.

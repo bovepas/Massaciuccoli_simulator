@@ -167,6 +167,84 @@ def fallback_compare_explanation(
     )
 
 
+
+# ======================================================
+# IMPORTANCE COMPARISON REPORT
+# ======================================================
+
+def build_importance_compare_report(
+    question,
+    entity_a,
+    entity_b,
+    score_a,
+    score_b,
+    comparison_statement
+):
+
+    return f"""
+============================================================
+DIGITAL TWIN IMPORTANCE COMPARISON REPORT
+============================================================
+
+QUESTION
+------------------------------------------------------------
+
+{question}
+
+============================================================
+COMPARED VARIABLES
+------------------------------------------------------------
+
+Variable A:
+{entity_a}
+
+Variable B:
+{entity_b}
+
+============================================================
+MODEL RESULTS
+------------------------------------------------------------
+
+Variable A importance score:
+{score_a:.4f}
+
+Variable B importance score:
+{score_b:.4f}
+
+============================================================
+DIGITAL TWIN RESULT
+------------------------------------------------------------
+
+{comparison_statement}
+"""
+
+
+def build_importance_compare_notes():
+
+    return """
+============================================================
+ECOLOGICAL INTERPRETATION NOTES
+============================================================
+
+The reported comparison was computed by the
+Digital Twin.
+
+The reported ranking reflects the relative
+statistical association of the compared variables
+with predicted ecosystem risk.
+
+A higher importance score indicates greater
+model sensitivity within the current prediction.
+
+The reported scores do not represent direct
+ecological causality or observed environmental
+change.
+
+Use the retrieved scientific evidence only to
+explain the ecological relevance of the reported
+variables.
+"""
+
 # ======================================================
 # MAIN
 # ======================================================
@@ -301,17 +379,33 @@ def generate_importance_compare_explanation(
 
     else:
 
+            report = build_importance_compare_report(
+                question,
+                entity_a,
+                entity_b,
+                score_a,
+                score_b,
+                comparison_statement
+            )
+
+            notes = build_importance_compare_notes()
+
             prompt = (
                 build_prompt("importance_compare")
                 + f"""
 
-    QUESTION:
-    {question}
+QUESTION:
+{question}
 
-    COMPUTED RESULT:
-    {comparison_statement}
+{report}
 
-    """
+{notes}
+
+============================================================
+RETRIEVED SCIENTIFIC EVIDENCE
+============================================================
+
+"""
             )
 
     # --------------------------------------------------
@@ -339,26 +433,19 @@ def generate_importance_compare_explanation(
 
         if cleaned:
 
-            final_text = (
-
-                comparison_statement
-                + "\n\n"
-                + cleaned
-            )
-
             print(
                 "\n[RAG OUTPUT]"
             )
 
             print(
-                final_text
+                cleaned
             )
 
             print(
                 "\n[RAG-IMPORTANCE-COMPARE] END\n"
             )
 
-            return final_text
+            return cleaned
 
         return comparison_statement
 

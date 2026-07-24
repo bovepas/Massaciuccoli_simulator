@@ -92,6 +92,109 @@ DEPENDENCY EVIDENCE:
 """
 
 # ======================================================
+# DEPENDENCY REPORT
+# ======================================================
+
+def build_dependency_report(
+    source,
+    target,
+    dependency_info
+):
+
+    if not dependency_info:
+
+        return """
+============================================================
+DIGITAL TWIN DEPENDENCY REPORT
+============================================================
+
+No dependency analysis is available.
+"""
+
+    strength = str(
+        dependency_info.get("strength", "unknown")
+    ).lower()
+
+    direction = str(
+        dependency_info.get("direction", "unknown")
+    ).lower()
+
+    
+
+    report = f"""
+============================================================
+DIGITAL TWIN DEPENDENCY REPORT
+============================================================
+
+SOURCE VARIABLE
+------------------------------------------------------------
+
+{source}
+
+TARGET VARIABLE
+------------------------------------------------------------
+
+{target}
+
+IDENTIFIED RELATIONSHIP
+------------------------------------------------------------
+
+Relationship type:
+{dependency_info.get("interaction_type")}
+
+Relationship direction:
+{dependency_info.get("direction")}
+
+MODEL CONFIDENCE
+------------------------------------------------------------
+
+Association strength:
+{dependency_info.get("strength")}
+
+Confidence:
+{dependency_info.get("confidence")}
+
+Association score:
+{dependency_info.get("score")}
+"""
+
+    return report
+
+# ======================================================
+# ECOLOGICAL NOTES
+# ======================================================
+
+def build_dependency_notes(
+    source,
+    target
+):
+
+    return f"""
+============================================================
+ECOLOGICAL INTERPRETATION NOTES
+============================================================
+
+The reported dependency describes a statistical
+association identified by the Digital Twin.
+
+Statistical association does not necessarily imply
+direct ecological causality.
+
+The retrieved scientific evidence should only be
+used to explain the ecological relevance of the
+reported statistical dependency.
+
+It must not be used to infer additional
+relationships or ecological mechanisms that
+are not reported by the Digital Twin.
+
+The retrieved evidence must support the reported
+dependency and must not be used to infer additional
+relationships that are not reported by the Digital Twin.
+"""
+
+
+# ======================================================
 # LEGACY PROMPT (FEATURE)
 # ======================================================
 
@@ -200,6 +303,17 @@ def generate_dependency_explanation(
         dependency_info
     )
 
+    dependency_report = build_dependency_report(
+        source,
+        target,
+        dependency_info
+    )
+
+    dependency_notes = build_dependency_notes(
+        source,
+        target
+    )
+
     # ======================================================
     # CASE 1: FEATURE → FEATURE / ABSTRACT TARGET
     # ======================================================
@@ -220,13 +334,18 @@ def generate_dependency_explanation(
                 build_prompt("dependency")
                 + f"""
 
-    QUESTION:
-    How does {source} influence {target}?
+QUESTION:
+How does {source} influence {target}?
 
-    MODEL RESULTS:
-    {dependency_block}
+{dependency_report}
 
-    """
+{dependency_notes}
+
+============================================================
+RETRIEVED SCIENTIFIC EVIDENCE
+============================================================
+
+"""
             )
 
     else:
@@ -244,13 +363,17 @@ def generate_dependency_explanation(
                 build_prompt("dependency")
                 + f"""
 
-    QUESTION:
-    How does {source} affect ecosystem risk?
+QUESTION:
+How does {source} affect ecosystem risk?
+{dependency_report}
 
-    MODEL RESULTS:
-    {dependency_block}
+{dependency_notes}
 
-    """
+  ============================================================
+  RETRIEVED SCIENTIFIC EVIDENCE
+  ============================================================
+
+  """
             )
 
     # ======================================================

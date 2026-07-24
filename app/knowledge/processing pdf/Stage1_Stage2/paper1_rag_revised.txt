@@ -1,0 +1,1039 @@
+======================================================================
+DOCUMENT
+======================================================================
+
+TITLE
+
+Climate change effects on animal presence in the Massaciuccoli Lake basin
+
+SOURCE
+
+Ecological Informatics 81 (2024)
+
+CASE STUDY
+
+Massaciuccoli Lake basin
+Tuscany
+Italy
+
+DOMAIN
+
+Wetland ecosystems
+Climate change
+Species distribution modelling
+Ecological niche modelling
+Artificial Intelligence
+Machine Learning
+Digital Twin
+
+======================================================================
+BACKGROUND
+======================================================================
+
+Wetlands are among the ecosystems most vulnerable to climate change.
+Over the last century they have undergone a substantial reduction in
+their global extent, resulting in biodiversity loss and degradation of
+ecosystem services including water regulation, carbon sequestration,
+food resources and tourism.
+
+Climate change represents one of the principal drivers of wetland
+degradation and biodiversity alteration. Predicting future ecological
+conditions is therefore essential for supporting conservation,
+environmental planning and ecosystem management.
+
+======================================================================
+ARTIFICIAL INTELLIGENCE FOR BIODIVERSITY FORECASTING
+======================================================================
+
+Artificial Intelligence models can identify large-scale biodiversity
+patterns and forecast future ecological changes before they become
+observable.
+
+Although environmental datasets naturally contain uncertainty,
+machine-learning approaches are effective for detecting macroscopic
+ecological trends that support long-term environmental decision making.
+
+These models are intended to describe ecosystem-scale dynamics rather
+than precise predictions for individual species occurrences.
+
+======================================================================
+MASSACIUCCOLI CASE STUDY
+======================================================================
+
+The study focuses on the Massaciuccoli Lake basin in Tuscany, Italy.
+
+The basin represents a wetland of high ecological value characterized
+by rich biodiversity and by the coexistence of native and non-native
+species.
+
+The ecosystem is exposed to multiple environmental pressures,
+including climate change and land-use change, which influence habitat
+suitability and future biodiversity patterns.
+
+======================================================================
+STUDY OBJECTIVES
+======================================================================
+
+The objective of the study is to evaluate how climate change may affect
+future animal distributions within the Massaciuccoli Lake basin.
+
+Machine-learning models are used to estimate habitat suitability under
+different greenhouse-gas emission scenarios.
+
+The resulting spatial predictions provide information that can support
+environmental management, biodiversity monitoring and spatial planning.
+
+======================================================================
+INTRODUCTION
+======================================================================
+
+WETLAND ECOSYSTEMS
+
+Wetlands are among the ecosystems most vulnerable to climate change.
+During the twentieth century their global extent declined by
+approximately 70%, with consequent reductions in biodiversity and in
+ecosystem services including water quality, food production, carbon
+sequestration and socio-economic functions.
+
+Climate change is recognized as one of the principal drivers affecting
+wetland ecosystems and biodiversity conservation. Long-term monitoring
+is therefore essential for assessing ecosystem conditions and supporting
+conservation activities.
+
+======================================================================
+ARTIFICIAL INTELLIGENCE FOR BIODIVERSITY ANALYSIS
+======================================================================
+
+Artificial Intelligence and big-data mining approaches can identify
+large-scale biodiversity patterns and forecast future ecological
+changes before they become observable.
+
+Although environmental datasets contain uncertainty and
+misclassification, machine-learning models remain effective for
+identifying macroscopic ecological trends over large spatial scales.
+
+These models are intended to support ecosystem-scale assessments and
+complement local ecological investigations rather than replace them.
+
+======================================================================
+MASSACIUCCOLI LAKE BASIN
+======================================================================
+
+The Massaciuccoli Lake basin, Tuscany (Italy), is a wetland ecosystem
+characterized by high biodiversity and ecological complexity.
+
+The basin hosts both native and non-native animal species and
+represents an important migration area for birds.
+
+Habitat suitability within the basin is influenced by hydrogeological,
+chemical and environmental conditions.
+
+Bird communities are particularly sensitive to alterations in
+hydrological and biogeochemical conditions, making the basin suitable
+for studying the ecological effects of climate change.
+
+======================================================================
+MODELLING OBJECTIVES
+======================================================================
+
+The modelling framework estimates the effects of climate change on
+animal presence and species richness within the Massaciuccoli Lake
+basin.
+
+Future habitat suitability is projected under Representative
+Concentration Pathway (RCP) 4.5 and RCP 8.5 scenarios for 2050 and
+2100.
+
+Historical analyses compare biodiversity conditions for 1950, 1999 and
+2016.
+
+Species richness is estimated through the combination of one
+unsupervised and one supervised machine-learning model trained on 180
+resident species.
+
+Species occurrence information is obtained from GBIF and integrated
+with validated field observations.
+
+======================================================================
+MAIN FINDINGS
+======================================================================
+
+Climate change is projected to substantially modify biodiversity within
+the Massaciuccoli Lake basin.
+
+Bird biodiversity is predicted to decline even under the medium
+greenhouse-gas emission scenario.
+
+Habitat suitability is projected to increase for several insect
+species, while aquatic and terrestrial species are expected to modify
+their spatial distribution toward cooler and wetter areas.
+
+The predicted biodiversity changes are associated with potential
+impacts on ecosystem services.
+
+The modelling framework is based entirely on FAIR data, open datasets
+and transferable methodology, allowing application to other wetland
+ecosystems.
+
+======================================================================
+METHODS
+======================================================================
+
+OVERVIEW
+
+The proposed methodology estimates long-term changes in animal species
+richness within the Massaciuccoli Lake basin through a spatially explicit
+machine-learning framework.
+
+The workflow integrates environmental information, species occurrence
+records and climate projections to estimate habitat suitability under
+historical and future climate conditions.
+
+The methodological pipeline consists of:
+
+• Environmental data collection
+• Environmental data re-analysis
+• Species observation data collection
+• Species prevalence estimation
+• Machine-learning modelling
+• Future scenario projection
+• Spatial biodiversity assessment
+
+======================================================================
+CLIMATE SCENARIOS
+======================================================================
+
+Future environmental conditions are simulated through Representative
+Concentration Pathway (RCP) scenarios.
+
+The study considers both an intermediate-emission scenario (RCP 4.5)
+and a high-emission scenario (RCP 8.5).
+
+Species distributions are projected for 2050 and 2100 under both
+climate scenarios and compared with historical environmental
+conditions.
+
+======================================================================
+SPECIES PREVALENCE ESTIMATION
+======================================================================
+
+Species prevalence is estimated before ecological modelling in order to
+reduce sampling imbalance among species.
+
+The prevalence estimation procedure improves the representativeness of
+species occurrence information and supports the construction of more
+robust biodiversity models.
+
+The estimated prevalence values are subsequently incorporated into the
+machine-learning workflow.
+
+======================================================================
+MACHINE LEARNING FRAMEWORK
+======================================================================
+
+The proposed framework combines unsupervised and supervised
+machine-learning approaches.
+
+The unsupervised component estimates a spatial biodiversity indicator
+based on species richness.
+
+The supervised component learns the relationship between environmental
+conditions and biodiversity patterns and projects these relationships to
+historical and future climate scenarios.
+
+The modelling framework produces spatially explicit biodiversity maps at
+approximately 50 m spatial resolution across the entire
+Massaciuccoli Lake basin.
+
+======================================================================
+MODEL OUTPUTS
+======================================================================
+
+The framework estimates changes in habitat suitability, species richness
+and biodiversity distribution under historical and future environmental
+conditions.
+
+Outputs are generated for multiple temporal scenarios and allow direct
+comparison between past, present and projected ecosystem conditions.
+
+The resulting spatial predictions provide quantitative information that
+supports biodiversity assessment, ecosystem monitoring and environmental
+planning within the Massaciuccoli Lake basin.
+
+======================================================================
+ENVIRONMENTAL DATA
+======================================================================
+
+The environmental variables used in this study originate from open
+datasets published by the District Basin Authority of the Northern
+Apennines, the public authority responsible for hydrogeological
+protection and water-resource management across Central and Northern
+Italy.
+
+The Authority provides openly accessible topographical,
+hydrogeological, environmental and territorial information for the
+Massaciuccoli Lake basin.
+
+The environmental dataset describes the ecological conditions of the
+basin through variables that directly influence habitat suitability and
+species distribution.
+
+The environmental variables include:
+
+• Evapotranspiration (ET)
+
+Amount of water transferred from the land surface to the atmosphere
+through evaporation and plant transpiration.
+
+• Water Surplus (WS)
+
+Amount of precipitation exceeding evapotranspiration, representing the
+availability of water resources within the basin.
+
+• Climatic Water Deficit (C)
+
+Difference between atmospheric water demand and available water,
+indicating potential drought conditions affecting habitats.
+
+• Land Use
+
+Spatial distribution of natural and anthropogenic land-cover classes.
+
+• Vegetation Characteristics
+
+Environmental descriptors related to vegetation cover and habitat
+structure.
+
+These environmental layers constitute the predictor variables used by
+the machine-learning models to estimate species richness and habitat
+suitability throughout the Massaciuccoli Lake basin.
+
+======================================================================
+ENVIRONMENTAL DATA PREPROCESSING
+======================================================================
+
+Historical environmental observations are combined with climate-change
+projections to reconstruct future environmental conditions across the
+Massaciuccoli Lake basin.
+
+Future scenarios are generated by modifying the environmental variables
+according to Representative Concentration Pathway (RCP) projections.
+
+The study considers both medium-emission (RCP 4.5) and high-emission
+(RCP 8.5) scenarios and estimates future environmental conditions for
+2050 and 2100.
+
+All environmental datasets are spatially harmonised on a common grid,
+allowing each grid cell to contain a complete and consistent set of
+environmental descriptors suitable for machine-learning analysis.
+
+======================================================================
+SPECIES OBSERVATION DATA
+======================================================================
+
+Species occurrence information is collected from the Global
+Biodiversity Information Facility (GBIF), one of the largest public
+repositories of biodiversity observations.
+
+Public occurrence records are integrated with reliable field
+observations collected directly within the Massaciuccoli Lake basin.
+
+Quality-control procedures reduce inconsistencies and improve the
+reliability of the occurrence dataset before ecological modelling.
+
+The final dataset includes approximately 180 resident animal species
+representing the biodiversity of the basin.
+
+======================================================================
+SPECIES PREVALENCE ASSESSMENT
+======================================================================
+
+Although citizen-science observations improved the overall quality of
+the occurrence dataset, sub-sampling biases remained, primarily due to
+the under-representation of rare species, which could lead
+distribution models to underestimate their presence.
+
+To reduce this bias, prior information regarding species presence and
+commonness was incorporated into the modelling framework through
+species prevalence.
+
+Species prevalence was approximated as the prevalence of species in
+Italian wetlands, assuming that species commonly observed in Italian
+wetlands were also more likely to occur in the Massaciuccoli Lake
+basin before analysing local observations.
+
+Within the Bayesian modelling framework, these prior probabilities
+were subsequently updated during model adaptation to the observed
+data.
+
+To estimate species commonness in Italian wetlands, public wetland
+definitions from the Ramsar Convention were used together with GBIF
+observations collected during the last decade.
+
+Species observation distributions were analysed through an
+unsupervised machine-learning approach to identify groups of species
+sharing similar commonness characteristics.
+
+Each identified cluster was associated with a prior prevalence value
+ranging from 0.2 to 0.8, providing prior probabilities for the Bayesian
+species-distribution models.
+
+Species commonness was characterised through numerical descriptors
+derived from the observation records, including species abundance,
+observation frequency and habitat extension.
+
+These descriptors were used by the clustering algorithm to identify
+groups of species exhibiting similar occurrence patterns across Italian
+wetlands.
+
+======================================================================
+MACHINE-LEARNING MODELLING
+======================================================================
+
+The modelling framework combines one unsupervised and one supervised
+machine-learning model to estimate long-term changes in species
+richness within the Massaciuccoli Lake basin.
+
+The unsupervised model estimates species prevalence by analysing
+species commonness patterns across Italian wetlands.
+
+The supervised model combines species occurrence information,
+environmental variables and prior prevalence estimates to predict
+habitat suitability and species richness under historical and future
+environmental conditions.
+
+The modelling strategy follows a Bayesian formulation in which prior
+probabilities describing species prevalence are combined with evidence
+derived from environmental conditions and species occurrence records.
+
+This approach reduces the influence of observation biases and allows
+prior ecological knowledge to contribute to habitat suitability
+estimation.
+
+Environmental variables are associated with species occurrence through
+Ecological Niche Modelling (ENM), allowing the estimation of habitat
+suitability under different environmental scenarios.
+
+The resulting habitat suitability maps constitute the basis for the
+subsequent estimation of spatial species richness.
+
+======================================================================
+ECOLOGICAL NICHE MODELLING
+======================================================================
+
+Ecological Niche Models estimate the relationship between
+environmental conditions and species occurrence.
+
+The models infer the environmental niche of each species and project
+habitat suitability under historical and future environmental
+conditions.
+
+The modelling process combines environmental predictor variables with
+species occurrence records to estimate the probability that suitable
+habitat exists at each spatial location.
+
+======================================================================
+HABITAT SUITABILITY
+======================================================================
+
+Habitat suitability is estimated independently for each species over
+the entire study area.
+
+The resulting suitability maps are subsequently combined to estimate
+species richness and analyse biodiversity dynamics across the
+Massaciuccoli Lake basin.
+
+Spatial predictions are produced for historical conditions and for the
+future climate scenarios considered in this study.
+
+======================================================================
+SPATIAL RESOLUTION
+======================================================================
+
+The modelling framework produces spatially explicit biodiversity maps
+at approximately 50 m spatial resolution.
+
+This spatial representation allows biodiversity changes to be analysed
+at the ecosystem scale while preserving local spatial variability.
+
+Spatially explicit predictions complement traditional basin-wide
+biodiversity indicators and provide information useful for ecosystem
+assessment and spatial planning.
+
+======================================================================
+ECOLOGICAL NICHE MODELLING
+======================================================================
+
+Ecological Niche Models (ENMs) estimate the set of environmental
+resources and conditions underlying the suitability of an area for a
+species, representing its fundamental ecological niche.
+
+An ENM estimates habitat suitability as the set of locations whose
+environmental conditions fall within the ecological niche of the
+species.
+
+Within the native distribution area, an ENM estimates the realised
+species distribution. Outside the native range, the model estimates the
+potential distribution, identifying environmentally suitable habitats.
+Mathematically, a species' ecological niche is represented as a
+hypervolume in a multidimensional environmental space, where each
+dimension corresponds to one environmental variable.
+
+The objective of the model is to identify the environmental
+hypervolume associated with the persistence of the species.
+
+The capability of an ENM to correctly estimate habitat suitability
+depends on the availability of a sufficiently informative set of
+environmental predictors describing the ecological requirements of the
+species.
+Ecological Niche Models can be implemented through statistical
+methods, machine-learning algorithms or expert-defined ecological
+rules.
+
+In this study, ENMs are used to estimate habitat suitability for each
+species under historical and future environmental conditions within
+the Massaciuccoli Lake basin.
+
+======================================================================
+MAXENT MODELLING
+======================================================================
+
+The ecological niche models are implemented through MaxEnt, a
+presence-only machine-learning algorithm that estimates the
+probability distribution of a species under the principle of maximum
+entropy.
+
+MaxEnt estimates habitat suitability by relating observed species
+occurrences to environmental variables while constraining the model
+with the environmental characteristics of the observation sites.
+
+The resulting suitability maps represent the probability that each
+location provides suitable environmental conditions for the analysed
+species.
+
+======================================================================
+MODEL TRAINING
+======================================================================
+
+Species occurrence records collected during the period 2013–2023 are
+used for model training.
+
+Training is performed using the environmental conditions associated
+with the same temporal period.
+
+Temperature and precipitation data from 2016 are used together with
+the resampled environmental variables representing evapotranspiration,
+water surplus and conductivity.
+
+The models focus on long-term habitat suitability trends rather than on
+naturally oscillating population densities.
+
+======================================================================
+HABITAT THRESHOLDING
+======================================================================
+
+For each species, MaxEnt provides a suitability probability
+distribution.
+
+Habitat suitability is transformed into a binary suitable/unsuitable
+classification through a decision threshold estimated during model
+training.
+
+The selected threshold corresponds to the minimum suitability value
+that correctly classifies all training presence locations.
+
+The same threshold is subsequently applied to all historical and future
+projection scenarios, ensuring methodological consistency across
+temporal comparisons.
+
+======================================================================
+MODEL ROBUSTNESS
+======================================================================
+
+Although individual species models may retain uncertainty,
+particularly for rarely observed species, the overall biodiversity
+assessment relies on the statistical aggregation of a large number of
+independent ecological niche models.
+
+The combination of multiple species models produces more stable and
+reliable macroscopic ecological information than the interpretation of
+individual species predictions alone.
+
+The objective of the framework is to estimate long-term biodiversity
+patterns and their temporal evolution rather than precise predictions
+for single species occurrences.
+
+======================================================================
+NOVELTY OF THE MODELLING APPROACH
+======================================================================
+
+The proposed framework combines Ecological Niche Modelling and
+machine-learning techniques to estimate long-term biodiversity changes
+within the Massaciuccoli Lake basin.
+
+Unlike traditional Species Distribution Models, the framework estimates
+species richness directly from the aggregation of habitat suitability
+predictions generated for multiple species.
+
+The modelling strategy combines prior ecological knowledge,
+environmental predictors and species occurrence observations within a
+Bayesian framework, reducing the influence of observation bias while
+preserving ecological consistency.
+
+The integration of unsupervised and supervised machine-learning models
+allows biodiversity patterns to be reconstructed under both historical
+and future climate scenarios.
+
+The proposed methodology is entirely based on FAIR environmental data
+and publicly available biodiversity observations, making the modelling
+framework reproducible and transferable to other wetland ecosystems.
+
+======================================================================
+SPECIES RICHNESS ESTIMATION
+======================================================================
+
+Species richness is estimated by combining the habitat suitability
+predictions generated independently for each analysed species.
+
+For every spatial cell, the framework evaluates habitat suitability for
+all modelled species and estimates biodiversity as the number of species
+whose predicted habitat is suitable.
+
+This approach produces spatially explicit biodiversity maps describing
+the distribution of species richness across the Massaciuccoli Lake
+basin.
+
+Species richness is estimated consistently for historical observations
+and future climate scenarios, allowing direct temporal comparison of
+biodiversity dynamics.
+
+======================================================================
+APPLICATION TO THE MASSACIUCCOLI LAKE BASIN
+======================================================================
+
+The modelling framework is applied to the entire Massaciuccoli Lake
+basin using harmonised environmental variables and species occurrence
+records.
+
+Environmental predictors are available for each spatial cell, allowing
+the reconstruction of biodiversity patterns over the complete study
+area.
+
+Historical biodiversity conditions are compared with future projections
+generated under Representative Concentration Pathway (RCP) 4.5 and
+RCP 8.5 climate scenarios.
+
+The resulting biodiversity maps support ecosystem monitoring,
+conservation planning and the assessment of climate-change impacts
+within the basin.
+
+======================================================================
+TEMPORAL SCENARIOS
+======================================================================
+
+The study evaluates biodiversity under multiple temporal conditions.
+
+Historical analyses describe ecosystem conditions for past decades,
+whereas future projections estimate biodiversity for 2050 and 2100
+under medium- and high-emission climate scenarios.
+
+The consistent application of the same modelling framework across all
+temporal scenarios allows changes in habitat suitability and species
+richness to be directly compared through time.
+
+======================================================================
+RESULTS
+======================================================================
+
+The modelling framework reconstructs historical biodiversity patterns
+and projects future changes in species richness and habitat suitability
+within the Massaciuccoli Lake basin.
+
+Historical simulations provide a coherent reconstruction of biodiversity
+distribution across the basin and constitute the reference conditions
+for future climate projections.
+
+Future biodiversity is evaluated under Representative Concentration
+Pathway (RCP) 4.5 and RCP 8.5 climate scenarios for the years 2050 and
+2100.
+
+======================================================================
+HISTORICAL BIODIVERSITY DISTRIBUTION
+======================================================================
+
+Historical simulations indicate that the modelling framework is able to
+reconstruct coherent biodiversity patterns throughout the
+Massaciuccoli Lake basin.
+
+Areas characterised by favourable environmental conditions exhibit
+higher predicted species richness, whereas environmentally stressed
+areas show lower habitat suitability and reduced biodiversity.
+
+The reconstructed historical biodiversity maps provide the ecological
+baseline against which future climate scenarios are compared.
+
+======================================================================
+FUTURE CLIMATE SCENARIOS
+======================================================================
+
+Future climate projections indicate substantial modifications in habitat
+suitability and biodiversity distribution throughout the
+Massaciuccoli Lake basin.
+
+The magnitude of the predicted changes depends on the greenhouse-gas
+emission scenario considered, with stronger alterations generally
+associated with the high-emission scenario.
+
+Projected biodiversity changes become progressively more pronounced
+towards the end of the century.
+
+======================================================================
+BIRD BIODIVERSITY
+======================================================================
+
+Bird species exhibit the largest overall reduction in habitat
+suitability among the analysed taxonomic groups.
+
+The predicted decline is already evident under the medium-emission
+scenario and becomes more pronounced under the high-emission scenario.
+
+The simulations indicate that bird communities are particularly
+sensitive to long-term climatic changes affecting the
+Massaciuccoli Lake basin.
+
+======================================================================
+AQUATIC AND TERRESTRIAL SPECIES
+======================================================================
+
+The projected response to climate change differs among taxonomic
+groups.
+
+Several aquatic and terrestrial species tend to shift their potential
+distribution toward cooler and more water-rich areas.
+
+The simulations indicate that future biodiversity patterns will be
+characterised by spatial redistribution rather than uniform species
+loss.
+
+======================================================================
+INSECT SPECIES
+======================================================================
+
+Unlike bird communities, several insect species are projected to
+experience an increase in habitat suitability under future climate
+conditions.
+
+The predicted increase reflects differences in ecological requirements
+among taxonomic groups and highlights the heterogeneous response of
+biodiversity to climate change.
+
+======================================================================
+SPATIAL BIODIVERSITY DYNAMICS
+======================================================================
+
+The modelling framework reveals spatially heterogeneous biodiversity
+responses across the Massaciuccoli Lake basin.
+
+Different portions of the basin exhibit distinct temporal trajectories,
+reflecting local environmental conditions and their interaction with
+future climate scenarios.
+
+Spatial biodiversity maps provide detailed information on the location,
+magnitude and distribution of projected ecological changes.
+
+======================================================================
+MODEL VALIDATION
+======================================================================
+
+The proposed modelling framework was evaluated by comparing predicted
+species distributions with independent occurrence observations.
+
+Model performance was assessed separately for each analysed species,
+allowing the reliability of habitat suitability predictions to be
+quantified across the study area.
+
+The evaluation indicates that the modelling framework is capable of
+reconstructing realistic biodiversity patterns within the
+Massaciuccoli Lake basin.
+
+======================================================================
+MODEL PERFORMANCE
+======================================================================
+
+Prediction accuracy varies among species according to the amount and
+quality of the available occurrence data.
+
+Species characterised by abundant and well-distributed observations
+generally exhibit higher predictive performance, whereas species with
+limited observations retain greater uncertainty.
+
+Despite this variability, the aggregation of multiple species models
+produces stable biodiversity estimates at the ecosystem scale.
+
+======================================================================
+MODEL LIMITATIONS
+======================================================================
+
+Prediction uncertainty is primarily associated with incomplete species
+observations and with the limited availability of occurrence data for
+rare species.
+
+Additional uncertainty derives from future climate projections and from
+the assumption that species maintain comparable ecological niches under
+future environmental conditions.
+
+These limitations should be considered when interpreting projected
+changes in habitat suitability and biodiversity distribution.
+
+======================================================================
+ECOSYSTEM-SCALE INTERPRETATION
+======================================================================
+
+Although uncertainty may affect individual species predictions, the
+framework is designed to estimate macroscopic biodiversity dynamics
+rather than precise forecasts for single species.
+
+The aggregation of habitat suitability predictions across a large
+number of resident species provides robust information regarding
+long-term ecosystem evolution.
+
+The modelling framework therefore supports biodiversity assessment at
+the ecosystem scale rather than species-specific ecological forecasting.
+
+======================================================================
+CONCLUSIONS
+======================================================================
+
+The proposed hybrid Digital Twin framework combines machine learning,
+Ecological Niche Modelling and environmental data to estimate long-term
+changes in biodiversity within the Massaciuccoli Lake basin.
+
+The framework reconstructs historical biodiversity patterns and projects
+future ecosystem conditions under multiple climate scenarios.
+
+The results indicate that climate change is expected to substantially
+modify biodiversity distribution, with different responses among
+taxonomic groups and increasing impacts under higher greenhouse-gas
+emission scenarios.
+The methodology relies exclusively on FAIR environmental datasets and
+public biodiversity observations, making the proposed framework
+reproducible and transferable to similar wetland ecosystems.
+
+The resulting spatial biodiversity maps provide quantitative support for
+ecosystem monitoring, environmental assessment and long-term planning.
+The hybrid Digital Twin demonstrates how machine-learning techniques
+can be integrated with ecological modelling to support biodiversity
+assessment under changing environmental conditions while preserving a
+transparent and reproducible scientific workflow.
+
+======================================================================
+RESULT SUMMARY
+======================================================================
+
+The analyses indicate a continuous increase in temperature from the
+historical period towards all future climate scenarios.
+
+Projected precipitation patterns suggest an increasing concentration of
+rainfall in mountain areas together with progressively drier conditions
+across most of the Massaciuccoli Lake basin.
+
+The combined effect of these environmental changes is expected to
+produce substantial modifications in biodiversity distribution,
+particularly after 2050.
+
+Bird communities are projected to undergo the strongest habitat loss,
+whereas several insect species are expected to increase their habitat
+suitability.
+
+Other terrestrial and aquatic species are predicted to progressively
+shift towards cooler and more water-rich areas.
+
+These projected biodiversity changes are consistent with the overall
+environmental differences observed between historical and future
+climate scenarios.
+
+======================================================================
+IMPLICATIONS FOR ECOSYSTEM MANAGEMENT
+======================================================================
+
+The projected biodiversity changes indicate increasing risks for the
+ecological integrity of the Massaciuccoli Lake basin and for the
+ecosystem services depending on resident species.
+
+The predicted timing and magnitude of biodiversity change suggest that
+mitigation and adaptation measures should be implemented before the
+most severe ecological transitions occur.
+
+Water management, ecosystem restoration and biodiversity conservation
+strategies may reduce part of the projected impacts if implemented
+sufficiently early.
+
+The quantitative estimates produced by the modelling framework provide
+scientific support for long-term environmental planning and ecosystem
+management.
+
+======================================================================
+ADVANTAGES OF THE FRAMEWORK
+======================================================================
+
+The proposed framework combines FAIR environmental datasets,
+Ecological Niche Modelling and machine-learning techniques within a
+fully reproducible workflow.
+
+The methodology is transferable to other wetland ecosystems because it
+does not depend on proprietary datasets or location-specific software.
+
+Spatially explicit biodiversity maps complement traditional aggregated
+biodiversity indicators by providing detailed information on the
+location and intensity of ecological change.
+
+======================================================================
+MODEL LIMITATIONS
+======================================================================
+
+Species distribution models inevitably simplify ecological processes.
+
+The framework estimates habitat suitability rather than actual species
+abundance and does not explicitly model ecological interactions among
+species.
+
+Future projections also depend on the uncertainty associated with
+climate scenarios and environmental assumptions.
+
+For these reasons, the framework should be interpreted as a tool for
+ecosystem-scale biodiversity assessment rather than precise prediction
+of individual species occurrence.
+
+======================================================================
+FUTURE DEVELOPMENTS
+======================================================================
+
+Future improvements may include additional environmental predictors,
+updated biodiversity observations and refined climate projections.
+
+The incorporation of land-cover dynamics, hydrological variables and
+additional ecological descriptors may further improve habitat
+prediction accuracy.
+
+Continuous integration of new observations will progressively increase
+the robustness of the Digital Twin framework.
+
+======================================================================
+OVERALL CONCLUSIONS
+======================================================================
+
+The proposed methodology demonstrates how Artificial Intelligence,
+Ecological Niche Modelling and FAIR environmental data can be combined
+to support biodiversity assessment within a Digital Twin framework.
+
+The resulting biodiversity projections provide quantitative knowledge
+for ecosystem monitoring, conservation planning and climate-change
+adaptation.
+
+The methodology remains reproducible, transparent and transferable,
+making it suitable for long-term environmental assessment in
+Massaciuccoli Lake and in other wetland ecosystems.
+
+======================================================================
+MODEL PREDICTION BEYOND THE TRAINING RANGES
+======================================================================
+
+The ecological niche models were trained directly on environmental
+conditions observed within the Massaciuccoli Lake basin rather than on
+global-scale environmental datasets.
+
+Training on regional environmental conditions allows the models to
+capture ecological gradients that are relevant at the basin scale and
+to better represent local habitat suitability.
+
+Large-scale environmental datasets may improve the estimation of
+species tolerance ranges but can reduce sensitivity to local
+environmental variability.
+
+The adopted approach combines local environmental information with
+prior ecological knowledge, improving regional habitat prediction while
+reducing the influence of sampling bias.
+
+======================================================================
+MODEL GENERALISATION
+======================================================================
+
+The framework is designed to estimate long-term biodiversity dynamics
+rather than exact species presence at individual locations.
+
+Model aggregation across many species increases the robustness of
+ecosystem-scale predictions and reduces the influence of uncertainty
+associated with individual ecological niche models.
+
+The resulting biodiversity maps should therefore be interpreted as
+macroscopic ecological indicators rather than deterministic forecasts.
+
+======================================================================
+TRANSFERABILITY
+======================================================================
+
+The proposed methodology is independent of the specific
+Massaciuccoli Lake case study.
+
+Because the workflow relies on FAIR environmental datasets, public
+biodiversity observations and reproducible machine-learning models, it
+can be adapted to other wetland ecosystems with comparable ecological
+datasets.
+
+Only the environmental layers and species occurrence observations need
+to be replaced when applying the framework to a different study area.
+
+======================================================================
+SOFTWARE AND DATA AVAILABILITY
+======================================================================
+
+The modelling workflow relies entirely on publicly available
+environmental datasets, biodiversity repositories and reproducible
+machine-learning software.
+
+Species occurrence data originate primarily from the Global
+Biodiversity Information Facility (GBIF), complemented by verified
+field observations.
+
+Environmental datasets are obtained from publicly accessible
+repositories and can be reused to reproduce the analyses presented in
+this work.
+
+======================================================================
+OPEN SCIENCE
+======================================================================
+
+The proposed framework follows FAIR principles.
+
+Environmental datasets, biodiversity observations and modelling
+procedures are organised to maximise reproducibility, transparency and
+reuse.
+
+The methodology can therefore be independently reproduced and extended
+using equivalent open ecological datasets.
+
+
+======================================================================
+CORE SCIENTIFIC CONTRIBUTIONS
+======================================================================
+
+• Hybrid Digital Twin framework for wetland ecosystem assessment.
+
+• Integration of Ecological Niche Modelling and machine-learning
+  techniques for biodiversity forecasting.
+
+• Bayesian species-prevalence estimation to reduce sampling bias.
+
+• Species richness estimation through aggregation of habitat suitability
+  predictions across multiple species.
+
+• Use of FAIR environmental datasets and open biodiversity repositories.
+
+• Spatially explicit biodiversity projections for the Massaciuccoli
+  Lake basin under historical and future climate scenarios.
+
+• Reproducible and transferable methodology applicable to other
+  wetland ecosystems.
+
+• Quantitative support for ecosystem monitoring, conservation planning
+  and long-term environmental management.

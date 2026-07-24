@@ -165,6 +165,79 @@ def build_group_block(group_scores):
 
     return "\n".join(rows)
 
+
+# ======================================================
+# IMPORTANCE REPORT
+# ======================================================
+
+def build_importance_report(
+    question,
+    increase_block,
+    decrease_block,
+    group_block
+):
+
+    return f"""
+============================================================
+DIGITAL TWIN IMPORTANCE REPORT
+============================================================
+
+QUESTION
+------------------------------------------------------------
+
+{question}
+
+============================================================
+DOMINANT ENVIRONMENTAL DOMAINS
+------------------------------------------------------------
+
+{group_block}
+
+============================================================
+RISK-INCREASING VARIABLES
+------------------------------------------------------------
+
+{increase_block}
+
+============================================================
+RISK-REDUCING VARIABLES
+------------------------------------------------------------
+
+{decrease_block}
+"""
+
+# ======================================================
+# ECOLOGICAL NOTES
+# ======================================================
+
+def build_importance_notes():
+
+    return """
+============================================================
+ECOLOGICAL INTERPRETATION NOTES
+============================================================
+
+The reported variables represent the strongest
+statistical associations identified by the
+Digital Twin.
+
+Variables reported as risk-increasing are
+statistically associated with higher predicted
+ecosystem risk.
+
+Variables reported as risk-reducing are
+statistically associated with lower predicted
+ecosystem risk.
+
+These associations do not represent observed
+environmental changes and should not be interpreted
+as direct ecological causality.
+
+Use the retrieved scientific evidence only to
+explain the ecological relevance of the reported
+variables.
+"""
+
 # ======================================================
 # LEGACY PROMPT 
 # ======================================================
@@ -443,18 +516,31 @@ RISK-REDUCING DRIVERS:
 
     else:
 
+        importance_report = build_importance_report(
+            question,
+            increase_block,
+            decrease_block,
+            group_block
+        )
+
+        importance_notes = build_importance_notes()
+
         prompt = (
             build_prompt("importance")
             + f"""
 
-    QUESTION:
-    What are the main factors influencing ecosystem risk?
+QUESTION:
+{question}
 
-    MODEL RESULTS:
+{importance_report}
 
-    {impact_text}
+{importance_notes}
 
-    """
+============================================================
+RETRIEVED SCIENTIFIC EVIDENCE
+============================================================
+
+"""
         )
 
     # ======================================================

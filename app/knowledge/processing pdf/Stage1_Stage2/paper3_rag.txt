@@ -1,0 +1,646 @@
+======================================================================
+DOCUMENT
+======================================================================
+
+TITLE
+
+Estimating Species Commonness and Prevalence through Unsupervised Methods
+======================================================================
+SOURCE
+======================================================================
+
+Scientific article
+======================================================================
+CASE STUDY
+======================================================================
+
+Massaciuccoli Lake basin (Tuscany, Italy)
+======================================================================
+DOMAIN
+======================================================================
+
+Species prevalence estimation
+
+Ecological Niche Modelling (ENM)
+
+Species commonness assessment
+======================================================================
+PURPOSE
+======================================================================
+
+This curated document preserves the scientific content of the original
+publication while reorganising it into semantically coherent sections
+optimised for Retrieval-Augmented Generation (RAG).
+
+Editorial artefacts, bibliographic references, manuscript-specific
+elements and publication metadata have been removed without modifying
+the scientific meaning of the original work.
+
+======================================================================
+ABSTRACT
+======================================================================
+
+Species prevalence is a fundamental parameter in Ecological Niche
+Models (ENMs) because it represents the prior expectation that a
+species is common or rare within a study area before model fitting.
+
+Reliable prevalence estimation is often difficult because occurrence
+data are incomplete, spatially biased or temporally heterogeneous,
+particularly for rare or poorly monitored species.
+
+This study proposes a data-driven, multi-species methodology for
+estimating species prevalence using publicly available occurrence
+records from the Global Biodiversity Information Facility (GBIF).
+
+The methodology is completely unsupervised and combines two clustering
+methods, one deep-learning model based on a Variational Autoencoder
+(VAE), an ensemble model and statistical analysis to classify species
+commonness and transform these classifications into prevalence
+probabilities.
+
+The methodology is evaluated on 161 species inhabiting the
+Massaciuccoli Lake basin, a wetland of high biodiversity value and
+ecological sensitivity.
+
+The proposed framework is scalable, reproducible and provides objective
+species prevalence estimates that can improve Ecological Niche Models
+and biodiversity assessments.
+
+======================================================================
+KEY CONCEPTS
+======================================================================
+
+Species prevalence
+
+Species commonness
+
+Ecological Niche Models (ENMs)
+
+Prior probability
+
+Species occurrence records
+
+GBIF
+
+Unsupervised learning
+
+Variational Autoencoder
+
+Cluster analysis
+
+Multi-species modelling
+
+======================================================================
+INTRODUCTION
+======================================================================
+
+Ecological Niche Models (ENMs) estimate the environmental conditions
+that support the persistence and proliferation of a species within a
+specific area.
+
+These models identify suitable habitats by relating species occurrence
+records to environmental variables and can predict potential species
+distribution under different environmental conditions.
+
+The quality of ENMs depends on both the selection of relevant
+environmental variables and the availability of reliable prior
+information regarding species occurrence.
+
+Species prevalence represents one of the most important sources of
+prior information because it defines the expected commonness or rarity
+of a species before model fitting.
+
+======================================================================
+ROLE OF SPECIES PREVALENCE
+======================================================================
+
+Species prevalence is formally defined as the proportion of presence
+records relative to the total number of surveyed sites.
+
+Within Bayesian Ecological Niche Models, including Maximum Entropy
+(MaxEnt), prevalence acts as prior information that influences the
+conversion of habitat suitability into probabilities of species
+presence.
+
+Species prevalence therefore represents the prior expectation that a
+species is common or rare within the study area before considering the
+available observations.
+
+Variations in prevalence settings may influence habitat suitability
+estimates, probability calibration and the resulting species
+distribution maps.
+
+Species prevalence also affects the conversion of continuous habitat
+suitability predictions into binary presence–absence maps and
+influences several performance metrics used to evaluate Ecological
+Niche Models.
+
+======================================================================
+SPECIES COMMONNESS
+======================================================================
+
+Species prevalence reflects ecological characteristics associated with
+species commonness and rarity.
+
+Common species are generally widespread, frequently observed and
+represented by numerous occurrence records.
+
+Rare species are characterised by lower abundance, restricted
+distribution or limited observations and therefore require particular
+attention during ecological modelling.
+
+Objective estimation of species commonness is essential for generating
+robust, interpretable and ecologically meaningful Ecological Niche
+Models.
+
+======================================================================
+LIMITATIONS OF CURRENT APPROACHES
+======================================================================
+
+Reliable prevalence estimation is often complicated by incomplete,
+heterogeneous and spatially biased occurrence data.
+
+Large biodiversity repositories contain valuable ecological
+information, but observation frequency is strongly influenced by
+sampling effort, temporal coverage, observer interest and taxonomic
+bias.
+
+Consequently, raw occurrence counts do not necessarily reflect the
+actual ecological commonness of a species.
+
+Many existing approaches therefore rely on expert judgement,
+supplementary ecological information or manually defined prevalence
+thresholds, limiting reproducibility and scalability.
+
+======================================================================
+OBJECTIVES OF THE STUDY
+======================================================================
+
+The proposed methodology introduces a completely data-driven,
+multi-species framework for estimating species prevalence from publicly
+available occurrence records.
+
+The framework combines aggregated ecological features, unsupervised
+clustering techniques, deep learning and statistical analysis to
+identify species commonness and estimate prevalence probabilities.
+
+The methodology minimises expert subjectivity, supports reproducible
+prevalence estimation and provides objective prior information for
+Ecological Niche Models.
+
+The approach is demonstrated through a case study involving 161 species
+from the Massaciuccoli Lake basin using GBIF observations collected
+from Italian wetlands.
+
+======================================================================
+OVERVIEW
+======================================================================
+
+Species commonness describes the relative abundance and spatial
+distribution of a species within a given ecological context.
+
+Common species are generally abundant, widespread and frequently
+observed, whereas rare species are characterised by lower abundance,
+restricted distribution or limited observations.
+
+Because species commonness directly influences species prevalence,
+objective estimation of commonness represents a fundamental step in
+Ecological Niche Modelling.
+
+======================================================================
+SPECIES PREVALENCE DISCRETISATION
+======================================================================
+
+Species prevalence is closely related to species commonness and can be
+represented through a limited number of prevalence classes.
+
+Discrete prevalence values simplify the incorporation of prior
+ecological information into Bayesian Ecological Niche Models while
+preserving the ecological distinction between common and rare species.
+
+Prevalence discretisation also facilitates large-scale multi-species
+analyses and reduces the influence of uncertainty associated with
+incomplete occurrence data.
+
+======================================================================
+CHALLENGES OF LARGE BIODIVERSITY DATASETS
+======================================================================
+
+Large biodiversity repositories provide extensive species occurrence
+information collected over different spatial and temporal scales.
+
+However, observation frequency is influenced by multiple factors,
+including sampling effort, observer activity, taxonomic interest and
+survey duration.
+
+Consequently, occurrence records represent only a partial observation
+of ecological reality and cannot be interpreted directly as species
+commonness.
+
+Reliable prevalence estimation therefore requires methodologies that
+can reduce the influence of these observational biases.
+
+======================================================================
+OBJECTIVE PREVALENCE ESTIMATION
+======================================================================
+
+Objective estimation of species prevalence should minimise subjective
+expert judgement while preserving ecological interpretability.
+
+The proposed methodology derives prevalence directly from aggregated
+species occurrence patterns through unsupervised learning.
+
+Species commonness therefore emerges from the structure of the data
+rather than from manually defined ecological thresholds.
+
+This approach improves reproducibility, scalability and consistency
+across large multi-species datasets.
+
+======================================================================
+MAIN CHARACTERISTICS OF THE PROPOSED FRAMEWORK
+======================================================================
+
+The proposed methodology:
+
+• generates objective multi-species prevalence assessments;
+
+• accounts for uncertainty and incompleteness in large occurrence
+  datasets;
+
+• minimises dependence on expert-defined thresholds;
+
+• supports adjustable prevalence discretisation;
+
+• provides reproducible prior probabilities for Ecological Niche
+  Models.
+  
+======================================================================
+METHODOLOGY
+======================================================================
+
+The proposed methodology estimates species commonness and prevalence
+through a fully data-driven, multi-species workflow based on statistical
+features extracted from species occurrence records.
+
+The framework follows the prevalence discretisation strategy introduced
+in the Overview and assigns species to commonness classes before
+associating each class with a prevalence probability.
+
+The methodology is designed to classify species into three principal
+commonness categories:
+
+• very common;
+
+• fairly common;
+
+• rare.
+
+These categories are associated with prevalence probabilities of 0.8,
+0.5 and 0.2 respectively, which are subsequently used as multiplicative
+weights within Bayesian Ecological Niche Models.
+
+The workflow is organised into three principal stages:
+
+• Feature Extraction;
+
+• Modelling;
+
+• Classification.
+
+An ensemble model combines the outputs of the individual models to
+produce the final species commonness assessment.
+
+ ======================================================================
+FEATURE EXTRACTION
+======================================================================
+
+Species occurrence information is obtained from the Global
+Biodiversity Information Facility (GBIF), one of the largest publicly
+available biodiversity repositories.
+
+GBIF provides billions of occurrence records collected from scientific
+institutions, monitoring programmes, museum collections and citizen
+science initiatives.
+
+The repository follows FAIR principles and adopts internationally
+recognised biodiversity standards, making it suitable for large-scale
+ecological analyses.
+
+Because GBIF observations are affected by spatial, temporal and
+taxonomic sampling biases, occurrence counts cannot be interpreted
+directly as indicators of species commonness.
+
+The proposed methodology therefore derives aggregated numerical
+features describing species commonness within a specified geographical
+area and temporal framework rather than relying directly on raw
+occurrence counts.
+
+======================================================================
+FEATURE DEFINITIONS
+======================================================================
+
+Feature extraction requires the definition of:
+
+• the geographical area of interest;
+
+• the temporal interval considered for the analysis;
+
+• the temporal aggregation unit;
+
+• the spatial aggregation resolution;
+
+• the list of analysed species.
+
+From these inputs, numerical indicators are calculated to describe
+species abundance, spatial distribution, temporal persistence,
+observation frequency and dataset coverage.
+
+These aggregated indicators constitute the feature space used for
+species commonness classification.
+
+======================================================================
+MODELLING
+======================================================================
+
+The extracted features are analysed through three complementary
+unsupervised methodologies.
+
+Two clustering algorithms identify groups of species characterised by
+similar feature values.
+
+A Variational Autoencoder learns a latent representation of the feature
+space and assigns a reconstruction probability to each species.
+
+The outputs of the three models provide complementary descriptions of
+species commonness that are subsequently integrated during the
+classification stage.
+
+======================================================================
+CLASSIFICATION
+======================================================================
+
+Species commonness is assigned through a consensus procedure based on
+the outputs generated by the individual models.
+
+Species are classified into three principal categories:
+
+• rare;
+
+• fairly common;
+
+• very common.
+
+These commonness classes are transformed into prevalence probability
+values of:
+
+• 0.2 for rare species;
+
+• 0.5 for fairly common species;
+
+• 0.8 for very common species.
+
+The methodology also supports finer prevalence discretisations by
+introducing additional intermediate classes when greater resolution is
+required.
+
+======================================================================
+CASE STUDY
+======================================================================
+
+The methodology was evaluated through a case study focused on the
+Massaciuccoli Lake basin, a biodiversity-rich wetland ecosystem in
+Tuscany, Italy.
+
+To simulate the estimation of species prevalence before local
+observations become available, occurrence records collected directly
+within the Massaciuccoli basin were excluded from model training.
+
+Instead, species occurrence data were collected from ecologically
+similar Italian wetlands identified through the Ramsar Convention on
+Wetlands.
+
+A total of 161 species representative of the biodiversity of the
+Massaciuccoli basin were analysed.
+
+The GBIF dataset contained 6,027 occurrence records collected from
+57 Italian wetland areas.
+
+The resulting dataset provided the basis for estimating species
+commonness and prevalence prior to applying Ecological Niche Models to
+the Massaciuccoli basin.
+
+======================================================================
+EVALUATION METHODOLOGY
+======================================================================
+
+The methodology was evaluated by comparing the automatic species
+commonness classifications with independent expert assessments.
+
+Species were classified into three commonness categories:
+
+• very common;
+
+• fairly common;
+
+• rare.
+
+A complementary binary evaluation distinguished between:
+
+• very common;
+
+• less common.
+
+Agreement between automatic classifications and expert assessments was
+measured through Accuracy and Cohen's Kappa.
+
+An expert ensemble was also constructed by combining the assessments
+of the two experts through the same consensus strategy adopted for the
+ensemble model.
+
+In addition, a leave-one-out sensitivity analysis was performed by
+removing one feature at a time and measuring the corresponding loss of
+classification agreement.
+
+This procedure quantified the contribution of each feature to the final
+species commonness assessment.
+
+======================================================================
+CLASSIFICATION PERFORMANCE
+======================================================================
+
+The Variational Autoencoder achieved the highest agreement with the
+expert assessments in both binary and three-class evaluations.
+
+The best results were obtained with the expert ensemble, reaching
+90.06% accuracy in the binary assessment and 85.71% accuracy in the
+three-class assessment.
+
+The corresponding Cohen's Kappa values indicated substantial agreement
+between the automatic classifications and the expert consensus.
+
+Overall, the VAE provided the most reliable representation of species
+commonness among the evaluated methodologies.
+
+======================================================================
+MODEL COMPARISON
+======================================================================
+
+The three modelling approaches exhibited complementary behaviours.
+
+Multi K-means showed a tendency to assign lower commonness levels,
+whereas X-means generally produced higher commonness classifications.
+
+The Variational Autoencoder achieved the highest overall agreement with
+expert assessments, suggesting that anomalous feature patterns are
+strongly associated with species rarity.
+
+The ensemble model provided stable classifications by combining the
+strengths of the individual methodologies.
+
+======================================================================
+FEATURE IMPORTANCE
+======================================================================
+
+The leave-one-out sensitivity analysis identified the most informative
+features for species commonness classification.
+
+Features describing intra-dataset record abundance, species abundance
+per record and observation frequency contributed most strongly to
+classification performance.
+
+These indicators therefore represent the principal descriptors of
+species commonness within the proposed methodology.
+
+======================================================================
+INTERPRETATION OF THE CASE STUDY
+======================================================================
+
+The Massaciuccoli Lake basin serves as a representative ecological case
+study demonstrating the behaviour and interpretability of the proposed
+framework.
+
+The observed prevalence distributions and classification boundaries are
+specific to this case study and are not intended to represent universal
+ecological thresholds.
+
+Instead, the case study illustrates how the methodology can be applied
+to a real-world heterogeneous species assemblage while preserving the
+generality of the underlying methodological framework.
+
+======================================================================
+DISCUSSION
+======================================================================
+
+The proposed methodology demonstrates that species prevalence can be
+estimated objectively from publicly available occurrence data through a
+fully data-driven workflow.
+
+Rather than relying on expert-defined prevalence values, the framework
+derives species commonness directly from aggregated ecological
+descriptors extracted from biodiversity observations.
+
+The resulting prevalence estimates provide reproducible prior
+probabilities that can be incorporated into Bayesian Ecological Niche
+Models.
+
+======================================================================
+INTERPRETATION OF THE RESULTS
+======================================================================
+
+The comparison among clustering techniques, deep-learning models and
+their ensemble demonstrates that different unsupervised methodologies
+capture complementary characteristics of species commonness.
+
+The Variational Autoencoder achieved the highest agreement with expert
+assessments, indicating that latent feature representations provide a
+particularly effective description of ecological commonness.
+
+The ensemble further increases robustness by combining complementary
+information produced by the individual models.
+
+======================================================================
+ECOLOGICAL IMPLICATIONS
+======================================================================
+
+Reliable estimation of species prevalence improves the ecological
+interpretation of Bayesian Ecological Niche Models by providing
+objective prior probabilities before habitat suitability modelling.
+
+Objective prevalence estimation reduces dependence on subjective expert
+judgement and facilitates reproducible biodiversity assessments across
+large collections of species.
+
+The methodology therefore supports more consistent ecological analyses
+for conservation planning and biodiversity monitoring.
+
+======================================================================
+LIMITATIONS
+======================================================================
+
+The methodology depends on the availability and quality of species
+occurrence records.
+
+Sampling effort, taxonomic coverage, temporal heterogeneity and spatial
+bias may influence the extracted features and consequently the
+estimated prevalence classes.
+
+The resulting prevalence estimates should therefore be interpreted as
+probabilistic ecological indicators rather than exact measurements of
+species abundance.
+
+======================================================================
+TRANSFERABILITY
+======================================================================
+
+Although the methodology is demonstrated using the Massaciuccoli Lake
+basin, the workflow is independent of the specific study area.
+
+The same analytical procedure can be applied to any geographical
+region for which harmonised biodiversity occurrence data are available.
+
+Only the occurrence dataset requires replacement, while the feature
+extraction, modelling and prevalence estimation workflow remain
+unchanged.
+
+======================================================================
+OVERALL CONCLUSIONS
+======================================================================
+
+The proposed methodology introduces a reproducible, fully unsupervised
+framework for estimating species commonness and prevalence from large
+biodiversity occurrence datasets.
+
+The integration of clustering techniques, deep-learning models and an
+ensemble strategy provides objective prevalence estimates suitable for
+Bayesian Ecological Niche Models.
+
+The methodology reduces dependence on subjective expert judgement,
+supports reproducible ecological modelling and can be transferred to
+other biodiversity monitoring scenarios based on harmonised occurrence
+data.
+
+======================================================================
+CORE SCIENTIFIC CONTRIBUTIONS
+======================================================================
+
+• Generalisable methodology for objective species prevalence
+  estimation.
+
+• Fully unsupervised multi-species classification workflow.
+
+• Aggregated ecological feature extraction from GBIF occurrence data.
+
+• Integration of clustering algorithms, Variational Autoencoder and
+  ensemble modelling.
+
+• Objective estimation of species commonness.
+
+• Automatic derivation of prevalence probabilities for Bayesian
+  Ecological Niche Models.
+
+• Validation through expert comparison and sensitivity analysis.
+
+• Transferable methodology for biodiversity monitoring and Ecological
+  Niche Modelling.
+  
+  

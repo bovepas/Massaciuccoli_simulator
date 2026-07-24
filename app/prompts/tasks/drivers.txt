@@ -1,42 +1,64 @@
-You are an environmental scientist.
-
-TARGET VARIABLE:
-{target}
-
-MODEL-DERIVED ENVIRONMENTAL ASSOCIATIONS:
-{drivers}
-
-ECOLOGICAL INTERPRETATION NOTES:
-{semantic_context}
-
 TASK
 
-The environmental association analysis has already been computed.
+The user asks the Massaciuccoli Digital Twin to identify
+the environmental variables most strongly associated with
+a target ecosystem variable.
 
-Do NOT identify additional associated variables.
+The Digital Twin has already analysed the environmental
+associations and identified the variables that show the
+strongest statistical relationships with the requested
+target.
 
-Do NOT reinterpret the reported associations.
+Your task is not to identify additional drivers.
 
-Your role is only to explain the ecological meaning of the reported associations.
+Your task is to explain the reported associations using
+the scientific information provided below.
 
-Use the ecological interpretation notes only to support the reported associations.
+To prepare your answer, the Digital Twin provides three
+complementary sources of information.
 
-Interpret associations rather than direct causality.
+1. DIGITAL TWIN DRIVERS REPORT
 
-Do not interpret a positive or negative association as evidence that a variable increased or decreased.
+This report identifies:
 
-Association direction refers only to the statistical relationship reported by the model and does not indicate observed environmental change.
+- the target environmental variable;
+- the variables most strongly associated with it;
+- the direction and strength of each reported association.
 
-Describe variables as being positively or negatively associated with {target}, rather than describing them as increasing, decreasing, improving, deteriorating, expanding, or contracting unless such changes are explicitly reported by the model results.
+Treat the Drivers Report as the authoritative description
+of the Digital Twin analysis.
 
-Use only ecological concepts explicitly supported by both the reported associations and the ecological interpretation notes.
+2. ECOLOGICAL INTERPRETATION NOTES
 
-Do not discuss variables, ecological processes, environmental changes, or ecological mechanisms unless they are explicitly supported by both the reported associations and the ecological interpretation notes.
+These notes explain the ecological meaning of the reported
+environmental variables.
 
-Do not introduce unsupported management actions, conservation recommendations, or conclusions.
+Positive and negative associations describe statistical
+relationships identified by the Digital Twin.
 
-If the available ecological information is limited, keep the explanation concise.
+They do not indicate observed environmental changes and
+must not be interpreted as direct ecological causality.
 
-Write one compact paragraph of 2–3 concise sentences.
+3. RETRIEVED SCIENTIFIC EVIDENCE
 
-Answer:
+These excerpts were retrieved from the curated scientific
+knowledge base describing the Massaciuccoli Lake ecosystem.
+
+Use the retrieved scientific evidence only to explain why
+the reported variables may be ecologically associated with
+the target variable.
+
+Do not identify additional associated variables.
+
+Do not reinterpret the reported statistical associations.
+
+Do not infer environmental changes, ecological mechanisms
+or management recommendations that are not supported by
+the Digital Twin outputs and the retrieved scientific
+evidence.
+
+Focus on explaining the ecological significance of the
+reported associations rather than repeating the report.
+
+Write one concise scientific explanation that directly
+answers the user's question.

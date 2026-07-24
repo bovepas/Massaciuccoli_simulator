@@ -10,8 +10,7 @@ RAG Drivers — v8
 ✔ Preserved ecological interpretation
 ✔ Backward compatible
 """
-
-from tools.llm_client import call_llm
+from knowledge.rag_pipeline import generate_answer
 from utils.feature_semantics import (
     build_semantic_context
 )
@@ -26,6 +25,29 @@ def debug_print(*args):
 
     if DEBUG:
         print(*args)
+
+def build_drivers_notes(semantic_context):
+
+    return f"""
+============================================================
+ECOLOGICAL INTERPRETATION NOTES
+============================================================
+
+The reported variables represent the strongest
+statistical associations identified by the
+Digital Twin.
+
+Positive and negative associations describe the
+direction of the statistical relationship.
+
+They do not indicate observed environmental
+changes and should not be interpreted as direct
+ecological causality.
+
+Semantic descriptions of the reported variables:
+
+{semantic_context}
+"""
 
 
 # ======================================================
@@ -155,6 +177,41 @@ def fallback_explanation(
 
     return ". ".join(parts) + "."
 
+# ======================================================
+# DRIVERS REPORT
+# ======================================================
+
+def build_drivers_report(
+    target,
+    drivers
+):
+
+    associations = "\n".join(
+
+        f"• {d['feature']}\n"
+        f"  Direction: {d['direction']}\n"
+        f"  Strength: {d['strength']}"
+
+        for d in drivers[:4]
+    )
+
+    return f"""
+============================================================
+DIGITAL TWIN DRIVERS REPORT
+============================================================
+
+TARGET VARIABLE
+------------------------------------------------------------
+
+{target}
+
+============================================================
+PRIMARY ASSOCIATED VARIABLES
+------------------------------------------------------------
+
+{associations}
+"""
+
 
 # ======================================================
 # MAIN
@@ -199,29 +256,31 @@ def generate_drivers_explanation(
 
         else:
 
-            drivers_text = "\n".join([
+            drivers_report = build_drivers_report(
+                target,
+                drivers
+            )
 
-                f"- {d['feature']} "
-                f"({d['direction']}, "
-                f"{d['strength']})"
-
-                for d in drivers[:4]
-            ])
+            drivers_notes = build_drivers_notes(
+                semantic_context
+            )
 
             prompt = (
                 build_prompt("drivers")
                 + f"""
 
-        TARGET VARIABLE:
-        {target}
+QUESTION:
+Which environmental variables contribute most to {target}?
 
-        OBSERVED ENVIRONMENTAL ASSOCIATIONS:
-        {drivers_text}
+{drivers_report}
 
-        ECOLOGICAL INTERPRETATION NOTES:
-        {semantic_context}
+{drivers_notes}
 
-        """
+============================================================
+RETRIEVED SCIENTIFIC EVIDENCE
+============================================================
+
+"""
             )
 
 
@@ -237,8 +296,41 @@ def generate_drivers_explanation(
             len(prompt)
         )
 
-        raw = call_llm(
-            prompt
+# ======================================================
+# RAG QUERY
+# ======================================================
+
+        top_drivers = ", ".join(
+
+            d["feature"]
+
+            for d in drivers[:3]
+
+        )
+
+        rag_query = f"""
+        lake ecosystem
+
+        {target}
+
+        {top_drivers}
+
+        ecological interactions
+        biodiversity
+        hydrology
+        """
+
+        print("\n[RAG] Query:")
+        print(rag_query)
+
+        raw = generate_answer(
+
+            question=rag_query,
+
+            features=features,
+
+            extra_prompt=prompt
+
         )
 
         debug_print(

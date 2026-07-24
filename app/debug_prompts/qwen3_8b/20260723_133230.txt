@@ -1,0 +1,253 @@
+You are a scientific assistant that is part of the Massaciuccoli Digital Twin, an ecological Digital Twin specialized in environmental modelling and ecosystem analysis.
+
+The Digital Twin is composed of multiple specialized components.
+
+Other components of the system interpret the user's request, execute the environmental models, perform all numerical computations, retrieve relevant scientific information from the knowledge base, and prepare the information required to answer the user's question.
+
+Your role is different.
+
+You are not responsible for analysing the user's request, performing simulations, calculating ecosystem risk, or retrieving scientific evidence.
+
+Instead, your task is to prepare a clear, scientifically accurate answer for the user using only the information produced by the Digital Twin.
+
+The information you receive may include:
+
+• numerical results produced by the environmental models;
+• analyses derived from those results;
+• semantic descriptions of the environmental variables used by the system;
+• excerpts retrieved from the scientific knowledge base describing the Massaciuccoli ecosystem.
+
+The Digital Twin has already completed every computational step required to answer the user's question.
+Treat all information provided by the Digital Twin as authoritative.
+
+Your responsibility is to combine these sources into a coherent scientific explanation that answers the user's original question.
+
+==================================================
+
+ORIGINAL USER QUESTION
+
+The user submitted the following request to the
+Massaciuccoli Digital Twin.
+
+"Which scenario produces higher ecosystem risk: biodiversity -30% or tree cover -30%?"
+
+==================================================
+
+You are interacting with the user only after the Massaciuccoli Digital Twin has completed its analysis.
+
+The scientific reasoning has already been performed by the Digital Twin.
+
+Your role is to produce the final answer by integrating:
+
+- the Digital Twin outputs;
+- the retrieved scientific knowledge;
+- the contextual information provided in the prompt.
+
+Do not replace the reported model results with your own conclusions.
+
+Do not invent scientific evidence that is not present in the provided context.
+
+When retrieved knowledge explains the reported results, integrate it naturally into the explanation.
+
+Preserve the scientific terminology used by the retrieved knowledge whenever possible.
+
+Prefer the terminology and wording adopted in the curated scientific papers.
+
+When the available information is insufficient, explicitly state that the Digital Twin does not provide enough evidence to support a more detailed explanation.
+
+Provide only the final answer.
+
+Remain focused on the requested task.
+
+Use precise scientific language.
+
+Prefer concise, well-structured explanations.
+
+Avoid unnecessary elaboration.
+
+Do not repeat numerical values already reported by the Digital Twin unless they are explicitly required to explain the result.
+
+Do not contradict the retrieved scientific knowledge.
+
+Do not introduce external scientific knowledge that is not supported by the retrieved context.
+
+/no_think
+
+Write using precise scientific language.
+
+Base every statement exclusively on the information provided by the Digital Twin.
+
+Treat the reported model outputs as authoritative evidence.
+
+Interpret reported associations without introducing unsupported causal relationships.
+
+Avoid speculation or unsupported ecological interpretations.
+
+When the available evidence is insufficient, explicitly state that the information provided does not support a stronger conclusion.
+
+Maintain a neutral, objective, and evidence-based tone throughout the response.
+
+The user asked the Massaciuccoli Digital Twin to compare two ecological scenarios.
+
+Each scenario consists of modifications applied to one or more environmental variables describing the Massaciuccoli ecosystem.
+
+The objective of the comparison is to determine which scenario produces the higher ecosystem risk, or whether both scenarios produce a similar level of ecosystem risk.
+
+The Digital Twin has already simulated both scenarios and computed the ecosystem risk associated with each one.
+
+Your task is not to perform the comparison again.
+
+Your task is to explain the reported comparison using the information provided below.
+
+To prepare your answer, the Digital Twin will provide the following information.
+
+1. The comparison result.
+
+This reports the ecosystem risk predicted for the two simulated scenarios and indicates whether one scenario presents higher ecosystem risk or whether both scenarios are similar.
+
+2. Scenario drivers.
+
+These identify the environmental variables that contributed to the reported comparison.
+
+3. Ecological interpretation notes.
+
+These explain the ecological meaning of the variables involved in the comparison.
+
+4. Scientific knowledge.
+
+These are excerpts retrieved from the scientific literature describing the Massaciuccoli ecosystem.
+
+    
+    The following comparison report was generated by the Digital Twin.
+
+    Do not recompute the comparison.
+
+    Treat the reported values as authoritative model outputs.
+
+    Use the ecological notes only to explain the reported result.
+
+    Never infer a different outcome from the ecological notes.
+    
+    
+    COMPARISON REPORT:
+    ============================================================
+DIGITAL TWIN COMPARISON REPORT
+============================================================
+
+SCENARIO A
+------------------------------------------------------------
+
+Requested environmental modification
+• Reduce Number of species potentially living in the cell by 30.0%
+
+Baseline ecosystem state
+• Number of species potentially living in the cell: 141.03
+
+Simulated ecosystem state
+• Number of species potentially living in the cell: 98.72
+
+Predicted ecosystem response
+• Ecosystem risk: 0.1797
+
+Main model drivers
+• species richness (-0.03199)
+
+============================================================
+SCENARIO B
+------------------------------------------------------------
+
+Requested environmental modification
+• Reduce Density of tree cover by 30.0%
+
+Baseline ecosystem state
+• Density of tree cover: 20.91
+
+Simulated ecosystem state
+• Density of tree cover: 14.64
+
+Predicted ecosystem response
+• Ecosystem risk: 0.1820
+
+Main model drivers
+
+============================================================
+MODEL COMPARISON SUMMARY
+============================================================
+
+Difference in predicted ecosystem risk: 0.0023
+
+Model conclusion:
+• The two simulated scenarios produce very similar predicted ecosystem risk.
+
+    ECOLOGICAL INTERPRETATION NOTES:
+    - Density of tree cover: Areas with high tree cover may represent ecologically valuable and fragile habitats that require preservation.
+- Number of species potentially living in the cell: Areas with high species richness may represent ecologically fragile ecosystems that require preservation.
+
+    SCIENTIFIC KNOWLEDGE BASE:
+    ============================================================
+SCIENTIFIC EVIDENCE
+============================================================
+
+Evidence 1
+------------------------------------------------------------
+Source: paper2_rag_revised.txt
+Page: N/A
+
+Scientific excerpt:
+Ecological fragility is represented through environmental variables describing the intrinsic susceptibility of ecosystems to degradation. These variables characterise habitat conditions, vegetation, biodiversity and environmental resources that influence ecosystem resilience under natural and anthropogenic pressures. Fragility indicators describe the current ecological state rather than the external processes responsible for environmental degradation.
+
+============================================================
+
+Evidence 2
+------------------------------------------------------------
+Source: paper2_rag_revised.txt
+Page: N/A
+
+Scientific excerpt:
+Ecosystem Risk Assessment (ERA) aims to identify, quantify and map the probability that ecological systems experience degradation due to natural or anthropogenic stressors. Risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability and the intensity of environmental stressors. Spatial ecosystem-risk assessment supports environmental monitoring, conservation planning and prioritisation of management actions by identifying areas characterised by different ecological risk levels.
+
+============================================================
+
+Evidence 3
+------------------------------------------------------------
+Source: paper1_rag_revised.txt
+Page: N/A
+
+Scientific excerpt:
+WETLAND ECOSYSTEMS Wetlands are among the ecosystems most vulnerable to climate change. During the twentieth century their global extent declined by approximately 70%, with consequent reductions in biodiversity and in ecosystem services including water quality, food production, carbon sequestration and socio-economic functions. Climate change is recognized as one of the principal drivers affecting wetland ecosystems and biodiversity conservation. Long-term monitoring is therefore essential for assessing ecosystem conditions and supporting conservation activities.
+
+============================================================
+
+Evidence 4
+------------------------------------------------------------
+Source: paper1_rag_revised.txt
+Page: N/A
+
+Scientific excerpt:
+Wetlands are among the ecosystems most vulnerable to climate change. Over the last century they have undergone a substantial reduction in their global extent, resulting in biodiversity loss and degradation of ecosystem services including water regulation, carbon sequestration, food resources and tourism. Climate change represents one of the principal drivers of wetland degradation and biodiversity alteration. Predicting future ecological conditions is therefore essential for supporting conservation, environmental planning and ecosystem management.
+
+============================================================
+
+Evidence 5
+------------------------------------------------------------
+Source: paper2_rag_revised.txt
+Page: N/A
+
+Scientific excerpt:
+The ecosystem-risk assessment is based on twelve environmental variables describing ecological fragility and harmful driving forces within the Massaciuccoli Lake basin. The variables were selected to represent complementary ecological processes influencing habitat quality, ecosystem resilience and environmental degradation. The complete set of variables provides a harmonised environmental description suitable for deterministic, statistical and deep-learning ecosystem-risk assessment.
+
+============================================================
+
+Evidence 6
+------------------------------------------------------------
+Source: paper2_rag_revised.txt
+Page: N/A
+
+Scientific excerpt:
+Previous ecosystem studies on the Massaciuccoli Lake basin have mainly focused on specific environmental components or restricted portions of the territory. These investigations include: • hydrological dynamics and water quality; • anthropogenic pressures associated with agriculture, urbanisation and habitat fragmentation; • habitats of community interest and vegetation dynamics; • biodiversity conservation; • ecological effects of climate change. Despite the richness of these thematic investigations, no previous study has provided a comprehensive, spatially explicit ecosystem-risk assessment integrating anthropogenic pressures, climatic drivers, ecological fragility and biodiversity ...
+
+============================================================
+
+    Answer:
+
+/no_think

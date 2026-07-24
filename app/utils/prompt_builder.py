@@ -94,16 +94,43 @@ def load_task_prompt(task):
         filename
     )
 
+# ======================================================
+# USER QUESTION
+# ======================================================
+
+def build_user_question(question):
+
+    if not question:
+
+        return ""
+
+    return f"""
+==================================================
+
+ORIGINAL USER QUESTION
+
+The user submitted the following request to the
+Massaciuccoli Digital Twin.
+
+"{question}"
+
+==================================================
+""".strip()
 
 # ======================================================
 # BUILD PROMPT
 # ======================================================
 
-def build_prompt(task):
+def build_prompt(
+        task,
+        question=None
+):
 
     parts = [
 
         load_base_prompt(),
+
+        build_user_question(question),
 
         load_model_prompt(),
 
@@ -111,9 +138,13 @@ def build_prompt(task):
 
         load_task_prompt(task)
     ]
+
     if DEBUG_PROMPTS:
 
         print("\n========== COMPOSED PROMPT ==========\n")
+
+        print("\n[QUESTION]\n")
+        print(parts[1])
 
         print("[BASE]\n")
         print(parts[0])

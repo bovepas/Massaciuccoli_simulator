@@ -88,6 +88,152 @@ def fallback():
         "interacting effects on hydrology, habitat structure, "
         "ecological resilience, and biodiversity."
     )
+# ======================================================
+# REPORT
+# ======================================================
+
+def build_assessment_report(
+    question,
+    risk_delta,
+    primary_drivers,
+    secondary_responses
+):
+
+    if risk_delta is None:
+        risk_text = "Unknown"
+    else:
+        risk_text = f"{risk_delta:.2f}"
+
+    if risk_delta is None:
+        trend = "cannot be determined"
+    elif risk_delta > 0:
+        trend = "higher than"
+    elif risk_delta < 0:
+        trend = "lower than"
+    else:
+        trend = "comparable to"
+
+    primary = ""
+
+    if primary_drivers:
+        primary = "\n".join(
+            f"• {k} (association score: {abs(v):.2f})"
+            for k, v in primary_drivers.items()
+        )
+    else:
+        primary = "None"
+
+    secondary = ""
+
+    if secondary_responses:
+        secondary = "\n".join(
+            f"• {k} (association score: {abs(v):.2f})"
+            for k, v in secondary_responses.items()
+        )
+    else:
+        secondary = "None"
+
+    report = f"""
+============================================================
+DIGITAL TWIN ASSESSMENT REPORT
+============================================================
+
+BASELINE ECOSYSTEM
+------------------------------------------------------------
+
+The current ecosystem conditions are used as the
+baseline reference for the assessment.
+
+============================================================
+SIMULATED ENVIRONMENTAL SCENARIO
+------------------------------------------------------------
+
+{question}
+
+============================================================
+PREDICTED ECOSYSTEM RESPONSE
+------------------------------------------------------------
+
+Predicted ecosystem risk: {risk_text}
+
+============================================================
+PRIMARY MODEL DRIVERS
+------------------------------------------------------------
+
+{primary}
+
+============================================================
+SECONDARY ECOSYSTEM ASSOCIATIONS
+------------------------------------------------------------
+
+{secondary}
+"""
+
+    return report
+
+# ======================================================
+# ECOLOGICAL NOTES
+# ======================================================
+
+def build_ecological_notes(
+    primary_drivers,
+    secondary_responses
+):
+
+    notes = []
+
+    notes.append(
+        "The primary model drivers identify the environmental "
+        "variables most strongly associated with the predicted "
+        "ecosystem risk."
+    )
+
+    notes.append(
+        "Secondary ecosystem associations identify ecosystem "
+        "components statistically associated with the simulated "
+        "scenario. They do not necessarily indicate variables "
+        "that increased or decreased during the simulation."
+    )
+
+    if primary_drivers:
+
+        notes.append("")
+
+        notes.append(
+            "Primary drivers reported by the Digital Twin:"
+        )
+
+        for feature in primary_drivers.keys():
+
+            notes.append(
+                f"• {feature} is identified by the Digital Twin "
+                "as one of the primary model drivers associated "
+                "with the predicted ecosystem response."
+            )
+
+    if secondary_responses:
+
+        notes.append("")
+
+        notes.append(
+            "Secondary ecosystem associations:"
+        )
+
+        for feature in secondary_responses.keys():
+
+            notes.append(
+                f"• {feature} is identified by the Digital Twin "
+                "as a secondary ecosystem association describing "
+                "the simulated environmental scenario."
+            )
+
+    return (
+        "============================================================\n"
+        "ECOLOGICAL INTERPRETATION NOTES\n"
+        "============================================================\n\n"
+        + "\n".join(notes)
+        + "\n"
+    )
 
 # ======================================================
 # PROMPT
@@ -279,30 +425,34 @@ def generate_assessment_explanation(
 
     else:
 
+        report = build_assessment_report(
+            question,
+            risk_delta,
+            primary_drivers,
+            secondary_responses
+        )
+
+        ecological_notes = build_ecological_notes(
+            primary_drivers,
+            secondary_responses
+        )
+
         prompt = (
-            build_prompt("assessment")
+            build_prompt(
+                "assessment",
+                question=question
+            )
+            + report
+            + ecological_notes
             + f"""
 
-    QUESTION:
-    {question}
+============================================================
+RETRIEVED SCIENTIFIC EVIDENCE
+============================================================
 
-    MODEL RESULTS
-    The reported association scores indicate the relative importance of variables
-    within the model. They are not measurements and do not indicate that a variable
-    has increased or decreased.
-    Risk increase:
-    {risk_text}
+        {context}
 
-    Primary drivers:
-    {primary_text}
-
-    Secondary ecosystem responses:
-    {secondary_text}
-
-    SCIENTIFIC KNOWLEDGE BASE:
-    {context}
-
-    """
+        """
         )
 
     # --------------------------------------------------
