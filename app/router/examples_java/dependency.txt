@@ -1,0 +1,26 @@
+How does temperature influence biodiversity in the Massaciuccoli basin?
+How does precipitation influence species richness?
+How does tree cover influence ecosystem risk?
+How does biodiversity influence ecosystem stability?
+How does temperature influence ecosystem risk?
+What is the relationship between temperature and biodiversity?
+What is the relationship between precipitation and species richness?
+What is the relationship between tree cover and ecosystem risk?
+What is the relationship between biodiversity and ecosystem stability?
+What is the relationship between temperature and ecosystem risk?
+How is biodiversity related to changes in temperature?
+How is species richness related to precipitation changes?
+How is ecosystem risk related to tree-cover density?
+How is ecosystem stability related to biodiversity?
+How is ecosystem risk related to temperature change?
+Does increasing temperature affect biodiversity?
+Does reduced precipitation affect species richness?
+Does tree-cover loss affect ecosystem risk?
+Does biodiversity loss affect ecosystem stability?
+Does temperature change affect ecosystem risk?
+What effect does temperature have on biodiversity?
+What effect does precipitation have on species richness?
+What effect does tree cover have on ecosystem risk?
+What effect does biodiversity have on ecosystem stability?
+What effect does temperature have on ecosystem risk?
+How does evapotranspiration affect water availability?

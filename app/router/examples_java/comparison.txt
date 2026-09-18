@@ -1,0 +1,10 @@
+Compare ecosystem risk between a warmer scenario and a cooler scenario.
+Compare ecosystem risk between a wetter scenario and a drier scenario.
+Compare ecosystem risk between a high-biodiversity scenario and a low-biodiversity scenario.
+Compare ecosystem risk between increased tree cover and reduced tree cover.
+Compare ecosystem risk between increased grassland presence and reduced grassland presence.
+Compare ecosystem risk between high evapotranspiration and low evapotranspiration.
+Compare ecosystem risk between high land imperviousness and low land imperviousness.
+Compare ecosystem risk between stable land use and strong land-use change.
+Compare ecosystem risk between high vegetation productivity and low vegetation productivity.
+Compare ecosystem risk between habitat restoration and habitat degradation.

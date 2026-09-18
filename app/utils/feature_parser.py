@@ -401,7 +401,52 @@ def parse_features(question: str, return_metadata=False):
         modified_features.add(mapped)
         explicitly_modified.add(mapped)
     
-    
+    # ==================================================
+    # ABSOLUTE TARGET
+    # e.g. "tree cover increases to 70%"
+    # ==================================================
+
+    target_pattern = rf"""
+    ({FEATURE_REGEX})
+    \s+
+    (increases|decreases|declines|increase|decrease|decline)
+    \s+
+    to
+    \s+
+    ([+\-]?\d+\.?\d*)
+    \s*
+    (%|°c)?
+    """
+
+    target_matches = re.findall(
+        target_pattern,
+        q,
+        flags=re.VERBOSE
+    )
+
+    for var, direction, value, unit in target_matches:
+
+        value = float(value)
+
+        mapped = FEATURE_MAP.get(var)
+
+        if not mapped:
+            continue
+
+        # The value is the requested final value,
+        # not a relative change.
+        modifications.append({
+
+            "variable": mapped,
+
+            "type": "absolute_target",
+
+            "value": value
+        })
+
+        modified_features.add(mapped)
+
+        explicitly_modified.add(mapped)   
     
     # ==================================================
     # GERUND DELTA

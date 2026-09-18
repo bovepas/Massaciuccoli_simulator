@@ -1,0 +1,50 @@
+Is suitable habitat for kingfisher fragmented or well connected?
+Is habitat suitability for common carp controlled by one dominant environmental driver or multiple drivers?
+Are the suitable habitat patches for great reed warbler isolated from each other?
+Does the model predict widespread suitability for purple heron?
+Can the model identify core habitat patches for European otter?
+Are the predicted habitats for marsh harrier large enough to suggest stable core areas?
+Is habitat suitability for water vole mostly climate-driven?
+Are climate and land-cover variables both important for pond turtle?
+Does the model for northern pike separate suitable and unsuitable conditions well?
+What does the AUC value indicate about model performance for common frog?
+Where are the main suitable habitat areas for great crested newt located?
+Is the largest suitable habitat patch for reed bunting dominant compared with the others?
+Does the binary habitat map for bittern indicate strong fragmentation?
+Are predicted suitable areas for moorhen arranged in corridors or isolated patches?
+Does the predicted habitat network for grey heron appear robust?
+Does precipitation dominate habitat suitability for dragonfly?
+Should the habitat suitability model for water rail be interpreted cautiously?
+What are the main limitations of the habitat suitability model for beaver?
+Does freshwater mussel occupy a few core habitat areas or many distributed habitats?
+How fragmented are the predicted suitable areas for mallard?
+Is suitable habitat for loggerhead turtle rare or broadly distributed?
+What does the habitat suitability model suggest for bottlenose dolphin?
+How does patch size influence habitat suitability interpretation for seagrass?
+What are the main environmental drivers of habitat suitability for European seabass?
+Do human-pressure variables affect habitat suitability for Atlantic cod?
+Can the training AUC for blue mussel be used as evidence of model reliability?
+How reliable is the habitat suitability model for common octopus?
+Are multiple environmental drivers equally important for harbor seal?
+How many major habitat cores are predicted for green sea turtle?
+Are suitable habitats for humpback whale mainly localised or broadly spread?
+Does the model suggest that clownfish depends on connected habitat corridors?
+Are there enough connected suitable cells to support coral grouper?
+Does temperature dominate habitat suitability for kelp?
+Does the AUC value suggest good discrimination for sea otter?
+How confident can we be in the habitat suitability predictions for Atlantic puffin?
+How widespread is suitable habitat for manta ray across the study area?
+Does anchovy show a clustered or dispersed habitat-suitability pattern?
+How much of the landscape is suitable for sardine?
+How should I interpret the suitability map for oyster?
+Does brown pelican show habitat suitability along waterways or in isolated patches?
+Which environmental variables contribute most to habitat suitability for red fox?
+Does water availability strongly influence habitat suitability for roe deer?
+Does the model for wild boar need independent validation?
+How is habitat connectivity structured for brown bear?
+Does a single environmental factor dominate habitat suitability for grey wolf?
+Does lynx have a continuous band of suitable habitat or separated patches?
+Is habitat suitability for red squirrel restricted to a small part of the area?
+Can the predicted suitable areas for European badger support habitat connectivity?
+Does the suitability model for barn owl indicate many small patches?
+Is habitat suitability for golden eagle mostly land-cover-driven?

@@ -378,6 +378,40 @@ are not reported by the Digital Twin.
 """
 
 # ======================================================
+# DELTA SEMANTIC MAPPING FOR SCIENTIFIC RETRIEVAL
+# ======================================================
+
+# Maps technical Digital Twin variable names to the scientific concept
+# used to search the scientific KB. This mapping is local to Delta;
+# the global retriever is intentionally unchanged.
+DELTA_RAG_CONCEPTS = (
+    ("evapotranspiration", "evapotranspiration"),
+    ("precipitation", "precipitation"),
+    ("temperature", "temperature"),
+    ("tree cover", "tree cover"),
+    ("grassland", "grassland"),
+    ("species", "biodiversity"),
+    ("biodiversity", "biodiversity"),
+    ("productivity", "ecosystem productivity"),
+    ("phenology", "ecosystem productivity"),
+    ("impervious", "land imperviousness"),
+    ("land use", "land use"),
+)
+
+
+def get_delta_rag_concept(feature):
+    """Translate a Digital Twin variable name into a scientific KB concept."""
+    feature_lower = feature.lower()
+
+    for keyword, concept in DELTA_RAG_CONCEPTS:
+        if keyword in feature_lower:
+            return concept
+
+    # Safe fallback: preserve the original variable name if no mapping exists.
+    return feature
+
+
+# ======================================================
 # PROMPT
 # ======================================================
 
@@ -623,7 +657,10 @@ def generate_delta_explanation(
     # --------------------------------------------------
 
     feature = drivers[0][0]
-    rag_query = feature
+    rag_concept = get_delta_rag_concept(feature)
+    rag_query = f"{rag_concept} ecosystem risk"
+
+    debug_print("[DELTA RAG CONCEPT]:", rag_concept)
 
     # --------------------------------------------------
     # PROMPT

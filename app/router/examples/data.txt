@@ -1,0 +1,50 @@
+Which environmental variables are available in the dataset?
+Which environmental stressors are explicitly measured in the dataset?
+Which variables in the dataset capture the main ecological dynamics of the basin?
+Which ecological variables are represented in the dataset?
+Which aspects of ecosystem functioning are represented in the dataset?
+Which environmental stressors represented in the dataset are most relevant for ecosystem assessment?
+Which environmental variables are explicitly included in the dataset?
+Which ecological variables are available in the dataset for ecosystem assessment?
+What environmental variables are contained in the dataset?
+What environmental variables can be retrieved from the dataset?
+What environmental variables are tracked in the dataset?
+What environmental variables are available for the Massaciuccoli basin?
+What ecological variables are included in the dataset?
+What environmental conditions are available in the dataset?
+What data are available about the environmental conditions of the basin?
+What variables are used to describe the current environmental conditions?
+Which variables are used to describe the lake system?
+What are the available environmental measurements for the basin?
+What is the current temperature in the Massaciuccoli basin?
+What is the latest temperature value in the Massaciuccoli basin?
+What is the baseline temperature value for the basin?
+What is the current precipitation value in the Massaciuccoli basin?
+What is the latest precipitation value in the basin?
+What is the baseline precipitation value for the basin?
+What is the current biodiversity value in the Massaciuccoli basin?
+What is the latest biodiversity value in the basin?
+What is the baseline biodiversity value for the basin?
+What is the current tree cover density in the basin?
+What is the latest tree cover value in the Massaciuccoli basin?
+What is the baseline tree cover value for the basin?
+What is the current evapotranspiration value in the basin?
+What is the latest evapotranspiration value in the Massaciuccoli basin?
+What is the baseline evapotranspiration value?
+What is the current grassland value in the basin?
+What is the latest grassland value in the dataset?
+What is the baseline grassland value?
+What is the current ecosystem productivity value?
+What is the latest ecosystem productivity value in the basin?
+What is the baseline ecosystem productivity value?
+Has the temperature increased or decreased compared with the baseline?
+Has precipitation increased or decreased compared with the baseline?
+Has biodiversity increased or decreased compared with the baseline?
+Has tree cover increased or decreased compared with the baseline?
+Has evapotranspiration increased or decreased compared with the baseline?
+What are the latest environmental conditions in the basin?
+What is the current status of the environmental system?
+What are the latest data for the Massaciuccoli basin?
+Can you provide all the current environmental variables?
+Can you provide the latest environmental conditions for the lake system?
+What is the latest average temperature recorded for the Massaciuccoli basin?

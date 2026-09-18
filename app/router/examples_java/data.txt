@@ -1,0 +1,10 @@
+Which ecological variables are represented in the dataset?
+Which environmental stressors are represented in the Massaciuccoli basin dataset?
+Which variables can be modified in an ecosystem-risk scenario?
+Which variables should be considered when simulating ecosystem risk?
+Which climatic variables are represented in the ecosystem-risk assessment?
+Which habitat variables are represented in the ecosystem-risk assessment?
+Which biodiversity-related variables are represented in the dataset?
+Which land-cover variables are included in the ecosystem-risk analysis?
+Which variables describe vegetation conditions in the Massaciuccoli basin?
+Which variables describe recent environmental change in the dataset?

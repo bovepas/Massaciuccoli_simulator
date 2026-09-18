@@ -1,0 +1,50 @@
+Compare ecosystem risk when temperature increases by 2°C versus when precipitation decreases by 10%.
+Which scenario produces higher ecosystem risk: biodiversity -30% or tree cover -30%?
+Which scenario is worse: temperature +3°C or precipitation −20%?
+Compare a scenario with increased tree cover (70%) and one with reduced biodiversity (−30%).
+Compare a scenario with temperature +2°C and a scenario with temperature +2°C but increased tree cover.
+Which scenario results in higher ecosystem risk: increased temperature or reduced precipitation?
+Which scenario leads to greater ecosystem risk: reduced biodiversity or reduced tree cover?
+Which scenario produces lower ecosystem risk: increased tree cover or reduced biodiversity?
+Which scenario is associated with higher ecosystem risk: temperature +2°C or precipitation −10%?
+Which scenario is more risky for the ecosystem: biodiversity −20% or tree cover −20%?
+Which scenario has the greater ecosystem risk: temperature +3°C or tree cover −30%?
+Which scenario would result in higher ecosystem risk: reduced precipitation or reduced biodiversity?
+Which scenario would be more damaging to ecosystem risk: increased temperature or reduced tree cover?
+Which scenario is more severe in terms of ecosystem risk: biodiversity −30% or precipitation −20%?
+Which scenario produces the higher level of ecosystem risk: temperature +2°C or biodiversity −20%?
+Compare ecosystem risk under increased temperature and under reduced precipitation.
+Compare ecosystem risk under reduced biodiversity and under reduced tree cover.
+Compare ecosystem risk under increased temperature and under reduced biodiversity.
+Compare ecosystem risk under reduced precipitation and under reduced tree cover.
+Compare ecosystem risk under increased tree cover and under reduced biodiversity.
+Compare ecosystem risk between a scenario with higher temperature and a scenario with lower precipitation.
+Compare ecosystem risk between a scenario with reduced biodiversity and a scenario with reduced tree cover.
+Compare ecosystem risk between a scenario with increased temperature and a scenario with reduced tree cover.
+Compare ecosystem risk between a scenario with reduced precipitation and a scenario with reduced biodiversity.
+Compare ecosystem risk between a scenario with increased tree cover and a scenario with reduced biodiversity.
+How does ecosystem risk differ between a scenario with increased temperature and one with reduced precipitation?
+How does ecosystem risk differ between a scenario with reduced biodiversity and one with reduced tree cover?
+How does ecosystem risk differ between a scenario with increased temperature and one with reduced biodiversity?
+How does ecosystem risk differ between a scenario with reduced precipitation and one with reduced tree cover?
+How does ecosystem risk differ between a scenario with increased tree cover and one with reduced biodiversity?
+Which of these scenarios would have higher ecosystem risk: temperature +2°C with precipitation −10%, or temperature +1°C with precipitation −20%?
+Which scenario produces higher ecosystem risk: temperature +3°C with biodiversity −20%, or temperature +2°C with biodiversity −30%?
+Which scenario is riskier: reduced precipitation and reduced biodiversity, or increased temperature and reduced tree cover?
+Which scenario produces greater ecosystem risk: increased temperature and reduced precipitation, or reduced biodiversity and reduced tree cover?
+Which scenario would be worse for ecosystem risk: temperature +2°C and biodiversity −20%, or precipitation −20% and tree cover −20%?
+Which scenario has higher ecosystem risk: temperature +3°C and precipitation −10%, or temperature +2°C and biodiversity −30%?
+Compare ecosystem risk between a scenario with increased temperature and reduced precipitation and a scenario with reduced biodiversity and tree cover.
+Compare a scenario with higher temperature and lower biodiversity against a scenario with lower precipitation and lower tree cover.
+Compare a scenario with increased temperature and increased tree cover against a scenario with reduced biodiversity and reduced precipitation.
+Compare ecosystem risk between a scenario with reduced precipitation and biodiversity and a scenario with increased temperature and tree cover.
+Which scenario is more harmful to ecosystem risk: higher temperature with lower precipitation or lower biodiversity with reduced tree cover?
+Which scenario produces the greater ecosystem risk: increased temperature with reduced biodiversity or reduced precipitation with reduced tree cover?
+How does ecosystem risk compare between higher temperature with lower precipitation and lower biodiversity with higher tree cover?
+How does ecosystem risk compare between reduced precipitation with lower biodiversity and increased temperature with lower tree cover?
+Which scenario leads to greater ecosystem risk: temperature +2°C and precipitation −10%, or biodiversity −20% and tree cover −20%?
+Which scenario results in higher ecosystem risk: temperature +3°C and tree cover −20%, or precipitation −20% and biodiversity −20%?
+Compare the ecosystem risk associated with temperature +2°C and biodiversity −30% against precipitation −10% and tree cover −30%.
+Compare ecosystem risk under a scenario with increased temperature, reduced precipitation and lower biodiversity against a scenario with lower temperature, normal precipitation and higher biodiversity.
+Which scenario would have the higher ecosystem risk: increased temperature with reduced precipitation, or reduced biodiversity with reduced tree cover?
+Which scenario would result in higher ecosystem risk: a 2°C increase in temperature with unchanged precipitation, or a 1°C increase in temperature with a 20% decrease in precipitation?

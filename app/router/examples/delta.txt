@@ -1,0 +1,58 @@
+How does ecosystem risk change when grassland cover decreases by 50%?
+What is the ecosystem risk if tree cover increases to 70% across the basin?
+What is the ecosystem risk if evapotranspiration increases substantially?
+What is the ecosystem risk if evapotranspiration increases by 25%?
+What is the ecosystem risk if tree cover decreases substantially?
+What happens to ecosystem risk when temperature increases from 0°C to +3°C?
+What happens to ecosystem risk when precipitation changes from 0% to -20%?
+What happens to ecosystem risk when biodiversity decreases from 100% to 70%?
+What happens to ecosystem risk when tree cover increases from 30% to 70%?
+What happens to ecosystem risk when evapotranspiration increases by 25%?
+What is the ecosystem risk if temperature increases by 3°C?
+What is the ecosystem risk if precipitation decreases by 20%?
+What is the ecosystem risk if tree cover decreases by 25%?
+What is the ecosystem risk if grassland presence increases by 15%?
+What is the ecosystem risk if evapotranspiration increases by 25%?
+What is the ecosystem risk if biodiversity declines by 30%?
+What is the ecosystem risk if land imperviousness increases to 40%?
+What is the ecosystem risk if temperature changes from the baseline to +2.5°C?
+How does ecosystem risk change when temperature increases by 1°C?
+How does ecosystem risk change when temperature increases by 2°C?
+How does ecosystem risk change when precipitation decreases by 10%?
+How does ecosystem risk change when precipitation decreases by 30%?
+How does ecosystem risk change when biodiversity decreases by 10%?
+How does ecosystem risk change when biodiversity decreases by 50%?
+How does ecosystem risk change when tree cover decreases by 20%?
+How does ecosystem risk change when tree cover increases by 20%?
+What is the ecosystem risk if biodiversity declines by 30%?
+What would happen to ecosystem risk if temperature increased by 2°C?
+How would ecosystem risk respond to a 3°C increase in temperature?
+What effect would a 2°C increase in temperature have on ecosystem risk?
+How would a rise in temperature of 1°C affect ecosystem risk?
+If temperature rises by 3°C, how does ecosystem risk change?
+What would be the impact on ecosystem risk of increasing temperature by 2°C?
+How does a temperature increase from 0°C to +2°C affect ecosystem risk?
+What happens to ecosystem risk when temperature rises from 0°C to +3°C?
+What would happen to ecosystem risk if precipitation decreased by 20%?
+How would ecosystem risk respond to a 10% decrease in precipitation?
+What effect would a 30% reduction in precipitation have on ecosystem risk?
+How would a decrease in precipitation of 15% affect ecosystem risk?
+If precipitation falls by 20%, how does ecosystem risk change?
+What would be the impact on ecosystem risk of reducing precipitation by 10%?
+How does ecosystem risk respond when precipitation changes from 0% to -30%?
+What would happen to ecosystem risk if biodiversity decreased by 20%?
+How would ecosystem risk respond to a 30% reduction in biodiversity?
+What effect would a 10% decrease in biodiversity have on ecosystem risk?
+How would a decline in biodiversity of 40% affect ecosystem risk?
+If biodiversity falls from 100% to 60%, how does ecosystem risk change?
+What would be the impact on ecosystem risk of reducing biodiversity by 20%?
+What would happen to ecosystem risk if tree cover decreased by 30%?
+How would ecosystem risk respond to a 20% increase in tree cover?
+What effect would a 40% reduction in tree cover have on ecosystem risk?
+How would an increase in tree cover from 30% to 60% affect ecosystem risk?
+If tree cover falls by 25%, how does ecosystem risk change?
+What would be the impact on ecosystem risk of increasing tree cover by 30%?
+What happens to ecosystem risk when tree cover changes from 70% to 40%?
+What would happen to ecosystem risk if evapotranspiration increased by 15%?
+How would ecosystem risk respond to a 30% increase in evapotranspiration?
+What effect would a substantial decrease in evapotranspiration have on ecosystem risk?

@@ -1,0 +1,74 @@
+Is suitable habitat for Alcedo atthis fragmented or well connected?
+How is habitat connectivity structured for Alcedo atthis?
+Is suitable habitat for Cyprinus carpio fragmented or well connected?
+How is habitat connectivity structured for Cyprinus carpio?
+How reliable is the habitat suitability model for Alcedo atthis?
+What does the AUC value indicate about model performance for Alcedo atthis?
+Would a decline in biodiversity affect habitat suitability for Species X?
+How would a change in biodiversity affect habitat suitability for Species X?
+Would reduced biodiversity alter the predicted suitability for Species X?
+How would biodiversity change affect the suitability of habitat for Species X?
+Can the habitat suitability predictions for Alcedo atthis be considered reliable?
+How would an increase in temperature affect habitat suitability for Species X?
+How would a decrease in precipitation affect habitat suitability for Species X?
+How would increased evapotranspiration affect habitat suitability for Species X?
+How would increased tree cover affect habitat suitability for Species X?
+How would reduced precipitation affect the predicted habitat suitability for Species X?
+Which environmental factor most strongly influences habitat suitability for Species X?
+Which environmental factor is most limiting for the habitat suitability of Species X?
+Which environmental factor most favors suitable habitat for Species X?
+Which environmental variable has the strongest influence on habitat suitability for Species X?
+Which climate-related variable has the strongest effect on habitat suitability for Species X?
+Which environmental factor contributes most to the suitability of Species X?
+What environmental factor is most associated with habitat suitability for Species X?
+Would warmer conditions change habitat suitability for Species X?
+Would increased tree cover change habitat suitability for Species X?
+Would reduced precipitation alter habitat suitability for Species X?
+How reliable is the habitat suitability model for Cyprinus carpio?
+What does the AUC value indicate about model performance for Cyprinus carpio?
+Can the habitat suitability predictions for Cyprinus carpio be considered reliable?
+How widespread is suitable habitat for Alcedo atthis across the basin?
+Does Alcedo atthis occupy a few core habitat areas or many distributed habitats?
+How widespread is suitable habitat for Cyprinus carpio across the basin?
+Does Cyprinus carpio occupy a few core habitat areas or many distributed habitats?
+Is habitat suitability for Alcedo atthis controlled by one dominant environmental driver or multiple drivers?
+Does a single environmental factor dominate habitat suitability for Alcedo atthis?
+What environmental conditions are associated with suitable habitat for Species X?
+Which environmental conditions favor suitable habitat for Species X?
+Under what environmental conditions is Species X most likely to have suitable habitat?
+What environmental conditions characterize suitable habitat for Species X?
+Which environmental conditions are most suitable for Species X?
+Are multiple environmental drivers equally important for Alcedo atthis?
+Is habitat suitability for Cyprinus carpio controlled by one dominant environmental driver or multiple drivers?
+Does a single environmental factor dominate habitat suitability for Cyprinus carpio?
+Are multiple environmental drivers equally important for Cyprinus carpio?
+What does the MaxEnt model predict for suitable habitat for Alcedo atthis?
+What does the MaxEnt model predict for suitable habitat for Cyprinus carpio?
+Where are the areas of highest habitat suitability for Alcedo atthis?
+Where are the areas of highest habitat suitability for Cyprinus carpio?
+Where are the areas of lowest habitat suitability for Alcedo atthis?
+Where are the areas of lowest habitat suitability for Cyprinus carpio?
+How is habitat suitability distributed for Alcedo atthis across the basin?
+How is habitat suitability distributed for Cyprinus carpio across the basin?
+Which areas of the basin are predicted to be most suitable for Alcedo atthis?
+Which areas of the basin are predicted to be most suitable for Cyprinus carpio?
+Which environmental variables contribute most to the MaxEnt prediction for Alcedo atthis?
+Which environmental variables contribute most to the MaxEnt prediction for Cyprinus carpio?
+Which environmental variable is the strongest predictor of habitat suitability for Alcedo atthis?
+Which environmental variable is the strongest predictor of habitat suitability for Cyprinus carpio?
+How important are the different environmental predictors in the MaxEnt model for Alcedo atthis?
+How important are the different environmental predictors in the MaxEnt model for Cyprinus carpio?
+How does the MaxEnt model describe the relationship between environmental variables and habitat suitability for Alcedo atthis?
+How does the MaxEnt model describe the relationship between environmental variables and habitat suitability for Cyprinus carpio?
+What does the response curve show for Alcedo atthis in the MaxEnt model?
+What does the response curve show for Cyprinus carpio in the MaxEnt model?
+How well does the MaxEnt model distinguish suitable from unsuitable habitat for Alcedo atthis?
+How well does the MaxEnt model distinguish suitable from unsuitable habitat for Cyprinus carpio?
+What does the MaxEnt model indicate about the potential distribution of Alcedo atthis?
+What does the MaxEnt model indicate about the potential distribution of Cyprinus carpio?
+How extensive is the predicted suitable habitat for Alcedo atthis?
+How extensive is the predicted suitable habitat for Cyprinus carpio?
+Are there clear hotspots of habitat suitability for Alcedo atthis?
+Are there clear hotspots of habitat suitability for Cyprinus carpio?
+Does the MaxEnt model identify concentrated or widespread suitable habitat for Alcedo atthis?
+Does the MaxEnt model identify concentrated or widespread suitable habitat for Cyprinus carpio?

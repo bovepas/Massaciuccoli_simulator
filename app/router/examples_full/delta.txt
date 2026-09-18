@@ -1,0 +1,125 @@
+How does ecosystem risk change when grassland cover decreases by 10%?
+How does ecosystem risk change when grassland cover decreases by 20%?
+How does ecosystem risk change when grassland cover decreases by 30%?
+How does ecosystem risk change when grassland cover decreases by 40%?
+How does ecosystem risk change when grassland cover decreases by 50%?
+How does ecosystem risk change when grassland cover decreases by 60%?
+How does ecosystem risk change when grassland cover increases by 20%?
+What is the ecosystem risk if temperature increases by 3°C?
+What is the ecosystem risk if precipitation decreases by 20%?
+I’m interested in what effect a significant increase in evapotranspiration would have on ecosystem risk.
+How would the lake environment respond if tree cover increased by 50% from its current level?
+What are the implications for the lake environment of a change in tree cover from the current situation to a 50% increase?
+What is the ecosystem risk if tree cover decreases by 25%?
+What is the ecosystem risk if grassland presence increases by 15%?
+Suppose the average temperature in the basin went up by 3 degrees. How would the ecosystem risk change?
+What is the ecosystem risk if evapotranspiration increases by 25%?
+What is the ecosystem risk if biodiversity declines by 30%?
+What is the ecosystem risk if land imperviousness increases to 40%?
+What would happen to ecosystem risk if precipitation became substantially lower?
+What is the ecosystem risk if temperature changes from the baseline to +2.5°C?
+What effect would a 50% increase in tree cover from today's level have on ecosystem risk?
+How does ecosystem risk change when grassland cover increases by 50%?
+How does ecosystem risk change when tree cover decreases by 10%?
+How does ecosystem risk change when tree cover decreases by 20%?
+How does ecosystem risk change when tree cover decreases by 30%?
+How does ecosystem risk change when grassland cover decreases by 50%?
+What is the ecosystem risk if tree cover increases to 70% across the basin?
+What is the ecosystem risk if evapotranspiration increases substantially?
+What is the ecosystem risk if evapotranspiration increases by 25%?
+What is the ecosystem risk if tree cover decreases substantially?
+What happens to ecosystem risk when temperature increases from 0°C to +3°C?
+What happens to ecosystem risk when precipitation changes from 0% to -20%?
+What happens to ecosystem risk when biodiversity decreases from 100% to 70%?
+What happens to ecosystem risk when tree cover increases from 30% to 70%?
+What happens to ecosystem risk when evapotranspiration increases by 25%?
+How does ecosystem risk change when temperature increases by 1°C?
+How does ecosystem risk change when temperature increases by 2°C?
+How does ecosystem risk change when precipitation decreases by 10%?
+How does ecosystem risk change when precipitation decreases by 30%?
+How does ecosystem risk change when biodiversity decreases by 10%?
+How does ecosystem risk change when biodiversity decreases by 50%?
+How does ecosystem risk change when tree cover decreases by 20%?
+How does ecosystem risk change when tree cover increases by 20%?
+What is the ecosystem risk if biodiversity declines by 30%?
+What would happen to ecosystem risk if temperature increased by 2°C?
+How would ecosystem risk respond to a 3°C increase in temperature?
+What effect would a 2°C increase in temperature have on ecosystem risk?
+How would a rise in temperature of 1°C affect ecosystem risk?
+If temperature rises by 3°C, how does ecosystem risk change?
+What would be the impact on ecosystem risk of increasing temperature by 2°C?
+How does a temperature increase from 0°C to +2°C affect ecosystem risk?
+What happens to ecosystem risk when temperature rises from 0°C to +3°C?
+What would happen to ecosystem risk if precipitation decreased by 20%?
+How would ecosystem risk respond to a 10% decrease in precipitation?
+What effect would a 30% reduction in precipitation have on ecosystem risk?
+How would a decrease in precipitation of 15% affect ecosystem risk?
+If precipitation falls by 20%, how does ecosystem risk change?
+What would be the impact on ecosystem risk of reducing precipitation by 10%?
+How does ecosystem risk respond when precipitation changes from 0% to -30%?
+What would happen to ecosystem risk if biodiversity decreased by 20%?
+How would ecosystem risk respond to a 30% reduction in biodiversity?
+What effect would a 10% decrease in biodiversity have on ecosystem risk?
+How would a decline in biodiversity of 40% affect ecosystem risk?
+If biodiversity falls from 100% to 60%, how does ecosystem risk change?
+What would be the impact on ecosystem risk of reducing biodiversity by 20%?
+What would happen to ecosystem risk if tree cover decreased by 30%?
+How would ecosystem risk respond to a 20% increase in tree cover?
+What effect would a 40% reduction in tree cover have on ecosystem risk?
+How would an increase in tree cover from 30% to 60% affect ecosystem risk?
+If tree cover falls by 25%, how does ecosystem risk change?
+What would be the impact on ecosystem risk of increasing tree cover by 30%?
+What happens to ecosystem risk when tree cover changes from 70% to 40%?
+What would happen to ecosystem risk if evapotranspiration increased by 15%?
+How would ecosystem risk respond to a 30% increase in evapotranspiration?
+What effect would a substantial decrease in evapotranspiration have on ecosystem risk?
+How does ecosystem risk change when tree cover decreases by 40%?
+How does ecosystem risk change when tree cover decreases by 50%?
+How does ecosystem risk change when tree cover increases by 20%?
+How does ecosystem risk change when tree cover increases by 40%?
+How does ecosystem risk change when tree cover increases by 70%?
+How does ecosystem risk change when biodiversity decreases by 10%?
+How does ecosystem risk change when biodiversity decreases by 20%?
+How does ecosystem risk change when biodiversity decreases by 30%?
+How does ecosystem risk change when biodiversity decreases by 50%?
+How does ecosystem risk change when biodiversity decreases by 60%?
+How does ecosystem risk change when biodiversity increases by 10%?
+How does ecosystem risk change when biodiversity increases by 25%?
+How does ecosystem risk change when precipitation decreases by 10%?
+How does ecosystem risk change when precipitation decreases by 20%?
+How does ecosystem risk change when precipitation decreases by 30%?
+How does ecosystem risk change when precipitation decreases by 50%?
+How does ecosystem risk change when precipitation increases by 10%?
+How does ecosystem risk change when precipitation increases by 25%?
+How does ecosystem risk change when evapotranspiration increases by 10%?
+How does ecosystem risk change when evapotranspiration increases by 20%?
+How does ecosystem risk change when evapotranspiration increases by 25%?
+How does ecosystem risk change when evapotranspiration increases by 50%?
+How does ecosystem risk change when evapotranspiration decreases by 15%?
+How does ecosystem risk change when land imperviousness increases by 10%?
+How does ecosystem risk change when land imperviousness increases by 25%?
+How does ecosystem risk change when land imperviousness increases by 35%?
+How does ecosystem risk change when vegetation productivity decreases by 20%?
+How does ecosystem risk change when vegetation productivity increases by 20%?
+How does ecosystem risk change when vegetation productivity decreases by 25%?
+How does ecosystem risk change when vegetation productivity increases by 25%?
+What happens to ecosystem risk when temperature increases from 0°C to +1°C?
+What happens to ecosystem risk when temperature increases from 0°C to +2°C?
+What happens to ecosystem risk when temperature increases from 0°C to +3°C?
+What happens to ecosystem risk when temperature changes from +1°C to +4°C?
+What happens to ecosystem risk when precipitation changes from 0% to -10%?
+What happens to ecosystem risk when precipitation changes from 0% to -20%?
+What happens to ecosystem risk when precipitation changes from 0% to -30%?
+What happens to ecosystem risk when precipitation changes from -10% to -40%?
+What happens to ecosystem risk when biodiversity decreases from 100% to 90%?
+What happens to ecosystem risk when biodiversity decreases from 100% to 70%?
+What happens to ecosystem risk when biodiversity decreases from 100% to 50%?
+What happens to ecosystem risk when biodiversity increases from 70% to 100%?
+What happens to ecosystem risk when tree cover increases from 30% to 50%?
+What happens to ecosystem risk when tree cover increases from 30% to 70%?
+What happens to ecosystem risk when tree cover decreases from 70% to 30%?
+What happens to ecosystem risk when tree cover decreases from 60% to 20%?
+What happens to ecosystem risk when grassland cover decreases from 80% to 40%?
+What happens to ecosystem risk when grassland cover increases from 40% to 80%?
+What happens to ecosystem risk when evapotranspiration increases by 25%?
+What happens to ecosystem risk when land imperviousness changes from 10% to 30%?

@@ -1,0 +1,49 @@
+Which environmental variables contribute most to ecosystem risk under changing climatic conditions?
+Which environmental pressures are most relevant for ecosystem risk in the Massaciuccoli basin?
+Which environmental conditions are associated with lower ecosystem risk in the Massaciuccoli basin?
+Which environmental variables contribute most to ecosystem risk in the Massaciuccoli basin?
+Which environmental variables should be prioritized to reduce ecosystem risk under climate change?
+Which variables are most important for ecosystem health?
+Which environmental stressors represented in the dataset are most relevant for ecosystem assessment?
+Which environmental variables contribute most to ecosystem health under changing climatic conditions?
+Which environmental variables contribute most to ecosystem health in the Massaciuccoli basin?
+Which environmental pressures are most relevant for ecosystem health in the Massaciuccoli basin?
+Which variables are most important for ecosystem stability?
+Which environmental variables contribute most to ecosystem stability under changing climatic conditions?
+Which environmental variables contribute most to ecosystem stability in the Massaciuccoli basin?
+Which environmental pressures are most relevant for ecosystem stability in the Massaciuccoli basin?
+Which variables are most important for ecosystem resilience?
+Which environmental variables contribute most to ecosystem resilience under changing climatic conditions?
+Which environmental variables contribute most to ecosystem resilience in the Massaciuccoli basin?
+Which environmental pressures are most relevant for ecosystem resilience in the Massaciuccoli basin?
+Which environmental variables contribute most to ecosystem assessment under changing climatic conditions?
+Which environmental variables contribute most to ecosystem assessment in the Massaciuccoli basin?
+Which environmental pressures are most relevant for ecosystem assessment in the Massaciuccoli basin?
+Which variables are most important for ecosystem assessment?
+Which hydrological conditions should be prioritized to reduce ecosystem risk under climate change?
+Which biodiversity-related variables are associated with lower ecosystem risk in the Massaciuccoli basin?
+Which biodiversity-related variables are associated with higher ecosystem risk in the Massaciuccoli basin?
+Which biodiversity-related variables should be prioritized to reduce ecosystem risk under climate change?
+Which vegetation-related variables are associated with lower ecosystem risk in the Massaciuccoli basin?
+Which vegetation-related variables are associated with higher ecosystem risk in the Massaciuccoli basin?
+Which vegetation-related variables should be prioritized to reduce ecosystem risk under climate change?
+Which land-use variables are associated with lower ecosystem risk in the Massaciuccoli basin?
+Which land-use variables are associated with higher ecosystem risk in the Massaciuccoli basin?
+Which land-use variables should be prioritized to reduce ecosystem risk under climate change?
+Which environmental pressures are associated with lower ecosystem risk in the Massaciuccoli basin?
+Which environmental pressures are associated with higher ecosystem risk in the Massaciuccoli basin?
+Which environmental pressures should be prioritized to reduce ecosystem risk under climate change?
+Which environmental stressors are associated with lower ecosystem risk in the Massaciuccoli basin?
+Which environmental stressors are associated with higher ecosystem risk in the Massaciuccoli basin?
+Which environmental stressors should be prioritized to reduce ecosystem risk under climate change?
+Which climate-related variable has the strongest impact on ecosystem risk?
+Is precipitation change strongly associated with ecosystem risk in the Massaciuccoli basin?
+Does precipitation change appear to be a major factor for ecosystem risk in the lake basin?
+Is temperature change strongly associated with ecosystem risk in the Massaciuccoli basin?
+Does temperature change appear to be a major factor for ecosystem risk in the lake basin?
+Is evapotranspiration change strongly associated with ecosystem risk in the Massaciuccoli basin?
+Does evapotranspiration change appear to be a major factor for ecosystem risk in the lake basin?
+Which environmental variables are most strongly associated with ecosystem risk?
+Which variables reduce ecosystem risk the most?
+Which factors increase ecosystem risk the most?
+What variables are most important for ecosystem risk?

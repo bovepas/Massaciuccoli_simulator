@@ -423,13 +423,40 @@ def parse_numeric_modifications(text):
         text
     )
 
-    modification_type = "numeric"
+    # --------------------------------------------------
+    # ABSOLUTE TARGET
+    # e.g. "tree cover increases to 70%"
+    # --------------------------------------------------
 
-    if "%" in text:
+    target_pattern = re.search(
+        r"\b(?:increase|increases|increased|increasing|"
+        r"decrease|decreases|decreased|decreasing|"
+        r"change|changes|changed|changing|"
+        r"rise|rises|rising|"
+        r"drop|drops|dropping)"
+        r"\s+to\s+"
+        r"([+-]?\d+(?:\.\d+)?)"
+        r"\s*(?:%|°c)?\b",
+        text
+    )
 
-        modification_type = (
-            "percentage_change"
+    if target_pattern:
+
+        value = float(
+            target_pattern.group(1)
         )
+
+        modification_type = "absolute_target"
+
+    else:
+
+        modification_type = "numeric"
+
+        if "%" in text:
+
+            modification_type = (
+                "percentage_change"
+            )
 
     print("\n[DEBUG NUMERIC PARSER]")
     print("text:", text)
@@ -539,11 +566,9 @@ def parse_scenario(text):
             m["variable"] == canonical
 
             and m.get("type") in [
-
                 "numeric",
-
-                "percentage_change"
-
+                "percentage_change",
+                "absolute_target"
             ]
 
             for m in modifications

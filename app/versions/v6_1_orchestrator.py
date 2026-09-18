@@ -77,8 +77,8 @@ from tasks.task_importance_compare import handle_importance_compare
 # ROUTER
 # ======================================================
 
-from versions.v6_1_main import route_question
-
+#from versions.v6_1_main import route_question
+from router.semantic_router import route_question
 
 # ======================================================
 # PARSERS

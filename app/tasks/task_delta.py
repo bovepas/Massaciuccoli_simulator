@@ -297,6 +297,18 @@ def handle_delta(
             ] = baseline_value + delta_value
 
         # ------------------------------------------
+        # Absolute target
+        # Example:
+        # tree cover increases to 70%
+        # ------------------------------------------
+
+        elif delta_type == "absolute_target":
+
+            scenario_b[
+                feature
+            ] = delta_value
+
+        # ------------------------------------------
         # Percentage variation
         # Example:
         # biodiversity -30%
@@ -304,36 +316,28 @@ def handle_delta(
 
         else:
 
-                change_variables = {
+            change_variables = {
+                "Relative change in the potential evapotranspiration compared to a recent past",
+                "Cumulative change in precipitation compared to a recent past"
+            }
 
-                        "Relative change in the potential evapotranspiration compared to a recent past",
+            if feature in change_variables:
 
-                        "Cumulative change in precipitation compared to a recent past"
+                scenario_b[
+                    feature
+                ] = baseline_value + delta_value
 
-                }
+            else:
 
-                if feature in change_variables:
-
-                    scenario_b[
-                        feature
-                    ] = baseline_value + delta_value
-
-                else:
-
-                    scenario_b[
-                        feature
-                    ] = (
-
-                        baseline_value
-
-                        * (
-
-                            1
-                            + delta_value / 100
-
-                            )
-
-                        )
+                scenario_b[
+                    feature
+                ] = (
+                    baseline_value
+                    * (
+                        1
+                        + delta_value / 100
+                    )
+                )
 
         v_from = baseline_value
 

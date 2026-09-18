@@ -1,0 +1,108 @@
+Compare a scenario with lower biodiversity against a scenario with increased temperature in terms of ecosystem risk.
+Compare increased temperature and reduced tree cover in terms of ecosystem risk.
+Which contributes more to ecosystem risk: biodiversity or tree cover?
+Which has a stronger effect on ecosystem risk: evapotranspiration increase or precipitation decrease?
+Compare climate stress and biodiversity decline as drivers of ecosystem risk.
+Compare tree-cover restoration and biodiversity conservation as risk mitigation strategies.
+Which intervention would be more effective: increasing tree cover or reducing land-use change?
+Compare hydrological stress and biodiversity stress in terms of ecosystem resilience.
+Compare a scenario with lower biodiversity against a scenario with increased temperature in terms of ecosystem risk.
+If you had to focus on just two factors, would tree cover or precipitation be more important for ecosystem risk?
+Compare increased temperature and reduced tree cover in terms of ecosystem risk.
+Which contributes more to ecosystem risk: biodiversity or tree cover?
+Which has a stronger effect on ecosystem risk: evapotranspiration increase or precipitation decrease?
+Between tree cover and land imperviousness, which one is more important for ecosystem risk?
+Which is more critical for ecosystem risk: tree cover or land imperviousness?
+If we compare tree cover and land imperviousness, which one is more important for the ecosystem?
+When considering possible interventions, would improving tree cover or reducing land imperviousness be more effective in addressing ecosystem risk?
+Between tree cover and land imperviousness, which one seems more critical when assessing the ecosystem?
+Which of these two factors is more critical for ecosystem risk, tree cover or land imperviousness?
+Compare climate stress and biodiversity decline as drivers of ecosystem risk.
+Compare tree-cover restoration and biodiversity conservation as risk mitigation strategies.
+Which intervention would be more effective: increasing tree cover or reducing land-use change?
+Compare hydrological stress and biodiversity stress in terms of ecosystem resilience.
+Which has a greater influence on ecosystem risk: temperature or precipitation?
+Which has a greater influence on ecosystem risk: biodiversity or temperature?
+Which has a greater influence on ecosystem risk: tree cover or precipitation?
+Which has a greater influence on ecosystem risk: temperature or tree cover?
+Which has a greater influence on ecosystem risk: biodiversity or precipitation?
+Which has a greater influence on ecosystem risk: biodiversity or evapotranspiration?
+Which has a greater influence on ecosystem risk: tree cover or evapotranspiration?
+Which environmental variable is more influential for ecosystem risk: temperature or precipitation?
+Which environmental variable is more influential for ecosystem risk: biodiversity or tree cover?
+Which environmental variable is more influential for ecosystem risk: precipitation or tree cover?
+Which environmental variable is more influential for ecosystem risk: temperature or biodiversity?
+Which environmental variable is more influential for ecosystem risk: evapotranspiration or temperature?
+Which environmental variable has a stronger impact on ecosystem risk: temperature or precipitation?
+Which environmental variable has a stronger impact on ecosystem risk: biodiversity or temperature?
+Which environmental variable has a stronger impact on ecosystem risk: tree cover or biodiversity?
+Which environmental variable has a stronger impact on ecosystem risk: precipitation or evapotranspiration?
+Which environmental variable has a stronger effect on ecosystem risk: temperature or tree cover?
+Which environmental variable has a stronger effect on ecosystem risk: biodiversity or precipitation?
+Which contributes more to ecosystem risk, temperature or precipitation?
+Which contributes more to ecosystem risk, biodiversity or temperature?
+Which contributes more to ecosystem risk, tree cover or biodiversity?
+Which contributes more to ecosystem risk, precipitation or tree cover?
+Which contributes more to ecosystem risk, evapotranspiration or temperature?
+Between temperature and precipitation, which is more important for ecosystem risk?
+Between biodiversity and tree cover, which is more important for ecosystem risk?
+Between temperature and biodiversity, which is more important for ecosystem risk?
+Between precipitation and tree cover, which is more important for ecosystem risk?
+Between biodiversity and evapotranspiration, which is more important for ecosystem risk?
+Which of the two has a greater effect on ecosystem risk: temperature or precipitation?
+Which of the two has a greater effect on ecosystem risk: biodiversity or tree cover?
+Which of the two has a greater effect on ecosystem risk: temperature or biodiversity?
+Which of the two has a greater effect on ecosystem risk: precipitation or evapotranspiration?
+Which of these two variables is more important for ecosystem risk: temperature or tree cover?
+Which of these two variables is more important for ecosystem risk: biodiversity or precipitation?
+Which factor has a greater influence on ecosystem risk, temperature or biodiversity?
+Which factor has a greater influence on ecosystem risk, precipitation or tree cover?
+Which factor has a greater influence on ecosystem risk, biodiversity or evapotranspiration?
+Does temperature have a greater influence on ecosystem risk than precipitation?
+Does biodiversity have a greater influence on ecosystem risk than tree cover?
+Does tree cover have a greater influence on ecosystem risk than precipitation?
+Is temperature more influential for ecosystem risk than biodiversity?
+Is biodiversity more influential for ecosystem risk than evapotranspiration?
+Which has a greater influence on ecosystem risk: temperature or precipitation?
+Which has a greater influence on ecosystem risk: biodiversity or temperature?
+Which has a greater influence on ecosystem risk: tree cover or precipitation?
+Which has a greater influence on ecosystem risk: temperature or tree cover?
+Which has a greater influence on ecosystem risk: biodiversity or precipitation?
+Which has a greater influence on ecosystem risk: biodiversity or evapotranspiration?
+Which has a greater influence on ecosystem risk: tree cover or evapotranspiration?
+Which environmental variable is more influential for ecosystem risk: temperature or precipitation?
+Which environmental variable is more influential for ecosystem risk: biodiversity or tree cover?
+Which environmental variable is more influential for ecosystem risk: precipitation or tree cover?
+Which environmental variable is more influential for ecosystem risk: temperature or biodiversity?
+Which environmental variable is more influential for ecosystem risk: evapotranspiration or temperature?
+Which environmental variable has a stronger impact on ecosystem risk: temperature or precipitation?
+Which environmental variable has a stronger impact on ecosystem risk: biodiversity or temperature?
+Which environmental variable has a stronger impact on ecosystem risk: tree cover or biodiversity?
+Which environmental variable has a stronger impact on ecosystem risk: precipitation or evapotranspiration?
+Which environmental variable has a stronger effect on ecosystem risk: temperature or tree cover?
+Which environmental variable has a stronger effect on ecosystem risk: biodiversity or precipitation?
+Which contributes more to ecosystem risk, temperature or precipitation?
+Which contributes more to ecosystem risk, biodiversity or temperature?
+Which contributes more to ecosystem risk, tree cover or biodiversity?
+Which contributes more to ecosystem risk, precipitation or tree cover?
+Which contributes more to ecosystem risk, evapotranspiration or temperature?
+Between temperature and precipitation, which is more important for ecosystem risk?
+Between biodiversity and tree cover, which is more important for ecosystem risk?
+Between temperature and biodiversity, which is more important for ecosystem risk?
+Between precipitation and tree cover, which is more important for ecosystem risk?
+Between biodiversity and evapotranspiration, which is more important for ecosystem risk?
+Which of the two has a greater effect on ecosystem risk: temperature or precipitation?
+Which of the two has a greater effect on ecosystem risk: biodiversity or tree cover?
+Which of the two has a greater effect on ecosystem risk: temperature or biodiversity?
+Which of the two has a greater effect on ecosystem risk: precipitation or evapotranspiration?
+Which of these two variables is more important for ecosystem risk: temperature or tree cover?
+Which of these two variables is more important for ecosystem risk: biodiversity or precipitation?
+Which factor has a greater influence on ecosystem risk, temperature or biodiversity?
+Which factor has a greater influence on ecosystem risk, precipitation or tree cover?
+Which factor has a greater influence on ecosystem risk, biodiversity or evapotranspiration?
+Does temperature have a greater influence on ecosystem risk than precipitation?
+Does biodiversity have a greater influence on ecosystem risk than tree cover?
+Does tree cover have a greater influence on ecosystem risk than precipitation?
+Is temperature more influential for ecosystem risk than biodiversity?
+Is biodiversity more influential for ecosystem risk than evapotranspiration?
+Is precipitation more influential for ecosystem risk than tree cover?
