@@ -185,7 +185,7 @@ def describe_structure(
 # MAIN
 # ======================================================
 
-def handle_enm(question: str):
+def handle_enm(question: str, enm_inputs: dict = None):
 
     print("\n========== ENM TASK START ==========\n")
     print("[DEBUG] Question:", question)
@@ -198,7 +198,15 @@ def handle_enm(question: str):
 
         print("[DEBUG] Running ENM analysis...")
 
-        result = run_enm_analysis(question)
+        if enm_inputs and enm_inputs.get("target_type") == "species":
+            result = run_enm_analysis(
+                question,
+                target=enm_inputs["target"]
+            )
+        else:
+            result = run_enm_analysis(
+                question
+            )
 
         artifacts = result.get(
             "artifacts",

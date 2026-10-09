@@ -88,6 +88,24 @@ from utils.feature_parser import parse_features
 
 from utils.range_parser import parse_range
 
+from extraction.delta.extractor import extract_delta
+from extraction.assessment.extractor import extract_assessment
+from extraction.assessment.bridge import assessment_extraction_to_inputs
+from extraction.comparison.extractor import extract_comparison
+from extraction.comparison.bridge import comparison_extraction_to_inputs
+from extraction.data.extractor import extract_data
+from extraction.data.bridge import data_extraction_to_inputs
+from extraction.dependency.extractor import extract_dependency
+from extraction.dependency.bridge import dependency_extraction_to_inputs
+from utils.feature_mapping import normalize_feature_name
+from extraction.drivers.extractor import extract_drivers
+from extraction.drivers.bridge import drivers_extraction_to_inputs
+from extraction.importance.extractor import extract_importance
+from extraction.importance.bridge import importance_extraction_to_inputs
+from extraction.importance_compare.extractor import extract_importance_compare
+from extraction.enm.extractor import extract_enm
+from extraction.enm.bridge import enm_extraction_to_inputs
+from extraction.importance_compare.bridge import importance_compare_extraction_to_inputs
 
 # ======================================================
 # MODEL + DATA LOADING
@@ -106,6 +124,84 @@ DATA_PATH = os.path.join(
     "massaciuccoli_data.csv"
 )
 
+
+
+
+# ======================================================
+# DELTA EXTRACTION → LEGACY RANGE INFO
+# ======================================================
+
+def _delta_extraction_to_range_info(extraction):
+    """
+    Convert the new DeltaExtraction result into the
+    range_info structure expected by handle_delta().
+
+    - Explicit range:
+        preserves the original from/to values.
+
+    - Implicit delta:
+        converts the extracted change into the
+        baseline_delta structure already supported
+        by handle_delta().
+
+    The semantic variable name returned by the LLM
+    is normalized to the actual dataset feature name.
+    """
+
+    if not extraction:
+        return None
+
+    if not extraction.scenario:
+        return None
+
+    scenario = extraction.scenario[0]
+
+    # --------------------------------------------------
+    # Normalize semantic variable name
+    # --------------------------------------------------
+
+    feature = normalize_feature_name(
+        scenario.variable
+    )
+
+    if not feature:
+        return None
+
+    # --------------------------------------------------
+    # Explicit range
+    # --------------------------------------------------
+
+    if scenario.range is not None:
+
+        return {
+            "feature": feature,
+            "from": scenario.range.from_value,
+            "to": scenario.range.to_value,
+        }
+
+    # --------------------------------------------------
+    # Implicit delta / absolute target
+    # --------------------------------------------------
+
+    if scenario.change is not None:
+
+        if scenario.change_type == "absolute_target":
+
+            return {
+                "feature": feature,
+                "mode": "baseline_delta",
+                "delta": scenario.change.value,
+                "delta_type": "absolute_target",
+            }
+
+        return {
+            "feature": feature,
+            "mode": "baseline_delta",
+            "delta": scenario.change.value,
+            "delta_type": "absolute_delta",
+        }
+
+    return None
 
 # ======================================================
 # LOAD RESOURCES
@@ -226,36 +322,37 @@ def run():
         # ==================================================
 
         parsed = None
-
         features = None
-
         range_info = None
-
+        comparison_inputs = None
+        data_inputs = None
+        dependency_inputs = None
+        drivers_inputs = None
+        importance_inputs = None
+        importance_compare_inputs = None
+        enm_inputs = None
         try:
 
             start_timer("parsing")
 
-            if task_type in [
-                "assessment",
-                "importance",
-                "delta"
-            ]:
+            if task_type == "assessment":
 
                 log_section("PARSING")
 
-                parsed = parse_features(
-
-                    question,
-
-                    return_metadata=True
+                assessment_extraction = extract_assessment(
+                    question
                 )
 
-               
-                
-                features = parsed["features"]
+                assessment_inputs = assessment_extraction_to_inputs(
+                    assessment_extraction
+                )
 
-                range_info = parse_range(
-                    question
+                parsed = assessment_inputs
+                features = assessment_inputs["features"]
+
+                log_data(
+                    "assessment_extraction",
+                    assessment_extraction
                 )
 
                 log_data(
@@ -264,10 +361,188 @@ def run():
                 )
 
                 log_data(
+                    "qualitative_changes",
+                    assessment_inputs["qualitative_changes"]
+                )
+
+
+            elif task_type == "importance":
+
+                log_section("PARSING")
+
+                importance_extraction = extract_importance(
+                    question
+                )
+
+                importance_inputs = importance_extraction_to_inputs(
+                    importance_extraction
+                )
+
+                parsed = importance_extraction
+                features = None
+                range_info = None
+
+                log_data(
+                    "importance_extraction",
+                    importance_extraction
+                )
+
+                log_data(
+                    "importance_inputs",
+                    importance_inputs
+                )
+
+
+            elif task_type == "delta":
+
+                log_section("PARSING")
+
+                delta_extraction = extract_delta(
+                    question
+                )
+
+                range_info = _delta_extraction_to_range_info(
+                    delta_extraction
+                )
+
+                # Temporary compatibility layer for handle_delta().
+                # The old parser remains untouched.
+                parsed = None
+                features = None
+
+                log_data(
+                    "delta_extraction",
+                    delta_extraction
+                )
+
+                log_data(
                     "range",
                     range_info
                 )
+            elif task_type == "comparison":
 
+                log_section("PARSING")
+
+                comparison_extraction = extract_comparison(
+                    question
+                )
+
+                comparison_inputs = comparison_extraction_to_inputs(
+                    comparison_extraction
+                )
+
+                parsed = comparison_extraction
+                features = None
+
+                log_data(
+                    "comparison_extraction",
+                    comparison_extraction
+                )
+
+                log_data(
+                    "comparison_inputs",
+                    comparison_inputs
+                )
+            elif task_type == "data":
+
+                log_section("PARSING")
+
+                data_extraction = extract_data(
+                    question
+                )
+
+                data_inputs = data_extraction_to_inputs(
+                    data_extraction
+                )
+
+                parsed = data_extraction
+                features = None
+
+                log_data(
+                    "data_extraction",
+                    data_extraction
+                )
+
+                log_data(
+                    "data_inputs",
+                    data_inputs
+                )
+            elif task_type == "dependency":
+
+                log_section("PARSING")
+
+                dependency_extraction = extract_dependency(
+                    question
+                )
+
+                dependency_inputs = (
+                    dependency_extraction_to_inputs(
+                        dependency_extraction
+                    )
+                )
+
+                parsed = dependency_extraction
+                features = None
+
+                log_data(
+                    "dependency_extraction",
+                    dependency_extraction
+                )
+
+                log_data(
+                    "dependency_inputs",
+                    dependency_inputs
+                )
+            elif task_type == "drivers":
+                log_section("PARSING")
+                drivers_extraction = extract_drivers(question)
+                drivers_inputs = drivers_extraction_to_inputs(
+                    drivers_extraction
+                )
+                parsed = drivers_extraction
+                features = None
+                log_data("drivers_extraction", drivers_extraction)
+                log_data("drivers_inputs", drivers_inputs)
+
+            elif task_type == "importance_compare":
+
+                extraction = extract_importance_compare(
+                    question
+                )
+
+                importance_compare_inputs = (
+                    importance_compare_extraction_to_inputs(
+                        extraction
+                    )
+                )
+            
+            
+            elif task_type == "enm":
+
+                log_section("PARSING")
+
+                enm_extraction = extract_enm(
+                    question
+                )
+
+                enm_inputs = enm_extraction_to_inputs(
+                    enm_extraction
+                )
+
+                parsed = enm_extraction
+                features = None
+
+                log_data(
+                    "enm_extraction",
+                    enm_extraction
+                )
+
+                log_data(
+                    "enm_inputs",
+                    enm_inputs
+                )
+
+            
             else:
 
                 log_section("PARSING")
@@ -346,9 +621,9 @@ def run():
 
                     dataset=dataset,
 
-                    top_k=parse_top_k(
-                        question
-                    )
+                    top_k=importance_inputs["top_k"],
+
+                    mode=importance_inputs["focus"]
                 )
 
             # --------------------------------------------------
@@ -378,7 +653,8 @@ def run():
 
                 result = handle_dependency(
                     question,
-                    route
+                    route,
+                    dependency_inputs=dependency_inputs
                 )
 
             # --------------------------------------------------
@@ -393,7 +669,9 @@ def run():
 
                     model,
 
-                    dataset
+                    dataset,
+        
+                    comparison_inputs=comparison_inputs
                 )
 
             # --------------------------------------------------
@@ -406,7 +684,8 @@ def run():
 
                     question,
 
-                    dataset=dataset
+                    dataset=dataset,
+                    data_inputs=data_inputs
                 )
 
             # --------------------------------------------------
@@ -416,7 +695,8 @@ def run():
             elif task_type == "drivers":
 
                 result = handle_drivers(
-                    question
+                    question,
+                    drivers_inputs=drivers_inputs
                 )
             # --------------------------------------------------
             # ENM
@@ -425,7 +705,8 @@ def run():
             elif task_type == "enm":
 
                 result = handle_enm(
-                    question
+                    question,
+                    enm_inputs=enm_inputs
                 )
             # --------------------------------------------------
             # IMPORTANCE COMPARE
@@ -439,7 +720,9 @@ def run():
 
                     model=model,
 
-                    dataset=dataset
+                    dataset=dataset,
+
+                    importance_compare_inputs=importance_compare_inputs
                 )   
                 
             # --------------------------------------------------

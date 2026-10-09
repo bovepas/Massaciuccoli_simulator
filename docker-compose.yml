@@ -37,6 +37,8 @@ services:
 
     restart: unless-stopped
 
+    gpus: all
+
     healthcheck:
       disable: true
 

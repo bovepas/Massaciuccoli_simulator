@@ -57,30 +57,35 @@ def classify_strength(corr):
 # 🔥 UPDATED DRIVER FORMAT (SEMANTIC FIX)
 # ======================================================
 
-def format_driver(d, target, goal):
+def format_driver(d, target, direction):
     feature = d["feature"]
     strength = d["strength"]
-    direction = d["direction"]
+    correlation_direction = d["direction"]
 
-    # 👉 caso biodiversità → linguaggio naturale "loss"
-    if "species" in target.lower() and goal == "decrease":
+    # Caso biodiversità → linguaggio naturale
+    if "species" in target.lower() and direction == "decrease":
         return f"{feature} (associated with biodiversity decline, {strength})"
 
-    if "species" in target.lower() and goal == "increase":
+    if "species" in target.lower() and direction == "increase":
         return f"{feature} (associated with biodiversity increase, {strength})"
 
-    # 👉 fallback generico
-    return f"{feature} ({direction}, {strength} influence)"
+    # Fallback generico
+    return f"{feature} ({correlation_direction}, {strength} influence)"
 
 
-def handle_drivers(question: str):
+def handle_drivers(question: str, drivers_inputs=None):
 
     print("\n========== DRIVERS TASK START ==========")
 
     df = load_data()
 
-    target_raw = parse_drivers_target(question)
-    target = normalize_feature_name(target_raw) if target_raw else None
+    if drivers_inputs is not None:
+        target = drivers_inputs.get("target")
+        direction = drivers_inputs.get("direction")
+    else:
+        target_raw = parse_drivers_target(question)
+        target = normalize_feature_name(target_raw) if target_raw else None
+        direction = parse_drivers_goal(question)
 
     print("[DEBUG] Target:", target)
 
@@ -92,8 +97,7 @@ def handle_drivers(question: str):
             "interpretation": "Target variable not found in dataset."
         }
 
-    goal = parse_drivers_goal(question)
-    print("[DEBUG] Goal:", goal)
+    print("[DEBUG] Direction:", direction)
 
     results = []
 
@@ -122,11 +126,10 @@ def handle_drivers(question: str):
             continue
 
     # 🔥 GOAL FILTER
-    if goal == "decrease":
-        results = [r for r in results if r["correlation"] < 0]
-
-    elif goal == "increase":
-        results = [r for r in results if r["correlation"] > 0]
+    # 🔥 DIRECTION
+    # La direction descrive la richiesta dell'utente,
+    # non il segno della correlazione.
+    # Le correlazioni vengono mantenute entrambe.
 
     # 🔥 SORT
     results = sorted(results, key=lambda x: x["abs_corr"], reverse=True)
@@ -135,12 +138,13 @@ def handle_drivers(question: str):
     print("[DEBUG] Top drivers:", [d["feature"] for d in top])
 
     # 🔥 UPDATED DRIVER OUTPUT
-    drivers = [format_driver(d, target, goal) for d in top]
+    drivers = [format_driver(d, target, direction) for d in top]
 
     # 🔥 SUMMARY
-    if goal == "decrease" and "species" in target.lower():
+    # 🔥 SUMMARY
+    if direction == "decrease" and "species" in target.lower():
         summary = "Drivers of biodiversity degradation"
-    elif goal == "increase" and "species" in target.lower():
+    elif direction == "increase" and "species" in target.lower():
         summary = "Drivers of biodiversity increase"
     else:
         summary = f"Drivers of {target}"

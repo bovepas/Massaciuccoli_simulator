@@ -1,0 +1,40 @@
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La densità della copertura arborea cambia dal 40% al 20%.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La presenza di praterie passa dal 30% al 70%.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("L area con terreno impermeabilizzato aumenta dal 20% al 40%.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La temperatura media passa da 15°C a 18°C.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La variazione della temperatura media passa da +2°C a +5°C.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La temperatura media diminuisce da 20°C a 16°C.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La densità della copertura arborea diminuisce del 20%.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La temperatura media aumenta di 3°C.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La precipitazione cumulativa diminuisce del 15%.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("Se la copertura arborea scende dal 70% al 30%, quale sarà l effetto sul rischio ecologico?").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("Consideriamo uno scenario in cui la temperatura media aumenta da 12°C a 17°C.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("Supponiamo che la superficie occupata dalle praterie passi dal 50% al 25%.").model_dump_json(indent=2))'
+---------
+---------
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La copertura arborea varia tra il 20% e il 40%.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La temperatura media varia fra 18°C e 15°C.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La copertura arborea passa dal 20,5% al 35,5%.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La temperatura media passa da 15,5°C a 18,2°C.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La copertura arborea passa dal 20 al 40%.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La temperatura media passa da 15 a 18.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La variazione della temperatura media passa da -2°C a +3°C.").model_dump_json(indent=2))'
+
+python -c 'from extraction.delta.extractor import extract_delta; print(extract_delta("La variazione della temperatura media diminuisce da +5°C a +2°C.").model_dump_json(indent=2))'

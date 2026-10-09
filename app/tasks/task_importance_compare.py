@@ -168,7 +168,8 @@ def compute_entity_score(
 def handle_importance_compare(
     question,
     model=None,
-    dataset=None
+    dataset=None,
+    importance_compare_inputs=None
 ):
 
     print(
@@ -200,37 +201,41 @@ def handle_importance_compare(
     # PARSER
     # --------------------------------------------------
 
-    parsed = parse_importance_compare(
-        question
-    )
+    if importance_compare_inputs is not None:
 
-    print("\n[DEBUG] Parsed:")
-    print(parsed)
+        parsed = importance_compare_inputs
 
-    if not parsed:
+        feature_a = parsed["entity_a"]
+        feature_b = parsed["entity_b"]
 
-        return {
+    else:
 
-            "summary":
-                "Comparison not recognized",
+        parsed = parse_importance_compare(
+            question
+        )
 
-            "data":
-                {},
+        print("\n[DEBUG] Parsed:")
+        print(parsed)
 
-            "drivers":
-                [],
+        if not parsed:
+            return {
+                "summary":
+                    "Comparison not recognized",
+                "data":
+                    {},
+                "drivers":
+                    [],
+                "interpretation":
+                    "Could not identify the variables to compare."
+            }
 
-            "interpretation":
-                "Could not identify the variables to compare."
-        }
+        feature_a = normalize_feature_name(
+            parsed["entity_a"]
+        )
 
-    feature_a = normalize_feature_name(
-        parsed["entity_a"]
-    )
-
-    feature_b = normalize_feature_name(
-        parsed["entity_b"]
-    )
+        feature_b = normalize_feature_name(
+            parsed["entity_b"]
+        )
 
     print("\n[DEBUG] Normalized features:")
     print("entity_a =", parsed["entity_a"])

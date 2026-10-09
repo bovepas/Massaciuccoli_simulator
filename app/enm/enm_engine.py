@@ -1059,11 +1059,13 @@ def compare_scenarios(
 # PUBLIC API
 # ======================================================
 
-def run_enm_analysis(question: str):
 
-    species, method = resolve_species(
-        question
-    )
+def run_enm_analysis(question: str, target: str = None):
+
+    if target:
+        species, method = resolve_species(target)
+    else:
+        species, method = resolve_species(question)
 
     scenario = parse_scenario(question)
 
@@ -1073,20 +1075,17 @@ def run_enm_analysis(question: str):
     print(scenario)
 
     if not species:
-
         raise ValueError(
             "Could not resolve species name"
         )
 
     if method == "fuzzy":
-
         print(
             f"⚠️ Using closest "
             f"dataset match: {species}"
         )
 
     if method == "gbif":
-
         print(
             f"⚠️ Using GBIF "
             f"match: {species}"
@@ -1097,7 +1096,6 @@ def run_enm_analysis(question: str):
     # --------------------------------------------------
 
     if not scenario["future"]:
-
         result = run_single_enm(
             species,
             method,
@@ -1109,7 +1107,6 @@ def run_enm_analysis(question: str):
     # --------------------------------------------------
 
     else:
-
         print(
             "\n[ENM] Running baseline "
             "scenario..."
@@ -1137,10 +1134,7 @@ def run_enm_analysis(question: str):
             future_result
         )
 
-        print(
-            "\n[COMPARISON]"
-        )
-
+        print("\n[COMPARISON]")
         print(comparison)
 
         result = future_result
@@ -1150,7 +1144,6 @@ def run_enm_analysis(question: str):
     # --------------------------------------------------
 
     result["scenario"] = scenario
-
     result["comparison"] = comparison
 
     return result

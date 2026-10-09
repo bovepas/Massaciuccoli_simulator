@@ -108,6 +108,32 @@ def build_context(retrieved):
 # ======================================================
 # COMPARISON REPORT
 # ======================================================
+def _get_modification_value(mod):
+    """
+    Extract the numeric modification value from the
+    normalized scenario representation.
+
+    Supported formats:
+    - float/int: direct delta
+    - dict with 'value': percentage/target/state representation
+    """
+
+    if isinstance(mod, (int, float)):
+        return float(mod)
+
+    if isinstance(mod, dict):
+        value = mod.get("value")
+
+        if value is None:
+            raise ValueError(
+                f"Invalid modification structure: {mod}"
+            )
+
+        return float(value)
+
+    raise TypeError(
+        f"Unsupported modification type: {type(mod)}"
+    )
 
 def build_comparison_report(
     scenario_a,
@@ -134,15 +160,17 @@ def build_comparison_report(
 
     for feature, mod in scenario_a["requested_modifications"].items():
 
+        value = _get_modification_value(mod)
+
         direction = (
             "Increase"
-            if mod["value"] >= 0
+            if value >= 0
             else "Reduce"
         )
 
         report.append(
             f"• {direction} {feature} by "
-            f"{abs(mod['value']):.1f}%"
+            f"{abs(value):.1f}%"
         )
 
     report.append("")
@@ -194,15 +222,17 @@ def build_comparison_report(
 
     for feature, mod in scenario_b["requested_modifications"].items():
 
+        value = _get_modification_value(mod)
+
         direction = (
             "Increase"
-            if mod["value"] >= 0
+            if value >= 0
             else "Reduce"
         )
 
         report.append(
             f"• {direction} {feature} by "
-            f"{abs(mod['value']):.1f}%"
+            f"{abs(value):.1f}%"
         )
 
     report.append("")
@@ -387,7 +417,7 @@ def build_transition_query(
 
             classify_transition(
                 feature,
-                mod["value"]
+                _get_modification_value(mod)
             )
 
         )
@@ -402,7 +432,7 @@ def build_transition_query(
 
             classify_transition(
                 feature,
-                mod["value"]
+                _get_modification_value(mod)
             )
 
         )

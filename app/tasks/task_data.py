@@ -226,8 +226,8 @@ def build_system_narrative(baseline):
 # MAIN
 # ======================================================
 
-def handle_data(question, dataset=None):
-
+def handle_data(question, dataset=None, data_inputs=None):
+    
     print("\n========== DATA TASK START ==========")
     print("[DATA] Loading live data...")
 
@@ -241,7 +241,32 @@ def handle_data(question, dataset=None):
 
     baseline = compute_baseline(dataset)
 
-    feature = extract_feature_from_question(question, baseline)
+    # ======================================================
+    # NEW EXTRACTION PATH
+    # ======================================================
+
+    if data_inputs is not None:
+
+        variables = data_inputs.get("variables", [])
+
+        if variables:
+            feature = variables[0]
+            print(
+                f"[DATA] Using extracted variable: {feature}"
+            )
+        else:
+            feature = None
+
+    # ======================================================
+    # LEGACY EXTRACTION FALLBACK
+    # ======================================================
+
+    else:
+
+        feature = extract_feature_from_question(
+            question,
+            baseline
+        )
 
     # ======================================================
     # SYSTEM REQUEST

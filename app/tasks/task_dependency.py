@@ -351,7 +351,7 @@ def aggregate_dependency_results(results):
 # MAIN
 # ======================================================
 
-def handle_dependency(question, route):
+def handle_dependency(question, route, dependency_inputs=None):
 
     print("\n========== DEPENDENCY TASK START ==========")
     print("# USING HYBRID DEPENDENCY TASK")
@@ -360,12 +360,22 @@ def handle_dependency(question, route):
     # PARSE
     # --------------------------------------------------
 
-    parsed = parse_dependency(question)
+    if dependency_inputs is not None:
 
-    source = parsed.get("source")
-    target = parsed.get("target")
-    target_raw = parsed.get("target_raw")
-    delta = parsed.get("delta")
+        source = dependency_inputs.get("driver")
+        target = dependency_inputs.get("target")
+
+        target_raw = target
+        delta = None
+
+    else:
+
+        parsed = parse_dependency(question)
+
+        source = parsed.get("source")
+        target = parsed.get("target")
+        target_raw = parsed.get("target_raw")
+        delta = parsed.get("delta")
 
     # --------------------------------------------------
     # ABSTRACT TARGET

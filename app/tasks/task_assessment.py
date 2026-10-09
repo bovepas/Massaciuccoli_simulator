@@ -268,7 +268,8 @@ def handle_assessment(
 
     df_scenario = build_input_df(
         scenario_values,
-        dataset
+        dataset,
+        interpret_percentages=True
     )
 
     scenario_risk = float(
@@ -377,7 +378,8 @@ def handle_assessment(
             primary_drivers=primary_drivers,
             secondary_responses=secondary_drivers,
             risk_delta=risk_delta,
-            features=modified_features        )
+            features=modified_features
+        )
 
     except Exception as e:
 
