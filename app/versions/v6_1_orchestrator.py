@@ -87,7 +87,7 @@ from router.semantic_router import route_question
 from utils.feature_parser import parse_features
 
 from utils.range_parser import parse_range
-
+from utils.model_input_builder import compute_feature_statistics
 from extraction.delta.extractor import extract_delta
 from extraction.assessment.extractor import extract_assessment
 from extraction.assessment.bridge import assessment_extraction_to_inputs
@@ -194,11 +194,20 @@ def _delta_extraction_to_range_info(extraction):
                 "delta_type": "absolute_target",
             }
 
+        if scenario.change.unit == "percent":
+            delta_type = "percentage_change"
+        elif scenario.change.unit == "degC":
+            delta_type = "absolute_delta"
+        else:
+            raise ValueError(
+                f"Unsupported delta unit: {scenario.change.unit}"
+            )
+
         return {
             "feature": feature,
             "mode": "baseline_delta",
             "delta": scenario.change.value,
-            "delta_type": "absolute_delta",
+            "delta_type": delta_type,
         }
 
     return None
@@ -427,8 +436,11 @@ def run():
                     question
                 )
 
+                feature_stats = compute_feature_statistics(dataset)
+
                 comparison_inputs = comparison_extraction_to_inputs(
-                    comparison_extraction
+                    comparison_extraction,
+                    feature_stats=feature_stats,
                 )
 
                 parsed = comparison_extraction

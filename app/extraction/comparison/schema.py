@@ -1,5 +1,5 @@
 from typing import List, Literal, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ComparisonModification(BaseModel):
@@ -33,6 +33,23 @@ class ComparisonModification(BaseModel):
         "count",
         "unknown",
     ]] = None
+
+    
+    @field_validator("unit", mode="before")
+    @classmethod
+    def normalize_unit(cls, value):
+        if not isinstance(value, str):
+            return value
+
+        normalized = {
+            "%": "percent",
+            "percentage": "percent",
+            "°C": "degC",
+            "°c": "degC",
+            "celsius": "degC",
+        }
+
+        return normalized.get(value.strip(), value.strip())
 
     from_value: Optional[float] = None
 

@@ -1,0 +1,161 @@
+Wed Oct 14 12:22:11 UTC 2026
+MaxEnt version 3.4.4
+Checking header of /app/enm/env_layers_2050_rcp85/Conductivity.asc
+Checking header of /app/enm/env_layers_2050_rcp85/Precipitation.asc
+Checking header of /app/enm/env_layers_2050_rcp85/Temperature.asc
+Reading samples from Presence_Actitis_hypoleucos.csv
+Read samples: max memory 1073741824, total allocated 262144000, free 242719896, used 19424104, increment 19424104
+Extractor: max memory 1073741824, total allocated 262144000, free 242229344, used 19914656, increment 490552
+Extracting random background and sample data
+Time since start: 1.001
+57224 points with values for all grids
+Adding samples to background in feature space
+Command line used:  environmentallayers=/app/enm/env_layers_2050_rcp85 samplesfile=/app/enm/presence/uccelli/Presence_Actitis_hypoleucos.csv outputdirectory=/app/enm/output/Actitis_hypoleucos autorun nowarnings responsecurves=true jackknife=true
+Command line to repeat: java density.MaxEnt nowarnings noprefixes responsecurves jackknife outputdirectory=/app/enm/output/Actitis_hypoleucos samplesfile=/app/enm/presence/uccelli/Presence_Actitis_hypoleucos.csv environmentallayers=/app/enm/env_layers_2050_rcp85 nowarnings autorun
+Species: Actitis_hypoleucos
+Layers: Conductivity Precipitation Temperature
+Layertypes: Continuous Continuous Continuous
+responsecurves: true
+jackknife: true
+outputdirectory: /app/enm/output/Actitis_hypoleucos
+samplesfile: /app/enm/presence/uccelli/Presence_Actitis_hypoleucos.csv
+environmentallayers: /app/enm/env_layers_2050_rcp85
+warnings: false
+autorun: true
+
+getSamples: max memory 1073741824, total allocated 262144000, free 237493408, used 24650592, increment 4735936
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 254512160, used 7631840, increment -17018752
+Actitis_hypoleucos: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 254201008, used 7942992, increment 311152
+linearPredictor: max memory 1073741824, total allocated 262144000, free 254120944, used 8023056, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 254120944, used 8023056, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 254120944, used 8023056, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.048000 loss = 9.021239
+Resulting gain: 0.1897009669052796
+Projecting...
+Writing file /app/enm/output/Actitis_hypoleucos/Actitis_hypoleucos.asc
+Writing /app/enm/output/Actitis_hypoleucos/plots/Actitis_hypoleucos.png
+Actitis_hypoleucos response curves
+Time since start: 2.252
+Response curve: only Conductivity
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 220924864, used 41219136, increment 33196080
+Actitis_hypoleucos Conductivity: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 220844800, used 41299200, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 220764736, used 41379264, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 220764736, used 41379264, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 220764736, used 41379264, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.048000 loss = 9.119049
+Resulting gain: 0.09189070616864647
+Actitis_hypoleucos response curves
+Response curve: only Precipitation
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 218408120, used 43735880, increment 2356616
+Actitis_hypoleucos Precipitation: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 218328056, used 43815944, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 218247992, used 43896008, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 218247992, used 43896008, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 218247992, used 43896008, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.016000 loss = 9.066024
+Resulting gain: 0.14491639286654312
+Actitis_hypoleucos response curves
+Response curve: only Temperature
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 215422960, used 46721040, increment 2825032
+Actitis_hypoleucos Temperature: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 215157696, used 46986304, increment 265264
+linearPredictor: max memory 1073741824, total allocated 262144000, free 215157696, used 46986304, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 215157696, used 46986304, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 215157696, used 46986304, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.014000 loss = 9.207839
+Resulting gain: 0.0031008276993897965
+Actitis_hypoleucos response curves
+Jackknife: leave Conductivity out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 200397568, used 61746432, increment 14760128
+Actitis_hypoleucos Conductivity: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 200317504, used 61826496, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 200237440, used 61906560, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 200237440, used 61906560, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 200237440, used 61906560, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.017000 loss = 9.066026
+Jackknife: leave Precipitation out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 199429056, used 62714944, increment 808384
+Actitis_hypoleucos Precipitation: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 199348992, used 62795008, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 199268928, used 62875072, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 199268928, used 62875072, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 199268928, used 62875072, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.020000 loss = 9.112783
+Jackknife: leave Temperature out
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 198040960, used 64103040, increment 1227968
+Actitis_hypoleucos Temperature: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 197960896, used 64183104, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 197880832, used 64263168, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197880832, used 64263168, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 197880832, used 64263168, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.018000 loss = 9.021239
+Jackknife: only Conductivity
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 197331904, used 64812096, increment 548928
+Actitis_hypoleucos Conductivity: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 197251840, used 64892160, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 197171776, used 64972224, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197171776, used 64972224, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 197171776, used 64972224, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.026000 loss = 9.119049
+Res.gain: 0.09189070616864647
+Jackknife: only Precipitation
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 1227960
+Actitis_hypoleucos Precipitation: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 0
+linearPredictor: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.015000 loss = 9.066024
+Res.gain: 0.14491639286654312
+Jackknife: only Temperature
+Making features
+makeFeatures: max memory 1073741824, total allocated 262144000, free 195444160, used 66699840, increment 499656
+Actitis_hypoleucos Temperature: 
+Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
+7 samples
+Density: max memory 1073741824, total allocated 262144000, free 195364096, used 66779904, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 195284032, used 66859968, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 195284032, used 66859968, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 195284032, used 66859968, increment 0
+Initial loss: 9.21094019204815
+60: time = 0.013000 loss = 9.207839
+Res.gain: 0.0031008276993897965
+Ending

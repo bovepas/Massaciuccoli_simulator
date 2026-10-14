@@ -22,7 +22,7 @@ from utils.scenario_parser import parse_single_scenario  # ✅ FIX IMPORT
 REQUIRED_DEFAULTS = {
     "Land use and cover": "rural_natural",
     "Change in land use and cover in the past decade": "1",
-    "Change in grassland presence  in the past decade": "0",
+    "Change in grassland presence in the past decade": "0",
     "Change in tree cover density in the past decade": "0",
 }
 
@@ -44,7 +44,7 @@ def build_realistic_baseline(dataset):
 
     baseline["Land use and cover"] = "rural_natural"
     baseline["Change in land use and cover in the past decade"] = "1"
-    baseline["Change in grassland presence  in the past decade"] = "0"
+    baseline["Change in grassland presence in the past decade"] = "0"
     baseline["Change in tree cover density in the past decade"] = "0"
 
     return baseline

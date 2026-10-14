@@ -204,7 +204,41 @@ scenario_b:
 
 Each modification belongs ONLY to the scenario whose text explicitly contains it.
 
+==================================================
+ADDITIONAL MODIFICATIONS BETWEEN SCENARIOS
+==================================================
 
+When the second scenario repeats the first scenario's conditions
+and then introduces an additional modification using words such as
+"but", "while", "with the addition of", or "in addition":
+
+1. Include the explicitly shared modifications in both scenarios.
+2. Include the additional modification ONLY in scenario_b.
+3. Never copy the additional modification into scenario_a.
+4. Preserve qualitative modifications as qualitative.
+5. Do not invent numerical magnitudes.
+
+Example:
+
+Question:
+"Compare a scenario with temperature +2°C and a scenario
+with temperature +2°C but increased tree cover."
+
+Correct extraction:
+
+scenario_a:
+- temperature +2°C
+
+scenario_b:
+- temperature +2°C
+- tree_cover, qualitative, direction = increase,
+  value = null
+
+The word "but" introduces an additional condition in scenario_b.
+It does not make that condition part of scenario_a.
+
+This rule applies only when the wording explicitly establishes
+the additional modification as belonging to the second scenario.
 ==================================================
 5. NO INVENTION / NO CROSS-CONTAMINATION
 ==================================================

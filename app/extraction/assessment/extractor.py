@@ -37,6 +37,52 @@ def _extract_json(text: str) -> dict:
         ) from exc
 
 
+def _infer_qualitative_direction(expression: str):
+    """
+    Infer direction only from explicit directional wording
+    in the original qualitative expression.
+    """
+    text = expression.lower()
+
+    decrease_patterns = (
+        r"\bdecreas(?:e|es|ed|ing)\b",
+        r"\breduc(?:e|es|ed|ing)\b",
+        r"\bdeclin(?:e|es|ed|ing)\b",
+        r"\bfall(?:s|ing)?\b",
+        r"\bfell\b",
+        r"\blower(?:s|ed|ing)?\b",
+        r"\bless\b",
+    )
+
+    increase_patterns = (
+        r"\bincreas(?:e|es|ed|ing)\b",
+        r"\bgrow(?:s|ing)?\b",
+        r"\bgrowing\b",
+        r"\bris(?:e|es|en|ing)\b",
+        r"\brose\b",
+        r"\bhigher\b",
+        r"\bmore\b",
+        r"\brais(?:e|es|ed|ing)\b",
+    )
+
+    has_decrease = any(
+        re.search(pattern, text)
+        for pattern in decrease_patterns
+    )
+    has_increase = any(
+        re.search(pattern, text)
+        for pattern in increase_patterns
+    )
+
+    # Avoid guessing when the wording is ambiguous.
+    if has_increase and not has_decrease:
+        return "increase"
+
+    if has_decrease and not has_increase:
+        return "decrease"
+
+    return None
+
 def _normalize_assessment_data(data: dict) -> dict:
     """
     Apply deterministic structural normalization to the raw LLM output.
@@ -51,6 +97,20 @@ def _normalize_assessment_data(data: dict) -> dict:
     for modification in scenario:
         expression = modification.get("original_expression", "")
         expression_lower = expression.lower()
+        
+        # Recover an omitted direction for qualitative modifications
+        # using only the explicit wording in the original expression.
+        if modification.get("modification_type") == "qualitative":
+            direction = modification.get("direction")
+
+            if direction not in ("increase", "decrease", "change"):
+                inferred_direction = _infer_qualitative_direction(
+                    expression
+                )
+
+                if inferred_direction is not None:
+                    modification["direction"] = inferred_direction
+
 
         # Explicit percentage expressions
         if "%" in expression:

@@ -72,7 +72,7 @@ def get_base_scenario():
         'Presence of grassland': 1,
         'Land use and cover': 'rural_natural',
         'Change in land use and cover in the past decade': '1',
-        'Change in grassland presence  in the past decade': '0',
+        'Change in grassland presence in the past decade': '0',
         'Change in tree cover density in the past decade': '0'
     }
 

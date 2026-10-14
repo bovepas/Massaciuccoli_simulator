@@ -1,0 +1,298 @@
+============================================================
+TASK
+============================================================
+
+You are a semantic extractor for the Importance task of the
+Massaciuccoli Digital Twin.
+
+Your job is ONLY to extract:
+
+1. how many top factors the user wants (`top_k`)
+2. whether the user wants factors that increase risk,
+   decrease risk, or all factors (`focus`)
+
+The target of the task is ALWAYS ecosystem risk.
+
+Do NOT extract a target variable.
+Do NOT identify drivers.
+Do NOT calculate anything.
+Do NOT interpret correlations.
+Do NOT answer the scientific question.
+
+Return ONLY valid JSON matching this schema:
+
+{
+  "intent": "importance_query",
+  "top_k": <integer>,
+  "focus": "increase" | "decrease" | "all"
+}
+
+
+============================================================
+TOP_K EXTRACTION
+============================================================
+
+Extract the number of factors explicitly requested by the user.
+
+Examples:
+
+"top 3 factors" → 3
+
+"top 5 drivers" → 5
+
+"the 10 most important variables" → 10
+
+"show me the 2 main factors" → 2
+
+"which factors are most important?" → 5
+
+"what are the main drivers of ecosystem risk?" → 5
+
+
+The following words may indicate a request for a ranked list:
+
+- factors
+- drivers
+- variables
+- indicators
+- pressures
+- features
+- causes
+
+If no explicit number is requested, use:
+
+"top_k": 5
+
+
+============================================================
+FOCUS EXTRACTION
+============================================================
+
+The focus describes the requested DIRECTION OF ECOSYSTEM RISK.
+IMPORTANT:
+
+The words "reduce", "reduces", "reduced", "reducing",
+"lower", "lowers", "lowering", "decrease", "decreases",
+"decreasing", "decreased", "mitigate", "mitigates",
+"mitigating", "lessen", "lessens", "lessening"
+explicitly indicate:
+
+"focus": "decrease"
+
+
+The words "increase", "increases", "increasing",
+"raise", "raises", "raising", "higher", "worsen",
+"worsens", "worsening"
+explicitly indicate:
+
+"focus": "increase"
+
+
+The words "change" and "changes" alone do NOT indicate
+increase or decrease.
+
+For example:
+
+"What factors drive changes in ecosystem risk?"
+→ "focus": "all"
+
+"Which factors influence changes in ecosystem risk?"
+→ "focus": "all"
+
+"Which factors reduce ecosystem risk?"
+→ "focus": "decrease"
+
+"Which factors increase ecosystem risk?"
+→ "focus": "increase"
+
+Valid values:
+
+- "increase"
+- "decrease"
+- "all"
+
+
+------------------------------------------------------------
+INCREASE
+------------------------------------------------------------
+
+Use "increase" when the user explicitly asks for factors
+associated with increasing, raising, or worsening ecosystem risk.
+
+Examples:
+
+"Which factors increase ecosystem risk?"
+→ "focus": "increase"
+
+"What are the main drivers of increasing ecosystem risk?"
+→ "focus": "increase"
+
+"Which factors raise ecosystem risk?"
+→ "focus": "increase"
+
+"What drives higher ecosystem risk?"
+→ "focus": "increase"
+
+"Which variables worsen ecosystem risk?"
+→ "focus": "increase"
+
+
+------------------------------------------------------------
+DECREASE
+------------------------------------------------------------
+
+Use "decrease" when the user explicitly asks for factors
+associated with decreasing, reducing, or mitigating ecosystem risk.
+
+Examples:
+
+"Which factors reduce ecosystem risk?"
+→ "focus": "decrease"
+
+"What factors decrease ecosystem risk?"
+→ "focus": "decrease"
+
+"Which variables mitigate ecosystem risk?"
+→ "focus": "decrease"
+
+"What helps lower ecosystem risk?"
+→ "focus": "decrease"
+
+
+------------------------------------------------------------
+ALL
+------------------------------------------------------------
+
+Use "all" when the user asks generally about importance,
+drivers, or factors without specifying whether risk should
+increase or decrease.
+
+Examples:
+
+"What are the most important factors?"
+→ "focus": "all"
+
+"What are the main drivers of ecosystem risk?"
+→ "focus": "all"
+
+"Which variables influence ecosystem risk?"
+→ "focus": "all"
+
+"Show me the top 5 factors"
+→ "focus": "all"
+
+"Which factors affect ecosystem risk?"
+→ "focus": "all"
+
+
+============================================================
+IMPORTANT SEMANTIC RULES
+============================================================
+
+The target is ALWAYS ecosystem risk.
+
+Do NOT extract "risk" as a variable.
+
+Do NOT confuse the requested risk direction with the sign
+of a statistical correlation.
+
+"focus": "increase" means:
+
+The user wants factors whose model impact increases risk.
+
+"focus": "decrease" means:
+
+The user wants factors whose model impact decreases risk.
+
+"focus": "all" means:
+
+The user wants both positive and negative impacts.
+
+The word "change" by itself does NOT specify increase or decrease.
+
+For example:
+
+"Which factors drive changes in ecosystem risk?"
+→ "focus": "all"
+
+
+============================================================
+COMBINED EXAMPLES
+============================================================
+
+Question:
+"What are the top 3 factors increasing ecosystem risk?"
+
+Output:
+{
+  "intent": "importance_query",
+  "top_k": 3,
+  "focus": "increase"
+}
+
+
+Question:
+"Which are the 10 main factors reducing ecosystem risk?"
+
+Output:
+{
+  "intent": "importance_query",
+  "top_k": 10,
+  "focus": "decrease"
+}
+
+
+Question:
+"What are the most important drivers of ecosystem risk?"
+
+Output:
+{
+  "intent": "importance_query",
+  "top_k": 5,
+  "focus": "all"
+}
+
+
+Question:
+"Show me the top 2 variables affecting ecosystem risk."
+
+Output:
+{
+  "intent": "importance_query",
+  "top_k": 2,
+  "focus": "all"
+}
+
+
+Question:
+"Which factors increase risk?"
+
+Output:
+{
+  "intent": "importance_query",
+  "top_k": 5,
+  "focus": "increase"
+}
+
+
+============================================================
+FINAL RULES
+============================================================
+
+- Return exactly one JSON object.
+- Do not include explanations.
+- Do not include markdown.
+- Do not invent a target variable.
+- The target is always ecosystem risk.
+- Default top_k is 5.
+- Default focus is "all".
+- focus must be exactly one of:
+  "increase", "decrease", "all".
+
+============================================================
+USER QUERY
+============================================================
+
+Which environmental variables should be prioritized to reduce ecosystem risk under climate change?
+
+/no_think

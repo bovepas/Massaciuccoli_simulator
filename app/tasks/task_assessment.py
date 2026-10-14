@@ -25,10 +25,12 @@ from utils.feature_mapping import (
 # QUALITATIVE SCALE
 # ======================================================
 
+
 QUALITATIVE_SCALE = {
     "slightly": 0.5,
     "moderately": 1.0,
     "significantly": 1.5,
+    "substantially": 1.5,
     "strongly": 2.0,
     "severely": 2.5,
     "extremely": 3.0
@@ -93,7 +95,9 @@ def apply_qualitative_changes(features, qualitative_changes, dataset):
 
         delta = std * scale
 
-        if "decrease" in direction:
+        direction_text = (direction or "").strip().lower()
+
+        if direction_text in ("decrease", "decreases", "decreasing"):
             delta = -delta
 
         baseline = grounded.get(feature, 0)

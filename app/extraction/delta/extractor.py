@@ -224,22 +224,159 @@ def _complete_with_python_range(data: dict, detected_range: dict) -> dict:
 
     return data
 
+def _normalize_qualitative_change(
+    data: dict,
+    question: str,
+) -> dict:
+    """
+    Enforce the project's qualitative normalization:
+    increase -> +50%, decrease -> -50%.
 
-def _remove_llm_range_when_not_detected(data: dict) -> dict:
+    Never override explicit numeric changes, ranges,
+    or absolute targets.
     """
-    If Python found no explicit range, discard any range hallucinated
-    by the LLM.
+    scenarios = data.get("scenario", [])
+    if not isinstance(scenarios, list):
+        return data
+
+    # Explicit numeric magnitude: leave it untouched.
+    numeric_pattern = re.compile(
+        r"\b(?:by|to|from)\s*[+-]?\d+(?:[.,]\d+)?"
+        r"|[+-]?\d+(?:[.,]\d+)?\s*"
+        r"(?:%|percent(?:age)?|°\s*c|degc|degrees?)\b",
+        re.IGNORECASE,
+    )
+
+    if numeric_pattern.search(question):
+        return data
+
+    qualitative_units = {
+        "tree_cover",
+        "evapotranspiration",
+        "precipitation",
+        "biodiversity",
+    }
+
+    increase_pattern = re.compile(
+        r"\b(increase|increases|increased|increasing|"
+        r"rise|rises|rose|rising|grow|grows|growth|"
+        r"higher|gain|gains|improve|warming|warmer)\b",
+        re.IGNORECASE,
+    )
+    decrease_pattern = re.compile(
+        r"\b(decrease|decreases|decreased|decreasing|"
+        r"decline|declines|declined|declining|"
+        r"reduce|reduces|reduced|reducing|"
+        r"lower|loss|losses|drop|drops|dropped|"
+        r"fall|falls|fell|cooling|colder)\b",
+        re.IGNORECASE,
+    )
+
+    for scenario in scenarios:
+        if not isinstance(scenario, dict):
+            continue
+
+        variable = scenario.get("variable")
+        if variable not in qualitative_units:
+            continue
+
+        if scenario.get("change_type") == "absolute_target":
+            continue
+
+        expression = scenario.get("original_expression") or question
+
+        inc = increase_pattern.search(expression)
+        dec = decrease_pattern.search(expression)
+
+        if inc is None and dec is None:
+            continue
+
+        # If both directions occur, do not guess.
+        if inc is not None and dec is not None:
+            continue
+
+        if inc is not None:
+            value = 50.0
+            direction = "increase"
+        else:
+            value = -50.0
+            direction = "decrease"
+
+        scenario["change"] = {
+            "value": value,
+            "unit": "percent",
+        }
+        scenario["interpretation"] = (
+            f"qualitative {direction} in {variable}, "
+            f"normalized to {value:+g}%"
+        )
+
+    return data
+
+def _remove_llm_range_when_not_detected(
+    data: dict,
+    question: str,
+) -> dict:
     """
+    Remove ranges hallucinated by the LLM when Python did not
+    detect an explicit range.
+
+    Also correct explicit absolute targets such as:
+        "tree cover increases to 70%"
+    """
+
     scenarios = data.get("scenario", [])
 
     if not isinstance(scenarios, list):
         return data
 
+    # Remove ranges not supported by the original question.
     for scenario in scenarios:
         if isinstance(scenario, dict):
             scenario.pop("range", None)
 
+    # Recognize explicit percentage targets deterministically.
+    target_pattern = re.compile(
+        r"\b(?:increase(?:s|d|ing)?|"
+        r"decrease(?:s|d|ing)?|"
+        r"rise(?:s|n|d|ing)?|"
+        r"decline(?:s|d|ing)?|"
+        r"fall(?:s|ing)?|"
+        r"drop(?:s|ped|ping)?|"
+        r"reduce(?:s|d|ing)?|"
+        r"raise(?:s|d|ing)?|"
+        r"reach(?:es|ed|ing)?|"
+        r"set|sets|setting|"
+        r"bring|brings|brought)"
+        r"\s+to\s+(-?\d+(?:[.,]\d+)?)\s*%",
+        flags=re.IGNORECASE,
+    )
+
+    for scenario in scenarios:
+        if not isinstance(scenario, dict):
+            continue
+
+        expression = scenario.get("original_expression", "")
+        match = target_pattern.search(expression)
+
+        if not match:
+            continue
+
+        target_value = float(match.group(1))
+
+        scenario["change_type"] = "absolute_target"
+        scenario["change"] = {
+            "value": target_value,
+            "unit": "percent",
+        }
+        scenario["interpretation"] = (
+            f"set {scenario.get('variable', 'variable')} "
+            f"to {target_value:g}%"
+        )
+
     return data
+
+
 
 
 def extract_delta(question: str) -> DeltaExtraction:
@@ -275,7 +412,15 @@ def extract_delta(question: str) -> DeltaExtraction:
             detected_range,
         )
     else:
-        data = _remove_llm_range_when_not_detected(data)
+        data = _remove_llm_range_when_not_detected(
+            data,
+            question,
+        )
+
+        data = _normalize_qualitative_change(
+            data,
+            question,
+        )
 
     # ----------------------------------------------------------
     # 4. Final schema validation
@@ -286,3 +431,4 @@ def extract_delta(question: str) -> DeltaExtraction:
         raise ValueError(
             f"Delta extractor returned JSON with an invalid schema:\n{data}"
         ) from exc
+

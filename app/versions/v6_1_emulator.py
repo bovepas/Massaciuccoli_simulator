@@ -39,7 +39,7 @@ NUM_FEATURES = [
 CAT_FEATURES = [
     "Change in tree cover density in the past decade",
     "Presence of grassland",
-    "Change in grassland presence  in the past decade",
+    "Change in grassland presence in the past decade",
     "Land use and cover",
     "Change in land use and cover in the past decade",
 ]
@@ -79,8 +79,8 @@ def preprocess_semantic_features(df: pd.DataFrame) -> pd.DataFrame:
         })
     )
 
-    df["Change in grassland presence  in the past decade"] = (
-        df["Change in grassland presence  in the past decade"]
+    df["Change in grassland presence in the past decade"] = (
+        df["Change in grassland presence in the past decade"]
         .replace({
             0: "unchanged",
             10: "unchanged",

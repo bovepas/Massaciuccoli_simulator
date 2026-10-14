@@ -27,10 +27,227 @@ def get_base_scenario():
         'Presence of grassland': 1,
         'Land use and cover': 'rural_natural',
         'Change in land use and cover in the past decade': '1',
-        'Change in grassland presence  in the past decade': '0',
+        'Change in grassland presence in the past decade': '0',
         'Change in tree cover density in the past decade': '0'
     }
 
+def validate_delta_scenario(feature, range_info, base):
+    """
+    Validate a delta scenario before modifying the baseline.
+
+    Returns:
+        None if the scenario is valid.
+        A descriptive error string otherwise.
+    """
+
+    import math
+    from numbers import Real
+
+    # --------------------------------------------------
+    # 1. Feature must exist in the baseline
+    # --------------------------------------------------
+
+    if feature not in base:
+        return (
+            f"Feature '{feature}' is not available "
+            "in the baseline scenario."
+        )
+
+    # --------------------------------------------------
+    # 2. Identify categorical and binary features
+    # --------------------------------------------------
+
+    binary_features = {
+        "Presence of grassland",
+    }
+
+    categorical_features = {
+        "Land use and cover",
+        "Change in land use and cover in the past decade",
+        "Change in grassland presence in the past decade",
+        "Change in grassland presence in the past decade",
+        "Change in tree cover density in the past decade",
+    }
+
+    # --------------------------------------------------
+    # 3. Validate modification mode
+    # --------------------------------------------------
+
+    mode = range_info.get("mode")
+
+    if mode == "baseline_delta":
+
+        delta_value = range_info.get("delta")
+        delta_type = range_info.get(
+            "delta_type",
+            "percentage_change"
+        )
+
+        if (
+            isinstance(delta_value, bool)
+            or not isinstance(delta_value, Real)
+            or not math.isfinite(delta_value)
+        ):
+            return "The requested modification must be numeric."
+
+        # Binary variables: only explicit state targets
+        # are supported. Percentage changes are invalid.
+        if feature in binary_features:
+
+            if delta_type != "absolute_target":
+                return (
+                    f"Feature '{feature}' is binary. "
+                    "Percentage changes and numeric deltas "
+                    "are not supported. Specify a target "
+                    "state of 0 or 1."
+                )
+
+            if delta_value not in (0, 1):
+                return (
+                    f"Feature '{feature}' accepts only "
+                    "the values 0 or 1."
+                )
+
+        # Categorical variables: do not apply arithmetic
+        # until the valid category codes are defined.
+        if feature in categorical_features:
+            return (
+                f"Feature '{feature}' is categorical. "
+                "Numeric deltas and percentage changes "
+                "are not supported until valid category "
+                "transitions are defined."
+            )
+
+        # Absolute temperature changes must use degrees C.
+        if (
+            feature
+            == "Change in average temperature compared to a recent past"
+            and delta_type != "absolute_delta"
+        ):
+            return (
+                "Temperature modifications must use an "
+                "absolute change expressed in degrees Celsius."
+            )
+
+        # Validate the resulting value for bounded features.
+        baseline_value = base[feature]
+
+        if (
+            isinstance(baseline_value, Real)
+            and not isinstance(baseline_value, bool)
+        ):
+
+            if delta_type == "absolute_delta":
+                resulting_value = baseline_value + delta_value
+
+            elif delta_type == "absolute_target":
+                resulting_value = delta_value
+
+            elif delta_type == "percentage_change":
+
+                additive_change_features = {
+                    "Relative change in the potential evapotranspiration compared to a recent past",
+                    "Cumulative change in precipitation compared to a recent past",
+                }
+
+                if feature in additive_change_features:
+                    resulting_value = baseline_value + delta_value
+                else:
+                    resulting_value = (
+                        baseline_value
+                        * (1 + delta_value / 100)
+                    )
+
+            else:
+                return (
+                    f"Unsupported delta type '{delta_type}'."
+                )
+
+            if not math.isfinite(resulting_value):
+                return "The resulting value is not finite."
+
+            if feature in {
+                "Density of tree cover",
+                "Density change in land imperviousness",
+            } and not 0 <= resulting_value <= 100:
+                return (
+                    f"The resulting value for '{feature}' "
+                    "must be between 0 and 100."
+                )
+
+            if feature in {
+                "Index of total productivity by plant phenology",
+                "Number of species potentially living in the cell",
+            } and resulting_value < 0:
+                return (
+                    f"The resulting value for '{feature}' "
+                    "cannot be negative."
+                )
+
+        return None
+
+    # --------------------------------------------------
+    # 4. Validate explicit ranges
+    # --------------------------------------------------
+
+    if mode is None:
+
+        if "from" not in range_info or "to" not in range_info:
+            return (
+                "The scenario must contain either a baseline "
+                "delta or an explicit from/to range."
+            )
+
+        v_from = range_info["from"]
+        v_to = range_info["to"]
+
+        if feature in categorical_features:
+            return (
+                f"Feature '{feature}' is categorical. "
+                "Numeric ranges are not supported until "
+                "valid category transitions are defined."
+            )
+
+        if feature in binary_features:
+            if v_from not in (0, 1) or v_to not in (0, 1):
+                return (
+                    f"Feature '{feature}' accepts only "
+                    "the values 0 or 1."
+                )
+
+        for value in (v_from, v_to):
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, Real)
+                or not math.isfinite(value)
+            ):
+                return (
+                    "Explicit ranges must contain finite "
+                    "numeric values for this feature."
+                )
+
+        if feature in {
+            "Density of tree cover",
+            "Density change in land imperviousness",
+        }:
+            if any(not 0 <= value <= 100 for value in (v_from, v_to)):
+                return (
+                    f"Values for '{feature}' must be "
+                    "between 0 and 100."
+                )
+
+        if feature in {
+            "Index of total productivity by plant phenology",
+            "Number of species potentially living in the cell",
+        }:
+            if any(value < 0 for value in (v_from, v_to)):
+                return (
+                    f"Values for '{feature}' cannot be negative."
+                )
+
+        return None
+
+    return f"Unsupported scenario mode '{mode}'."
 
 # ======================================================
 # RISK LEVEL
@@ -50,9 +267,31 @@ def risk_level_from_score(score: float) -> str:
 # 🔥 GENERIC FALLBACK (IMPLICIT DELTA)
 # ======================================================
 
+
 def infer_simple_range(question):
 
     q = question.lower()
+
+    # Grassland cover is not a percentage-based feature
+    # available in the dataset.
+    if "grassland" in q and any(
+        term in q
+        for term in (
+            "cover",
+            "coverage",
+            "density",
+            "percentage",
+            "percent",
+            "copertura",
+            "percentuale",
+            "densità",
+        )
+    ):
+        print(
+            "[DEBUG] Grassland cover requested, "
+            "but no percentage-coverage feature exists."
+        )
+        return None
 
     keywords = [
         "temperature",
@@ -82,7 +321,7 @@ def infer_simple_range(question):
     if not feature:
         return None
 
-    # direction
+    # Direction
     if any(w in q for w in ["decrease", "reduce", "drop"]):
         direction = -1
     elif any(w in q for w in ["increase", "rise"]):
@@ -90,8 +329,9 @@ def infer_simple_range(question):
     else:
         return None
 
-    # magnitude (safe generic)
+    # Magnitude (safe generic)
     magnitude = 10
+
     if "temperature" in detected:
         magnitude = 2
 
@@ -102,13 +342,36 @@ def infer_simple_range(question):
     }
 
 
+
 # ======================================================
 # 🔥 FEATURE RECOVERY
 # ======================================================
 
+
 def recover_feature_from_question(question):
 
     q = question.lower()
+
+    # Grassland cover is not a percentage-based feature
+    # available in the dataset.
+    if "grassland" in q and any(
+        term in q
+        for term in (
+            "cover",
+            "coverage",
+            "density",
+            "percentage",
+            "percent",
+            "copertura",
+            "percentuale",
+            "densità",
+        )
+    ):
+        print(
+            "[DEBUG] Refusing grassland feature recovery: "
+            "requested coverage is not available."
+        )
+        return None
 
     if "tree cover" in q:
         return normalize_feature_name("tree_cover")
@@ -124,10 +387,12 @@ def recover_feature_from_question(question):
 
     if "precipitation" in q:
         return normalize_feature_name("precipitation")
+
     if "grassland" in q:
         return normalize_feature_name("grassland")
 
     return None
+
 
 # ======================================================
 # MAIN
@@ -187,6 +452,7 @@ def handle_delta(
                 "delta_type": mod.get("type")
             }
 
+
     # --------------------------------------------------
     # Legacy fallback
     # --------------------------------------------------
@@ -203,20 +469,52 @@ def handle_delta(
 
         if not range_info:
 
+            question_lower = question.lower()
+
+            grassland_coverage_terms = (
+                "cover",
+                "coverage",
+                "density",
+                "percentage",
+                "percent",
+                "copertura",
+                "percentuale",
+                "densità",
+            )
+
+            asks_grassland_coverage = (
+                "grassland" in question_lower
+                and any(
+                    term in question_lower
+                    for term in grassland_coverage_terms
+                )
+            )
+
+            if asks_grassland_coverage:
+                print(
+                    "[DEBUG] Grassland percentage coverage "
+                    "requested, but the feature is unsupported."
+                )
+
+                return {
+                    "summary": "Unsupported environmental variable",
+                    "data": {},
+                    "drivers": [],
+                    "interpretation": (
+                        "The dataset represents grassland through "
+                        "binary presence (0/1), not percentage coverage. "
+                        "The requested scenario cannot be simulated "
+                        "with the available variables."
+                    ),
+                }
+
             return {
-
-                "summary":
-                    "Range not recognized",
-
-                "data":
-                    {},
-
-                "drivers":
-                    [],
-
-                "interpretation":
-                    "Could not parse range"
+                "summary": "Range not recognized",
+                "data": {},
+                "drivers": [],
+                "interpretation": "Could not parse range"
             }
+
 
     # --------------------------------------------------
     # Feature recovery
@@ -252,12 +550,70 @@ def handle_delta(
             "interpretation":
                 "Could not identify the environmental variable."
         }
+    
+    # --------------------------------------------------
+    # Validate grassland cover requests
+    # --------------------------------------------------
+
+    q = question.lower()
+
+    if "grassland" in q and any(
+        term in q
+        for term in (
+            "cover",
+            "coverage",
+            "density",
+            "percentage",
+            "percent",
+            "copertura",
+            "percentuale",
+            "densità",
+        )
+    ):
+        print(
+            "[DEBUG] Unsupported request: grassland "
+            "percentage coverage is not available."
+        )
+
+        return {
+            "summary": "Unsupported environmental variable",
+            "data": {},
+            "drivers": [],
+            "interpretation": (
+                "The dataset contains binary grassland presence, "
+                "not percentage grassland coverage. "
+                "The requested scenario cannot be simulated."
+            )
+        }
 
     # --------------------------------------------------
     # Build scenarios
     # --------------------------------------------------
 
     base = get_base_scenario()
+    
+    # --------------------------------------------------
+    # Validate scenario before building modifications
+    # --------------------------------------------------
+
+    validation_error = validate_delta_scenario(
+        feature,
+        range_info,
+        base
+    )
+
+    if validation_error:
+        print(
+            "[DEBUG] Invalid scenario:",
+            validation_error
+        )
+
+        return {
+            "summary": "Invalid scenario",
+            "data": {},
+            "drivers": [],
+            "interpretation": validation_error
+        }
 
     # ----------------------------------------------
     # Case 1:

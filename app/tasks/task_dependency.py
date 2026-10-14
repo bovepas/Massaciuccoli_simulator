@@ -141,9 +141,21 @@ def extract_abstract_target(question: str):
 
 def resolve_dependency_targets(target):
 
-    if target in ABSTRACT_DEPENDENCY_TARGETS:
+    # Defensive compatibility: callers should pass an abstract concept string,
+    # not the list returned by normalize_feature_name().
+    if isinstance(target, list):
+        return target
 
-        return ABSTRACT_DEPENDENCY_TARGETS[target]
+    target_aliases = {
+        "water availability": "hydrological dynamics",
+        "water": "hydrological dynamics",
+        "water level": "hydrological dynamics",
+        "hydrology": "hydrological dynamics",
+    }
+    abstract_target = target_aliases.get(str(target).strip().lower(), target)
+
+    if abstract_target in ABSTRACT_DEPENDENCY_TARGETS:
+        return ABSTRACT_DEPENDENCY_TARGETS[abstract_target]
 
     return [target]
 
@@ -189,7 +201,32 @@ def extract_source_from_question(question: str):
         return "Density of tree cover"
 
     return None
+# ======================================================
+# FILTER SELF-TARGETS
+# ======================================================
 
+def filter_self_targets(source, targets):
+    """Esclude i target che coincidono con la sorgente."""
+
+    if not source:
+        return list(targets or [])
+
+    source_key = str(source).strip().casefold()
+    filtered_targets = []
+
+    for target in targets or []:
+        target_key = str(target).strip().casefold()
+
+        if target_key == source_key:
+            print(
+                "[DEBUG] Excluding self-target from dependency aggregation:",
+                target
+            )
+            continue
+
+        filtered_targets.append(target)
+
+    return filtered_targets
 
 # ======================================================
 # CLEAN HELPERS
@@ -404,7 +441,12 @@ def handle_dependency(question, route, dependency_inputs=None):
         target
     )
 
-    print("[DEBUG] Resolved targets:")
+    resolved_targets = filter_self_targets(
+        source,
+        resolved_targets
+    )
+
+    print("[DEBUG] Resolved targets after self-target filter:")
     print(resolved_targets)
 
     # --------------------------------------------------
@@ -520,29 +562,21 @@ def handle_dependency(question, route, dependency_inputs=None):
         if target_raw
         else simplify(target)
     )
-
+    #print("[DEBUG] target:", repr(target))
+    #print("[DEBUG] target_raw:", repr(target_raw))
+    #print("[DEBUG] human_target:", repr(human_target))
     # --------------------------------------------------
     # SUMMARY
     # --------------------------------------------------
 
     if source:
+        source_label = simplify(source).capitalize()
+        target_label = str(human_target).strip()
 
-        summary = (
-            f"Effect of "
-            f"{simplify(source).capitalize()} "
-            f"on {human_target}"
-        )
-
-        summary = summary.replace(
-            "on on",
-            "on"
-        )
+        summary = f"Effect of {source_label} on {target_label}"
 
     else:
-
-        summary = (
-            "Conceptual dependency analysis"
-        )
+        summary = "Conceptual dependency analysis"
 
     # --------------------------------------------------
     # STRUCTURED DATA

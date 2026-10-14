@@ -13,6 +13,8 @@ Feature Mapping — v7
 ✔ Backward compatible
 """
 
+import re
+
 # ======================================================
 # CANONICAL FEATURE NAMES
 # ======================================================
@@ -41,6 +43,9 @@ FEATURE_MAPPING = {
 
     "tree cover change":
         "Change in tree cover density in the past decade",
+
+    "grassland presence":
+        "Presence of grassland",
 
     "grassland":
         "Presence of grassland",
@@ -171,6 +176,7 @@ SYNONYMS = {
     "forest cover": "tree cover",
 
     "habitat": "grassland",
+    "grassland presence": "grassland presence",
 
     # Biodiversity
     "species richness": "species",
@@ -336,6 +342,23 @@ def normalize_feature_name(name: str):
         return None
 
     name = name.lower().strip()
+
+    # Normalize common machine-readable separators so canonical names
+    # such as "grassland_change" and "tree_cover" can match exactly.
+    name = re.sub(r"[_-]+", " ", name)
+    name = re.sub(r"\s+", " ", name).strip()
+
+    # --------------------------------------------------
+    # UNSUPPORTED GRASSLAND COVERAGE
+    # --------------------------------------------------
+    # The dataset contains binary grassland presence, not a percentage
+    # of grassland cover. Do not let partial matching silently map a
+    # coverage request to the binary presence feature.
+
+    if "grassland" in name and re.search(
+        r"\b(cover|coverage|density|percentage|percent)\b", name
+    ):
+        return None
 
     # --------------------------------------------------
     # ABSTRACT MATCH

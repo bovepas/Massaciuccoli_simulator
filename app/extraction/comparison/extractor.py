@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 import re
@@ -126,14 +127,141 @@ def _infer_percentage_direction(modification):
         modification["direction"] = "increase"
 
 
-def _normalize_comparison_data(data):
+def _canonical_variable_in_text(text):
+    """Return canonical variables explicitly mentioned in text."""
+    text = (text or "").lower()
+    aliases = {
+        "temperature": [r"\btemperature\b", r"\bwarmer\b", r"\bheat\b"],
+        "precipitation": [r"\bprecipitation\b", r"\brainfall\b", r"\brain\b"],
+        "evapotranspiration": [r"\bevapotranspiration\b", r"\bevaporation\b"],
+        "biodiversity": [r"\bbiodiversity\b", r"\bspecies richness\b", r"\bnumber of species\b"],
+        "tree_cover": [r"\btree cover\b", r"\btrees\b", r"\btree density\b"],
+        "grassland": [r"\bgrassland\b", r"\bgrass\b"],
+        "land_use": [r"\bland use\b", r"\bland-use class\b"],
+        "productivity": [r"\bproductivity\b", r"\bplant productivity\b", r"\bvegetation productivity\b"],
+        "land_imperviousness": [r"\bimperviousness\b", r"\bimpervious surface\b", r"\burbanization\b"],
+    }
+    return {
+        variable for variable, patterns in aliases.items()
+        if any(re.search(pattern, text) for pattern in patterns)
+    }
+
+
+def _canonical_variable_name(variable):
+    """Normalize common LLM variable labels to the prompt's canonical names."""
+    value = re.sub(r"[\s\-]+", "_", str(variable or "").strip().lower())
+    aliases = {
+        "tree_cover": "tree_cover",
+        "tree_cover_density": "tree_cover",
+        "trees": "tree_cover",
+        "temperature": "temperature",
+        "average_temperature": "temperature",
+        "precipitation": "precipitation",
+        "rainfall": "precipitation",
+        "rain": "precipitation",
+        "evapotranspiration": "evapotranspiration",
+        "evaporation": "evapotranspiration",
+        "biodiversity": "biodiversity",
+        "species_richness": "biodiversity",
+        "number_of_species": "biodiversity",
+        "grass": "grassland",
+        "grassland": "grassland",
+        "land_use": "land_use",
+        "productivity": "productivity",
+        "land_imperviousness": "land_imperviousness",
+        "imperviousness": "land_imperviousness",
+    }
+    return aliases.get(value, value)
+
+
+def _repair_addition_after_but(question, data):
+    """
+    Repair the explicit construction:
+      'a scenario with X and a scenario with X but Y'
+
+    Keep X in both scenarios when X is explicitly present in the second
+    scenario's text. Keep Y only in scenario_b when Y is introduced after
+    'but' and is not part of scenario_a's text. This repair is deliberately
+    limited to the recognizable wording pattern.
+    """
+    q = (question or "").strip()
+    match = re.search(
+        r"\bscenario\s+with\s+(.*?)\s+and\s+"
+        r"(?:a\s+)?scenario\s+with\s+(.*?)\s+but\s+"
+        r"(.+?)[.!?]*$",
+        q,
+        flags=re.IGNORECASE,
+    )
+    if not match:
+        return data
+
+    scenario_a_text, scenario_b_shared_text, additional_text = match.groups()
+    variables_in_a_text = _canonical_variable_in_text(scenario_a_text)
+    variables_in_b_shared_text = _canonical_variable_in_text(
+        scenario_b_shared_text
+    )
+    variables_in_addition = (
+        _canonical_variable_in_text(additional_text) - variables_in_a_text
+    )
+
+    scenario_a = data.get("scenario_a", [])
+    scenario_b = data.get("scenario_b", [])
+
+    # If the LLM wrongly put the additional 'but Y' modification into A,
+    # remove it there only when the question text does not mention Y in A.
+    data["scenario_a"] = [
+        mod for mod in scenario_a
+        if _canonical_variable_name(mod.get("variable"))
+        not in variables_in_addition
+    ]
+
+    # Restore explicitly shared modifications from A into B, but only when
+    # the variable is stated in the second scenario's pre-'but' clause.
+    present_in_b = {
+        _canonical_variable_name(mod.get("variable"))
+        for mod in scenario_b
+    }
+    for mod in data["scenario_a"]:
+        canonical = _canonical_variable_name(mod.get("variable"))
+        if (
+            canonical in variables_in_a_text
+            and canonical in variables_in_b_shared_text
+            and canonical not in present_in_b
+        ):
+            data["scenario_b"].append(copy.deepcopy(mod))
+            present_in_b.add(canonical)
+
+    return data
+
+
+def _normalize_target(question, data):
+    """
+    Enforce the documented target default while preserving explicit targets.
+    """
+    q = (question or "").lower()
+
+    if re.search(r"\bresilien(?:ce|t)\\b", q):
+        data["target"] = "ecosystem_resilience"
+    elif re.search(r"\becosystem health\\b|\\bhealth of the ecosystem\\b", q):
+        data["target"] = "ecosystem_health"
+    elif re.search(r"\brisk\\b", q):
+        data["target"] = "ecosystem_risk"
+    else:
+        data["target"] = "ecosystem_risk"
+
+    return data
+
+
+def _normalize_comparison_data(data, question=""):
     """
     Deterministic normalization of the LLM extraction.
 
-    The LLM performs semantic extraction.
-    This function only enforces the extraction contract.
-    It does not perform arithmetic or model calculations.
+    The LLM performs semantic extraction. This function enforces the
+    extraction contract for known, unambiguous cases; it does not perform
+    arithmetic or model calculations.
     """
+    data = _repair_addition_after_but(question, data)
+    data = _normalize_target(question, data)
 
     for scenario_key in ("scenario_a", "scenario_b"):
         scenario = data.get(scenario_key, [])
@@ -150,6 +278,14 @@ def _normalize_comparison_data(data):
                 # The bridge expects a positive magnitude plus
                 # a separate direction.
                 _infer_percentage_direction(modification)
+
+            elif modification_type == "qualitative":
+                # Direction belongs in 'direction', not 'magnitude'.
+                magnitude = modification.get("magnitude")
+                direction = modification.get("direction")
+                if (isinstance(magnitude, str) and isinstance(direction, str)
+                        and magnitude.lower() == direction.lower()):
+                    modification["magnitude"] = None
 
     return data
 
@@ -194,7 +330,8 @@ def extract_comparison(question: str) -> ComparisonExtraction:
     parsed_json = _extract_json(raw_text)
 
     parsed_json = _normalize_comparison_data(
-        parsed_json
+        parsed_json,
+        question=question,
     )
 
     return ComparisonExtraction.model_validate(
