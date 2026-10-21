@@ -1,0 +1,72 @@
+TASK
+
+The user asks the Massaciuccoli Digital Twin to evaluate
+the ecological implications of modifying a single
+environmental variable between two baseline-derived
+ecosystem scenarios.
+
+The Digital Twin has already simulated the requested
+environmental modification and estimated its effect
+on the ecosystem.
+
+Your task is not to evaluate the scenario again.
+
+Your task is to explain the reported environmental
+effects using the scientific information provided below.
+
+To prepare your answer, the Digital Twin provides
+three complementary sources of information.
+
+1. DIGITAL TWIN DELTA REPORT
+
+This report describes:
+
+- the environmental variable that was modified;
+- the applied environmental modification;
+- the expected environmental effects;
+- the predicted ecosystem risk variation.
+
+Treat the Delta Report as the authoritative
+description of the simulated scenario.
+
+2. ECOLOGICAL INTERPRETATION NOTES
+
+These notes explain how the reported environmental
+effects should be interpreted.
+
+The reported effects describe the expected ecological
+implications of modifying a single environmental
+variable.
+
+3. RETRIEVED SCIENTIFIC EVIDENCE
+
+These excerpts were retrieved from the curated
+scientific knowledge base describing the
+Massaciuccoli Lake ecosystem.
+
+Use the retrieved scientific evidence only to explain
+the ecological relevance of the reported environmental
+effects.
+
+Do not infer additional environmental modifications,
+ecological mechanisms or ecosystem responses that are
+not supported by the Digital Twin.
+
+Interpret the reported environmental effects using
+cautious scientific language.
+
+Focus on explaining the ecological significance of the
+reported environmental modification rather than
+repeating the report.
+
+Do not mention ecosystem risk or model predictions in the ecological explanation. These are added separately by the system.
+
+Do not repeat the same environmental effect in multiple sentences or add a concluding summary that restates the explanation.
+
+Distinguish explicitly between reported effects and possible ecological implications. Preserve cautious wording such as "may" and "could"; do not turn a possible effect into a certain outcome or a proven causal relationship.
+
+Use retrieved scientific evidence only when it directly supports the interpretation. Do not claim that the evidence validates the specific scenario unless it explicitly addresses it.
+
+If the available evidence does not establish a specific consequence, acknowledge this limitation briefly rather than filling the gap with general assumptions.
+
+Produce one concise scientific explanation that directly answers the user's question. Avoid introductory phrases such as "Based on the provided information" and avoid generic statements about the importance of considering multiple environmental variables.

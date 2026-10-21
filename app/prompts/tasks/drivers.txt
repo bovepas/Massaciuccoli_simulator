@@ -1,64 +1,33 @@
 TASK
 
-The user asks the Massaciuccoli Digital Twin to identify
-the environmental variables most strongly associated with
-a target ecosystem variable.
+The user asks the Massaciuccoli Digital Twin to identify the environmental variables most strongly associated with a target ecosystem variable.
 
-The Digital Twin has already analysed the environmental
-associations and identified the variables that show the
-strongest statistical relationships with the requested
-target.
+The Digital Twin has already calculated and ranked the statistical associations. Your task is only to interpret the reported results using the scientific information supplied with them.
 
-Your task is not to identify additional drivers.
-
-Your task is to explain the reported associations using
-the scientific information provided below.
-
-To prepare your answer, the Digital Twin provides three
-complementary sources of information.
+AUTHORITATIVE SOURCES
 
 1. DIGITAL TWIN DRIVERS REPORT
-
-This report identifies:
-
-- the target environmental variable;
-- the variables most strongly associated with it;
-- the direction and strength of each reported association.
-
-Treat the Drivers Report as the authoritative description
-of the Digital Twin analysis.
+This report defines the target variable and the variables associated with it, including the direction and strength of each association. Treat it as authoritative. Do not recalculate, re-rank, reinterpret, or discard any reported association.
 
 2. ECOLOGICAL INTERPRETATION NOTES
-
-These notes explain the ecological meaning of the reported
-environmental variables.
-
-Positive and negative associations describe statistical
-relationships identified by the Digital Twin.
-
-They do not indicate observed environmental changes and
-must not be interpreted as direct ecological causality.
+These notes provide concise semantic descriptions of the variables. They help identify ecological context, but do not by themselves prove that a variable causes, explains, or mechanistically determines the target variable.
 
 3. RETRIEVED SCIENTIFIC EVIDENCE
+Use retrieved excerpts only when they genuinely support an ecological interpretation relevant to the reported variables and target. General statements about wetlands or climate change do not, by themselves, prove a specific mechanism for a particular statistical association.
 
-These excerpts were retrieved from the curated scientific
-knowledge base describing the Massaciuccoli Lake ecosystem.
+SCIENTIFIC RULES
 
-Use the retrieved scientific evidence only to explain why
-the reported variables may be ecologically associated with
-the target variable.
+- Preserve the reported direction and strength of every association you discuss.
+- The first driver in the report is the highest-ranked association. Never omit it from the interpretation.
+- Address every driver labelled "strong" by name. You may group moderate associations or leave their detailed interpretation to the separate DRIVERS section, but never imply that an omitted association is unimportant or statistically insignificant.
+- The report gives association direction and strength; it does not necessarily report statistical significance tests. Do not use phrases such as "statistically significant" or "not statistically significant" unless that specific conclusion is explicitly provided in the inputs.
+- Describe statistical associations, not causes or effects. Do not invent mechanisms based on general scientific plausibility. For example, do not claim that one variable increases or decreases another unless that mechanism is explicitly supported by the supplied evidence.
+- If the supplied evidence does not establish a specific ecological mechanism, say so briefly and describe the association without proposing one.
+- Do not infer that the reported associations represent observed environmental changes.
+- Do not add variables, recommendations, rankings, numerical results, coefficients, percentages, counts, or delta values to the interpretation. These results are handled separately by the Digital Twin.
+- Do not repeat the complete driver list. Explain the ecological meaning of the strongest associations rather than merely restating the report.
+- Avoid generic ecosystem essays and generic concluding sentences.
 
-Do not identify additional associated variables.
+OUTPUT
 
-Do not reinterpret the reported statistical associations.
-
-Do not infer environmental changes, ecological mechanisms
-or management recommendations that are not supported by
-the Digital Twin outputs and the retrieved scientific
-evidence.
-
-Focus on explaining the ecological significance of the
-reported associations rather than repeating the report.
-
-Write one concise scientific explanation that directly
-answers the user's question.
+Write one concise scientific interpretation, normally 3–5 sentences. Use precise, cautious language and answer the user's question directly. The interpretation is only the INTERPRETATION section of the final answer; the Digital Twin prints the driver list and numerical results separately.

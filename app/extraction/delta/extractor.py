@@ -15,7 +15,9 @@ from extraction.delta.range_detector import detect_range
 REFERENCE_UNITS = {
     "temperature": "degC",
     "tree_cover": "percent",
+    "tree_cover_density": "percent",
     "evapotranspiration": "percent",
+    "density_of_tree_cover": "percent",
     "precipitation": "percent",
 }
 
@@ -52,30 +54,37 @@ def _calculate_range_change(
     from_value: float,
     to_value: float,
     unit: str,
+    variable_name: str = None,
 ) -> float:
     """
-    Deterministic arithmetic for an explicit range.
+    Calculate an explicit range deterministically.
 
-    For degC:
-        delta = to - from
+    For tree-cover density, calculate relative percentage change.
+    For other percentage variables and temperature, preserve the
+    existing absolute-difference calculation.
 
-    For percent:
-        an explicit range represents an absolute change between
-        the two percentage values:
-            delta = to - from
-
-        Examples:
-            0% -> 15%    = +15%
-            0% -> -15%   = -15%
-            15% -> 0%    = -15%
-            -15% -> 0%   = +15%
-            -10% -> +10% = +20%
-            20% -> 40%   = +20%
-
-        We deliberately do NOT calculate relative percentage change
-        for explicit ranges, because that would produce misleading
-        results when the starting value is zero or negative.
+    When the initial tree-cover value is zero, retain the project's
+    existing convention and return the final value.
     """
+
+    relative_percent_variables = {
+        "tree_cover",
+        "density_of_tree_cover",
+        "tree_cover_density",
+    }
+
+    if (
+        unit == "percent"
+        and variable_name in relative_percent_variables
+    ):
+        if from_value == 0:
+            return round(to_value, 4)
+
+        return round(
+            ((to_value - from_value) / abs(from_value)) * 100,
+            4,
+        )
+
     if unit in ("percent", "degC"):
         return round(to_value - from_value, 2)
 
@@ -170,6 +179,7 @@ def _complete_with_python_range(data: dict, detected_range: dict) -> dict:
             from_value=from_value,
             to_value=to_value,
             unit=unit,
+            variable_name=variable_name,
         )
 
         scenario["change"] = {
@@ -181,44 +191,58 @@ def _complete_with_python_range(data: dict, detected_range: dict) -> dict:
     # 5. Python builds a deterministic interpretation
     # ----------------------------------------------------------
 
-    if direction == "increase":
-        if unit == "percent":
-            interpretation = (
-                f"increase in {variable_name} by "
-                f"{abs(calculated_value):g} percentage points"
-            )
-        elif unit == "degC":
-            interpretation = (
-                f"increase in {variable_name} by "
-                f"{abs(calculated_value):g}°C"
-            )
-        else:
-            interpretation = (
-                f"increase in {variable_name} "
-                f"from {from_value:g} to {to_value:g}"
-            )
+        if direction == "increase":
+            if (
+                unit == "percent"
+                and variable_name in ("tree_cover", "density_of_tree_cover","tree_cover_density",)
+            ):
+                interpretation = (
+                    f"increase in {variable_name} by "
+                    f"{abs(calculated_value):g}% (relative change)"
+                )
+            elif unit == "percent":
+                interpretation = (
+                    f"increase in {variable_name} by "
+                    f"{abs(calculated_value):g} percentage points"
+                )
+            elif unit == "degC":
+                interpretation = (
+                    f"increase in {variable_name} by "
+                    f"{abs(calculated_value):g}°C"
+                )
+            else:
+                interpretation = (
+                    f"increase in {variable_name} "
+                    f"from {from_value:g} to {to_value:g}"
+                )
 
-    elif direction == "decrease":
-        if unit == "percent":
-            interpretation = (
-                f"decrease in {variable_name} by "
-                f"{abs(calculated_value):g} percentage points"
-            )
-        elif unit == "degC":
-            interpretation = (
-                f"decrease in {variable_name} by "
-                f"{abs(calculated_value):g}°C"
-            )
-        else:
-            interpretation = (
-                f"decrease in {variable_name} "
-                f"from {from_value:g} to {to_value:g}"
-            )
+        elif direction == "decrease":
+            if (
+                unit == "percent"
+                and variable_name in ("tree_cover", "density_of_tree_cover","tree_cover_density",)
+            ):
+                interpretation = (
+                    f"decrease in {variable_name} by "
+                    f"{abs(calculated_value):g}% (relative change)"
+                )
+            elif unit == "percent":
+                interpretation = (
+                    f"decrease in {variable_name} by "
+                    f"{abs(calculated_value):g} percentage points"
+                )
+            elif unit == "degC":
+                interpretation = (
+                    f"decrease in {variable_name} by "
+                    f"{abs(calculated_value):g}°C"
+                )
+            else:
+                interpretation = (
+                    f"decrease in {variable_name} "
+                    f"from {from_value:g} to {to_value:g}"
+                )
 
-    else:
-        interpretation = (
-            f"no change in {variable_name}"
-        )
+        else:
+            interpretation = f"no change in {variable_name}"
 
     scenario["interpretation"] = interpretation
 

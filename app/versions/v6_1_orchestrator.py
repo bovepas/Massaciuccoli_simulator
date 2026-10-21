@@ -793,41 +793,66 @@ def run():
             start_timer("output_rendering")
 
             print("\nSUMMARY:")
+            print(result.get("summary", ""))
 
-            print(
-                result.get(
-                    "summary",
-                    ""
-                )
-            )
+            data = result.get("data", {}) or {}
 
-            data = result.get(
-                "data",
-                {}
-            )
-
-            if data:
-
-                print("\nDATA:")
-
-                print(data)
-
-            if "drivers" in result:
+            if task_type == "drivers":
+                # Drivers-specific output: interpretation, associations, numerical results.
+                print("\nINTERPRETATION:")
+                print(result.get("interpretation", ""))
 
                 print("\nDRIVERS:")
+                driver_labels = result.get("drivers", []) or []
+                if driver_labels:
+                    for driver in driver_labels:
+                        print("-", driver)
+                else:
+                    print("No qualifying driver associations were returned.")
 
-                for d in result["drivers"]:
+                print("\nNUMERICAL RESULTS:")
+                numeric_rows = data.get("drivers", []) if isinstance(data, dict) else []
+                numeric_rows = [
+                    row for row in numeric_rows
+                    if isinstance(row, dict) and row.get("correlation") is not None
+                ]
+                if numeric_rows:
+                    for row in numeric_rows:
+                        feature = row.get("feature", "Unknown variable")
+                        indicator = next(
+                            (row.get(key) for key in (
+                                "climate_indicator",
+                                "hydrological_indicator",
+                                "resilience_indicator",
+                                "vulnerability_indicator",
+                            ) if row.get(key)),
+                            None,
+                        )
+                        label = f"{indicator} — {feature}" if indicator else str(feature)
+                        try:
+                            correlation = float(row["correlation"])
+                            absolute = float(row.get("abs_corr", abs(correlation)))
+                            print(f"- {label}: r = {correlation:.3f}; |r| = {absolute:.3f}")
+                        except (TypeError, ValueError):
+                            print(f"- {label}: correlation value unavailable")
+                else:
+                    print("No correlation coefficients were available for this analysis.")
+                    indicators = data.get("indicators", []) if isinstance(data, dict) else []
+                    if indicators:
+                        print("Indicators examined:", ", ".join(map(str, indicators)))
+            else:
+                # Keep the existing rendering for every other task unchanged.
+                if data:
+                    print("\nDATA:")
+                    print(data)
 
-                    print("-", d)
+                if "drivers" in result:
+                    print("\nDRIVERS:")
+                    for driver in result["drivers"]:
+                        print("-", driver)
 
-            print("\nINTERPRETATION:")
-
-            print(
-                result.get(
-                    "interpretation",
-                    ""
-                )
-            )
+                print("\nINTERPRETATION:")
+                print(result.get("interpretation", ""))
 
             print("\n---------------------------\n")
 

@@ -64,24 +64,24 @@ def debug_print(*args):
 # CLEAN TEXT
 # ======================================================
 
-def clean_text(text: str):
 
+def clean_text(text: str):
     if not text:
         return ""
 
-    text = re.sub(
-        r"\(id\s*\d+\)",
-        "",
-        text
-    )
+    text = re.sub(r"\(id\s*\d+\)", "", text)
 
-    text = re.sub(
-        r"\s+",
-        " ",
-        text
-    )
+    # Normalize Windows and Unix line endings.
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+
+    # Remove trailing whitespace without collapsing paragraph breaks.
+    text = "\n".join(line.rstrip() for line in text.split("\n"))
+
+    # Limit excessive blank lines while preserving Markdown structure.
+    text = re.sub(r"\n{3,}", "\n\n", text)
 
     return text.strip()
+
 
 
 # ======================================================
@@ -182,7 +182,8 @@ def fallback_answer(question: str):
 def generate_answer(
     question: str,
     features=None,
-    extra_prompt: str = ""
+    extra_prompt: str = "",
+    prompt_question: str | None = None,
 ):
 
     # ==================================================
@@ -190,6 +191,12 @@ def generate_answer(
     # ==================================================
 
     start_timer("rag_total")
+
+    # `question` remains the task-owned retrieval query. By default the same
+    # text is also shown to the LLM, preserving existing behavior for all callers.
+    # Tasks that use a concise retrieval query may pass `prompt_question` to
+    # provide the actual subtask to the LLM without changing retrieval.
+    displayed_question = question if prompt_question is None else prompt_question
 
     # ==================================================
     # RETRIEVAL
@@ -324,7 +331,7 @@ Do not introduce unsupported ecological claims.
 {extra_prompt}
 
 User Question:
-{question}
+{displayed_question}
 
 Retrieved Scientific Knowledge:
 {context}
@@ -369,8 +376,12 @@ Scientific Interpretation:
     )
 
     debug_print(
-        "[RAG] Question:",
+        "[RAG] Retrieval query:",
         question
+    )
+    debug_print(
+        "[RAG] LLM prompt question:",
+        displayed_question
     )
 
     debug_print(

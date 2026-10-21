@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 
 """
-RAG Delta — v38 (epistemic + significance-aware)
+RAG Delta — v39 (ecological interpretation separated from model results)
 
-✔ Uses centralized llm_client
-✔ Deterministic ecological logic preserved
-✔ Softer ecological language
-✔ Epistemic risk phrasing
-✔ Delta significance semantics
-✔ Cleaner text generation
-✔ Strong fallback
-✔ Tree cover + biodiversity support
+- Keeps ecological facts deterministic and task-local.
+- The LLM generates only the ecological interpretation.
+- Python appends the canonical, rounded risk result.
+- A zero environmental change is not misclassified as a decrease.
+- The Delta retrieval query focuses on ecological effects, not generic risk methodology.
 """
 
+import math
 import re
 from knowledge.rag_pipeline import generate_answer
 
@@ -32,6 +30,31 @@ def debug_print(*args):
 # ======================================================
 # DELTA SIGNIFICANCE
 # ======================================================
+
+def format_risk_delta_for_display(delta, decimals=3):
+    """Format a risk-score difference for prompts without changing its source value.
+
+    Three decimals are used for consistency with the displayed risk scores.
+    Values that round to zero are rendered as 0.000, never -0.000 or scientific
+    notation (for example, 1.1102230246251565e-16).
+    """
+    if delta is None:
+        return None
+
+    try:
+        numeric = float(delta)
+    except (TypeError, ValueError):
+        return None
+
+    if not math.isfinite(numeric):
+        return None
+
+    rounded = round(numeric, decimals)
+    if rounded == 0.0:  # also normalizes negative zero
+        rounded = 0.0
+
+    return rounded
+
 
 def classify_delta(delta):
 
@@ -68,6 +91,32 @@ def build_facts(drivers):
 
         name = feature.lower()
         delta = v_to - v_from
+
+        # A zero change must not be treated as a decrease by the branches below.
+        # Keep the fact ecological and neutral; do not infer gains or losses.
+        if math.isclose(float(delta), 0.0, abs_tol=1e-12):
+            if "temperature" in name:
+                label = "temperature"
+            elif "precipitation" in name:
+                label = "precipitation"
+            elif "evapotranspiration" in name:
+                label = "evapotranspiration"
+            elif "tree cover" in name:
+                label = "tree cover"
+            elif "grassland" in name:
+                label = "grassland extent"
+            elif "species" in name or "biodiversity" in name:
+                label = "biodiversity"
+            elif "productivity" in name or "phenology" in name:
+                label = "vegetation productivity"
+            elif "impervious" in name:
+                label = "land imperviousness"
+            elif "land use" in name:
+                label = "land use change"
+            else:
+                label = feature
+            facts.append(f"{label} remains unchanged")
+            continue
 
         # --------------------------------------------------
         # TEMPERATURE
@@ -283,73 +332,36 @@ def build_facts(drivers):
 # DELTA REPORT
 # ======================================================
 
-def build_delta_report(
-    drivers,
-    facts,
-    delta
-):
-
+def build_delta_report(drivers, facts, delta=None):
+    """Build scenario context for the LLM without exposing model-risk outputs."""
     feature, value_from, value_to = drivers[0]
+    effects = "\n".join(f"• {fact}" for fact in facts)
 
-    if delta is None:
-
-        risk_change = "Unknown"
-
-    elif delta > 0:
-
-        risk_change = "Increase"
-
-    elif delta < 0:
-
-        risk_change = "Decrease"
-
-    else:
-
-        risk_change = "No substantial change"
-
-    effects = "\n".join(
-        f"• {f}"
-        for f in facts
-    )
-
-    report = f"""
+    return f"""
 ============================================================
-DIGITAL TWIN DELTA REPORT
+DIGITAL TWIN DELTA REPORT — ECOLOGICAL CONTEXT
 ============================================================
 
 MODIFIED ENVIRONMENTAL VARIABLE
 ------------------------------------------------------------
-
 {feature}
 
-============================================================
 APPLIED MODIFICATION
 ------------------------------------------------------------
+Initial value: {value_from}
+Modified value: {value_to}
 
-Initial value:
-{value_from}
-
-Modified value:
-{value_to}
-
-============================================================
-EXPECTED ENVIRONMENTAL EFFECTS
+REPORTED ENVIRONMENTAL EFFECTS
 ------------------------------------------------------------
-
 {effects}
 
-============================================================
-MODEL RESULTS
+OUTPUT SCOPE
 ------------------------------------------------------------
-
-Predicted ecosystem risk variation:
-{risk_change}
-
-Estimated ecosystem risk difference:
-{delta}
+Write only the ecological interpretation of the reported effects.
+Do not mention ecosystem risk, risk scores, risk classifications,
+score variations, or model predictions. Python adds the quantitative
+model result separately after this interpretation has been generated.
 """
-
-    return report
 
 # ======================================================
 # ECOLOGICAL NOTES
@@ -375,6 +387,13 @@ reported environmental effects.
 Do not infer additional environmental modifications,
 ecological mechanisms or ecosystem responses that
 are not reported by the Digital Twin.
+
+The LLM output is only the ecological interpretation.
+Do not answer the risk-score part of the user's request.
+Do not mention ecosystem risk, a risk score, a risk level,
+or any numerical model prediction. Python appends those results.
+If the modified variable is unchanged, do not describe an increase,
+decrease, loss, gain, or other directional ecological effect.
 """
 
 # ======================================================
@@ -441,7 +460,8 @@ def build_legacy_prompt(facts):
 
     unless these concepts are explicitly supported by the provided facts.
 
-    - Combine the facts into 1-2 concise sentences.
+    - Produce exactly 1-2 concise sentences. State each environmental effect only once.
+    - Do not add an introduction, a generic methodological comment, or a concluding summary.
     - Do NOT present associations as proven causal mechanisms.
     - Distinguish between ecological interpretation and model prediction.
     - Use cautious scientific language.
@@ -457,47 +477,96 @@ def build_legacy_prompt(facts):
 # ======================================================
 
 def clean_output(text):
+    """Normalize the LLM answer and remove redundant summary sentences."""
 
     if not text:
         return ""
 
     text = text.strip()
 
+    # Remove common introductory framing.
     text = re.sub(
-        r"^here is.*?:",
+        r"^(?:here is|this means|based on the provided information)[^:]*:\s*",
         "",
         text,
         flags=re.IGNORECASE
     )
 
-    text = re.sub(
-        r"^this means.*?:",
-        "",
-        text,
-        flags=re.IGNORECASE
-    )
+    text = re.sub(r"\s+", " ", text).strip()
+    text = text.replace("increases increases", "increases")
+    text = text.replace("decreases decreases", "decreases")
 
-    text = text.replace("\n", " ")
+    # Keep the first useful formulation of an idea and discard clear repeats.
+    sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z])", text)
+    kept = []
 
-    text = re.sub(
-        r"\s+",
-        " ",
-        text
-    )
+    def content_words(sentence):
+        words = re.findall(r"[a-z0-9]+", sentence.lower())
+        stopwords = {
+            "the", "a", "an", "and", "or", "but", "if", "of", "to",
+            "in", "on", "for", "with", "by", "from", "that", "this",
+            "these", "those", "is", "are", "was", "were", "be", "been",
+            "being", "may", "might", "could", "would", "should", "it",
+            "its", "as", "at", "than", "however", "therefore"
+        }
+        return {word for word in words if word not in stopwords}
 
-    # repetition cleanup
-    text = text.replace(
-        "increases increases",
-        "increases"
-    )
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if not sentence:
+            continue
 
-    text = text.replace(
-        "decreases decreases",
-        "decreases"
-    )
+        # A summary phrase is usually redundant when it repeats prior content.
+        if re.match(r"^(?:in summary|to summarize|overall|in conclusion)\b", sentence, re.I):
+            candidate_words = content_words(sentence)
+            if any(
+                len(candidate_words & content_words(previous)) /
+                max(1, len(candidate_words | content_words(previous))) >= 0.30
+                for previous in kept
+            ):
+                continue
 
-    return text.strip()
+        current_words = content_words(sentence)
+        redundant = False
+        for previous in kept:
+            previous_words = content_words(previous)
+            if not current_words or not previous_words:
+                continue
+            overlap = len(current_words & previous_words) / max(
+                1, len(current_words | previous_words)
+            )
+            if overlap >= 0.55:
+                redundant = True
+                break
 
+        if not redundant:
+            kept.append(sentence)
+
+    # Avoid long answers even if the model adds several distinct but peripheral points.
+    return " ".join(kept[:2]).strip()
+
+
+
+# ======================================================
+# REMOVE MODEL-RISK CONTENT FROM LLM INTERPRETATION
+# ======================================================
+
+def remove_risk_sentences(text):
+    """Keep the LLM's ecological prose separate from the Python-built result."""
+    if not text:
+        return ""
+
+    sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z])", text.strip())
+    kept = []
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if not sentence:
+            continue
+        # Any sentence mentioning risk belongs to the separate deterministic section.
+        if re.search(r"\brisk\b|\brisk-score\b|\bscore\b|\bmodel prediction\b", sentence, re.I):
+            continue
+        kept.append(sentence)
+    return " ".join(kept).strip()
 
 # ======================================================
 # OUTPUT VALIDATION
@@ -521,111 +590,74 @@ def is_valid(text):
 # ADD RISK SENTENCE
 # ======================================================
 
-def add_risk_alignment(text, delta, drivers=None):
+def _format_score(value):
+    try:
+        return f"{float(value):.3f}"
+    except (TypeError, ValueError):
+        return str(value)
 
-    if delta is None:
-        return text
 
-    if "ecosystem risk" in text.lower():
-        return text
+def add_risk_alignment(text, delta, drivers=None, model_results=None):
+    """Render ecological interpretation and model estimates as separate sections.
 
-    severity = classify_delta(delta)
+    All quantitative values come from Python/model_results; the LLM contributes
+    only the ecological interpretation. Keep the text layout consistent for
+    positive, negative, and zero changes.
+    """
+    ecological_text = remove_risk_sentences(text).strip()
+    display_delta = format_risk_delta_for_display(delta)
 
-    # --------------------------------------------------
-    # CONFIDENCE
-    # --------------------------------------------------
+    sections = []
+    if ecological_text:
+        sections.append(
+            "**Ecological interpretation**\n" + ecological_text
+        )
 
-    d = abs(delta)
+    if display_delta is None:
+        return "\n\n".join(sections) if sections else ""
 
-    if d < 0.05:
-        confidence = "low confidence"
-
-    elif d < 0.20:
-        confidence = "moderate confidence"
-
+    if display_delta > 0:
+        direction = "Increase"
+        delta_text = f"+{display_delta:.3f}"
+    elif display_delta < 0:
+        direction = "Decrease"
+        delta_text = f"{display_delta:.3f}"
     else:
-        confidence = "high confidence"
+        direction = "No substantial change"
+        delta_text = "0.000"
 
-    # --------------------------------------------------
-    # BASELINE DEVIATION
-    # --------------------------------------------------
+    estimate_lines = ["**Model estimate**"]
 
-    deviation_text = ""
+    required = {"score_from", "score_to", "risk_from", "risk_to"}
+    if model_results and required.issubset(model_results):
+        estimate_lines.extend([
+            f"Initial ecosystem risk: {_format_score(model_results['score_from'])} ({model_results['risk_from']})",
+            f"Final ecosystem risk: {_format_score(model_results['score_to'])} ({model_results['risk_to']})",
+        ])
 
-    if drivers:
+    estimate_lines.extend([
+        f"Predicted risk change: {direction}",
+        f"Risk-score change: {delta_text}",
+    ])
+    sections.append("\n".join(estimate_lines))
 
-        feature, v_from, v_to = drivers[0]
-
-        relative_shift = abs(v_to - v_from)
-
-        if relative_shift >= 30:
-
-            deviation_text = (
-                " This scenario represents "
-                "a major deviation from "
-                "baseline environmental "
-                "conditions."
-            )
-
-        elif relative_shift >= 15:
-
-            deviation_text = (
-                " This scenario represents "
-                "a notable deviation from "
-                "baseline environmental "
-                "conditions."
-            )
-
-    # --------------------------------------------------
-    # RISK ALIGNMENT
-    # --------------------------------------------------
-
-    if delta > 0:
-
-        return (
-            text
-            + f" The model predicts a {severity} "
-              f"increase in ecosystem risk "
-              f"under this scenario, "
-              f"with {confidence}."
-#           + deviation_text
-        )
-
-    elif delta < 0:
-
-        return (
-            text
-            + f" The model predicts a {severity} "
-              f"decrease in ecosystem risk "
-              f"under this scenario, "
-              f"with {confidence}."
-#            + deviation_text
-        )
-
-    else:
-
-        return (
-            text
-            + " The model predicts no "
-              "substantial change in "
-              "ecosystem risk."
-#            + deviation_text
-        )
+    return "\n\n".join(sections)
 
 # ======================================================
 # FALLBACK
 # ======================================================
 
-def fallback(facts, delta):
-
-    if not facts:
-        return "No clear environmental pattern detected."
-
-    sentence = " and ".join(facts[:2]) + "."
+def fallback(facts, delta, drivers=None, model_results=None):
+    if facts:
+        sentence = " and ".join(facts[:2]) + "."
+    else:
+        sentence = "No clear environmental pattern detected."
 
     return add_risk_alignment(
         sentence,
-        delta
+        delta,
+        drivers=drivers,
+        model_results=model_results,
     )
 
 
@@ -637,19 +669,22 @@ def generate_delta_explanation(
     question,
     drivers,
     delta=None,
-    features=None
+    features=None,
+    model_results=None
 ):
 
-    print("\n[RAG-DELTA v38] START")
+    print("\n[RAG-DELTA v39] START")
 
     facts = build_facts(drivers)
 
     debug_print("[FACTS]:", facts)
 
     if not facts:
-        return (
-            "No clear environmental "
-            "pattern detected."
+        return add_risk_alignment(
+            "No clear environmental pattern detected.",
+            delta,
+            drivers=drivers,
+            model_results=model_results,
         )
 
     # --------------------------------------------------
@@ -658,7 +693,7 @@ def generate_delta_explanation(
 
     feature = drivers[0][0]
     rag_concept = get_delta_rag_concept(feature)
-    rag_query = f"{rag_concept} ecosystem risk"
+    rag_query = f"{rag_concept} ecological effects habitat vegetation"
 
     debug_print("[DELTA RAG CONCEPT]:", rag_concept)
 
@@ -677,19 +712,20 @@ def generate_delta_explanation(
         delta_report = build_delta_report(
             drivers,
             facts,
-            delta
         )
 
-        delta_notes = build_delta_notes(
-            drivers
-        )
+        delta_notes = build_delta_notes(drivers)
 
         prompt = (
             build_prompt("delta")
             + f"""
 
-    QUESTION:
-    {question}
+    ECOLOGICAL INTERPRETATION SUBTASK:
+    Describe the ecological implications of changing {feature} from
+    {drivers[0][1]} to {drivers[0][2]}. Use the supplied facts and only
+    directly relevant retrieved scientific evidence. Do not answer the
+    ecosystem-risk prediction part of the original request; Python will
+    append the formatted model result separately.
 
     {delta_report}
 
@@ -698,9 +734,14 @@ def generate_delta_explanation(
     ============================================================
     RETRIEVED SCIENTIFIC EVIDENCE
     ============================================================
-
     """
         )
+
+    prompt_question = (
+        f"Explain only the ecological implications of changing {feature} "
+        f"from {drivers[0][1]} to {drivers[0][2]}. Do not report risk "
+        "scores, risk levels, or model predictions."
+    )
 
     try:
 
@@ -715,34 +756,31 @@ def generate_delta_explanation(
             print("\n=====================================\n")
 
         raw = generate_answer(
-
             question=rag_query,
-
             features=features,
-
-            extra_prompt=prompt
+            extra_prompt=prompt,
+            prompt_question=prompt_question,
         )
 
         print("[RAW]:", raw)
 
         if not is_valid(raw):
+            return fallback(facts, delta, drivers, model_results)
 
-            return fallback(
-                facts,
-                delta
-            )
-
-        cleaned = clean_output(raw)
+        cleaned = remove_risk_sentences(clean_output(raw))
+        if not is_valid(cleaned):
+            cleaned = " and ".join(facts[:2]) + "."
 
         final = add_risk_alignment(
             cleaned,
             delta,
-            drivers
+            drivers=drivers,
+            model_results=model_results,
         )
 
         print("[FINAL]:", final)
 
-        print("[RAG-DELTA v38] END")
+        print("[RAG-DELTA v39] END")
 
         return final
 
@@ -750,7 +788,4 @@ def generate_delta_explanation(
 
         print("[RAG ERROR]", e)
 
-        return fallback(
-            facts,
-            delta
-        )
+        return fallback(facts, delta, drivers, model_results)

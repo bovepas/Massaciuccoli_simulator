@@ -382,7 +382,9 @@ def handle_assessment(
             primary_drivers=primary_drivers,
             secondary_responses=secondary_drivers,
             risk_delta=risk_delta,
-            features=modified_features
+            features=modified_features,
+            baseline_risk=baseline_risk,
+            scenario_risk=scenario_risk
         )
 
     except Exception as e:

@@ -78,14 +78,19 @@ def enm_extraction_to_inputs(
         raise ValueError("ENM target is empty")
 
     dataset_group = None
+    target_type = extraction.target_type
 
-    if extraction.target_type == "category":
+    if target_type == "category":
         dataset_group = CATEGORY_MAP.get(target.casefold())
 
         if dataset_group is None:
-            raise ValueError(
-                f"Unsupported ENM category: {target}"
-            )
+            # The LLM can occasionally label an unfamiliar common species
+            # name as a category. Do not hard-code individual names or fail
+            # here: pass the target to the species resolver, which will use
+            # GBIF and accept it only if it exists in the local dataset.
+            # Genuine unsupported groups will fail safely at species
+            # resolution instead of being mapped to an arbitrary species.
+            target_type = "species"
 
     if extraction.intent == "future_suitability":
         if extraction.year not in (None, 2050, 2100):
@@ -117,7 +122,7 @@ def enm_extraction_to_inputs(
     return {
         "intent": extraction.intent,
         "target": target,
-        "target_type": extraction.target_type,
+        "target_type": target_type,
         "dataset_group": dataset_group,
         "year": extraction.year,
         "rcp": extraction.rcp,

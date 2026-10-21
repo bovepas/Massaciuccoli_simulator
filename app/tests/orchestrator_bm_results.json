@@ -1,12 +1,12 @@
 {
-  "created_at": "2026-10-14T12:22:52",
+  "created_at": "2026-10-20T12:18:23",
   "benchmark_module": "tests.test_router_bm_cosin",
   "total_questions": 87,
   "counts": {
-    "route_correct": 87,
-    "route_wrong": 0,
-    "response_returned": 87,
-    "application_failure": 0,
+    "route_correct": 84,
+    "route_wrong": 3,
+    "response_returned": 85,
+    "application_failure": 2,
     "empty_result": 0,
     "invalid_result": 0,
     "execution_exception": 0
@@ -19,8 +19,8 @@
       "predicted_type": "drivers",
       "route_correct": true,
       "status": "response_returned",
-      "summary": "Drivers of biodiversity degradation",
-      "interpretation": "Based on the Digital Twin's analysis, the environmental variables most strongly associated with a decrease in the number of species potentially living in the cell are: 1. Change in land use and cover in the past decade (direction: negative, strength: strong) 2. Density change in land imperviousness (direction: positive, strength: strong) These associations suggest that areas with high levels of land-use modification and increased impervious surfaces may have lower species richness due to habitat loss and fragmentation. The retrieved scientific evidence supports this interpretation. Climate change is projected to substantially modify biodiversity within the Massaciuccoli Lake basin, with bird biodiversity predicted to decline even under moderate greenhouse-gas emission scenarios. Habitat suitability is also expected to change, potentially leading to a shift in species distribution towards cooler and wetter areas. It's worth noting that while land use and cover changes are strongly associated with decreased species richness, the strength of this association is not as strong as that of density change in land imperviousness. However, both variables are still significant contributors to the decline in species richness.\n\nThese associations highlight environmental pressures observed in the lake ecosystem and may reflect interacting ecological processes.",
+      "summary": "Drivers of Number of species potentially living in the cell",
+      "interpretation": "The Digital Twin reports a strong negative statistical association between Change in land use and cover in the past decade and Number of species potentially living in the cell; and a strong positive statistical association between Density change in land imperviousness and Number of species potentially living in the cell. The supplied semantic notes provide ecological context for the reported variables, but do not by themselves establish a specific mechanism connecting these variables to the target. The retrieved material does not support a stronger mechanistic explanation; the reported directions should therefore be interpreted as statistical associations, not causal effects.",
       "data": {
         "target": "Number of species potentially living in the cell",
         "drivers": [
@@ -62,11 +62,11 @@
         ]
       },
       "drivers": [
-        "Change in land use and cover in the past decade (associated with biodiversity decline, strong)",
-        "Density change in land imperviousness (associated with biodiversity decline, strong)",
-        "Land use and cover (associated with biodiversity decline, moderate)",
-        "Cumulative change in precipitation compared to a recent past (associated with biodiversity decline, moderate)",
-        "Relative change in the potential evapotranspiration compared to a recent past (associated with biodiversity decline, moderate)"
+        "Change in land use and cover in the past decade (negative, strong influence)",
+        "Density change in land imperviousness (positive, strong influence)",
+        "Land use and cover (positive, moderate influence)",
+        "Cumulative change in precipitation compared to a recent past (negative, moderate influence)",
+        "Relative change in the potential evapotranspiration compared to a recent past (positive, moderate influence)"
       ],
       "error": null
     },
@@ -74,16 +74,26 @@
       "index": 2,
       "question": "What factors drive ecosystem risk in the basin?",
       "expected_type": "drivers",
-      "predicted_type": "drivers",
-      "route_correct": true,
+      "predicted_type": "importance",
+      "route_correct": false,
       "status": "response_returned",
-      "summary": "Drivers of Ecosystem risk classification according to a Variational Autoencoder with a later application of a Multi K-means process",
-      "interpretation": "Based on the Digital Twin's analysis, the environmental variables most strongly associated with Ecosystem risk classification according to a Variational Autoencoder with a later application of a Multi K-means process are: 1. Nutrient levels (positive association) 2. Water temperature (negative association) According to the retrieved scientific evidence, nutrient levels are ecologically associated with ecosystem risk because wetlands are among the ecosystems most exposed to degradation due to anthropogenic pressures and climate-related stressors. The Massaciuccoli Lake basin, a Ramsar-listed wetland, is characterized by high ecological value and strong land-use pressure. Water temperature, on the other hand, is negatively associated with ecosystem risk classification. This may be because water temperature can impact aquatic species' tolerance to environmental changes, which in turn affects ecosystem resilience. It's essential to note that these associations do not indicate observed environmental changes or direct ecological causality. The reported statistical relationships should be interpreted as descriptive of the Digital Twin analysis and not as evidence of causal links between the variables.\n\nThese associations highlight environmental pressures observed in the lake ecosystem and may reflect interacting ecological processes.",
+      "summary": "Top factors influencing ecosystem risk",
+      "interpretation": "Based on the Digital Twin's analysis, the factors most strongly associated with ecosystem risk in the Massaciuccoli Lake basin are land use and biodiversity. The Digital Twin report indicates that land use is a dominant environmental domain with a moderate impact of 0.1784 on predicted ecosystem risk, while biodiversity has a strong negative impact of -0.1786. The retrieved scientific evidence supports this finding by highlighting the importance of wetlands as productive ecosystems providing essential ecosystem services. However, these ecosystems are increasingly exposed to multiple anthropogenic pressures, including land-use change, urbanization, and climate change, which can produce cumulative ecological effects that are difficult to quantify using traditional environmental assessment methods.",
       "data": {
-        "target": "Ecosystem risk classification according to a Variational Autoencoder with a later application of a Multi K-means process",
-        "drivers": []
+        "Index of total productivity by plant phenology": -0.1786,
+        "Number of species potentially living in the cell": 0.0243,
+        "Change in land use and cover in the past decade": -0.1784
       },
-      "drivers": [],
+      "drivers": [
+        "🌍 Dominant ecosystem domains:",
+        "biodiversity (score=0.203)",
+        "land_use (score=0.178)",
+        "📈 Increasing risk:",
+        "Number of species potentially living in the cell [biodiversity] (impact=0.024, moderate)",
+        "📉 Reducing risk:",
+        "Index of total productivity by plant phenology [biodiversity] (impact=-0.179, strong)",
+        "Change in land use and cover in the past decade [land_use] (impact=-0.178, strong)"
+      ],
       "error": null
     },
     {
@@ -92,70 +102,11 @@
       "expected_type": "drivers",
       "predicted_type": "drivers",
       "route_correct": true,
-      "status": "response_returned",
-      "summary": "Drivers associated with climate-related stress indicators",
-      "interpretation": "Climate-related stress is not a directly measured column in this dataset. The analysis therefore examines temperature, precipitation and potential evapotranspiration separately, reporting the strongest correlations with other available numeric environmental indicators. These are associations, not evidence of causation, and no composite climate-stress index was calculated.\n\n- temperature change: strongest observed associations are Change in tree cover density in the past decade (negative, r=-0.43); Density of tree cover (negative, r=-0.42).\n- precipitation change: strongest observed associations are Density change in land imperviousness (negative, r=-0.35); Number of species potentially living in the cell (negative, r=-0.20).\n- potential evapotranspiration change: strongest observed associations are Density change in land imperviousness (positive, r=0.33); Change in tree cover density in the past decade (positive, r=0.23).",
-      "data": {
-        "target": "climate-related stress",
-        "drivers": [
-          {
-            "feature": "Change in tree cover density in the past decade",
-            "correlation": -0.4320634223563913,
-            "abs_corr": 0.4320634223563913,
-            "direction": "negative",
-            "strength": "strong",
-            "climate_indicator": "Change in average temperature compared to a recent past"
-          },
-          {
-            "feature": "Density of tree cover",
-            "correlation": -0.42181464981223327,
-            "abs_corr": 0.42181464981223327,
-            "direction": "negative",
-            "strength": "strong",
-            "climate_indicator": "Change in average temperature compared to a recent past"
-          },
-          {
-            "feature": "Density change in land imperviousness",
-            "correlation": -0.3474442529901107,
-            "abs_corr": 0.3474442529901107,
-            "direction": "negative",
-            "strength": "strong",
-            "climate_indicator": "Cumulative change in precipitation compared to a recent past"
-          },
-          {
-            "feature": "Number of species potentially living in the cell",
-            "correlation": -0.19803206600161113,
-            "abs_corr": 0.19803206600161113,
-            "direction": "negative",
-            "strength": "moderate",
-            "climate_indicator": "Cumulative change in precipitation compared to a recent past"
-          },
-          {
-            "feature": "Density change in land imperviousness",
-            "correlation": 0.3346906339557217,
-            "abs_corr": 0.3346906339557217,
-            "direction": "positive",
-            "strength": "strong",
-            "climate_indicator": "Relative change in the potential evapotranspiration compared to a recent past"
-          },
-          {
-            "feature": "Change in tree cover density in the past decade",
-            "correlation": 0.22621121144905657,
-            "abs_corr": 0.22621121144905657,
-            "direction": "positive",
-            "strength": "moderate",
-            "climate_indicator": "Relative change in the potential evapotranspiration compared to a recent past"
-          }
-        ]
-      },
-      "drivers": [
-        "temperature change — Change in tree cover density in the past decade (negative association, strong, r=-0.43)",
-        "temperature change — Density of tree cover (negative association, strong, r=-0.42)",
-        "precipitation change — Density change in land imperviousness (negative association, strong, r=-0.35)",
-        "precipitation change — Number of species potentially living in the cell (negative association, moderate, r=-0.20)",
-        "potential evapotranspiration change — Density change in land imperviousness (positive association, strong, r=0.33)",
-        "potential evapotranspiration change — Change in tree cover density in the past decade (positive association, moderate, r=0.23)"
-      ],
+      "status": "application_failure",
+      "summary": "Drivers not computable",
+      "interpretation": "Target variable not found in dataset.",
+      "data": {},
+      "drivers": [],
       "error": null
     },
     {
@@ -166,7 +117,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Drivers of Index of total productivity by plant phenology",
-      "interpretation": "The environmental variables most strongly associated with Index of total productivity by plant phenology are: 1. Change in land use and cover in the past decade (positive direction, strong strength) 2. Density change in land imperviousness (positive direction, strong strength) These two variables show a positive association with the target variable, indicating that changes in land use and cover, as well as increases in land imperviousness, are correlated with higher productivity of plant phenology. According to the retrieved scientific evidence, increasing land-use modification (as indicated by the change in land use and cover) can lead to growing anthropogenic pressure on ecosystems. Similarly, increasing land imperviousness reflects growing anthropogenic pressure and ecosystem sealing, which may contribute to environmental degradation. In contrast, the density of tree cover shows a moderate positive association with Index of total productivity by plant phenology. This suggests that areas with high tree cover may represent ecologically valuable and fragile habitats that require preservation. The other variables, such as change in grassland presence in the past decade and presence of grassland, also show positive associations with the target variable, but to a lesser extent.\n\nThese associations highlight environmental pressures observed in the lake ecosystem and may reflect interacting ecological processes.",
+      "interpretation": "The Digital Twin reports a strong positive statistical association between Change in land use and cover in the past decade and Index of total productivity by plant phenology; and a strong positive statistical association between Density change in land imperviousness and Index of total productivity by plant phenology. The supplied semantic notes provide ecological context for the reported variables, but do not by themselves establish a specific mechanism connecting these variables to the target. The retrieved material does not support a stronger mechanistic explanation; the reported directions should therefore be interpreted as statistical associations, not causal effects.",
       "data": {
         "target": "Index of total productivity by plant phenology",
         "drivers": [
@@ -224,7 +175,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Drivers of Relative change in the potential evapotranspiration compared to a recent past",
-      "interpretation": "Based on the Digital Twin's analysis, the environmental variables most strongly associated with a relative change in potential evapotranspiration compared to a recent past are: 1. Cumulative change in precipitation compared to a recent past (negative direction and strong strength) 2. Change in average temperature compared to a recent past (negative direction and strong strength) These associations indicate that reduced precipitation and increasing temperatures are strongly linked to decreased potential evapotranspiration, which may contribute to ecological stress and aridity. The retrieved scientific evidence supports this association by highlighting the vulnerability of wetland ecosystems to climate change. Wetlands are among the most affected ecosystems, with a substantial decline in global extent over the last century, resulting in biodiversity loss and degradation of ecosystem services (Retrieved Scientific Knowledge: WETLAND ECOSYSTEMS). Climate change is recognized as one of the principal drivers of wetland degradation and biodiversity alteration, emphasizing the importance of predicting future ecological conditions for conservation and management efforts.\n\nThese associations highlight environmental pressures observed in the lake ecosystem and may reflect interacting ecological processes.",
+      "interpretation": "The Digital Twin reports a strong negative statistical association between Cumulative change in precipitation compared to a recent past and Relative change in the potential evapotranspiration compared to a recent past; a strong negative statistical association between Change in average temperature compared to a recent past and Relative change in the potential evapotranspiration compared to a recent past; and a strong positive statistical association between Density change in land imperviousness and Relative change in the potential evapotranspiration compared to a recent past. The supplied semantic notes provide ecological context for the reported variables, but do not by themselves establish a specific mechanism connecting these variables to the target. The retrieved material does not support a stronger mechanistic explanation; the reported directions should therefore be interpreted as statistical associations, not causal effects.",
       "data": {
         "target": "Relative change in the potential evapotranspiration compared to a recent past",
         "drivers": [
@@ -282,7 +233,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Drivers of Presence of grassland",
-      "interpretation": "The environmental variables most strongly associated with the Presence of grassland are Change in grassland presence in the past decade and Index of total productivity by plant phenology. According to the Digital Twin Drivers Report, these two variables show a positive association with the Presence of grassland, indicating that areas with recent changes in grassland presence or high levels of plant productivity tend to have more grassland. Retrieved scientific evidence supports this association. The Massaciuccoli Lake basin is characterized by wetlands, which are among the most productive ecosystems on Earth and provide essential ecosystem services (WETLAND ECOSYSTEMS). High levels of plant productivity in these areas may be indicative of ecologically valuable green spaces that should be preserved. In contrast, Change in land use and cover in the past decade shows a positive association with Presence of grassland, but its strength is moderate compared to the other two variables. Density of tree cover also shows a negative association, indicating that areas with high tree cover may not have as much grassland.\n\nThese associations highlight environmental pressures observed in the lake ecosystem and may reflect interacting ecological processes.",
+      "interpretation": "The Digital Twin reports a strong positive statistical association between Change in grassland presence in the past decade and Presence of grassland. The supplied semantic notes provide ecological context for the reported variables, but do not by themselves establish a specific mechanism connecting these variables to the target. The retrieved material does not support a stronger mechanistic explanation; the reported directions should therefore be interpreted as statistical associations, not causal effects.",
       "data": {
         "target": "Presence of grassland",
         "drivers": [
@@ -336,95 +287,25 @@
       "index": 7,
       "question": "What factors drive ecosystem resilience?",
       "expected_type": "drivers",
-      "predicted_type": "drivers",
-      "route_correct": true,
+      "predicted_type": "importance",
+      "route_correct": false,
       "status": "response_returned",
-      "summary": "Associations with ecosystem resilience proxy indicators",
-      "interpretation": "Ecosystem resilience is not a directly measured variable in this dataset. This analysis therefore examines tree-cover density, change in tree-cover density, plant-phenology productivity and potential species richness as separate indicators that may be relevant to resilience; they are proxies, not a validated resilience measure. Associations are correlations, not evidence of causation. No composite index or resilience score was calculated.\n\n- Density of tree cover: strongest observed associations are Change in average temperature compared to a recent past (negative, r=-0.42); Density change in land imperviousness (positive, r=0.25).\n- Change in tree cover density in the past decade: strongest observed associations are Change in average temperature compared to a recent past (negative, r=-0.43); Density change in land imperviousness (positive, r=0.24).\n- Index of total productivity by plant phenology: strongest observed associations are Density change in land imperviousness (positive, r=0.31); Change in grassland presence in the past decade (positive, r=0.20).\n- Number of species potentially living in the cell: strongest observed associations are Density change in land imperviousness (positive, r=0.35); Cumulative change in precipitation compared to a recent past (negative, r=-0.20).",
+      "summary": "Top factors influencing ecosystem risk",
+      "interpretation": "Based on the Digital Twin's analysis, ecosystem risk is associated with variables that indicate a decrease in ecological resilience. The Index of total productivity by plant phenology and Change in land use and cover in the past decade are reported as risk-reducing variables, indicating that these factors contribute to lower predicted ecosystem risk. This suggests that areas with high levels of plant productivity and minimal changes in land use may be more resilient to environmental stressors. In contrast, the Number of species potentially living in the cell is a risk-increasing variable, with a moderate strength of association.",
       "data": {
-        "target": "ecosystem resilience",
-        "indicators": [
-          "Density of tree cover",
-          "Change in tree cover density in the past decade",
-          "Index of total productivity by plant phenology",
-          "Number of species potentially living in the cell"
-        ],
-        "drivers": [
-          {
-            "feature": "Change in average temperature compared to a recent past",
-            "correlation": -0.42181464981223327,
-            "abs_corr": 0.42181464981223327,
-            "direction": "negative",
-            "strength": "strong",
-            "resilience_indicator": "Density of tree cover"
-          },
-          {
-            "feature": "Density change in land imperviousness",
-            "correlation": 0.25382184343415165,
-            "abs_corr": 0.25382184343415165,
-            "direction": "positive",
-            "strength": "moderate",
-            "resilience_indicator": "Density of tree cover"
-          },
-          {
-            "feature": "Change in average temperature compared to a recent past",
-            "correlation": -0.4320634223563913,
-            "abs_corr": 0.4320634223563913,
-            "direction": "negative",
-            "strength": "strong",
-            "resilience_indicator": "Change in tree cover density in the past decade"
-          },
-          {
-            "feature": "Density change in land imperviousness",
-            "correlation": 0.23818999348427394,
-            "abs_corr": 0.23818999348427394,
-            "direction": "positive",
-            "strength": "moderate",
-            "resilience_indicator": "Change in tree cover density in the past decade"
-          },
-          {
-            "feature": "Density change in land imperviousness",
-            "correlation": 0.313107406797643,
-            "abs_corr": 0.313107406797643,
-            "direction": "positive",
-            "strength": "strong",
-            "resilience_indicator": "Index of total productivity by plant phenology"
-          },
-          {
-            "feature": "Change in grassland presence in the past decade",
-            "correlation": 0.19774113120980963,
-            "abs_corr": 0.19774113120980963,
-            "direction": "positive",
-            "strength": "moderate",
-            "resilience_indicator": "Index of total productivity by plant phenology"
-          },
-          {
-            "feature": "Density change in land imperviousness",
-            "correlation": 0.3512427474110908,
-            "abs_corr": 0.3512427474110908,
-            "direction": "positive",
-            "strength": "strong",
-            "resilience_indicator": "Number of species potentially living in the cell"
-          },
-          {
-            "feature": "Cumulative change in precipitation compared to a recent past",
-            "correlation": -0.19803206600161113,
-            "abs_corr": 0.19803206600161113,
-            "direction": "negative",
-            "strength": "moderate",
-            "resilience_indicator": "Number of species potentially living in the cell"
-          }
-        ]
+        "Index of total productivity by plant phenology": -0.1786,
+        "Number of species potentially living in the cell": 0.0243,
+        "Change in land use and cover in the past decade": -0.1784
       },
       "drivers": [
-        "Density of tree cover — Change in average temperature compared to a recent past (negative association, strong, r=-0.42)",
-        "Density of tree cover — Density change in land imperviousness (positive association, moderate, r=0.25)",
-        "Change in tree cover density in the past decade — Change in average temperature compared to a recent past (negative association, strong, r=-0.43)",
-        "Change in tree cover density in the past decade — Density change in land imperviousness (positive association, moderate, r=0.24)",
-        "Index of total productivity by plant phenology — Density change in land imperviousness (positive association, strong, r=0.31)",
-        "Index of total productivity by plant phenology — Change in grassland presence in the past decade (positive association, moderate, r=0.20)",
-        "Number of species potentially living in the cell — Density change in land imperviousness (positive association, strong, r=0.35)",
-        "Number of species potentially living in the cell — Cumulative change in precipitation compared to a recent past (negative association, moderate, r=-0.20)"
+        "🌍 Dominant ecosystem domains:",
+        "biodiversity (score=0.203)",
+        "land_use (score=0.178)",
+        "📈 Increasing risk:",
+        "Number of species potentially living in the cell [biodiversity] (impact=0.024, moderate)",
+        "📉 Reducing risk:",
+        "Index of total productivity by plant phenology [biodiversity] (impact=-0.179, strong)",
+        "Change in land use and cover in the past decade [land_use] (impact=-0.178, strong)"
       ],
       "error": null
     },
@@ -434,56 +315,11 @@
       "expected_type": "drivers",
       "predicted_type": "drivers",
       "route_correct": true,
-      "status": "response_returned",
-      "summary": "Drivers associated with hydrological change indicators",
-      "interpretation": "Hydrological change is not directly measured as a single variable in this dataset. The analysis examines cumulative precipitation change and relative potential evapotranspiration change separately, reporting their strongest correlations with other available numeric environmental indicators. These associations do not establish causation. No composite hydrological index was calculated.\n\n- precipitation change: strongest observed associations are Change in average temperature compared to a recent past (positive, r=0.42); Density change in land imperviousness (negative, r=-0.35).\n- potential evapotranspiration change: strongest observed associations are Change in average temperature compared to a recent past (negative, r=-0.73); Density change in land imperviousness (positive, r=0.33).",
-      "data": {
-        "target": "hydrological change",
-        "indicators": [
-          "Cumulative change in precipitation compared to a recent past",
-          "Relative change in the potential evapotranspiration compared to a recent past"
-        ],
-        "drivers": [
-          {
-            "feature": "Change in average temperature compared to a recent past",
-            "correlation": 0.41568228169267524,
-            "abs_corr": 0.41568228169267524,
-            "direction": "positive",
-            "strength": "strong",
-            "hydrological_indicator": "Cumulative change in precipitation compared to a recent past"
-          },
-          {
-            "feature": "Density change in land imperviousness",
-            "correlation": -0.3474442529901107,
-            "abs_corr": 0.3474442529901107,
-            "direction": "negative",
-            "strength": "strong",
-            "hydrological_indicator": "Cumulative change in precipitation compared to a recent past"
-          },
-          {
-            "feature": "Change in average temperature compared to a recent past",
-            "correlation": -0.7302875524303364,
-            "abs_corr": 0.7302875524303364,
-            "direction": "negative",
-            "strength": "strong",
-            "hydrological_indicator": "Relative change in the potential evapotranspiration compared to a recent past"
-          },
-          {
-            "feature": "Density change in land imperviousness",
-            "correlation": 0.3346906339557217,
-            "abs_corr": 0.3346906339557217,
-            "direction": "positive",
-            "strength": "strong",
-            "hydrological_indicator": "Relative change in the potential evapotranspiration compared to a recent past"
-          }
-        ]
-      },
-      "drivers": [
-        "precipitation change — Change in average temperature compared to a recent past (positive association, strong, r=0.42)",
-        "precipitation change — Density change in land imperviousness (negative association, strong, r=-0.35)",
-        "potential evapotranspiration change — Change in average temperature compared to a recent past (negative association, strong, r=-0.73)",
-        "potential evapotranspiration change — Density change in land imperviousness (positive association, strong, r=0.33)"
-      ],
+      "status": "application_failure",
+      "summary": "Drivers not computable",
+      "interpretation": "Target variable not found in dataset.",
+      "data": {},
+      "drivers": [],
       "error": null
     },
     {
@@ -494,7 +330,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Drivers of Number of species potentially living in the cell",
-      "interpretation": "Based on the Digital Twin's analysis, the environmental variables most strongly associated with a decrease in the number of species potentially living in the cell are: 1. Change in land use and cover in the past decade (direction: negative, strength: strong) 2. Density change in land imperviousness (direction: positive, strength: strong) These associations suggest that areas with high levels of land-use modification and increased impervious surfaces may have lower species richness due to habitat loss and fragmentation. The retrieved scientific evidence supports this interpretation. Climate change is projected to substantially modify biodiversity within the Massaciuccoli Lake basin, with bird biodiversity predicted to decline even under moderate greenhouse-gas emission scenarios. Habitat suitability is also expected to change, potentially leading to a shift in species distribution towards cooler and wetter areas. It's worth noting that while land use and cover changes are strongly associated with decreased species richness, the strength of this association is not as strong as that of density change in land imperviousness. However, both variables are still significant contributors to the decline in species richness.\n\nThese associations highlight environmental pressures observed in the lake ecosystem and may reflect interacting ecological processes.",
+      "interpretation": "The Digital Twin reports a strong negative statistical association between Change in land use and cover in the past decade and Number of species potentially living in the cell; and a strong positive statistical association between Density change in land imperviousness and Number of species potentially living in the cell. The supplied semantic notes provide ecological context for the reported variables, but do not by themselves establish a specific mechanism connecting these variables to the target. The retrieved material does not support a stronger mechanistic explanation; the reported directions should therefore be interpreted as statistical associations, not causal effects.",
       "data": {
         "target": "Number of species potentially living in the cell",
         "drivers": [
@@ -548,153 +384,25 @@
       "index": 10,
       "question": "What factors drive ecosystem vulnerability?",
       "expected_type": "drivers",
-      "predicted_type": "drivers",
-      "route_correct": true,
+      "predicted_type": "importance",
+      "route_correct": false,
       "status": "response_returned",
-      "summary": "Associations with ecosystem vulnerability proxy indicators",
-      "interpretation": "Ecosystem vulnerability is not directly measured as a single variable in this dataset. This analysis examines available environmental pressure and sensitivity indicators separately as candidate proxies; they are not a validated vulnerability measure and their correlations do not establish causation. The analysis does not equate vulnerability with ecosystem risk and does not calculate a composite vulnerability score.\n\n- Density change in land imperviousness: strongest observed associations are Index of total productivity by plant phenology (positive, r=0.31); Density of tree cover (positive, r=0.25).\n- Change in tree cover density in the past decade: strongest observed associations are Density of tree cover (positive, r=0.88); Presence of grassland (negative, r=-0.19).\n- Change in grassland presence in the past decade: strongest observed associations are Presence of grassland (positive, r=0.46); Density of tree cover (negative, r=-0.22).\n- Change in average temperature compared to a recent past: strongest observed associations are Density of tree cover (negative, r=-0.42); Presence of grassland (positive, r=0.18).\n- Cumulative change in precipitation compared to a recent past: strongest observed associations are Index of total productivity by plant phenology (negative, r=-0.13).\n- Relative change in the potential evapotranspiration compared to a recent past: strongest observed associations are Density of tree cover (positive, r=0.22).\n- Change in land use and cover in the past decade: strongest observed associations are Index of total productivity by plant phenology (positive, r=0.64); Presence of grassland (positive, r=0.22).\n- Number of species potentially living in the cell: strongest observed associations are Density of tree cover (negative, r=-0.11); Index of total productivity by plant phenology (positive, r=0.10).",
+      "summary": "Top factors influencing ecosystem risk",
+      "interpretation": "Based on the Digital Twin's analysis, the factors most strongly associated with ecosystem vulnerability in the Massaciuccoli Lake basin are biodiversity and land use. The Digital Twin report indicates that these two domains have the highest scores (0.2029 and 0.1784, respectively) among the dominant environmental domains. The risk-increasing variable, \"Number of species potentially living in the cell,\" is statistically associated with higher predicted ecosystem risk, with a moderate strength and impact of 0.0243. However, it's essential to note that this association does not represent observed environmental changes and should not be interpreted as direct ecological causality.",
       "data": {
-        "target": "ecosystem vulnerability",
-        "indicators": [
-          "Density change in land imperviousness",
-          "Change in tree cover density in the past decade",
-          "Change in grassland presence in the past decade",
-          "Change in average temperature compared to a recent past",
-          "Cumulative change in precipitation compared to a recent past",
-          "Relative change in the potential evapotranspiration compared to a recent past",
-          "Change in land use and cover in the past decade",
-          "Number of species potentially living in the cell"
-        ],
-        "drivers": [
-          {
-            "feature": "Index of total productivity by plant phenology",
-            "correlation": 0.313107406797643,
-            "abs_corr": 0.313107406797643,
-            "direction": "positive",
-            "strength": "strong",
-            "vulnerability_indicator": "Density change in land imperviousness"
-          },
-          {
-            "feature": "Density of tree cover",
-            "correlation": 0.25382184343415165,
-            "abs_corr": 0.25382184343415165,
-            "direction": "positive",
-            "strength": "moderate",
-            "vulnerability_indicator": "Density change in land imperviousness"
-          },
-          {
-            "feature": "Density of tree cover",
-            "correlation": 0.8837770623252239,
-            "abs_corr": 0.8837770623252239,
-            "direction": "positive",
-            "strength": "strong",
-            "vulnerability_indicator": "Change in tree cover density in the past decade"
-          },
-          {
-            "feature": "Presence of grassland",
-            "correlation": -0.18502256511213364,
-            "abs_corr": 0.18502256511213364,
-            "direction": "negative",
-            "strength": "moderate",
-            "vulnerability_indicator": "Change in tree cover density in the past decade"
-          },
-          {
-            "feature": "Presence of grassland",
-            "correlation": 0.4601197057040153,
-            "abs_corr": 0.4601197057040153,
-            "direction": "positive",
-            "strength": "strong",
-            "vulnerability_indicator": "Change in grassland presence in the past decade"
-          },
-          {
-            "feature": "Density of tree cover",
-            "correlation": -0.2182891573499436,
-            "abs_corr": 0.2182891573499436,
-            "direction": "negative",
-            "strength": "moderate",
-            "vulnerability_indicator": "Change in grassland presence in the past decade"
-          },
-          {
-            "feature": "Density of tree cover",
-            "correlation": -0.42181464981223327,
-            "abs_corr": 0.42181464981223327,
-            "direction": "negative",
-            "strength": "strong",
-            "vulnerability_indicator": "Change in average temperature compared to a recent past"
-          },
-          {
-            "feature": "Presence of grassland",
-            "correlation": 0.18132823097331185,
-            "abs_corr": 0.18132823097331185,
-            "direction": "positive",
-            "strength": "moderate",
-            "vulnerability_indicator": "Change in average temperature compared to a recent past"
-          },
-          {
-            "feature": "Index of total productivity by plant phenology",
-            "correlation": -0.12988631874618392,
-            "abs_corr": 0.12988631874618392,
-            "direction": "negative",
-            "strength": "moderate",
-            "vulnerability_indicator": "Cumulative change in precipitation compared to a recent past"
-          },
-          {
-            "feature": "Density of tree cover",
-            "correlation": 0.21827272170538278,
-            "abs_corr": 0.21827272170538278,
-            "direction": "positive",
-            "strength": "moderate",
-            "vulnerability_indicator": "Relative change in the potential evapotranspiration compared to a recent past"
-          },
-          {
-            "feature": "Index of total productivity by plant phenology",
-            "correlation": 0.6365523277331321,
-            "abs_corr": 0.6365523277331321,
-            "direction": "positive",
-            "strength": "strong",
-            "vulnerability_indicator": "Change in land use and cover in the past decade"
-          },
-          {
-            "feature": "Presence of grassland",
-            "correlation": 0.22383085732694677,
-            "abs_corr": 0.22383085732694677,
-            "direction": "positive",
-            "strength": "moderate",
-            "vulnerability_indicator": "Change in land use and cover in the past decade"
-          },
-          {
-            "feature": "Density of tree cover",
-            "correlation": -0.11388675822073949,
-            "abs_corr": 0.11388675822073949,
-            "direction": "negative",
-            "strength": "moderate",
-            "vulnerability_indicator": "Number of species potentially living in the cell"
-          },
-          {
-            "feature": "Index of total productivity by plant phenology",
-            "correlation": 0.10247061230540878,
-            "abs_corr": 0.10247061230540878,
-            "direction": "positive",
-            "strength": "moderate",
-            "vulnerability_indicator": "Number of species potentially living in the cell"
-          }
-        ]
+        "Index of total productivity by plant phenology": -0.1786,
+        "Number of species potentially living in the cell": 0.0243,
+        "Change in land use and cover in the past decade": -0.1784
       },
       "drivers": [
-        "Density change in land imperviousness — Index of total productivity by plant phenology (positive association, strong, r=0.31)",
-        "Density change in land imperviousness — Density of tree cover (positive association, moderate, r=0.25)",
-        "Change in tree cover density in the past decade — Density of tree cover (positive association, strong, r=0.88)",
-        "Change in tree cover density in the past decade — Presence of grassland (negative association, moderate, r=-0.19)",
-        "Change in grassland presence in the past decade — Presence of grassland (positive association, strong, r=0.46)",
-        "Change in grassland presence in the past decade — Density of tree cover (negative association, moderate, r=-0.22)",
-        "Change in average temperature compared to a recent past — Density of tree cover (negative association, strong, r=-0.42)",
-        "Change in average temperature compared to a recent past — Presence of grassland (positive association, moderate, r=0.18)",
-        "Cumulative change in precipitation compared to a recent past — Index of total productivity by plant phenology (negative association, moderate, r=-0.13)",
-        "Relative change in the potential evapotranspiration compared to a recent past — Density of tree cover (positive association, moderate, r=0.22)",
-        "Change in land use and cover in the past decade — Index of total productivity by plant phenology (positive association, strong, r=0.64)",
-        "Change in land use and cover in the past decade — Presence of grassland (positive association, moderate, r=0.22)",
-        "Number of species potentially living in the cell — Density of tree cover (negative association, moderate, r=-0.11)",
-        "Number of species potentially living in the cell — Index of total productivity by plant phenology (positive association, moderate, r=0.10)"
+        "🌍 Dominant ecosystem domains:",
+        "biodiversity (score=0.203)",
+        "land_use (score=0.178)",
+        "📈 Increasing risk:",
+        "Number of species potentially living in the cell [biodiversity] (impact=0.024, moderate)",
+        "📉 Reducing risk:",
+        "Index of total productivity by plant phenology [biodiversity] (impact=-0.179, strong)",
+        "Change in land use and cover in the past decade [land_use] (impact=-0.178, strong)"
       ],
       "error": null
     },
@@ -757,8 +465,8 @@
       "predicted_type": "drivers",
       "route_correct": true,
       "status": "response_returned",
-      "summary": "Drivers of biodiversity degradation",
-      "interpretation": "Based on the Digital Twin's analysis, the environmental variables most strongly associated with a decrease in the number of species potentially living in the cell are: 1. Change in land use and cover in the past decade (direction: negative, strength: strong) 2. Density change in land imperviousness (direction: positive, strength: strong) These associations suggest that areas with high levels of land-use modification and increased impervious surfaces may have lower species richness due to habitat loss and fragmentation. The retrieved scientific evidence supports this interpretation. Climate change is projected to substantially modify biodiversity within the Massaciuccoli Lake basin, with bird biodiversity predicted to decline even under moderate greenhouse-gas emission scenarios. Habitat suitability is also expected to change, potentially leading to a shift in species distribution towards cooler and wetter areas. It's worth noting that while land use and cover changes are strongly associated with decreased species richness, the strength of this association is not as strong as that of density change in land imperviousness. However, both variables are still significant contributors to the decline in species richness.\n\nThese associations highlight environmental pressures observed in the lake ecosystem and may reflect interacting ecological processes.",
+      "summary": "Drivers of Number of species potentially living in the cell",
+      "interpretation": "The Digital Twin reports a strong negative statistical association between Change in land use and cover in the past decade and Number of species potentially living in the cell; and a strong positive statistical association between Density change in land imperviousness and Number of species potentially living in the cell. The supplied semantic notes provide ecological context for the reported variables, but do not by themselves establish a specific mechanism connecting these variables to the target. The retrieved material does not support a stronger mechanistic explanation; the reported directions should therefore be interpreted as statistical associations, not causal effects.",
       "data": {
         "target": "Number of species potentially living in the cell",
         "drivers": [
@@ -800,11 +508,11 @@
         ]
       },
       "drivers": [
-        "Change in land use and cover in the past decade (associated with biodiversity decline, strong)",
-        "Density change in land imperviousness (associated with biodiversity decline, strong)",
-        "Land use and cover (associated with biodiversity decline, moderate)",
-        "Cumulative change in precipitation compared to a recent past (associated with biodiversity decline, moderate)",
-        "Relative change in the potential evapotranspiration compared to a recent past (associated with biodiversity decline, moderate)"
+        "Change in land use and cover in the past decade (negative, strong influence)",
+        "Density change in land imperviousness (positive, strong influence)",
+        "Land use and cover (positive, moderate influence)",
+        "Cumulative change in precipitation compared to a recent past (negative, moderate influence)",
+        "Relative change in the potential evapotranspiration compared to a recent past (positive, moderate influence)"
       ],
       "error": null
     },
@@ -868,7 +576,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Drivers of Number of species potentially living in the cell",
-      "interpretation": "Based on the Digital Twin's analysis, the environmental variables most strongly associated with a decrease in the number of species potentially living in the cell are: 1. Change in land use and cover in the past decade (direction: negative, strength: strong) 2. Density change in land imperviousness (direction: positive, strength: strong) These associations suggest that areas with high levels of land-use modification and increased impervious surfaces may have lower species richness due to habitat loss and fragmentation. The retrieved scientific evidence supports this interpretation. Climate change is projected to substantially modify biodiversity within the Massaciuccoli Lake basin, with bird biodiversity predicted to decline even under moderate greenhouse-gas emission scenarios. Habitat suitability is also expected to change, potentially leading to a shift in species distribution towards cooler and wetter areas. It's worth noting that while land use and cover changes are strongly associated with decreased species richness, the strength of this association is not as strong as that of density change in land imperviousness. However, both variables are still significant contributors to the decline in species richness.\n\nThese associations highlight environmental pressures observed in the lake ecosystem and may reflect interacting ecological processes.",
+      "interpretation": "The Digital Twin reports a strong negative statistical association between Change in land use and cover in the past decade and Number of species potentially living in the cell; and a strong positive statistical association between Density change in land imperviousness and Number of species potentially living in the cell. The supplied semantic notes provide ecological context for the reported variables, but do not by themselves establish a specific mechanism connecting these variables to the target. The retrieved material does not support a stronger mechanistic explanation; the reported directions should therefore be interpreted as statistical associations, not causal effects.",
       "data": {
         "target": "Number of species potentially living in the cell",
         "drivers": [
@@ -1027,7 +735,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Temperature on Cumulative change in precipitation compared to a recent past",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, a positive relationship exists between temperature and precipitation. The reported association strength is moderate (0.393), with high confidence. According to the retrieved scientific evidence, climate change is recognized as one of the principal drivers affecting wetland ecosystems and biodiversity conservation. As temperatures increase, projected precipitation patterns suggest an increasing concentration of rainfall in mountain areas and progressively drier conditions across most of the Massaciuccoli Lake basin. This suggests that a warmer environment may lead to reduced water availability in some areas, potentially influencing the cumulative change in precipitation. However, it is essential to note that this relationship should not be interpreted as direct ecological causality, but rather as a statistical association identified by the Digital Twin. The retrieved scientific evidence indicates that wetlands are among the ecosystems most vulnerable to climate change, and changes in temperature and precipitation patterns can have substantial effects on biodiversity distribution. However, the specific impact of these environmental changes on the cumulative change in precipitation is not explicitly stated in the provided information.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, a positive relationship exists between temperature and precipitation. The reported association strength is moderate (0.393), with high confidence.\n\nAccording to the retrieved scientific evidence, climate change is recognized as one of the principal drivers affecting wetland ecosystems and biodiversity conservation. As temperatures increase, projected precipitation patterns suggest an increasing concentration of rainfall in mountain areas and progressively drier conditions across most of the Massaciuccoli Lake basin.\n\nThis suggests that a warmer environment may lead to reduced water availability in some areas, potentially influencing the cumulative change in precipitation. However, it is essential to note that this relationship should not be interpreted as direct ecological causality, but rather as a statistical association identified by the Digital Twin.\n\nThe retrieved scientific evidence indicates that wetlands are among the ecosystems most vulnerable to climate change, and changes in temperature and precipitation patterns can have substantial effects on biodiversity distribution. However, the specific impact of these environmental changes on the cumulative change in precipitation is not explicitly stated in the provided information.",
       "data": {
         "dependency_strength": "moderate",
         "dependency_score": 0.393,
@@ -1051,7 +759,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Evapotranspiration on water availability",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the relative change in potential evapotranspiration compared to a recent past has a negative relationship with water availability. The Digital Twin report indicates a strong and high-confidence association between these two variables, suggesting that as the relative change in potential evapotranspiration decreases (i.e., reduced evapotranspiration), water availability tends to increase. This is consistent with the ecological interpretation notes, which emphasize the importance of wetlands in regulating water cycles. Retrieved scientific evidence from the knowledge base supports this relationship, highlighting the critical role of wetlands in maintaining ecosystem services such as water regulation and carbon storage. The decline of wetland ecosystems due to climate change and anthropogenic pressures can lead to reduced evapotranspiration and altered water availability patterns. In summary, the negative relationship between relative change in potential evapotranspiration and water availability suggests that reduced evapotranspiration is associated with increased water availability in the Massaciuccuccoli Lake ecosystem.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the relative change in potential evapotranspiration compared to a recent past has a negative relationship with water availability.\n\nThe Digital Twin report indicates a strong and high-confidence association between these two variables, suggesting that as the relative change in potential evapotranspiration decreases (i.e., reduced evapotranspiration), water availability tends to increase. This is consistent with the ecological interpretation notes, which emphasize the importance of wetlands in regulating water cycles.\n\nRetrieved scientific evidence from the knowledge base supports this relationship, highlighting the critical role of wetlands in maintaining ecosystem services such as water regulation and carbon storage. The decline of wetland ecosystems due to climate change and anthropogenic pressures can lead to reduced evapotranspiration and altered water availability patterns.\n\nIn summary, the negative relationship between relative change in potential evapotranspiration and water availability suggests that reduced evapotranspiration is associated with increased water availability in the Massaciuccuccoli Lake ecosystem.",
       "data": {
         "dependency_strength": "strong",
         "dependency_score": 0.725,
@@ -1075,7 +783,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Change in land use and cover in the past decade on Number of species potentially living in the cell",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, a statistical dependency between Change in land use and cover in the past decade and biodiversity has been identified. The reported relationship represents an anthropogenic ecosystem pressure, with a negative direction. This means that as change in land use and cover in the past decade increases, the number of species potentially living in the cell tends to decrease. According to the retrieved scientific evidence, climate change is projected to substantially modify biodiversity within the Massaciuccoli Lake basin. Changes in habitat suitability and species richness are expected to occur due to climate change, which may lead to a decline in bird biodiversity, even under medium-greenhouse-gas emission scenarios. The strong association strength (0.586) and high confidence level (high) support the reported dependency. However, it is essential to note that this statistical association does not necessarily imply direct ecological causality. In summary, the reported negative relationship between Change in land use and cover in the past decade and biodiversity suggests that increasing anthropogenic pressure on ecosystems may lead to a decrease in species richness.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, a statistical dependency between Change in land use and cover in the past decade and biodiversity has been identified.\n\nThe reported relationship represents an anthropogenic ecosystem pressure, with a negative direction. This means that as change in land use and cover in the past decade increases, the number of species potentially living in the cell tends to decrease.\n\nAccording to the retrieved scientific evidence, climate change is projected to substantially modify biodiversity within the Massaciuccoli Lake basin. Changes in habitat suitability and species richness are expected to occur due to climate change, which may lead to a decline in bird biodiversity, even under medium-greenhouse-gas emission scenarios.\n\nThe strong association strength (0.586) and high confidence level (high) support the reported dependency. However, it is essential to note that this statistical association does not necessarily imply direct ecological causality.\n\nIn summary, the reported negative relationship between Change in land use and cover in the past decade and biodiversity suggests that increasing anthropogenic pressure on ecosystems may lead to a decrease in species richness.",
       "data": {
         "dependency_strength": "strong",
         "dependency_score": 0.586,
@@ -1099,7 +807,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Biodiversity on ecosystem stability",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the reported statistical dependency between the biodiversity and ecosystem stability can be explained as follows: The positive relationship identified by the Digital Twin suggests that areas with high numbers of species potentially living in the cell may also exhibit higher levels of ecosystem stability. This association is described as a biodiversity-vegetation interaction, indicating that the diversity of species in the cell may have a positive impact on the overall stability of the ecosystem. Retrieved scientific evidence from the Massaciuccoli Lake ecosystem notes that wetlands, which are characterized by high species richness, are among the most vulnerable ecosystems to climate change. However, this information does not directly support the reported dependency between species richness and ecosystem stability in the context of the Massaciuccoli Digital Twin's analysis. It is essential to note that the association strength is weak (0.102) and the confidence is moderate (moderate), indicating that while there may be a statistical relationship between these variables, it is not strongly supported by the model. Therefore, any conclusions drawn from this relationship should be interpreted with caution.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the reported statistical dependency between the biodiversity and ecosystem stability can be explained as follows:\n\nThe positive relationship identified by the Digital Twin suggests that areas with high numbers of species potentially living in the cell may also exhibit higher levels of ecosystem stability. This association is described as a biodiversity-vegetation interaction, indicating that the diversity of species in the cell may have a positive impact on the overall stability of the ecosystem.\n\nRetrieved scientific evidence from the Massaciuccoli Lake ecosystem notes that wetlands, which are characterized by high species richness, are among the most vulnerable ecosystems to climate change. However, this information does not directly support the reported dependency between species richness and ecosystem stability in the context of the Massaciuccoli Digital Twin's analysis.\n\nIt is essential to note that the association strength is weak (0.102) and the confidence is moderate (moderate), indicating that while there may be a statistical relationship between these variables, it is not strongly supported by the model. Therefore, any conclusions drawn from this relationship should be interpreted with caution.",
       "data": {
         "dependency_strength": "weak",
         "dependency_score": 0.102,
@@ -1123,7 +831,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Temperature on Number of species potentially living in the cell",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, a clear and concise scientific interpretation of the relationship between temperature and biodiversity is as follows: The reported negative climate-biodiversity interaction indicates that an increase in average temperature compared to a recent past is associated with a decrease in the number of species potentially living in the cell. This association is considered weak, with a low confidence level (0.043) and a low association score. According to the retrieved scientific evidence, changes in habitat suitability and species richness are expected to occur as a result of projected environmental changes, including increased temperature and precipitation patterns. These changes are likely to lead to a decline in biodiversity distribution, particularly for bird communities, which are projected to undergo strong habitat loss. While some insect species may experience an increase in habitat suitability, the overall trend suggests that warmer temperatures will have a negative impact on species richness in the Massaciuccoli Lake ecosystem. Therefore, it is reasonable to conclude that a change in average temperature compared to a recent past is associated with a decrease in the number of species potentially living in the cell.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, a clear and concise scientific interpretation of the relationship between temperature and biodiversity is as follows:\n\nThe reported negative climate-biodiversity interaction indicates that an increase in average temperature compared to a recent past is associated with a decrease in the number of species potentially living in the cell. This association is considered weak, with a low confidence level (0.043) and a low association score.\n\nAccording to the retrieved scientific evidence, changes in habitat suitability and species richness are expected to occur as a result of projected environmental changes, including increased temperature and precipitation patterns. These changes are likely to lead to a decline in biodiversity distribution, particularly for bird communities, which are projected to undergo strong habitat loss.\n\nWhile some insect species may experience an increase in habitat suitability, the overall trend suggests that warmer temperatures will have a negative impact on species richness in the Massaciuccoli Lake ecosystem. Therefore, it is reasonable to conclude that a change in average temperature compared to a recent past is associated with a decrease in the number of species potentially living in the cell.",
       "data": {
         "dependency_strength": "weak",
         "dependency_score": 0.043,
@@ -1147,7 +855,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Tree cover on ecosystem risk",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the reported statistical dependency between tree cover and ecosystem risk can be interpreted as follows: The Digital Twin report indicates a low-confidence association (0.0) between these two variables, which suggests that there is no statistically significant relationship identified in the model. However, the retrieved scientific evidence from previous studies on the Massaciuccoli Lake basin highlights the importance of biodiversity conservation and ecological fragility. While the Digital Twin notes that statistical association does not necessarily imply direct ecological causality, it is worth noting that areas with high tree cover may represent ecologically valuable and fragile habitats that require preservation. This suggests that the density of tree cover could be an indicator of ecosystem health and resilience, which in turn might influence ecosystem risk. However, without further evidence from the Digital Twin or additional research on this specific relationship, it is not possible to draw a stronger conclusion about the causal link between tree cover and ecosystem risk. Therefore, the reported dependency should be interpreted as a statistical association that warrants further investigation to determine its ecological relevance.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the reported statistical dependency between tree cover and ecosystem risk can be interpreted as follows:\n\nThe Digital Twin report indicates a low-confidence association (0.0) between these two variables, which suggests that there is no statistically significant relationship identified in the model. However, the retrieved scientific evidence from previous studies on the Massaciuccoli Lake basin highlights the importance of biodiversity conservation and ecological fragility.\n\nWhile the Digital Twin notes that statistical association does not necessarily imply direct ecological causality, it is worth noting that areas with high tree cover may represent ecologically valuable and fragile habitats that require preservation. This suggests that the density of tree cover could be an indicator of ecosystem health and resilience, which in turn might influence ecosystem risk.\n\nHowever, without further evidence from the Digital Twin or additional research on this specific relationship, it is not possible to draw a stronger conclusion about the causal link between tree cover and ecosystem risk. Therefore, the reported dependency should be interpreted as a statistical association that warrants further investigation to determine its ecological relevance.",
       "data": {
         "dependency_strength": "unsupported",
         "dependency_score": 0.0,
@@ -1171,7 +879,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Precipitation on Number of species potentially living in the cell",
-      "interpretation": "The cumulative change in precipitation compared to a recent past has a negative statistical dependency on the number of species potentially living in the cell, indicating an inverse relationship between these two environmental variables. According to the retrieved scientific evidence, changes in precipitation patterns are expected to impact biodiversity distribution in the Massaciuccoli Lake basin. The projected increase in aridity and decrease in rainfall across most of the basin may lead to a decline in species richness, particularly for bird communities that are predicted to undergo strong habitat loss. In contrast, some insect species are expected to increase their habitat suitability due to the changing precipitation patterns. However, this relationship is not directly supported by the Digital Twin's analysis, which only reports a statistical association between cumulative change in precipitation and number of species potentially living in the cell. Therefore, while there is evidence suggesting that changes in precipitation may impact biodiversity distribution in the Massaciuccoli Lake basin, the reported negative dependency between cumulative change in precipitation and number of species potentially living in the cell should be interpreted with caution, as it does not necessarily imply direct ecological causality.",
+      "interpretation": "The cumulative change in precipitation compared to a recent past has a negative statistical dependency on the number of species potentially living in the cell, indicating an inverse relationship between these two environmental variables.\n\nAccording to the retrieved scientific evidence, changes in precipitation patterns are expected to impact biodiversity distribution in the Massaciuccoli Lake basin. The projected increase in aridity and decrease in rainfall across most of the basin may lead to a decline in species richness, particularly for bird communities that are predicted to undergo strong habitat loss.\n\nIn contrast, some insect species are expected to increase their habitat suitability due to the changing precipitation patterns. However, this relationship is not directly supported by the Digital Twin's analysis, which only reports a statistical association between cumulative change in precipitation and number of species potentially living in the cell.\n\nTherefore, while there is evidence suggesting that changes in precipitation may impact biodiversity distribution in the Massaciuccoli Lake basin, the reported negative dependency between cumulative change in precipitation and number of species potentially living in the cell should be interpreted with caution, as it does not necessarily imply direct ecological causality.",
       "data": {
         "dependency_strength": "moderate",
         "dependency_score": 0.195,
@@ -1195,7 +903,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Evapotranspiration on Number of species potentially living in the cell",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the relative change in potential evapotranspiration compared to a recent past is positively associated with the number of species potentially living in the cell. The Digital Twin report indicates a moderate association strength (0.177) and confidence level between these two variables, classified as a hydrology-biodiversity interaction relationship. The retrieved scientific evidence from the knowledge base supports this association, highlighting that wetlands are vulnerable to climate change, which can lead to changes in biodiversity. While the exact nature of this relationship is not specified, it is clear that an increase in relative change in potential evapotranspiration may be linked to an increase in species richness. However, it is essential to note that this association does not imply direct ecological causality and should be interpreted with caution. In summary, the reported positive association between relative change in potential evapotranspiration and number of species potentially living in the cell suggests a possible link between hydrological conditions and biodiversity in the Massaciuccoli Lake ecosystem.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the relative change in potential evapotranspiration compared to a recent past is positively associated with the number of species potentially living in the cell.\n\nThe Digital Twin report indicates a moderate association strength (0.177) and confidence level between these two variables, classified as a hydrology-biodiversity interaction relationship. The retrieved scientific evidence from the knowledge base supports this association, highlighting that wetlands are vulnerable to climate change, which can lead to changes in biodiversity.\n\nWhile the exact nature of this relationship is not specified, it is clear that an increase in relative change in potential evapotranspiration may be linked to an increase in species richness. However, it is essential to note that this association does not imply direct ecological causality and should be interpreted with caution.\n\nIn summary, the reported positive association between relative change in potential evapotranspiration and number of species potentially living in the cell suggests a possible link between hydrological conditions and biodiversity in the Massaciuccoli Lake ecosystem.",
       "data": {
         "dependency_strength": "moderate",
         "dependency_score": 0.177,
@@ -1219,7 +927,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Tree cover on ecosystem stability",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the reported statistical dependency between tree cover and ecosystem stability can be interpreted as follows: The positive relationship between these two variables suggests that areas with high density of tree cover tend to have more stable ecosystems. This association is likely due to vegetation-vegetation interactions, where dense tree cover may provide a favorable environment for other plant species, leading to increased biodiversity and ecosystem resilience. Retrieved scientific evidence from the Massaciuccoli Lake ecosystem notes that wetlands are among the most vulnerable ecosystems to climate change, with significant declines in biodiversity and ecosystem services over the past century. However, this information does not directly support the reported dependency between tree cover density and ecosystem stability. It is essential to note that statistical association does not necessarily imply direct ecological causality. Further research would be necessary to determine the underlying mechanisms driving this relationship.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the reported statistical dependency between tree cover and ecosystem stability can be interpreted as follows:\n\nThe positive relationship between these two variables suggests that areas with high density of tree cover tend to have more stable ecosystems. This association is likely due to vegetation-vegetation interactions, where dense tree cover may provide a favorable environment for other plant species, leading to increased biodiversity and ecosystem resilience.\n\nRetrieved scientific evidence from the Massaciuccoli Lake ecosystem notes that wetlands are among the most vulnerable ecosystems to climate change, with significant declines in biodiversity and ecosystem services over the past century. However, this information does not directly support the reported dependency between tree cover density and ecosystem stability.\n\nIt is essential to note that statistical association does not necessarily imply direct ecological causality. Further research would be necessary to determine the underlying mechanisms driving this relationship.",
       "data": {
         "dependency_strength": "moderate",
         "dependency_score": 0.162,
@@ -1244,7 +952,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Biodiversity on ecosystem resilience",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the reported statistical dependency between \"biodiversity\" and \"ecosystem resilience\" cannot be directly interpreted due to low model confidence (0.0) and an unsupported association strength. However, referring to the retrieved scientific evidence from the knowledge base, wetland ecosystems are among those most vulnerable to climate change, which can lead to biodiversity loss and degradation of ecosystem services, including water regulation and carbon sequestration. This suggests that a high number of species potentially living in the cell may be indicative of a more complex and resilient ecosystem. While this interpretation is not directly supported by the Digital Twin's results, it can be inferred from the scientific evidence related to wetland ecosystems and their vulnerability to climate change.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the reported statistical dependency between \"biodiversity\" and \"ecosystem resilience\" cannot be directly interpreted due to low model confidence (0.0) and an unsupported association strength.\n\nHowever, referring to the retrieved scientific evidence from the knowledge base, wetland ecosystems are among those most vulnerable to climate change, which can lead to biodiversity loss and degradation of ecosystem services, including water regulation and carbon sequestration. This suggests that a high number of species potentially living in the cell may be indicative of a more complex and resilient ecosystem.\n\nWhile this interpretation is not directly supported by the Digital Twin's results, it can be inferred from the scientific evidence related to wetland ecosystems and their vulnerability to climate change.",
       "data": {
         "dependency_strength": "unsupported",
         "dependency_score": 0.0,
@@ -1268,7 +976,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Temperature on Number of species potentially living in the cell",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, a clear and concise scientific interpretation of the relationship between temperature and biodiversity is as follows: The reported negative climate-biodiversity interaction indicates that an increase in average temperature compared to a recent past is associated with a decrease in the number of species potentially living in the cell. This association is considered weak, with a low confidence level (0.043) and a low association score. According to the retrieved scientific evidence, changes in habitat suitability and species richness are expected to occur as a result of projected environmental changes, including increased temperature and precipitation patterns. These changes are likely to lead to a decline in biodiversity distribution, particularly for bird communities, which are projected to undergo strong habitat loss. While some insect species may experience an increase in habitat suitability, the overall trend suggests that warmer temperatures will have a negative impact on species richness in the Massaciuccoli Lake ecosystem. Therefore, it is reasonable to conclude that a change in average temperature compared to a recent past is associated with a decrease in the number of species potentially living in the cell.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, a clear and concise scientific interpretation of the relationship between temperature and biodiversity is as follows:\n\nThe reported negative climate-biodiversity interaction indicates that an increase in average temperature compared to a recent past is associated with a decrease in the number of species potentially living in the cell. This association is considered weak, with a low confidence level (0.043) and a low association score.\n\nAccording to the retrieved scientific evidence, changes in habitat suitability and species richness are expected to occur as a result of projected environmental changes, including increased temperature and precipitation patterns. These changes are likely to lead to a decline in biodiversity distribution, particularly for bird communities, which are projected to undergo strong habitat loss.\n\nWhile some insect species may experience an increase in habitat suitability, the overall trend suggests that warmer temperatures will have a negative impact on species richness in the Massaciuccoli Lake ecosystem. Therefore, it is reasonable to conclude that a change in average temperature compared to a recent past is associated with a decrease in the number of species potentially living in the cell.",
       "data": {
         "dependency_strength": "weak",
         "dependency_score": 0.043,
@@ -1292,7 +1000,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Precipitation on ecosystem risk",
-      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the cumulative change in precipitation compared to a recent past is associated with ecosystem risk. The retrieved scientific evidence from the knowledge base describes wetlands as ecosystems vulnerable to climate change, which can lead to reduced biodiversity and ecosystem services. Climate change is recognized as a principal driver affecting wetland ecosystems and biodiversity conservation. The simultaneous action of multiple stressors, including climate change, produces cumulative ecological effects that are difficult to quantify. The Digital Twin's report indicates a low-confidence association between the cumulative change in precipitation and ecosystem risk, with an unsupported association strength. However, the retrieved scientific evidence supports the reported dependency, indicating that changes in precipitation can have significant impacts on wetland ecosystems and biodiversity. In this context, the cumulative change in precipitation compared to a recent past is likely to influence ecosystem risk by exacerbating the effects of climate change on wetland ecosystems. This could lead to reduced biodiversity, altered ecosystem services, and increased vulnerability to environmental stressors.",
+      "interpretation": "Based on the information provided by the Massaciuccoli Digital Twin, the cumulative change in precipitation compared to a recent past is associated with ecosystem risk.\n\nThe retrieved scientific evidence from the knowledge base describes wetlands as ecosystems vulnerable to climate change, which can lead to reduced biodiversity and ecosystem services. Climate change is recognized as a principal driver affecting wetland ecosystems and biodiversity conservation. The simultaneous action of multiple stressors, including climate change, produces cumulative ecological effects that are difficult to quantify.\n\nThe Digital Twin's report indicates a low-confidence association between the cumulative change in precipitation and ecosystem risk, with an unsupported association strength. However, the retrieved scientific evidence supports the reported dependency, indicating that changes in precipitation can have significant impacts on wetland ecosystems and biodiversity.\n\nIn this context, the cumulative change in precipitation compared to a recent past is likely to influence ecosystem risk by exacerbating the effects of climate change on wetland ecosystems. This could lead to reduced biodiversity, altered ecosystem services, and increased vulnerability to environmental stressors.",
       "data": {
         "dependency_strength": "unsupported",
         "dependency_score": 0.0,
@@ -1316,7 +1024,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Tree cover on Number of species potentially living in the cell",
-      "interpretation": "Based on the information provided by the Digital Twin, the reported statistical dependency between tree cover and biodiversity can be explained as follows: The identified relationship represents a vegetation-biodiversity interaction, where a negative association is observed. This means that areas with high density of tree cover tend to have fewer species potentially living in the cell. According to the retrieved scientific evidence, this relationship may be related to habitat fragmentation and loss of biodiversity due to human activities such as agriculture and urbanization. Climate change projections also suggest that changes in temperature and precipitation patterns may alter the distribution and abundance of species in the Massaciuccoli Lake basin. However, it is essential to note that the reported dependency has a weak association strength (0.113) and moderate confidence level (moderate). Therefore, while there appears to be a statistical association between tree cover and biodiversity, further research is needed to confirm the ecological significance of this relationship. In summary, high density of tree cover may be associated with lower biodiversity in the Massaciuccoli Lake basin, possibly due to habitat fragmentation and climate change impacts. However, more research is required to fully understand the nature and extent of this relationship.",
+      "interpretation": "Based on the information provided by the Digital Twin, the reported statistical dependency between tree cover and biodiversity can be explained as follows:\n\nThe identified relationship represents a vegetation-biodiversity interaction, where a negative association is observed. This means that areas with high density of tree cover tend to have fewer species potentially living in the cell.\n\nAccording to the retrieved scientific evidence, this relationship may be related to habitat fragmentation and loss of biodiversity due to human activities such as agriculture and urbanization. Climate change projections also suggest that changes in temperature and precipitation patterns may alter the distribution and abundance of species in the Massaciuccoli Lake basin.\n\nHowever, it is essential to note that the reported dependency has a weak association strength (0.113) and moderate confidence level (moderate). Therefore, while there appears to be a statistical association between tree cover and biodiversity, further research is needed to confirm the ecological significance of this relationship.\n\nIn summary, high density of tree cover may be associated with lower biodiversity in the Massaciuccoli Lake basin, possibly due to habitat fragmentation and climate change impacts. However, more research is required to fully understand the nature and extent of this relationship.",
       "data": {
         "dependency_strength": "weak",
         "dependency_score": 0.113,
@@ -1340,7 +1048,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Temperature on lake ecosystem",
-      "interpretation": "Based on the information provided by the Digital Twin, a clear and concise scientific interpretation of the change in average temperature compared to a recent past and its influence on the lake ecosystem is as follows: The reported statistical dependency between changes in average temperature and lake ecosystem variables indicates a relationship that should be interpreted with caution. The Digital Twin's model confidence for this association is low, indicating that the strength of this relationship is not well-supported by the model. However, according to the retrieved scientific evidence, climate change is recognized as one of the principal drivers affecting wetland ecosystems and biodiversity conservation (Retrieved Scientific Evidence). Specifically, it is stated that \"Climate change is recognized as one of the principal drivers affecting wetland ecosystems and biodiversity conservation.\" While there is no direct causal link between temperature changes and lake ecosystem variables explicitly reported by the Digital Twin, the evidence suggests that climate change can have a significant impact on wetland ecosystems, including those in the Massaciuccoli Lake basin. The projected increase in temperature and precipitation patterns are expected to produce substantial modifications in biodiversity distribution, particularly after 2050. Therefore, it can be inferred that changes in average temperature compared to a recent past may influence lake ecosystem variables indirectly through their impact on climate change and subsequent environmental changes. However, this interpretation should be viewed with caution due to the low confidence associated with the reported association between temperature changes and lake ecosystem variables.",
+      "interpretation": "Based on the information provided by the Digital Twin, a clear and concise scientific interpretation of the change in average temperature compared to a recent past and its influence on the lake ecosystem is as follows:\n\nThe reported statistical dependency between changes in average temperature and lake ecosystem variables indicates a relationship that should be interpreted with caution. The Digital Twin's model confidence for this association is low, indicating that the strength of this relationship is not well-supported by the model.\n\nHowever, according to the retrieved scientific evidence, climate change is recognized as one of the principal drivers affecting wetland ecosystems and biodiversity conservation (Retrieved Scientific Evidence). Specifically, it is stated that \"Climate change is recognized as one of the principal drivers affecting wetland ecosystems and biodiversity conservation.\"\n\nWhile there is no direct causal link between temperature changes and lake ecosystem variables explicitly reported by the Digital Twin, the evidence suggests that climate change can have a significant impact on wetland ecosystems, including those in the Massaciuccoli Lake basin. The projected increase in temperature and precipitation patterns are expected to produce substantial modifications in biodiversity distribution, particularly after 2050.\n\nTherefore, it can be inferred that changes in average temperature compared to a recent past may influence lake ecosystem variables indirectly through their impact on climate change and subsequent environmental changes. However, this interpretation should be viewed with caution due to the low confidence associated with the reported association between temperature changes and lake ecosystem variables.",
       "data": {
         "dependency_strength": "unsupported",
         "dependency_score": 0.0,
@@ -1364,7 +1072,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Effect of Precipitation on ecological conditions in the basin",
-      "interpretation": "Based on the information provided by the Digital Twin, the cumulative change in precipitation compared to a recent past is expected to influence ecological conditions in the Massaciuccoli Lake basin through modifications in biodiversity distribution. The projected changes in precipitation patterns suggest an increasing concentration of rainfall in mountain areas and progressively drier conditions across most of the basin. This is consistent with the overall environmental differences observed between historical and future climate scenarios, which indicate a continuous increase in temperature from the historical period towards all future climate scenarios. According to the retrieved scientific evidence, bird communities are projected to undergo the strongest habitat loss, whereas several insect species are expected to increase their habitat suitability. Other terrestrial and aquatic species are predicted to progressively shift towards cooler and more water-rich areas. These projected biodiversity changes are consistent with the overall environmental differences observed between historical and future climate scenarios. The Massaciuccoli Lake basin, being a wetland ecosystem characterized by high biodiversity and ecological complexity, is particularly sensitive to alterations in hydrological and biogeochemical conditions, making it suitable for studying the ecological effects of climate change. Therefore, the cumulative change in precipitation compared to a recent past is expected to have a significant impact on the ecological conditions in the Massaciuccoli Lake basin, leading to changes in biodiversity distribution and habitat suitability.",
+      "interpretation": "Based on the information provided by the Digital Twin, the cumulative change in precipitation compared to a recent past is expected to influence ecological conditions in the Massaciuccoli Lake basin through modifications in biodiversity distribution.\n\nThe projected changes in precipitation patterns suggest an increasing concentration of rainfall in mountain areas and progressively drier conditions across most of the basin. This is consistent with the overall environmental differences observed between historical and future climate scenarios, which indicate a continuous increase in temperature from the historical period towards all future climate scenarios.\n\nAccording to the retrieved scientific evidence, bird communities are projected to undergo the strongest habitat loss, whereas several insect species are expected to increase their habitat suitability. Other terrestrial and aquatic species are predicted to progressively shift towards cooler and more water-rich areas.\n\nThese projected biodiversity changes are consistent with the overall environmental differences observed between historical and future climate scenarios. The Massaciuccoli Lake basin, being a wetland ecosystem characterized by high biodiversity and ecological complexity, is particularly sensitive to alterations in hydrological and biogeochemical conditions, making it suitable for studying the ecological effects of climate change.\n\nTherefore, the cumulative change in precipitation compared to a recent past is expected to have a significant impact on the ecological conditions in the Massaciuccoli Lake basin, leading to changes in biodiversity distribution and habitat suitability.",
       "data": {
         "dependency_strength": "unsupported",
         "dependency_score": 0.0,
@@ -1415,7 +1123,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information, the Massaciuccoli Digital Twin has simulated a scenario where the number of species potentially living in the cell is modified from 200 to 140.0. According to the Digital Twin Delta Report, this modification leads to a decrease in biodiversity and may result in decreased ecosystem resilience and increased ecosystem stress. The retrieved scientific evidence from the Massaciuccoli Lake ecosystem notes that ecosystem risk assessment is based on twelve environmental variables describing ecological fragility and harmful driving forces within the basin. However, it does not provide specific information on how the modified number of species affects ecosystem risk. Therefore, the reported environmental effects can be interpreted as indicating a potential decrease in ecosystem resilience and increased stress due to the modification of the number of species potentially living in the cell.",
+      "interpretation": "Biodiversity decline by 30% may lead to a decrease in ecosystem resilience, potentially resulting in increased ecosystem stress. The retrieved scientific evidence suggests that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and environmental stressors. However, this information does not provide specific details on how biodiversity loss affects these components.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.207,
@@ -1440,7 +1148,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the Massaciuccoli Digital Twin's ecological interpretation notes state that the reported environmental effects describe the expected ecological implications of modifying Density of tree cover between two baseline-derived scenarios. The retrieved scientific evidence supports this by explaining that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. The Digital Twin's report indicates that increasing tree cover from 50% to 70% across the basin results in expected environmental effects such as increased forest habitats being better preserved and potentially higher ecosystem resilience. However, it does not provide explicit information on how these changes affect the overall ecosystem risk. Given the limitations of the provided information, it is difficult to determine a specific tree cover ecosystem risk value for a 70% increase in tree cover across the basin. The Digital Twin's report only provides an estimated ecosystem risk difference of 0.501, which may not be sufficient to draw conclusions about the overall ecosystem risk. Therefore, based on the available information from the Digital Twin and retrieved scientific evidence, it is not possible to provide a definitive answer to the user's question regarding the tree cover ecosystem risk without making assumptions or inferences that are not supported by the provided data.",
+      "interpretation": "The ecosystem risk is expected to increase due to the modification of tree cover from 50% to 70%. This change may lead to better preservation of forest habitats and increased ecosystem resilience, but also potentially alter the ecosystem structure. The retrieved scientific evidence suggests that ecosystem risk assessment methods often rely on deterministic models or individual environmental indicators, which might be insufficient to describe the complexity of ecological systems.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.961,
@@ -1494,11 +1202,11 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided Digital Twin Delta Report, Ecological Interpretation Notes, and Retrieved Scientific Evidence, here is a concise scientific explanation of the ecosystem risk associated with a 25% increase in evapotranspiration: The reported environmental effect of a 25% increase in evapotranspiration is expected to lead to an increase in water loss from the ecosystem. This may result in increased ecosystem stress due to reduced water availability for plants and animals. According to the retrieved scientific evidence, ecosystem risk assessment (ERA) aims to identify and quantify the probability that ecological systems experience degradation due to environmental stressors. The ERA framework is based on twelve harmonized environmental variables describing ecological fragility and harmful driving forces within the Massaciuccoli Lake basin. However, the Digital Twin Delta Report indicates that there is no substantial change in predicted ecosystem risk variation associated with this modification. This suggests that the overall ecosystem risk level remains relatively stable despite the increase in evapotranspiration. In summary, while a 25% increase in evapotranspiration may lead to increased water loss and ecosystem stress, the available data does not support a significant change in ecosystem risk levels within the Massaciuccoli Lake basin.",
+      "interpretation": "The ecosystem risk remains \"Medium Risk\" when evapotranspiration increases by 25%. This is because the Digital Twin's analysis indicates no substantial change in predicted ecosystem risk variation, with an estimated risk difference of 0.0. The retrieved scientific evidence supports this finding, as ecosystem-risk assessment frameworks typically consider multiple environmental variables and stressors to evaluate ecological fragility and degradation.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.461,
-        "delta": -0.0,
+        "delta": 0.0,
         "risk_from": "Medium Risk",
         "risk_to": "Medium Risk"
       },
@@ -1519,7 +1227,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the Massaciuccoli Digital Twin's ecological interpretation notes state that the reported environmental effects describe the expected ecological implications of modifying Density of tree cover between two baseline-derived scenarios. The retrieved scientific evidence supports this by explaining that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. The Digital Twin Delta Report indicates that a substantial decrease in tree cover from 50 to 25.0 would lead to expected environmental effects such as decreased vegetation density, deteriorated habitat conditions, and changes in ecosystem structure. These effects are consistent with the scientific understanding of how changes in tree cover can impact ecosystems. In the context of the Massaciuccoli Lake ecosystem, the retrieved scientific evidence highlights the importance of considering multiple environmental indicators when assessing ecosystem risk. However, it does not provide specific information on the relationship between tree cover and ecosystem risk in this particular ecosystem. Therefore, based on the available information, a decrease in tree cover would likely lead to changes in the ecosystem structure and potentially affect habitat conditions. However, without additional information on the specific relationships between tree cover and ecosystem risk in the Massaciuccoli Lake ecosystem, it is difficult to provide a more detailed explanation of the potential impacts.",
+      "interpretation": "The ecosystem risk is expected to decrease substantially as tree cover decreases from 50 to 25.0. This reduction in tree cover may lead to a decrease in vegetation density and potentially deteriorate habitat conditions, resulting in changes to the ecosystem structure. The retrieved scientific evidence suggests that ecosystem risk assessment methods can provide valuable insights into environmental monitoring and conservation planning, but it is essential to interpret the results as decision-support tools rather than deterministic representations of future ecosystem evolution.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.06,
@@ -1588,7 +1296,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the Massaciuccoli Digital Twin's ecological interpretation notes state that the reported environmental effects describe the expected ecological implications of modifying Density of tree cover between two baseline-derived scenarios. The retrieved scientific evidence supports this by explaining that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. The Digital Twin's report indicates that increasing tree cover from 50% to 70% across the basin results in expected environmental effects such as increased forest habitats being better preserved and potentially higher ecosystem resilience. However, it does not provide explicit information on how these changes affect the overall ecosystem risk. Given the limitations of the provided information, it is difficult to determine a specific tree cover ecosystem risk value for a 70% increase in tree cover across the basin. The Digital Twin's report only provides an estimated ecosystem risk difference of 0.501, which may not be sufficient to draw conclusions about the overall ecosystem risk. Therefore, based on the available information from the Digital Twin and retrieved scientific evidence, it is not possible to provide a definitive answer to the user's question regarding the tree cover ecosystem risk without making assumptions or inferences that are not supported by the provided data.",
+      "interpretation": "The ecosystem risk is expected to increase due to the modification of tree cover from 50% to 70%. The predicted ecosystem risk difference is 0.5005169285908453, indicating a significant change in risk level. Retrieved scientific evidence supports this interpretation by highlighting that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and environmental stressors.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.961,
@@ -1613,7 +1321,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided Digital Twin Delta Report, Ecological Interpretation Notes, and Retrieved Scientific Evidence, here is a concise scientific explanation of the ecosystem risk associated with an increase in evapotranspiration: The expected environmental effect of increasing relative change in potential evapotranspiration by 50.0 units compared to a recent past is that evapotranspiration will increase, potentially leading to increased water loss and ecosystem stress. According to the retrieved scientific evidence from the Ecosystem Risk Assessment (ERA) framework, risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. However, the Digital Twin Delta Report does not provide sufficient information to quantify this risk or determine its spatial distribution within the Massaciuccoli Lake basin. Therefore, it cannot be concluded that an increase in evapotranspiration will result in a specific level of ecosystem risk without additional information on the relationship between evapotranspiration and ecosystem vulnerability.",
+      "interpretation": "The substantial increase in evapotranspiration may lead to a potential water loss, which could result in increased ecosystem stress. This effect is directly supported by the retrieved scientific evidence, which describes the relationship between evapotranspiration and ecosystem stress. The Digital Twin's report indicates that the risk score remains unchanged (0.461) after the modification, but this does not necessarily imply no change in ecosystem risk.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.461,
@@ -1638,11 +1346,11 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided Digital Twin Delta Report, Ecological Interpretation Notes, and Retrieved Scientific Evidence, here is a concise scientific explanation of the ecosystem risk associated with a 25% increase in evapotranspiration: The reported environmental effect of a 25% increase in evapotranspiration is expected to lead to an increase in water loss from the ecosystem. This may result in increased ecosystem stress due to reduced water availability for plants and animals. According to the retrieved scientific evidence, ecosystem risk assessment (ERA) aims to identify and quantify the probability that ecological systems experience degradation due to environmental stressors. The ERA framework is based on twelve harmonized environmental variables describing ecological fragility and harmful driving forces within the Massaciuccoli Lake basin. However, the Digital Twin Delta Report indicates that there is no substantial change in predicted ecosystem risk variation associated with this modification. This suggests that the overall ecosystem risk level remains relatively stable despite the increase in evapotranspiration. In summary, while a 25% increase in evapotranspiration may lead to increased water loss and ecosystem stress, the available data does not support a significant change in ecosystem risk levels within the Massaciuccoli Lake basin.",
+      "interpretation": "The increase in evapotranspiration by 25% is expected to lead to a slight increase in water loss, potentially resulting in increased ecosystem stress. The retrieved scientific evidence suggests that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and environmental stressor intensity. Reported environmental effects: Water loss may increase, ecosystem stress may increase.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.461,
-        "delta": -0.0,
+        "delta": 0.0,
         "risk_from": "Medium Risk",
         "risk_to": "Medium Risk"
       },
@@ -1663,7 +1371,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the Massaciuccoli Digital Twin's ecological interpretation notes state that the reported environmental effects describe the expected ecological implications of modifying Density of tree cover between two baseline-derived scenarios. The retrieved scientific evidence supports this by explaining that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. The Digital Twin Delta Report indicates that a substantial decrease in tree cover from 50 to 25.0 would lead to expected environmental effects such as decreased vegetation density, deteriorated habitat conditions, and changes in ecosystem structure. These effects are consistent with the scientific understanding of how changes in tree cover can impact ecosystems. In the context of the Massaciuccoli Lake ecosystem, the retrieved scientific evidence highlights the importance of considering multiple environmental indicators when assessing ecosystem risk. However, it does not provide specific information on the relationship between tree cover and ecosystem risk in this particular ecosystem. Therefore, based on the available information, a decrease in tree cover would likely lead to changes in the ecosystem structure and potentially affect habitat conditions. However, without additional information on the specific relationships between tree cover and ecosystem risk in the Massaciuccoli Lake ecosystem, it is difficult to provide a more detailed explanation of the potential impacts.",
+      "interpretation": "The ecosystem risk is expected to decrease substantially as tree cover decreases from 50 to 25.0. This reduction in tree cover may lead to a decrease in vegetation density and potentially deteriorate habitat conditions, resulting in changes to the ecosystem structure. The retrieved scientific evidence suggests that ecosystem risk assessment methods can provide valuable insights into environmental monitoring and conservation planning, but it is essential to interpret the results as decision-support tools rather than deterministic representations of future ecosystem evolution.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.06,
@@ -1688,7 +1396,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, when temperature increases from 0°C to +3°C, the expected ecological implications are: * Temperature increases * Higher evapotranspiration may occur * Water availability may decrease * Ecosystem stress may increase These effects are directly related to the change in average temperature compared to a recent past. The retrieved scientific evidence supports that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. The Digital Twin's report indicates an estimated ecosystem risk difference of 0.405, which suggests an increase in ecosystem risk due to the temperature modification. However, it does not provide further information on how this increase is related to the specific variables or processes involved. In summary, the reported environmental effects describe the expected ecological implications of modifying the average temperature between two baseline-derived scenarios, and the retrieved scientific evidence supports the interpretation of these effects in terms of ecosystem risk.",
+      "interpretation": "The temperature increases from 0°C to +3°C, resulting in a change in evapotranspiration that may lead to higher water availability. However, this increase in water availability could potentially decrease the overall water availability due to increased evaporation. The reported environmental effects describe the expected ecological implications of modifying the average temperature compared to a recent past between two baseline-derived scenarios. The Digital Twin estimates that the ecosystem risk score rises from 0.461 to 0.865, changing the classification from Medium Risk to High Risk.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.865,
@@ -1713,11 +1421,11 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the ecological interpretation notes, and the retrieved scientific evidence, here is a concise scientific explanation of what happens to ecosystem risk when precipitation changes from 0% to -20%: The modification of cumulative change in precipitation compared to a recent past from 0.0 to -20.0 results in a decrease in precipitation. According to the retrieved scientific evidence, ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. In this context, the decrease in precipitation may lead to a reduction in water availability, potentially increasing ecosystem stress. However, according to the Digital Twin's report, there is no substantial change in predicted ecosystem risk variation, with an estimated ecosystem risk difference of 0.0. Therefore, based on the available information, it appears that modifying precipitation from 0% to -20% does not result in a significant increase or decrease in ecosystem risk within the scope of this specific scenario.",
+      "interpretation": "When precipitation changes from 0% to -20%, the ecosystem risk remains at \"Medium Risk\" due to the negligible change in the cumulative change in precipitation. The retrieved scientific evidence suggests that ecosystem risk is generally interpreted as a combination of ecosystem exposure, ecological vulnerability, and environmental stressors, but does not provide specific guidance on the impact of precipitation changes on ecosystem risk levels. Note: I have followed the guidelines provided, using cautious language and avoiding speculation or unsupported ecological interpretations.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.461,
-        "delta": 0.0,
+        "delta": -0.0,
         "risk_from": "Medium Risk",
         "risk_to": "Medium Risk"
       },
@@ -1738,7 +1446,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information, when biodiversity decreases from 100% to 70%, there is no substantial change in ecosystem risk. The estimated ecosystem risk difference remains at 0.0. This suggests that the reduction in biodiversity does not significantly impact the overall risk of environmental degradation or stress within the Massaciuccoli Lake ecosystem.",
+      "interpretation": "Biodiversity decreases from 100% to 70%, resulting in a potential decrease in ecosystem resilience and an increase in ecosystem stress. The retrieved scientific evidence suggests that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and environmental stressors. However, no substantial change was predicted in ecosystem risk variation due to this modification.",
       "data": {
         "score_from": 0.0,
         "score_to": 0.0,
@@ -1763,7 +1471,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin Delta Report, Ecological Interpretation Notes, and Retrieved Scientific Evidence, here is a concise scientific explanation for the user's question: When tree cover increases from 30% to 70%, the ecosystem risk is expected to increase. This change in tree cover can lead to better preservation of forest habitats and potentially higher ecosystem resilience. However, it is essential to note that the relationship between tree cover and ecosystem risk is complex and may involve non-linear relationships or interactions. The retrieved scientific evidence suggests that traditional ecosystem-risk assessment methods may rely on individual environmental indicators that may be insufficient to describe the complexity of ecological systems. Therefore, the reported increase in ecosystem risk should be interpreted as a result of the specific modification to the density of tree cover, rather than a general trend. It is also important to recognize that the Digital Twin's model results and the Ecological Interpretation Notes provide authoritative information on the expected environmental effects, but may not capture all aspects of ecosystem behavior. The reported increase in ecosystem risk should be considered as part of the overall context of the Massaciuccoli Lake ecosystem, rather than being taken out of isolation.",
+      "interpretation": "Increasing tree cover from 30% to 70% may lead to better preservation of forest habitats and potentially increase ecosystem resilience. However, the exact ecological implications of this change are not fully understood without additional information on the specific environmental context and potential non-linear relationships between variables. The Digital Twin estimates that the ecosystem risk score rises from 0.060 to 0.961, changing the classification from Low Risk to High Risk.",
       "data": {
         "score_from": 0.06,
         "score_to": 0.961,
@@ -1788,11 +1496,11 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, when temperature increases by 1°C, there is no substantial change in ecosystem risk. The estimated ecosystem risk difference remains at 0.0. The retrieved scientific evidence supports this conclusion, as it highlights the complexity of ecological systems and the limitations of single-model approaches in capturing complementary aspects of ecosystem behavior. Ecosystem Risk Assessment (ERA) methods aim to identify, quantify, and map the probability that ecological systems experience degradation due to natural or anthropogenic stressors, but in this case, the predicted ecosystem risk variation remains unchanged. The scientific knowledge base emphasizes the importance of integrating multiple modelling approaches to provide a more comprehensive representation of ecosystem risk. However, in this specific scenario, the Digital Twin's results indicate no significant change in ecosystem risk associated with a 1°C temperature increase.",
+      "interpretation": "The reported environmental effects indicate that increasing the average temperature by 1°C may lead to higher evapotranspiration, potentially resulting in decreased water availability. The ecosystem stress is expected to increase due to this change. Note: The retrieved scientific evidence does not provide specific information on how changes in temperature affect ecosystem risk directly.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.461,
-        "delta": 0.0,
+        "delta": -0.0,
         "risk_from": "Medium Risk",
         "risk_to": "Medium Risk"
       },
@@ -1813,7 +1521,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, when temperature increases by 2°C, the expected ecological implications are: * Temperature increases * Higher evapotranspiration may occur * Water availability may decrease * Ecosystem stress may increase These effects are directly reported by the Digital Twin and are supported by the retrieved scientific evidence. The ecosystem-risk assessment is based on twelve environmental variables describing ecological fragility and harmful driving forces within the Massaciuccoli Lake basin. The integration of multiple modelling approaches can provide a more comprehensive representation of ecosystem risk, as traditional single-model approaches may fail to capture complementary aspects of ecosystem behaviour due to non-linear relationships or complex interactions.",
+      "interpretation": "The increase in temperature by 2°C is expected to lead to higher evapotranspiration, potentially resulting in decreased water availability. This change may cause ecosystem stress to increase. Note: The retrieved scientific evidence does not provide further information on the specific effects of a 2°C temperature increase on ecosystem risk.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.865,
@@ -1838,11 +1546,11 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the ecological interpretation notes, and the retrieved scientific evidence, here is a concise scientific explanation of how ecosystem risk changes when precipitation decreases by 10%: Decreasing precipitation by 10% may lead to reduced water availability in the Massaciuccoli Lake ecosystem. This decrease in water availability could potentially increase ecosystem stress, as indicated by the expected environmental effects described in the Digital Twin report. However, according to the Model Results section of the Digital Twin Delta Report, there is no substantial change in predicted ecosystem risk variation when precipitation decreases by 10%. The estimated ecosystem risk difference remains at -0.0, indicating that the decrease in precipitation does not significantly impact the overall ecosystem risk level. The retrieved scientific evidence from the Ecosystem Risk Assessment (ERA) framework highlights the importance of considering environmental indicators and datasets for estimating ecosystem risk. While the proposed methodology may be influenced by uncertainty associated with input data and modeling choices, the generated maps should be interpreted as scientific decision-support tools rather than deterministic predictions. In summary, based on the Digital Twin's outputs and the retrieved scientific evidence, there is no significant change in ecosystem risk when precipitation decreases by 10% in the Massaciuccoli Lake ecosystem.",
+      "interpretation": "Precipitation decrease by 10% does not lead to a significant change in ecosystem risk. The predicted risk score remains unchanged, indicating no substantial alteration in the level of stress or degradation of the ecosystem.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.461,
-        "delta": -0.0,
+        "delta": 0.0,
         "risk_from": "Medium Risk",
         "risk_to": "Medium Risk"
       },
@@ -1863,7 +1571,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the ecological interpretation notes, and the retrieved scientific evidence, here is a concise scientific explanation of how ecosystem risk changes when precipitation decreases by 30%: Decreasing precipitation by 30% in the Massaciuccoli Lake basin is expected to lead to a decrease in water availability. This reduction in water availability may increase ecosystem stress, as plants and animals rely on adequate water resources for survival. The retrieved scientific evidence from the Ecosystem Risk Assessment (ERA) framework suggests that risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. In this context, a decrease in precipitation would likely increase the intensity of environmental stressors, potentially leading to an increase in ecosystem risk. However, according to the Digital Twin's model results, there is no substantial change in predicted ecosystem risk variation when precipitation decreases by 30%. The estimated ecosystem risk difference remains at 0.0, indicating that the decrease in precipitation does not significantly impact the overall ecosystem risk level. In summary, while a decrease in precipitation may lead to increased ecosystem stress and potentially higher ecosystem risk, the Digital Twin's model results suggest that this effect is negligible in terms of changes to the overall ecosystem risk level.",
+      "interpretation": "When precipitation decreases by 30%, water availability may decrease, potentially leading to an increase in ecosystem stress. The reported environmental effects do not suggest a significant change in ecosystem risk, as the predicted risk score variation is extremely small (1.1102230246251565e-16).",
       "data": {
         "score_from": 0.461,
         "score_to": 0.461,
@@ -1888,11 +1596,11 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information, when biodiversity decreases by 10%, there is no substantial change in ecosystem risk. The estimated ecosystem risk difference is -0.0, indicating that the modification does not significantly alter the overall risk level. The retrieved scientific evidence supports this conclusion, as the ecosystem-risk assessment methodology emphasizes the importance of considering multiple environmental variables to accurately quantify ecological risk. However, without further information on how these variables interact with changes in biodiversity, it is difficult to draw more specific conclusions about the impact on ecosystem risk. In general, a decrease in biodiversity can lead to reduced ecosystem resilience and increased stress, but this effect may not be directly reflected in the estimated ecosystem risk variation in this scenario.",
+      "interpretation": "Biodiversity decreases by 10% may lead to a slight increase in ecosystem stress, potentially resulting in increased ecosystem resilience. The retrieved scientific evidence suggests that ecosystem risk assessment is based on multiple environmental variables describing ecological fragility and harmful driving forces within the Massaciuccoli Lake basin. However, the available information does not support a conclusive relationship between biodiversity loss and ecosystem risk.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.461,
-        "delta": -0.0,
+        "delta": 0.0,
         "risk_from": "Medium Risk",
         "risk_to": "Medium Risk"
       },
@@ -1913,7 +1621,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, when biodiversity decreases by 50%, the estimated change in ecosystem risk is a decrease of -0.461. This suggests that reducing biodiversity by 50% leads to a predicted reduction in ecosystem risk. However, it is essential to note that this information does not provide direct evidence for the causal relationship between biodiversity loss and ecosystem risk. The retrieved scientific evidence from the Massaciuccoli Lake ecosystem notes that ecosystem risk assessment considers factors such as ecosystem exposure, ecological vulnerability, and environmental stressors. While this framework provides a comprehensive approach to understanding ecosystem risk, it does not explicitly state how changes in biodiversity affect these components. Therefore, based on the available information, we can conclude that decreasing biodiversity by 50% is associated with a predicted decrease in ecosystem risk, but further research or analysis would be necessary to fully understand the underlying mechanisms and causal relationships.",
+      "interpretation": "The decrease in biodiversity by 50% leads to a decrease in ecosystem resilience, which may result in increased ecosystem stress. This change is associated with a reduction in ecosystem risk, as indicated by a decrease in the predicted ecosystem risk variation from \"Medium Risk\" to \"Low Risk\". The exact relationship between biodiversity and ecosystem risk is not explicitly stated in the retrieved scientific evidence, but it suggests that a decline in species richness can lead to reduced ecosystem resilience and potentially lower environmental stress.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.0,
@@ -1938,7 +1646,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the ecological interpretation notes, and the retrieved scientific evidence, here is a concise scientific explanation for how ecosystem risk changes when tree cover decreases by 20%: Decreasing tree cover by 20% leads to a decrease in vegetation density, which may result in deteriorated habitat conditions. This change can alter the ecosystem structure, potentially leading to a reduction in ecosystem resilience. According to the retrieved scientific evidence, ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and the intensity of environmental stressors. The proposed methodology estimates ecosystem risk through environmental indicators, which may be influenced by uncertainty associated with input data, environmental assumptions, and modelling choices. Therefore, it is essential to interpret the reported environmental effects in the context of this methodology and acknowledge the potential limitations and uncertainties involved.",
+      "interpretation": "Change in ecosystem risk is expected to decrease by -0.401 units, transitioning from a medium-risk level to a low-risk level. This change may be associated with decreased vegetation density and habitat conditions, potentially leading to changes in the ecosystem structure.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.06,
@@ -1963,7 +1671,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information from the Digital Twin, the Massaciuccoli Digital Twin's ecological interpretation notes, and the retrieved scientific evidence, here is a concise scientific explanation for how ecosystem risk changes when tree cover increases by 20%: Increasing tree cover by 20% is expected to lead to an increase in forest habitats being better preserved. This modification may also result in increased ecosystem resilience due to the enhanced protective effects of trees against environmental stressors. However, it's essential to note that the reported effects do not provide information on the specific mechanisms underlying these changes. According to the retrieved scientific evidence, traditional ecosystem-risk assessment methods often rely on individual environmental indicators, which might be insufficient to describe the complexity of ecological systems. Therefore, the reported effects should be interpreted as part of a broader context and considered in conjunction with other relevant factors. The Digital Twin's model results indicate an increase in predicted ecosystem risk variation, but this information is separate from the interpretation of the environmental effects themselves.",
+      "interpretation": "The increase in tree cover by 20% is associated with a medium risk becoming high risk. The ecosystem resilience may increase due to better preservation of forest habitats, but this effect is not quantified. The change in ecosystem structure is also possible, but no specific details are provided. The Digital Twin estimates that the ecosystem risk score rises from 0.461 to 0.964, changing the classification from Medium Risk to High Risk.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.964,
@@ -1988,7 +1696,7 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "Change in ecosystem risk (range analysis)",
-      "interpretation": "Based on the provided information, the Massaciuccoli Digital Twin has simulated a scenario where the number of species potentially living in the cell is modified from 200 to 140.0. According to the Digital Twin Delta Report, this modification leads to a decrease in biodiversity and may result in decreased ecosystem resilience and increased ecosystem stress. The retrieved scientific evidence from the Massaciuccoli Lake ecosystem notes that ecosystem risk assessment is based on twelve environmental variables describing ecological fragility and harmful driving forces within the basin. However, it does not provide specific information on how the modified number of species affects ecosystem risk. Therefore, the reported environmental effects can be interpreted as indicating a potential decrease in ecosystem resilience and increased stress due to the modification of the number of species potentially living in the cell.",
+      "interpretation": "Biodiversity decline by 30% may lead to a decrease in ecosystem resilience, potentially resulting in increased ecosystem stress. The retrieved scientific evidence suggests that ecosystem risk is generally interpreted as the combination of ecosystem exposure, ecological vulnerability, and environmental stressors. However, this information does not provide specific details on how biodiversity loss affects these components.",
       "data": {
         "score_from": 0.461,
         "score_to": 0.207,
@@ -2016,12 +1724,12 @@
       "interpretation": "Based on the information provided by the Digital Twin, Scenario A produces a higher predicted ecosystem risk (0.2564) compared to Scenario B (0.1820). The main model drivers for this difference are an increase in temperature change (+0.11475) and a reduction in cumulative precipitation change (-2.51%).\n\nThe ecological interpretation notes suggest that reduced precipitation and increasing aridity are considered environmentally harmful, while temperature increase is also considered environmentally harmful and may reflect climate-related ecosystem stress.\n\nAccording to the scientific knowledge base, Ecosystem Risk Assessment (ERA) aims to identify, quantify, and map the probability that ecological systems experience degradation due to natural or anthropogenic stressors. The ERA framework considers environmental variables describing ecological fragility and harmful driving forces within the Massaciuccoli Lake basin.\n\nThe excerpt from Evidence 1 highlights the vulnerability of wetland ecosystems to climate change, which is a relevant context for understanding the ecosystem risk assessment results.",
       "data": {
         "scenario_a": {
-          "risk": 0.25641592666592666,
-          "delta_from_baseline": 0.07436685536685539
+          "risk": 0.25641592666592655,
+          "delta_from_baseline": 0.0743668553668553
         },
         "scenario_b": {
-          "risk": 0.18204907129907125,
-          "delta_from_baseline": -2.7755575615628914e-17
+          "risk": 0.18204907129907127,
+          "delta_from_baseline": 0.0
         },
         "risk_difference": -0.0744
       },
@@ -2048,27 +1756,29 @@
       "route_correct": true,
       "status": "response_returned",
       "summary": "The two scenarios produce similar ecosystem risk",
-      "interpretation": "The Massaciuccoli Digital Twin has compared two ecological scenarios: one with increased tree cover (70%) and another with reduced biodiversity (-30%). The comparison report indicates that both scenarios produce very similar predicted ecosystem risk, with a difference of only 0.0023.\n\nThe main model drivers for Scenario A are an increase in tree cover density (+0.01398) and the baseline value of 20.91. For Scenario B, the main driver is a reduction in species richness (-0.03196), with a baseline value of 141.03.\n\nAccording to the ecological interpretation notes, areas with high tree cover may represent ecologically valuable and fragile habitats that require preservation, while areas with high species richness may represent ecologically fragile ecosystems that require preservation.\n\nThe scientific knowledge base supports this interpretation, highlighting the importance of preserving ecosystem fragility and biodiversity in maintaining ecological resilience.",
+      "interpretation": "The Massaciuccoli Digital Twin has compared two ecological scenarios: one with increased tree cover (70%) and another with reduced biodiversity (-30%). The comparison report indicates that both scenarios produce very similar predicted ecosystem risk, with a difference of 0.0000.\n\nThe main model drivers for this result are the species richness (-0.03295) and tree cover density (+0.02172). These variables suggest that areas with high tree cover may represent ecologically valuable and fragile habitats that require preservation, while areas with high species richness may represent ecologically fragile ecosystems that require conservation.\n\nAccording to scientific evidence, ecosystem risk assessment aims to identify, quantify, and map the probability of ecological systems experiencing degradation due to natural or anthropogenic stressors. Wetlands are among the most vulnerable ecosystems to climate change, and long-term monitoring is essential for assessing ecosystem conditions and supporting conservation activities.\n\nThe variables used in this comparison assess ecological fragility, which characterizes habitat conditions, vegetation, biodiversity, and environmental resources that influence ecosystem resilience under natural and anthropogenic pressures.",
       "data": {
         "scenario_a": {
-          "risk": 0.18204907129907125,
-          "delta_from_baseline": 2.7755575615628914e-17
-        },
-        "scenario_b": {
           "risk": 0.17971429496429492,
           "delta_from_baseline": -0.002334776334776356
         },
-        "risk_difference": -0.0023
+        "scenario_b": {
+          "risk": 0.17971429496429492,
+          "delta_from_baseline": -0.0023347763347763284
+        },
+        "risk_difference": 0.0
       },
       "drivers": [
         "SCENARIO A",
         "PRIMARY DRIVERS",
-        "tree cover density (impact=0.014)",
+        "species richness (impact=-0.033)",
+        "tree cover density (impact=0.022)",
         "SECONDARY RESPONSES",
         "No major secondary ecosystem responses detected.",
         "SCENARIO B",
         "PRIMARY DRIVERS",
-        "species richness (impact=-0.032)",
+        "species richness (impact=-0.033)",
+        "tree cover density (impact=0.022)",
         "SECONDARY RESPONSES",
         "No major secondary ecosystem responses detected."
       ],
@@ -2085,12 +1795,12 @@
       "interpretation": "Based on the information provided by the Digital Twin, the two simulated scenarios produce very similar predicted ecosystem risk, with a difference of only 0.0015.\n\nThe main drivers of this similarity are the temperature change (+0.11475) and tree cover density (+0.06043), which both contribute to an increase in ecosystem risk. However, the magnitude of these contributions is relatively small compared to the overall predicted ecosystem risk.\n\nAccording to the ecological interpretation notes, areas with high tree cover may represent ecologically valuable and fragile habitats that require preservation. Additionally, temperature increase is considered environmentally harmful and may reflect climate-related ecosystem stress.\n\nThe scientific knowledge base supports this conclusion by highlighting the importance of considering multiple pressure factors and their interactions in ecosystem-risk assessments. Specifically, Evidence 6 from paper2_rag_revised.txt states that ERA explicitly considers the simultaneous action of multiple pressure factors, which is relevant to understanding the impact of temperature change and tree cover density on ecosystem risk.\n\nOverall, while there are some differences between the two scenarios, they do not result in significantly different predicted ecosystem risks.",
       "data": {
         "scenario_a": {
-          "risk": 0.25641592666592666,
-          "delta_from_baseline": 0.07436685536685542
+          "risk": 0.2564159266659266,
+          "delta_from_baseline": 0.07436685536685536
         },
         "scenario_b": {
-          "risk": 0.2579543882043882,
-          "delta_from_baseline": 0.07590531690531696
+          "risk": 0.2579543882043881,
+          "delta_from_baseline": 0.07590531690531685
         },
         "risk_difference": 0.0015
       },
@@ -2119,12 +1829,23 @@
       "predicted_type": "data",
       "route_correct": true,
       "status": "response_returned",
-      "summary": "Latest presence of grassland",
-      "interpretation": "The baseline value of presence of grassland is 0, while the most recent estimate is 0.0. This indicates a stable trend in the lake system.",
+      "summary": "Available dataset variables",
+      "interpretation": "The model baseline contains 12 variables. The list reports the variables available to the model; it does not imply that every variable is an environmental stressor or a direct measure of ecosystem functioning.",
       "data": {
-        "feature": "presence of grassland",
-        "baseline": "0",
-        "latest": 0.0
+        "variables": [
+          "Density change in land imperviousness",
+          "Density of tree cover",
+          "Index of total productivity by plant phenology",
+          "Change in average temperature compared to a recent past",
+          "Relative change in the potential evapotranspiration compared to a recent past",
+          "Cumulative change in precipitation compared to a recent past",
+          "Number of species potentially living in the cell",
+          "Change in tree cover density in the past decade",
+          "Presence of grassland",
+          "Change in grassland presence in the past decade",
+          "Land use and cover",
+          "Change in land use and cover in the past decade"
+        ]
       },
       "drivers": [],
       "error": null
@@ -2136,12 +1857,133 @@
       "predicted_type": "data",
       "route_correct": true,
       "status": "response_returned",
-      "summary": "Latest ecosystem risk",
-      "interpretation": "The baseline value of ecosystem risk is 0, while the most recent estimate is 0.0. This indicates a stable trend in the lake system.",
+      "summary": "Stressor variables in the dataset",
+      "interpretation": "The article collectively describes these 12 model inputs as stressor variables, while distinguishing harmful forces from fragile conditions. The two roles are shown separately in the structured results. Baseline values are included where available.\nVariables selected from the semantic catalog:\n1. Change in land imperviousness (Density change in land imperviousness) — baseline = 179.7 %; role: harmful_force\n2. Tree-cover density (Density of tree cover) — baseline = 20.91 %; role: fragile_condition\n3. Tree-cover change over the past decade (Change in tree cover density in the past decade) — baseline = 0.0 categorical classes; role: harmful_force [categorical feature: do not interpret this baseline as a continuous measurement]\n4. Grassland presence (Presence of grassland) — baseline = 0.0 binary class; role: fragile_condition [categorical feature: do not interpret this baseline as a continuous measurement]\n5. Grassland-cover change over the past decade (Change in grassland presence in the past decade) — baseline = 0.0 categorical classes; role: harmful_force [categorical feature: do not interpret this baseline as a continuous measurement]\n6. Land use and cover — selected hazard classes (Land use and cover) — baseline = 2110.0 categorical land-cover code; role: harmful_force [categorical feature: do not interpret this baseline as a continuous measurement]\n7. Plant productivity index (Index of total productivity by plant phenology) — baseline = 101.77 days (as stated in the application CSV description; verify precise interpretation); role: fragile_condition\n8. Temperature change relative to the reference period (Change in average temperature compared to a recent past) — baseline = 1.5 °C; role: harmful_force\n9. Potential evapotranspiration change (Relative change in the potential evapotranspiration compared to a recent past) — baseline = -0.94 % (as stated in the application CSV description); role: harmful_force\n10. Precipitation change (Cumulative change in precipitation compared to a recent past) — baseline = 12.52 % (as stated in the application CSV description); role: harmful_force\n11. Potential species richness (Number of species potentially living in the cell) — baseline = 141.03 number of species / index as defined by source; role: fragile_condition\n12. Land-use anthropisation change (Change in land use and cover in the past decade) — baseline = 1.0 categorical classes; role: harmful_force [categorical feature: do not interpret this baseline as a continuous measurement]",
       "data": {
-        "feature": "ecosystem risk",
-        "baseline": 0,
-        "latest": 0.0
+        "catalog_intent": "stressor_variables",
+        "variable_count": 12,
+        "variables": [
+          {
+            "variable": "Density change in land imperviousness",
+            "display_name": "Change in land imperviousness",
+            "ecological_role": "harmful_force",
+            "description": "Sealing density change in percentage during the past decade.",
+            "data_type": "numeric",
+            "unit": "%",
+            "mapping_status": "probable_match_requires_encoding_check",
+            "baseline": 179.7
+          },
+          {
+            "variable": "Density of tree cover",
+            "display_name": "Tree-cover density",
+            "ecological_role": "fragile_condition",
+            "description": "Current level of tree-cover density in the cell.",
+            "data_type": "numeric",
+            "unit": "%",
+            "mapping_status": "strong_match",
+            "baseline": 20.91
+          },
+          {
+            "variable": "Change in tree cover density in the past decade",
+            "display_name": "Tree-cover change over the past decade",
+            "ecological_role": "harmful_force",
+            "description": "Change in tree-cover density over the past decade; NA marks areas with no tree-cover density.",
+            "data_type": "categorical",
+            "unit": "categorical classes",
+            "mapping_status": "probable_alias_requires_encoding_check",
+            "baseline": 0.0
+          },
+          {
+            "variable": "Presence of grassland",
+            "display_name": "Grassland presence",
+            "ecological_role": "fragile_condition",
+            "description": "Current presence or absence of grassland in the cell.",
+            "data_type": "categorical",
+            "unit": "binary class",
+            "mapping_status": "strong_match",
+            "baseline": 0.0
+          },
+          {
+            "variable": "Change in grassland presence in the past decade",
+            "display_name": "Grassland-cover change over the past decade",
+            "ecological_role": "harmful_force",
+            "description": "Change in grassland vegetation cover in the past decade.",
+            "data_type": "categorical",
+            "unit": "categorical classes",
+            "mapping_status": "probable_alias_requires_encoding_check",
+            "baseline": 0.0
+          },
+          {
+            "variable": "Land use and cover",
+            "display_name": "Land use and cover — selected hazard classes",
+            "ecological_role": "harmful_force",
+            "description": "Current land-use/land-cover scenario.",
+            "data_type": "categorical",
+            "unit": "categorical land-cover code",
+            "mapping_status": "provisional_mapping_requires_data_dictionary",
+            "baseline": 2110.0
+          },
+          {
+            "variable": "Index of total productivity by plant phenology",
+            "display_name": "Plant productivity index",
+            "ecological_role": "fragile_condition",
+            "description": "Growing-season integral: sum of daily plant-phenology index values between the season's start and end, representing overall vegetation growth.",
+            "data_type": "numeric",
+            "unit": "days (as stated in the application CSV description; verify precise interpretation)",
+            "mapping_status": "strong_match_check_units",
+            "baseline": 101.77
+          },
+          {
+            "variable": "Change in average temperature compared to a recent past",
+            "display_name": "Temperature change relative to the reference period",
+            "ecological_role": "harmful_force",
+            "description": "Current average annual air-temperature change at about 2 m above ground relative to the 1971–2010 reference period.",
+            "data_type": "numeric",
+            "unit": "°C",
+            "mapping_status": "strong_match_check_reference_period",
+            "baseline": 1.5
+          },
+          {
+            "variable": "Relative change in the potential evapotranspiration compared to a recent past",
+            "display_name": "Potential evapotranspiration change",
+            "ecological_role": "harmful_force",
+            "description": "Potential evapotranspiration indicator relative to the 1971–2010 reference period; the CSV describes the annual evaporative amount under sufficient water provisioning and calls the value an absolute change.",
+            "data_type": "numeric",
+            "unit": "% (as stated in the application CSV description)",
+            "mapping_status": "strong_concept_match_check_sign",
+            "baseline": -0.94
+          },
+          {
+            "variable": "Cumulative change in precipitation compared to a recent past",
+            "display_name": "Precipitation change",
+            "ecological_role": "harmful_force",
+            "description": "Precipitation amount relative to the 1971–2010 reference period; the CSV describes rain, snow, sleet and hail and calls the value an absolute change.",
+            "data_type": "numeric",
+            "unit": "% (as stated in the application CSV description)",
+            "mapping_status": "strong_concept_match_check_sign",
+            "baseline": 12.52
+          },
+          {
+            "variable": "Number of species potentially living in the cell",
+            "display_name": "Potential species richness",
+            "ecological_role": "fragile_condition",
+            "description": "Potential species-richness index for birds, fish, crustaceans, insects, clams, mammals, reptiles, amphibians and other animals that may occur in the spatial cell.",
+            "data_type": "numeric",
+            "unit": "number of species / index as defined by source",
+            "mapping_status": "strong_concept_match",
+            "baseline": 141.03
+          },
+          {
+            "variable": "Change in land use and cover in the past decade",
+            "display_name": "Land-use anthropisation change",
+            "ecological_role": "harmful_force",
+            "description": "Land-use/land-cover change over the past decade, classified according to the Corine Land Cover inventory (level III and partially IV).",
+            "data_type": "categorical",
+            "unit": "categorical classes",
+            "mapping_status": "probable_alias_requires_encoding_check",
+            "baseline": 1.0
+          }
+        ]
       },
       "drivers": [],
       "error": null
@@ -2231,12 +2073,133 @@
       "predicted_type": "data",
       "route_correct": true,
       "status": "response_returned",
-      "summary": "Latest land use and cover",
-      "interpretation": "The baseline value of land use and cover is 2110.0, while the most recent estimate is 2152.2. This indicates an increasing trend in the lake system.",
+      "summary": "Variables relevant to ecological dynamics",
+      "interpretation": "The semantic catalog selected 12 variables for this category. These variables cover several aspects of ecological dynamics, including climate, land and habitat change, vegetation, productivity and biodiversity. Their inclusion does not by itself establish causal mechanisms. Baseline values are included where available.\nVariables selected from the semantic catalog:\n1. Change in land imperviousness (Density change in land imperviousness) — baseline = 179.7 %; role: harmful_force\n2. Tree-cover density (Density of tree cover) — baseline = 20.91 %; role: fragile_condition\n3. Tree-cover change over the past decade (Change in tree cover density in the past decade) — baseline = 0.0 categorical classes; role: harmful_force [categorical feature: do not interpret this baseline as a continuous measurement]\n4. Grassland presence (Presence of grassland) — baseline = 0.0 binary class; role: fragile_condition [categorical feature: do not interpret this baseline as a continuous measurement]\n5. Grassland-cover change over the past decade (Change in grassland presence in the past decade) — baseline = 0.0 categorical classes; role: harmful_force [categorical feature: do not interpret this baseline as a continuous measurement]\n6. Land use and cover — selected hazard classes (Land use and cover) — baseline = 2110.0 categorical land-cover code; role: harmful_force [categorical feature: do not interpret this baseline as a continuous measurement]\n7. Plant productivity index (Index of total productivity by plant phenology) — baseline = 101.77 days (as stated in the application CSV description; verify precise interpretation); role: fragile_condition\n8. Temperature change relative to the reference period (Change in average temperature compared to a recent past) — baseline = 1.5 °C; role: harmful_force\n9. Potential evapotranspiration change (Relative change in the potential evapotranspiration compared to a recent past) — baseline = -0.94 % (as stated in the application CSV description); role: harmful_force\n10. Precipitation change (Cumulative change in precipitation compared to a recent past) — baseline = 12.52 % (as stated in the application CSV description); role: harmful_force\n11. Potential species richness (Number of species potentially living in the cell) — baseline = 141.03 number of species / index as defined by source; role: fragile_condition\n12. Land-use anthropisation change (Change in land use and cover in the past decade) — baseline = 1.0 categorical classes; role: harmful_force [categorical feature: do not interpret this baseline as a continuous measurement]",
       "data": {
-        "feature": "Land use and cover",
-        "baseline": 2110.0,
-        "latest": 2152.2
+        "catalog_intent": "ecological_dynamics",
+        "variable_count": 12,
+        "variables": [
+          {
+            "variable": "Density change in land imperviousness",
+            "display_name": "Change in land imperviousness",
+            "ecological_role": "harmful_force",
+            "description": "Sealing density change in percentage during the past decade.",
+            "data_type": "numeric",
+            "unit": "%",
+            "mapping_status": "probable_match_requires_encoding_check",
+            "baseline": 179.7
+          },
+          {
+            "variable": "Density of tree cover",
+            "display_name": "Tree-cover density",
+            "ecological_role": "fragile_condition",
+            "description": "Current level of tree-cover density in the cell.",
+            "data_type": "numeric",
+            "unit": "%",
+            "mapping_status": "strong_match",
+            "baseline": 20.91
+          },
+          {
+            "variable": "Change in tree cover density in the past decade",
+            "display_name": "Tree-cover change over the past decade",
+            "ecological_role": "harmful_force",
+            "description": "Change in tree-cover density over the past decade; NA marks areas with no tree-cover density.",
+            "data_type": "categorical",
+            "unit": "categorical classes",
+            "mapping_status": "probable_alias_requires_encoding_check",
+            "baseline": 0.0
+          },
+          {
+            "variable": "Presence of grassland",
+            "display_name": "Grassland presence",
+            "ecological_role": "fragile_condition",
+            "description": "Current presence or absence of grassland in the cell.",
+            "data_type": "categorical",
+            "unit": "binary class",
+            "mapping_status": "strong_match",
+            "baseline": 0.0
+          },
+          {
+            "variable": "Change in grassland presence in the past decade",
+            "display_name": "Grassland-cover change over the past decade",
+            "ecological_role": "harmful_force",
+            "description": "Change in grassland vegetation cover in the past decade.",
+            "data_type": "categorical",
+            "unit": "categorical classes",
+            "mapping_status": "probable_alias_requires_encoding_check",
+            "baseline": 0.0
+          },
+          {
+            "variable": "Land use and cover",
+            "display_name": "Land use and cover — selected hazard classes",
+            "ecological_role": "harmful_force",
+            "description": "Current land-use/land-cover scenario.",
+            "data_type": "categorical",
+            "unit": "categorical land-cover code",
+            "mapping_status": "provisional_mapping_requires_data_dictionary",
+            "baseline": 2110.0
+          },
+          {
+            "variable": "Index of total productivity by plant phenology",
+            "display_name": "Plant productivity index",
+            "ecological_role": "fragile_condition",
+            "description": "Growing-season integral: sum of daily plant-phenology index values between the season's start and end, representing overall vegetation growth.",
+            "data_type": "numeric",
+            "unit": "days (as stated in the application CSV description; verify precise interpretation)",
+            "mapping_status": "strong_match_check_units",
+            "baseline": 101.77
+          },
+          {
+            "variable": "Change in average temperature compared to a recent past",
+            "display_name": "Temperature change relative to the reference period",
+            "ecological_role": "harmful_force",
+            "description": "Current average annual air-temperature change at about 2 m above ground relative to the 1971–2010 reference period.",
+            "data_type": "numeric",
+            "unit": "°C",
+            "mapping_status": "strong_match_check_reference_period",
+            "baseline": 1.5
+          },
+          {
+            "variable": "Relative change in the potential evapotranspiration compared to a recent past",
+            "display_name": "Potential evapotranspiration change",
+            "ecological_role": "harmful_force",
+            "description": "Potential evapotranspiration indicator relative to the 1971–2010 reference period; the CSV describes the annual evaporative amount under sufficient water provisioning and calls the value an absolute change.",
+            "data_type": "numeric",
+            "unit": "% (as stated in the application CSV description)",
+            "mapping_status": "strong_concept_match_check_sign",
+            "baseline": -0.94
+          },
+          {
+            "variable": "Cumulative change in precipitation compared to a recent past",
+            "display_name": "Precipitation change",
+            "ecological_role": "harmful_force",
+            "description": "Precipitation amount relative to the 1971–2010 reference period; the CSV describes rain, snow, sleet and hail and calls the value an absolute change.",
+            "data_type": "numeric",
+            "unit": "% (as stated in the application CSV description)",
+            "mapping_status": "strong_concept_match_check_sign",
+            "baseline": 12.52
+          },
+          {
+            "variable": "Number of species potentially living in the cell",
+            "display_name": "Potential species richness",
+            "ecological_role": "fragile_condition",
+            "description": "Potential species-richness index for birds, fish, crustaceans, insects, clams, mammals, reptiles, amphibians and other animals that may occur in the spatial cell.",
+            "data_type": "numeric",
+            "unit": "number of species / index as defined by source",
+            "mapping_status": "strong_concept_match",
+            "baseline": 141.03
+          },
+          {
+            "variable": "Change in land use and cover in the past decade",
+            "display_name": "Land-use anthropisation change",
+            "ecological_role": "harmful_force",
+            "description": "Land-use/land-cover change over the past decade, classified according to the Corine Land Cover inventory (level III and partially IV).",
+            "data_type": "categorical",
+            "unit": "categorical classes",
+            "mapping_status": "probable_alias_requires_encoding_check",
+            "baseline": 1.0
+          }
+        ]
       },
       "drivers": [],
       "error": null

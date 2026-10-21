@@ -10,7 +10,7 @@ Drivers Task — v6 (clean + demo-ready + semantic fix)
 
 ✔ Improves output readability
 
-✔ Adds scientific disclaimer
+✔ Uses cautious association-based scientific language
 
 ✔ 🔥 Aligns wording with "loss / increase"
 
@@ -296,7 +296,7 @@ def analyze_climate_stress(df):
 
             "summary": "Climate-related stress indicators not computable",
 
-            "data": {"target": "climate-related stress", "drivers": []},
+            "data": {"target": "climate-related stress", "indicators": available, "drivers": []},
 
             "drivers": [],
 
@@ -314,7 +314,6 @@ def analyze_climate_stress(df):
 
     driver_labels = []
 
-    lines = []
 
     for target_column in available:
 
@@ -357,9 +356,6 @@ def analyze_climate_stress(df):
         label = CLIMATE_INDICATOR_LABELS.get(target_column, target_column)
 
         if not top:
-
-            lines.append(f"- {label}: no associations met the correlation threshold (|r| >= {MIN_CORRELATION:.1f}).")
-
             continue
 
         for item in top:
@@ -370,19 +366,10 @@ def analyze_climate_stress(df):
 
                 f"{label} — {item['feature']} ({item['direction']} association, "
 
-                f"{item['strength']}, r={item['correlation']:.2f})"
+                f"{item['strength']})"
 
             )
 
-        component_text = "; ".join(
-
-            f"{item['feature']} ({item['direction']}, r={item['correlation']:.2f})"
-
-            for item in top
-
-        )
-
-        lines.append(f"- {label}: strongest observed associations are {component_text}.")
 
     interpretation = (
 
@@ -396,7 +383,7 @@ def analyze_climate_stress(df):
 
         "not evidence of causation, and no composite climate-stress index was calculated.\n\n"
 
-        + "\n".join(lines)
+
 
     )
 
@@ -404,7 +391,7 @@ def analyze_climate_stress(df):
 
         "summary": "Drivers associated with climate-related stress indicators",
 
-        "data": {"target": "climate-related stress", "drivers": rows},
+        "data": {"target": "climate-related stress", "indicators": available, "drivers": rows},
 
         "drivers": driver_labels,
 
@@ -430,7 +417,6 @@ def analyze_hydrological_change(df):
 
     rows = []
     driver_labels = []
-    lines = []
     for indicator in available:
         y = pd.to_numeric(df[indicator], errors="coerce")
         associations = []
@@ -452,22 +438,13 @@ def analyze_hydrological_change(df):
         top = associations[:2]
         label = HYDROLOGICAL_INDICATOR_LABELS.get(indicator, indicator)
         if not top:
-            lines.append(
-                f"- {label}: no associations met the correlation threshold "
-                f"(|r| >= {MIN_CORRELATION:.1f})."
-            )
             continue
         for item in top:
             rows.append(item)
             driver_labels.append(
                 f"{label} — {item['feature']} ({item['direction']} association, "
-                f"{item['strength']}, r={item['correlation']:.2f})"
+                f"{item['strength']})"
             )
-        items_text = "; ".join(
-            f"{item['feature']} ({item['direction']}, r={item['correlation']:.2f})"
-            for item in top
-        )
-        lines.append(f"- {label}: strongest observed associations are {items_text}.")
 
     interpretation = (
         "Hydrological change is not directly measured as a single variable in this dataset. "
@@ -475,7 +452,7 @@ def analyze_hydrological_change(df):
         "evapotranspiration change separately, reporting their strongest correlations with "
         "other available numeric environmental indicators. These associations do not establish "
         "causation. No composite hydrological index was calculated.\n\n"
-        + "\n".join(lines)
+
     )
     return {
         "summary": "Drivers associated with hydrological change indicators",
@@ -501,7 +478,6 @@ def analyze_ecosystem_resilience(df):
 
     rows = []
     driver_labels = []
-    lines = []
     for indicator in available:
         y = pd.to_numeric(df[indicator], errors="coerce")
         associations = []
@@ -523,26 +499,14 @@ def analyze_ecosystem_resilience(df):
         associations.sort(key=lambda item: item["abs_corr"], reverse=True)
         top = associations[:2]
         if not top:
-            lines.append(
-                f"- {indicator}: no associations met the correlation threshold "
-                f"(|r| >= {MIN_CORRELATION:.1f})."
-            )
             continue
 
-        summary_items = []
         for item in top:
             rows.append(item)
             driver_labels.append(
                 f"{indicator} — {item['feature']} ({item['direction']} association, "
-                f"{item['strength']}, r={item['correlation']:.2f})"
+                f"{item['strength']})"
             )
-            summary_items.append(
-                f"{item['feature']} ({item['direction']}, r={item['correlation']:.2f})"
-            )
-        lines.append(
-            f"- {indicator}: strongest observed associations are "
-            + "; ".join(summary_items) + "."
-        )
 
     interpretation = (
         "Ecosystem resilience is not a directly measured variable in this dataset. "
@@ -551,7 +515,7 @@ def analyze_ecosystem_resilience(df):
         "separate indicators that may be relevant to resilience; they are proxies, "
         "not a validated resilience measure. Associations are correlations, not "
         "evidence of causation. No composite index or resilience score was calculated.\n\n"
-        + "\n".join(lines)
+
     )
     return {
         "summary": "Associations with ecosystem resilience proxy indicators",
@@ -579,7 +543,6 @@ def analyze_ecosystem_vulnerability(df):
 
     rows = []
     driver_labels = []
-    lines = []
     for indicator in available:
         y = pd.to_numeric(df[indicator], errors="coerce")
         associations = []
@@ -600,22 +563,13 @@ def analyze_ecosystem_vulnerability(df):
         associations.sort(key=lambda item: item["abs_corr"], reverse=True)
         top = associations[:2]
         if not top:
-            lines.append(
-                f"- {indicator}: no associations met the correlation threshold "
-                f"(|r| >= {MIN_CORRELATION:.1f})."
-            )
             continue
         for item in top:
             rows.append(item)
             driver_labels.append(
                 f"{indicator} — {item['feature']} ({item['direction']} association, "
-                f"{item['strength']}, r={item['correlation']:.2f})"
+                f"{item['strength']})"
             )
-        items_text = "; ".join(
-            f"{item['feature']} ({item['direction']}, r={item['correlation']:.2f})"
-            for item in top
-        )
-        lines.append(f"- {indicator}: strongest observed associations are {items_text}.")
 
     interpretation = (
         "Ecosystem vulnerability is not directly measured as a single variable in this dataset. "
@@ -623,7 +577,7 @@ def analyze_ecosystem_vulnerability(df):
         "separately as candidate proxies; they are not a validated vulnerability measure and "
         "their correlations do not establish causation. The analysis does not equate vulnerability "
         "with ecosystem risk and does not calculate a composite vulnerability score.\n\n"
-        + "\n".join(lines)
+
     )
     return {
         "summary": "Associations with ecosystem vulnerability proxy indicators",
@@ -818,50 +772,6 @@ def handle_drivers(question: str, drivers_inputs=None):
         top,
 
         features=semantic_features
-
-    )
-
-    # ======================================================
-
-    # 🔥 POST-PROCESS FIX (GRAMMAR SAFE)
-
-    # ======================================================
-
-    if "species" in target.lower():
-
-        explanation = explanation.replace(
-
-            "shows a negative relationship with",
-
-            "is negatively affected by"
-
-        )
-
-        explanation = explanation.replace(
-
-            "exhibits negative associations with",
-
-            "is further negatively influenced by"
-
-        )
-
-        explanation = explanation.replace(
-
-            "linked to a decrease in the potential for species to live in the cell",
-
-            "acting as drivers of biodiversity loss in the system"
-
-        )
-
-    # 🔥 DISCLAIMER
-
-    explanation += (
-
-        "\n\nThese associations highlight environmental pressures "
-
-        "observed in the lake ecosystem and may reflect interacting "
-
-        "ecological processes."
 
     )
 

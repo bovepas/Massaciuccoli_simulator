@@ -10,6 +10,8 @@ import shutil
 import time
 import numpy as np
 import re
+import unicodedata
+from functools import lru_cache
 import requests
 from scipy import ndimage
 
@@ -59,114 +61,237 @@ DATASET_SPECIES = build_species_index()
 
 
 # ======================================================
-# MATCHING
+# MATCHING AND GBIF RESOLUTION
 # ======================================================
 
-def clean_tokens(text):
+GBIF_API = "https://api.gbif.org/v1"
+GBIF_TIMEOUT = 8
+GBIF_SEARCH_LIMIT = 1000
 
+
+def normalize_taxon_name(value):
+    """Normalize names for comparison without changing their meaning."""
+    if not value:
+        return ""
+
+    value = unicodedata.normalize("NFKD", str(value))
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = value.casefold()
+    return " ".join(re.findall(r"[a-z0-9]+", value))
+
+
+DATASET_SPECIES_BY_NORMALIZED = {
+    normalize_taxon_name(species): species
+    for species in DATASET_SPECIES
+    if normalize_taxon_name(species)
+}
+
+
+def clean_tokens(text):
+    """Return informative words; retained for diagnostics/legacy callers."""
     return [
-        t for t in re.findall(r"[a-z]+", text.lower())
+        t for t in re.findall(r"[a-z]+", str(text).lower())
         if t not in STOPWORDS and len(t) > 2
     ]
 
 
 def match_exact(question):
+    """Match a scientific name already present in the local dataset."""
+    q_norm = normalize_taxon_name(question)
+    if not q_norm:
+        return None
 
-    q = question.lower()
-
-    for species in DATASET_SPECIES:
-
-        if species.lower() in q:
-            return species
+    # Prefer the longest dataset name, avoiding shorter substring matches.
+    for normalized, original in sorted(
+        DATASET_SPECIES_BY_NORMALIZED.items(),
+        key=lambda item: len(item[0]),
+        reverse=True,
+    ):
+        if re.search(
+            rf"(?<![a-z0-9]){re.escape(normalized)}(?![a-z0-9])",
+            q_norm,
+        ):
+            return original
 
     return None
 
 
-def match_binomial(question):
+def is_binomial_name(value):
+    """True only when the supplied value itself is a two-word scientific name."""
+    value = str(value or "").strip().strip(".,;:!?()[]{}\"'")
+    return bool(re.fullmatch(r"[A-Z][A-Za-z-]+\s+[a-z][A-Za-z-]+", value))
 
-    matches = re.findall(
-        r"\b([A-Z][a-z]+ [a-z]+)\b",
-        question
+
+@lru_cache(maxsize=512)
+def _gbif_scientific_match(name):
+    """Resolve a scientific name through GBIF, returning its JSON record."""
+    try:
+        response = requests.get(
+            f"{GBIF_API}/species/match",
+            params={"name": name, "strict": "true"},
+            timeout=GBIF_TIMEOUT,
+        )
+        response.raise_for_status()
+        data = response.json()
+        if not isinstance(data, dict):
+            return None
+        if data.get("rank") != "SPECIES":
+            return None
+        if data.get("status") not in (None, "ACCEPTED"):
+            return None
+        if not data.get("canonicalName"):
+            return None
+        return data
+    except (requests.RequestException, ValueError, TypeError):
+        return None
+
+
+def _dataset_species_from_canonical(canonical_name):
+    """Return the local dataset spelling only for a canonical-name match."""
+    return DATASET_SPECIES_BY_NORMALIZED.get(
+        normalize_taxon_name(canonical_name)
     )
 
-    return matches[0] if matches else None
+
+def match_scientific_name(name):
+    """Resolve an explicit binomial, but never substitute another local species."""
+    record = _gbif_scientific_match(str(name).strip())
+    if not record:
+        return None
+
+    canonical = record.get("canonicalName")
+    local_species = _dataset_species_from_canonical(canonical)
+    if local_species:
+        return local_species
+
+    return None
 
 
-def match_fuzzy(question):
+def _vernacular_name_matches(query, vernacular_name):
+    """Compare a user common name with a GBIF vernacular name conservatively."""
+    query_norm = normalize_taxon_name(query)
+    name_norm = normalize_taxon_name(vernacular_name)
+    if not query_norm or not name_norm:
+        return False
 
-    tokens = clean_tokens(question)
+    if query_norm == name_norm:
+        return True
 
-    if DEBUG:
-        print(f"[FUZZY] tokens: {tokens}")
+    # Permit a common-name fragment such as "kingfisher" to match
+    # "Common kingfisher", while requiring complete word boundaries.
+    return bool(re.search(
+        rf"(?<![a-z0-9]){re.escape(query_norm)}(?![a-z0-9])",
+        name_norm,
+    ))
 
-    best_match = None
-    best_score = 0
 
-    for species in DATASET_SPECIES:
+@lru_cache(maxsize=512)
+def _gbif_vernacular_names(usage_key):
+    """Fetch and cache vernacular names for a GBIF backbone taxon."""
+    try:
+        response = requests.get(
+            f"{GBIF_API}/species/{usage_key}/vernacularNames",
+            params={"limit": 1000},
+            timeout=GBIF_TIMEOUT,
+        )
+        response.raise_for_status()
+        data = response.json()
+        if isinstance(data, dict):
+            return tuple(
+                item for item in data.get("results", [])
+                if isinstance(item, dict) and item.get("vernacularName")
+            )
+    except (requests.RequestException, ValueError, TypeError):
+        pass
 
-        name_tokens = species.lower().split()
+    return tuple()
 
-        score = 0
 
-        for t in tokens:
+def match_gbif(common_name):
+    """Resolve a common name through GBIF and validate it against local data.
 
-            if t in name_tokens:
-                score += 3
+    GBIF is used to discover candidate taxa; the local presence-file index is
+    authoritative. Ambiguous matches are rejected rather than selecting the
+    first GBIF result or an unrelated species.
+    """
+    query = str(common_name or "").strip()
+    if not query:
+        return None
 
-        if tokens and name_tokens[0] in tokens:
-            score += 5
+    try:
+        response = requests.get(
+            f"{GBIF_API}/species/search",
+            params={
+                "q": query,
+                "qField": "VERNACULAR",
+                "rank": "SPECIES",
+                "status": "ACCEPTED",
+                "limit": GBIF_SEARCH_LIMIT,
+            },
+            timeout=GBIF_TIMEOUT,
+        )
+        response.raise_for_status()
+        data = response.json()
+    except (requests.RequestException, ValueError, TypeError) as exc:
+        if DEBUG:
+            print(f"[GBIF] vernacular search failed: {exc}")
+        return None
 
-        if score > best_score:
-            best_score = score
-            best_match = species
+    # Deduplicate GBIF records by canonical scientific name, keeping a key
+    # for checking the actual vernacular-name records when available.
+    candidates = {}
+    for record in data.get("results", []):
+        if not isinstance(record, dict):
+            continue
+        if record.get("rank") != "SPECIES":
+            continue
+        if record.get("taxonomicStatus") not in (None, "ACCEPTED"):
+            continue
+
+        canonical = record.get("canonicalName")
+        local_species = _dataset_species_from_canonical(canonical)
+        if not local_species:
+            continue
+
+        # Prefer the GBIF Backbone key if the search result provides one.
+        usage_key = record.get("nubKey") or record.get("key")
+        key = normalize_taxon_name(local_species)
+        candidates.setdefault(key, {
+            "species": local_species,
+            "usage_key": usage_key,
+        })
+
+    if not candidates:
+        if DEBUG:
+            print(f"[GBIF] no candidate in local dataset for common name: {query!r}")
+        return None
+
+    # Confirm that the searched words occur in a vernacular name for the
+    # candidate, rather than trusting general text search ranking alone.
+    confirmed = []
+    for candidate in candidates.values():
+        usage_key = candidate.get("usage_key")
+        if usage_key is None:
+            continue
+
+        names = _gbif_vernacular_names(str(usage_key))
+        if any(
+            _vernacular_name_matches(query, item.get("vernacularName", ""))
+            for item in names
+        ):
+            confirmed.append(candidate["species"])
+
+    unique_confirmed = sorted(set(confirmed))
+    if len(unique_confirmed) == 1:
+        if DEBUG:
+            print(f"[GBIF] vernacular match → {unique_confirmed[0]}")
+        return unique_confirmed[0]
 
     if DEBUG:
         print(
-            f"[FUZZY] best: "
-            f"{best_match} "
-            f"(score={best_score})"
+            f"[GBIF] unresolved/ambiguous common name {query!r}; "
+            f"confirmed candidates={unique_confirmed or list(candidates)}"
         )
-
-    if best_score >= 3:
-        return best_match
-
-    return None
-
-
-def match_gbif(question):
-
-    try:
-
-        url = "https://api.gbif.org/v1/species/search"
-
-        params = {
-            "q": question,
-            "limit": 10
-        }
-
-        r = requests.get(
-            url,
-            params=params,
-            timeout=5
-        )
-
-        data = r.json()
-
-        for res in data.get("results", []):
-
-            sci = res.get("canonicalName")
-            rank = res.get("rank")
-
-            if sci and rank == "SPECIES":
-
-                for s in DATASET_SPECIES:
-
-                    if sci.lower() == s.lower():
-                        return sci
-
-    except Exception:
-        pass
-
     return None
 
 
@@ -174,54 +299,33 @@ def match_gbif(question):
 # RESOLUTION
 # ======================================================
 
-def resolve_species(question):
+def resolve_species(target):
+    """Resolve a target without guessing when GBIF/local data are ambiguous."""
+    target = str(target or "").strip()
+    print(f"\n[RESOLVE] {target}")
+    if not target:
+        return None, None
 
-    print(f"\n[RESOLVE] {question}")
+    # 1. Exact local scientific name (including a scientific name embedded
+    #    in a longer sentence).
+    species = match_exact(target)
+    if species:
+        return species, "exact"
 
-    # exact
+    # 2. Explicit binomial: use GBIF's scientific-name matcher, but accept
+    #    only a canonical species that exists in the local presence dataset.
+    if is_binomial_name(target):
+        species = match_scientific_name(target)
+        if species:
+            return species, "gbif_scientific"
+        print(f"[RESOLVE] scientific name not available in local dataset: {target}")
+        return None, None
 
-    s = match_exact(question)
-
-    if s:
-        return s, "exact"
-
-    # binomial
-
-    s = match_binomial(question)
-
-    if s:
-
-        if s in DATASET_SPECIES:
-
-            print(
-                f"[BINOMIAL] dataset "
-                f"match → {s}"
-            )
-
-            return s, "binomial"
-
-        else:
-
-            print(
-                f"[BINOMIAL] NOT "
-                f"in dataset → {s}"
-            )
-
-            return None, None
-
-    # fuzzy
-
-    s = match_fuzzy(question)
-
-    if s:
-        return s, "fuzzy"
-
-    # GBIF
-
-    s = match_gbif(question)
-
-    if s:
-        return s, "gbif"
+    # 3. Common/vernacular name: query GBIF's vernacular-name field, then
+    #    intersect with the local dataset. No scientific-name fuzzy fallback.
+    species = match_gbif(target)
+    if species:
+        return species, "gbif_vernacular"
 
     return None, None
 
@@ -1085,10 +1189,9 @@ def run_enm_analysis(question: str, target: str = None):
             f"dataset match: {species}"
         )
 
-    if method == "gbif":
+    if method and method.startswith("gbif"):
         print(
-            f"⚠️ Using GBIF "
-            f"match: {species}"
+            f"[RESOLVE] GBIF match ({method}): {species}"
         )
 
     # --------------------------------------------------

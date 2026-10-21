@@ -1,13 +1,12 @@
-Wed Oct 14 12:22:11 UTC 2026
+Tue Oct 20 12:17:43 UTC 2026
 MaxEnt version 3.4.4
 Checking header of /app/enm/env_layers_2050_rcp85/Conductivity.asc
 Checking header of /app/enm/env_layers_2050_rcp85/Precipitation.asc
 Checking header of /app/enm/env_layers_2050_rcp85/Temperature.asc
 Reading samples from Presence_Actitis_hypoleucos.csv
-Read samples: max memory 1073741824, total allocated 262144000, free 242719896, used 19424104, increment 19424104
-Extractor: max memory 1073741824, total allocated 262144000, free 242229344, used 19914656, increment 490552
+Read samples: max memory 1073741824, total allocated 262144000, free 241687728, used 20456272, increment 20456272
+Extractor: max memory 1073741824, total allocated 262144000, free 241687728, used 20456272, increment 0
 Extracting random background and sample data
-Time since start: 1.001
 57224 points with values for all grids
 Adding samples to background in feature space
 Command line used:  environmentallayers=/app/enm/env_layers_2050_rcp85 samplesfile=/app/enm/presence/uccelli/Presence_Actitis_hypoleucos.csv outputdirectory=/app/enm/output/Actitis_hypoleucos autorun nowarnings responsecurves=true jackknife=true
@@ -23,139 +22,139 @@ environmentallayers: /app/enm/env_layers_2050_rcp85
 warnings: false
 autorun: true
 
-getSamples: max memory 1073741824, total allocated 262144000, free 237493408, used 24650592, increment 4735936
+getSamples: max memory 1073741824, total allocated 262144000, free 237011032, used 25132968, increment 4676696
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 254512160, used 7631840, increment -17018752
+makeFeatures: max memory 1073741824, total allocated 262144000, free 254665728, used 7478272, increment -17654696
 Actitis_hypoleucos: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 254201008, used 7942992, increment 311152
-linearPredictor: max memory 1073741824, total allocated 262144000, free 254120944, used 8023056, increment 80064
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 254120944, used 8023056, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 254120944, used 8023056, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 254374416, used 7769584, increment 291312
+linearPredictor: max memory 1073741824, total allocated 262144000, free 254374416, used 7769584, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 254374416, used 7769584, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 254374416, used 7769584, increment 0
 Initial loss: 9.21094019204815
 60: time = 0.048000 loss = 9.021239
 Resulting gain: 0.1897009669052796
 Projecting...
 Writing file /app/enm/output/Actitis_hypoleucos/Actitis_hypoleucos.asc
+Time since start: 1.181
 Writing /app/enm/output/Actitis_hypoleucos/plots/Actitis_hypoleucos.png
 Actitis_hypoleucos response curves
-Time since start: 2.252
 Response curve: only Conductivity
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 220924864, used 41219136, increment 33196080
+makeFeatures: max memory 1073741824, total allocated 262144000, free 222940160, used 39203840, increment 31434256
 Actitis_hypoleucos Conductivity: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 220844800, used 41299200, increment 80064
-linearPredictor: max memory 1073741824, total allocated 262144000, free 220764736, used 41379264, increment 80064
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 220764736, used 41379264, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 220764736, used 41379264, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 222860096, used 39283904, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 222780032, used 39363968, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 222780032, used 39363968, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 222780032, used 39363968, increment 0
 Initial loss: 9.21094019204815
-60: time = 0.048000 loss = 9.119049
+60: time = 0.032000 loss = 9.119049
 Resulting gain: 0.09189070616864647
 Actitis_hypoleucos response curves
 Response curve: only Precipitation
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 218408120, used 43735880, increment 2356616
+makeFeatures: max memory 1073741824, total allocated 262144000, free 220516400, used 41627600, increment 2263632
 Actitis_hypoleucos Precipitation: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 218328056, used 43815944, increment 80064
-linearPredictor: max memory 1073741824, total allocated 262144000, free 218247992, used 43896008, increment 80064
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 218247992, used 43896008, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 218247992, used 43896008, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 220436336, used 41707664, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 220072176, used 42071824, increment 364160
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 220072176, used 42071824, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 220072176, used 42071824, increment 0
 Initial loss: 9.21094019204815
-60: time = 0.016000 loss = 9.066024
+60: time = 0.014000 loss = 9.066024
 Resulting gain: 0.14491639286654312
 Actitis_hypoleucos response curves
 Response curve: only Temperature
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 215422960, used 46721040, increment 2825032
+makeFeatures: max memory 1073741824, total allocated 262144000, free 217695552, used 44448448, increment 2376624
 Actitis_hypoleucos Temperature: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 215157696, used 46986304, increment 265264
-linearPredictor: max memory 1073741824, total allocated 262144000, free 215157696, used 46986304, increment 0
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 215157696, used 46986304, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 215157696, used 46986304, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 217615488, used 44528512, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 217535424, used 44608576, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 217535424, used 44608576, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 217535424, used 44608576, increment 0
 Initial loss: 9.21094019204815
-60: time = 0.014000 loss = 9.207839
+60: time = 0.016000 loss = 9.207839
 Resulting gain: 0.0031008276993897965
 Actitis_hypoleucos response curves
 Jackknife: leave Conductivity out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 200397568, used 61746432, increment 14760128
+makeFeatures: max memory 1073741824, total allocated 262144000, free 202290336, used 59853664, increment 15245088
 Actitis_hypoleucos Conductivity: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 200317504, used 61826496, increment 80064
-linearPredictor: max memory 1073741824, total allocated 262144000, free 200237440, used 61906560, increment 80064
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 200237440, used 61906560, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 200237440, used 61906560, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 202210272, used 59933728, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 202130208, used 60013792, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 202130208, used 60013792, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 202130208, used 60013792, increment 0
 Initial loss: 9.21094019204815
-60: time = 0.017000 loss = 9.066026
+60: time = 0.020000 loss = 9.066026
 Jackknife: leave Precipitation out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 199429056, used 62714944, increment 808384
+makeFeatures: max memory 1073741824, total allocated 262144000, free 200830392, used 61313608, increment 1299816
 Actitis_hypoleucos Precipitation: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 199348992, used 62795008, increment 80064
-linearPredictor: max memory 1073741824, total allocated 262144000, free 199268928, used 62875072, increment 80064
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 199268928, used 62875072, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 199268928, used 62875072, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 200750328, used 61393672, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 200670264, used 61473736, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 200670264, used 61473736, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 200670264, used 61473736, increment 0
 Initial loss: 9.21094019204815
-60: time = 0.020000 loss = 9.112783
+60: time = 0.021000 loss = 9.112783
 Jackknife: leave Temperature out
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 198040960, used 64103040, increment 1227968
+makeFeatures: max memory 1073741824, total allocated 262144000, free 199828976, used 62315024, increment 841288
 Actitis_hypoleucos Temperature: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 197960896, used 64183104, increment 80064
-linearPredictor: max memory 1073741824, total allocated 262144000, free 197880832, used 64263168, increment 80064
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197880832, used 64263168, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 197880832, used 64263168, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 199748912, used 62395088, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 199668848, used 62475152, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 199668848, used 62475152, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 199668848, used 62475152, increment 0
 Initial loss: 9.21094019204815
 60: time = 0.018000 loss = 9.021239
 Jackknife: only Conductivity
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 197331904, used 64812096, increment 548928
+makeFeatures: max memory 1073741824, total allocated 262144000, free 199020592, used 63123408, increment 648256
 Actitis_hypoleucos Conductivity: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 197251840, used 64892160, increment 80064
-linearPredictor: max memory 1073741824, total allocated 262144000, free 197171776, used 64972224, increment 80064
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197171776, used 64972224, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 197171776, used 64972224, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 198573280, used 63570720, increment 447312
+linearPredictor: max memory 1073741824, total allocated 262144000, free 198493216, used 63650784, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 198493216, used 63650784, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 198493216, used 63650784, increment 0
 Initial loss: 9.21094019204815
-60: time = 0.026000 loss = 9.119049
+60: time = 0.029000 loss = 9.119049
 Res.gain: 0.09189070616864647
 Jackknife: only Precipitation
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 1227960
+makeFeatures: max memory 1073741824, total allocated 262144000, free 197891952, used 64252048, increment 601264
 Actitis_hypoleucos Precipitation: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 0
-linearPredictor: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 0
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 195943816, used 66200184, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 197811888, used 64332112, increment 80064
+linearPredictor: max memory 1073741824, total allocated 262144000, free 197731824, used 64412176, increment 80064
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197731824, used 64412176, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 197731824, used 64412176, increment 0
 Initial loss: 9.21094019204815
-60: time = 0.015000 loss = 9.066024
+60: time = 0.016000 loss = 9.066024
 Res.gain: 0.14491639286654312
 Jackknife: only Temperature
 Making features
-makeFeatures: max memory 1073741824, total allocated 262144000, free 195444160, used 66699840, increment 499656
+makeFeatures: max memory 1073741824, total allocated 262144000, free 197003504, used 65140496, increment 728320
 Actitis_hypoleucos Temperature: 
 Regularization values: linear/quadratic/product: 1.000, categorical: 0.545, threshold: 1.930, hinge: 0.500
 7 samples
-Density: max memory 1073741824, total allocated 262144000, free 195364096, used 66779904, increment 80064
-linearPredictor: max memory 1073741824, total allocated 262144000, free 195284032, used 66859968, increment 80064
-FeaturedSpace: max memory 1073741824, total allocated 262144000, free 195284032, used 66859968, increment 0
-Sequential: max memory 1073741824, total allocated 262144000, free 195284032, used 66859968, increment 0
+Density: max memory 1073741824, total allocated 262144000, free 197003504, used 65140496, increment 0
+linearPredictor: max memory 1073741824, total allocated 262144000, free 197003504, used 65140496, increment 0
+FeaturedSpace: max memory 1073741824, total allocated 262144000, free 197003504, used 65140496, increment 0
+Sequential: max memory 1073741824, total allocated 262144000, free 197003504, used 65140496, increment 0
 Initial loss: 9.21094019204815
-60: time = 0.013000 loss = 9.207839
+60: time = 0.015000 loss = 9.207839
 Res.gain: 0.0031008276993897965
 Ending

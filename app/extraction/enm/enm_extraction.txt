@@ -65,6 +65,19 @@ IMPORTANT CLASSIFICATION RULES:
   "How is the distribution of birds across the lake?"
   -> target = "birds", target_type = "category"
 
+  "Which is the areal of the kingfisher?"
+  -> target = "kingfisher", target_type = "species",
+     intent = "distribution"
+
+  "How is Alcedo atthis distributed across the lake?"
+  -> target = "Alcedo atthis", target_type = "species",
+     intent = "distribution"
+
+- A common name referring to an individual species is "species",
+  even when the name is in English or is unfamiliar. Do not classify
+  it as "category" merely because it is not a scientific name.
+- Broad groups such as "birds", "fish", or "mammals" are "category";
+  a named species such as "kingfisher" in the example above is "species".
 - Never classify a specific species as a category merely because
   its name is unfamiliar or because the question uses the word
   "species".

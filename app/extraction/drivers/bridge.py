@@ -1,8 +1,25 @@
+import re
+
 from extraction.drivers.schema import DriversExtraction
-from utils.feature_mapping import normalize_feature_name
+from utils.feature_mapping import FEATURE_LABELS, normalize_feature_name
+
+
+def _normalise_spaces(text: str) -> str:
+    return re.sub(r"\s+", " ", str(text or "").strip()).lower()
 
 
 def _normalize_target(target: str):
+    """Preserve canonical dataset columns before applying synonym mapping.
+
+    normalize_feature_name() deliberately supports partial semantic matching; for
+    a full column label that behaviour can collapse e.g. a decade-change column
+    into its base variable. Exact canonical names must therefore be preserved first.
+    """
+    target_norm = _normalise_spaces(target)
+    for canonical in FEATURE_LABELS.keys():
+        if _normalise_spaces(canonical) == target_norm:
+            return canonical
+
     feature = normalize_feature_name(target)
     if feature:
         return feature

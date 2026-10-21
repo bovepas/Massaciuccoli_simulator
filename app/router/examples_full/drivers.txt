@@ -1,6 +1,5 @@
-What factors drive ecosystem risk in the basin?
-What factors drive ecosystem resilience?
-What factors drive ecosystem vulnerability?
+Which environmental variables are statistically associated with ecosystem resilience in the basin?
+Which environmental variables are statistically associated with ecosystem vulnerability in the basin?
 Which environmental variables are most strongly associated with biodiversity in the Massaciuccoli basin?
 Which environmental variable contributes most to biodiversity change?
 What factors drive changes in vegetation productivity?
@@ -10,8 +9,7 @@ Which environmental factors seem to be behind the changes in biodiversity across
 What factors drive species richness?
 What factors could explain the changes we see in ecosystem productivity?
 I’d like to understand what is driving the loss of grassland in the lake area.
-Which environmental factors seem to be behind the changes in biodiversity across the basin?
-Which environmental variables are most important for preserving biodiversity?
+Which environmental variables are statistically associated with biodiversity patterns in the lake ecosystem?
 What factors drive tree cover dynamics in the basin?
 What factors drive biodiversity patterns in the lake ecosystem?
 What environmental factors are associated with changes in biodiversity?
@@ -55,3 +53,29 @@ What environmental variables are associated with ecosystem productivity?
 What drives changes in ecosystem productivity?
 Which environmental conditions influence vegetation productivity?
 Which environmental variables explain changes in tree cover?
+Which environmental variables have the strongest statistical association with the target variable "Cumulative change in precipitation compared to a recent past"?
+Which dataset columns are most strongly correlated with "Cumulative change in precipitation compared to a recent past"?
+Identify the top environmental correlates of "Cumulative change in precipitation compared to a recent past" and report the sign and strength of each association.
+For the target column "Cumulative change in precipitation compared to a recent past", which environmental features have the largest absolute Pearson correlations?
+Which environmental variables show positive or negative statistical associations with "Cumulative change in precipitation compared to a recent past"?
+Which environmental variables have the strongest statistical associations with the dataset variable "Density of tree cover"?
+Which dataset features are most strongly correlated with the target variable "Density of tree cover"?
+For "Density of tree cover", report the environmental variables with the strongest correlations, including direction and strength.
+Which environmental variables are most strongly associated with "Change in tree cover density in the past decade"?
+Which environmental variables have the strongest statistical associations with "Change in grassland presence in the past decade"?
+Which dataset columns have the strongest correlations with "Change in grassland presence in the past decade"?
+Which environmental features are most strongly associated with the target variable "Index of total productivity by plant phenology"?
+Which environmental variables have the strongest statistical associations with "Relative change in the potential evapotranspiration compared to a recent past"?
+Which environmental variables correlate most strongly with "Change in average temperature compared to a recent past"?
+Which environmental variables are most strongly associated with the dataset indicator "Number of species potentially living in the cell"?
+For the aggregate biodiversity indicator "Number of species potentially living in the cell", identify environmental variables with the strongest statistical associations.
+For a specified environmental target column, identify the five strongest environmental associations and preserve the reported direction and strength.
+Find the five environmental variables most strongly associated with the target variable, ranked by absolute correlation.
+Calculate statistical associations between environmental variables and the explicitly named target column; do not substitute a different target.
+Which environmental variables are positively or negatively correlated with the specified target variable in the dataset?
+I want correlations with a specific environmental variable as the target, not a general ranking of ecosystem indicators.
+Which variables in the environmental dataset best explain variation in the explicitly named target variable?
+Which environmental variables are most strongly statistically associated with "Cumulative change in precipitation compared to a recent past"? Report the direction and strength of each association.
+Which environmental variables are most strongly statistically associated with "Density of tree cover"? Report the direction and strength of each association.
+Which environmental variables are most strongly statistically associated with "Change in grassland presence in the past decade"? Report the direction and strength of each association.
+Which environmental variables are most strongly statistically associated with "Number of species potentially living in the cell"? Report the direction and strength of each association.

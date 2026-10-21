@@ -1,0 +1,1 @@
+java -mx1024m -cp "/app/enm/maxent.jar:/app/enm/maxent.jar" density.Explain -l /app/enm/output/Alcedo_atthis/Alcedo_atthis.lambdas -c /app/enm/output/Alcedo_atthis/Alcedo_atthis.asc /app/enm/env_layers
