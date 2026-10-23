@@ -27,7 +27,6 @@ class AssessmentModification(BaseModel):
         "delta",
         "percentage",
         "target",
-        "range",
         "qualitative",
         "state_change",
     ]
@@ -47,7 +46,7 @@ class AssessmentModification(BaseModel):
     ]] = None
 
     # --------------------------------------------------
-    # Range / state transition
+    # State transition
     # --------------------------------------------------
 
     from_value: Optional[float] = None

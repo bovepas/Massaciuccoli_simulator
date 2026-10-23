@@ -47,6 +47,70 @@ def _normalize_qualitative_magnitude(magnitude):
     return mapping.get(normalized, "default")
 
 
+def _explicit_qualitative_magnitude(original_expression):
+    """
+    Return a magnitude only when the user's original expression states one.
+
+    The extractor's interpretation/magnitude fields can contain inferred
+    intensifiers that the user did not request. For simulation, those must
+    not override the deterministic default.
+    """
+    import re
+
+    text = str(original_expression or "").lower()
+
+    if re.search(r"\b(extreme|extremely)\b", text):
+        return "extreme"
+    if re.search(r"\b(significant|significantly|substantial|substantially)\b", text):
+        return "significant"
+    if re.search(r"\b(slight|slightly)\b", text):
+        return "slight"
+
+    return None
+
+
+def _scenario_descriptions(modifications):
+    """
+    Build human-readable descriptions of what the user requested.
+
+    Qualitative requests stay qualitative in the report, even though the
+    simulator may need a deterministic numeric proxy internally.
+    """
+    descriptions = {}
+
+    for modification in modifications:
+        feature = _normalize_variable(modification.variable)
+        if not feature or modification.modification_type != "qualitative":
+            continue
+
+        direction = _normalize_qualitative_direction(
+            modification.direction,
+            modification.original_expression,
+            modification.interpretation,
+        )
+        verb = {
+            "increase": "Increase",
+            "decrease": "Reduce",
+        }.get(direction, "Change")
+
+        magnitude = _explicit_qualitative_magnitude(
+            modification.original_expression
+        )
+
+        if magnitude == "slight":
+            detail = "qualitative; slight magnitude explicitly stated"
+        elif magnitude == "significant":
+            detail = "qualitative; substantial/significant magnitude explicitly stated"
+        elif magnitude == "extreme":
+            detail = "qualitative; extreme magnitude explicitly stated"
+        else:
+            detail = "qualitative; magnitude not specified"
+
+        descriptions[feature] = f"{verb} {feature} ({detail})"
+
+    return descriptions
+
+
 def _normalize_qualitative_direction(
     direction,
     original_expression=None,
@@ -198,8 +262,14 @@ def _modification_to_value(
             modification.interpretation,
         )
 
+        # Use an intensity only if it is explicitly present in the
+        # user's original expression. Do not let the LLM invent words such
+        # as "substantially" in interpretation/magnitude fields.
+        explicit_magnitude = _explicit_qualitative_magnitude(
+            modification.original_expression
+        )
         magnitude = _normalize_qualitative_magnitude(
-            modification.magnitude
+            explicit_magnitude
         )
 
         return qualitative_to_delta(
@@ -256,6 +326,19 @@ def _scenario_to_dict(
             feature_stats=feature_stats,
         )
 
+        # Never silently overwrite a previous modification of the same
+        # dataset feature. Identical repeats are harmless extraction noise;
+        # conflicting modifications are ambiguous and must be corrected
+        # upstream rather than producing a misleading simulation.
+        if feature in scenario:
+            if scenario[feature] == value:
+                continue
+            raise ValueError(
+                f"Conflicting modifications for feature '{feature}' in "
+                f"the same comparison scenario: {scenario[feature]!r} "
+                f"and {value!r}. Check the comparison extraction."
+            )
+
         scenario[feature] = value
 
     return scenario
@@ -295,6 +378,13 @@ def comparison_extraction_to_inputs(
         feature_stats=feature_stats,
     )
 
+    scenario_a_descriptions = _scenario_descriptions(
+        extraction.scenario_a
+    )
+    scenario_b_descriptions = _scenario_descriptions(
+        extraction.scenario_b
+    )
+
     if not scenario_a:
         raise ValueError(
             "Scenario A contains no usable modifications"
@@ -308,4 +398,7 @@ def comparison_extraction_to_inputs(
     return {
         "scenario_a": scenario_a,
         "scenario_b": scenario_b,
+        # Report-only metadata is kept separate from numeric model inputs.
+        "scenario_a_descriptions": scenario_a_descriptions,
+        "scenario_b_descriptions": scenario_b_descriptions,
     }

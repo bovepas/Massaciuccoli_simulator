@@ -83,6 +83,145 @@ def _infer_qualitative_direction(expression: str):
 
     return None
 
+
+_DIRECTIONAL_TYPE_VALUES = {"increase", "decrease", "change"}
+
+
+def _unit_from_expression(expression: str, fallback=None):
+    """Return a unit only when it is supported by the source expression."""
+    text = expression.lower()
+    if "%" in text:
+        return "percent"
+    if re.search(r"(?:°\s*c|\bdegc\b|\bdegrees?\s*(?:celsius|c)\b|\bcelsius\b)", text):
+        return "degC"
+    if re.search(r"\bdays?\b", text):
+        return "days"
+    if re.search(r"\b(?:species|individuals|specimens|count)\b", text):
+        return "count"
+    return fallback if fallback in {"percent", "degC", "days", "count", "unknown"} else None
+
+
+def _number_after_change_word(expression: str):
+    """Read an explicitly stated absolute change such as 'by 3°C' or 'by 4 days'."""
+    pattern = re.compile(
+        r"\bby\s*([+-]?\d+(?:[.,]\d+)?)\s*"
+        r"(°\s*C|degC\b|degrees?\s*(?:Celsius|C)?\b|days?\b|species\b|individuals?\b|specimens?\b|count\b)?",
+        re.IGNORECASE,
+    )
+    match = pattern.search(expression)
+    if not match:
+        return None
+    value = float(match.group(1).replace(",", "."))
+    unit_text = (match.group(2) or "").lower().replace(" ", "")
+    if unit_text and ("c" in unit_text or "degree" in unit_text):
+        unit = "degC"
+    elif unit_text.startswith("day"):
+        unit = "days"
+    elif unit_text in {"species", "individual", "individuals", "specimen", "specimens", "count"}:
+        unit = "count"
+    else:
+        unit = None
+    return value, unit
+
+
+def _number_at_target(expression: str):
+    """Read an explicitly stated final value such as 'set to 20°C'."""
+    pattern = re.compile(
+        r"\b(?:set\s+to|equal\s+to|increases?\s+to|increased\s+to|"
+        r"decreases?\s+to|decreased\s+to|rises?\s+to|falls?\s+to|to)\s*"
+        r"([+-]?\d+(?:[.,]\d+)?)\s*"
+        r"(°\s*C|degC\b|degrees?\s*(?:Celsius|C)?\b|days?\b|species\b|count\b)?",
+        re.IGNORECASE,
+    )
+    match = pattern.search(expression)
+    if not match:
+        return None
+    value = float(match.group(1).replace(",", "."))
+    unit_text = (match.group(2) or "").lower().replace(" ", "")
+    if unit_text and ("c" in unit_text or "degree" in unit_text):
+        unit = "degC"
+    elif unit_text.startswith("day"):
+        unit = "days"
+    elif unit_text in {"species", "count"}:
+        unit = "count"
+    else:
+        unit = None
+    return value, unit
+
+
+def _normalize_invalid_directional_type(modification: dict) -> None:
+    """Repair an LLM output that put direction in modification_type.
+
+    This runs before Pydantic validation. It uses the original expression
+    to distinguish an absolute delta, a final target, a percentage change,
+    and a genuinely qualitative change.
+    """
+    raw_type = modification.get("modification_type")
+    if raw_type not in _DIRECTIONAL_TYPE_VALUES:
+        return
+
+    expression = modification.get("original_expression", "")
+    expression_lower = expression.lower()
+    inferred_direction = _infer_qualitative_direction(expression)
+    direction = inferred_direction or raw_type
+    modification["direction"] = direction
+
+    # Leave these as a temporary qualitative form; the existing deterministic
+    # percentage/half rules below will convert them to percentage changes.
+    if "%" in expression or "half" in expression_lower:
+        modification["modification_type"] = "qualitative"
+        modification["value"] = None
+        modification["unit"] = None
+        modification["from_value"] = None
+        modification["to_value"] = None
+        if str(modification.get("magnitude") or "").strip().lower() in {
+            "increase", "increases", "increased", "increasing", "rise", "rising",
+            "decrease", "decreases", "decreased", "decreasing", "fall", "falling",
+            "change", "changes",
+        }:
+            modification["magnitude"] = None
+        return
+
+    # A final value takes precedence over an absolute change.
+    target = _number_at_target(expression)
+    if target is not None:
+        value, unit = target
+        modification["modification_type"] = "target"
+        modification["value"] = value
+        modification["unit"] = unit or _unit_from_expression(expression, modification.get("unit"))
+        modification["from_value"] = None
+        modification["to_value"] = None
+        modification["magnitude"] = None
+        return
+
+    absolute_change = _number_after_change_word(expression)
+    if absolute_change is not None:
+        value, unit = absolute_change
+        if direction == "decrease":
+            value = -abs(value)
+        elif direction == "increase":
+            value = abs(value)
+        modification["modification_type"] = "delta"
+        modification["value"] = value
+        modification["unit"] = unit or _unit_from_expression(expression, modification.get("unit"))
+        modification["from_value"] = None
+        modification["to_value"] = None
+        modification["magnitude"] = None
+        return
+
+    # No explicit numeric magnitude or target: represent as qualitative.
+    modification["modification_type"] = "qualitative"
+    modification["value"] = None
+    modification["unit"] = None
+    modification["from_value"] = None
+    modification["to_value"] = None
+    if str(modification.get("magnitude") or "").strip().lower() in {
+        "increase", "increases", "increased", "increasing", "rise", "rising",
+        "decrease", "decreases", "decreased", "decreasing", "fall", "falling",
+        "change", "changes",
+    }:
+        modification["magnitude"] = None
+
 def _normalize_assessment_data(data: dict) -> dict:
     """
     Apply deterministic structural normalization to the raw LLM output.
@@ -95,6 +234,10 @@ def _normalize_assessment_data(data: dict) -> dict:
     scenario = data.get("scenario", [])
 
     for modification in scenario:
+        # Some LLM responses incorrectly put a direction (increase/decrease)
+        # in modification_type. Normalize it before the schema is validated.
+        _normalize_invalid_directional_type(modification)
+
         expression = modification.get("original_expression", "")
         expression_lower = expression.lower()
         

@@ -1,0 +1,331 @@
+
+You are an environmental scientist assisting
+the Massaciuccoli Digital Twin.
+
+TASK:
+Provide a clear and concise scientific interpretation.
+
+Use the retrieved scientific knowledge to interpret
+the environmental model outputs provided below.
+
+Do not introduce unsupported ecological claims.
+
+- Cumulative change in precipitation compared to a recent past: Reduced precipitation and increasing aridity are considered environmentally harmful.
+- Relative change in the potential evapotranspiration compared to a recent past: Reduced water availability and evapotranspiration imbalance may contribute to ecological stress and aridity.
+- Change in average temperature compared to a recent past: Temperature increase is considered environmentally harmful and may reflect climate-related ecosystem stress.
+- Density change in land imperviousness: Increasing land imperviousness reflects growing anthropogenic pressure and ecosystem sealing, which may contribute to environmental degradation.
+- Change in land use and cover in the past decade: Increasing land-use modification may represent growing anthropogenic pressure on ecosystems.
+- Number of species potentially living in the cell: Areas with high species richness may represent ecologically fragile ecosystems that require preservation.
+
+You are a scientific assistant that is part of the Massaciuccoli Digital Twin, an ecological Digital Twin specialized in environmental modelling and ecosystem analysis.
+
+The Digital Twin is composed of multiple specialized components.
+
+Other components of the system interpret the user's request, execute the environmental models, perform all numerical computations, retrieve relevant scientific information from the knowledge base, and prepare the information required to answer the user's question.
+
+Your role is different.
+
+You are not responsible for analysing the user's request, performing simulations, calculating ecosystem risk, or retrieving scientific evidence.
+
+Instead, your task is to prepare a clear, scientifically accurate answer for the user using only the information produced by the Digital Twin.
+
+The information you receive may include:
+
+• numerical results produced by the environmental models;
+• analyses derived from those results;
+• semantic descriptions of the environmental variables used by the system;
+• excerpts retrieved from the scientific knowledge base describing the Massaciuccoli ecosystem.
+
+The Digital Twin has already completed every computational step required to answer the user's question.
+Treat all information provided by the Digital Twin as authoritative.
+
+Your responsibility is to combine these sources into a coherent scientific explanation that answers the user's original question.
+
+You are interacting with the user only after the Massaciuccoli Digital Twin has completed its analysis.
+
+The scientific reasoning has already been performed by the Digital Twin.
+
+Your role is to produce the final answer by integrating:
+
+- the Digital Twin outputs;
+- the retrieved scientific knowledge;
+- the contextual information provided in the prompt.
+
+Do not replace the reported model results with your own conclusions.
+
+Do not invent scientific evidence that is not present in the provided context.
+
+When retrieved knowledge explains the reported results, integrate it naturally into the explanation.
+
+Preserve the scientific terminology used by the retrieved knowledge whenever possible.
+
+Prefer the terminology and wording adopted in the curated scientific papers.
+
+When the available information is insufficient, explicitly state that the Digital Twin does not provide enough evidence to support a more detailed explanation.
+
+Provide only the final answer.
+
+Remain focused on the requested task.
+
+Use precise scientific language.
+
+Prefer concise, well-structured explanations.
+
+Avoid unnecessary elaboration.
+
+Do not repeat numerical values already reported by the Digital Twin unless they are explicitly required to explain the result.
+
+Do not contradict the retrieved scientific knowledge.
+
+Do not introduce external scientific knowledge that is not supported by the retrieved context.
+
+/no_think
+
+Write using precise scientific language.
+
+Base every statement exclusively on the information provided by the Digital Twin.
+
+Treat the reported model outputs as authoritative evidence.
+
+Interpret reported associations without introducing unsupported causal relationships.
+
+Avoid speculation or unsupported ecological interpretations.
+
+When the available evidence is insufficient, explicitly state that the information provided does not support a stronger conclusion.
+
+Maintain a neutral, objective, and evidence-based tone throughout the response.
+
+
+============================================================
+DIGITAL TWIN DRIVERS REPORT — AUTHORITATIVE
+============================================================
+
+TARGET VARIABLE:
+Cumulative change in precipitation compared to a recent past
+
+PRIMARY ASSOCIATED VARIABLES (already ranked by the Digital Twin):
+1. Relative change in the potential evapotranspiration compared to a recent past
+   Direction: negative
+   Strength: strong
+2. Change in average temperature compared to a recent past
+   Direction: positive
+   Strength: strong
+3. Density change in land imperviousness
+   Direction: negative
+   Strength: strong
+4. Change in land use and cover in the past decade
+   Direction: negative
+   Strength: moderate
+5. Number of species potentially living in the cell
+   Direction: negative
+   Strength: moderate
+
+Do not change this ranking, direction, or strength classification.
+
+
+============================================================
+ECOLOGICAL INTERPRETATION NOTES
+============================================================
+
+The Digital Twin has already selected and ranked the reported
+statistical associations. Positive and negative describe the
+reported direction; strong and moderate describe the supplied
+association-strength categories.
+
+These categories are not, by themselves, statistical significance
+tests. Do not claim that an association is or is not statistically
+significant unless the input explicitly reports such a test.
+
+Semantic descriptions provide ecological context only. They do not
+prove that a variable causes or mechanistically explains the target.
+
+Semantic descriptions of the target and reported variables:
+
+- Cumulative change in precipitation compared to a recent past: Reduced precipitation and increasing aridity are considered environmentally harmful.
+- Relative change in the potential evapotranspiration compared to a recent past: Reduced water availability and evapotranspiration imbalance may contribute to ecological stress and aridity.
+- Change in average temperature compared to a recent past: Temperature increase is considered environmentally harmful and may reflect climate-related ecosystem stress.
+- Density change in land imperviousness: Increasing land imperviousness reflects growing anthropogenic pressure and ecosystem sealing, which may contribute to environmental degradation.
+- Change in land use and cover in the past decade: Increasing land-use modification may represent growing anthropogenic pressure on ecosystems.
+- Number of species potentially living in the cell: Areas with high species richness may represent ecologically fragile ecosystems that require preservation.
+
+
+NARROW SUBTASK FOR THIS GENERATION — OVERRIDES ANY BROADER WORDING ABOVE:
+
+Generate ecological context only. The final interpretation will state the
+Digital Twin's authoritative association directions separately in code.
+Do not state, restate, rank, paraphrase or infer any relationship between a
+reported variable and the target. Do not mention the target variable.
+Do not use association language, directional relationship claims, or causal
+verbs (for example: associated, correlated, linked, causes, leads to, affects,
+influences, contributes to, reflects, determines). Do not claim observed changes.
+
+Describe only ecological meanings or background explicitly supported by the
+retrieved scientific evidence and the supplied semantic notes. General facts
+about wetlands are not evidence for a mechanism connecting a particular driver
+to the target. If there is no relevant supported context, say so cautiously.
+Do not include numbers, coefficients, years, percentages, significance claims,
+recommendations or additional environmental variables.
+
+Return 1–3 concise sentences of ecological context only. Do not add headings.
+
+ECOLOGICAL CONTEXT:
+
+
+User Question:
+Massaciuccoli Lake basin scientific evidence on the ecological context of the target variable and the following environmental variables: target=Cumulative change in precipitation compared to a recent past; drivers=Relative change in the potential evapotranspiration compared to a recent past; Change in average temperature compared to a recent past; Density change in land imperviousness; Change in land use and cover in the past decade; Number of species potentially living in the cell. Relevant context may include wetland ecology, water availability, climate conditions, biodiversity, and land-use characteristics. Do not assume a causal relationship.
+
+Retrieved Scientific Knowledge:
+[Source: paper1_rag_revised.txt | Section: ENVIRONMENTAL DATA]
+The environmental variables used in this study originate from open
+datasets published by the District Basin Authority of the Northern
+Apennines, the public authority responsible for hydrogeological
+protection and water-resource management across Central and Northern
+Italy.
+
+The Authority provides openly accessible topographical,
+hydrogeological, environmental and territorial information for the
+Massaciuccoli Lake basin.
+
+The environmental dataset describes the ecological conditions of the
+basin through variables that directly influence habitat suitability and
+species distribution.
+
+The environmental variables include:
+
+• Evapotranspiration (ET)
+
+Amount of water transferred from the land surface to the atmosphere
+through evaporation and plant transpiration.
+
+• Water Surplus (WS)
+
+Amount of precipitation exceeding evapotranspiration, representing the
+availability of water resources within the basin.
+
+• Climatic Water Deficit (C)
+
+Difference between atmospheric water demand and available water,
+indicating potential drought conditions affecting habitats.
+
+• Land Use
+
+Spatial distribution of natural and anthropogenic land-cover classes.
+
+• Vegetation Characteristics
+
+Environmental descriptors related to vegetation cover and habitat
+structure.
+
+These environmental layers constitute the predictor variables used by
+the machine-learning models to estimate species richness and habitat
+suitability throughout the Massaciuccoli Lake basin.
+
+---
+
+[Source: paper2_rag_revised.txt | Section: ECOSYSTEM RISK ASSESSMENT (ERA)]
+Ecosystem Risk Assessment (ERA) is a methodological framework for
+identifying, characterising and spatially representing the likelihood
+that an ecosystem undergoes a critical transition from one ecological
+state to another due to natural or anthropogenic pressures.
+
+Unlike traditional impact assessments focused on individual stressors,
+ERA explicitly considers the simultaneous action of multiple pressure
+factors, their interactions across different spatial and temporal
+scales, and the non-linear responses of ecological systems.
+
+In wetland ecosystems, ERA is particularly relevant because ecological
+dynamics emerge from the interaction among hydrology, vegetation,
+biodiversity, climate variability and land-use practices. These same
+interactions also increase ecosystem vulnerability to cumulative
+anthropogenic pressures and irreversible ecological transitions.
+
+---
+
+[Source: paper1_rag_revised.txt | Section: MODEL TRAINING]
+Species occurrence records collected during the period 2013–2023 are
+used for model training.
+
+Training is performed using the environmental conditions associated
+with the same temporal period.
+
+Temperature and precipitation data from 2016 are used together with
+the resampled environmental variables representing evapotranspiration,
+water surplus and conductivity.
+
+The models focus on long-term habitat suitability trends rather than on
+naturally oscillating population densities.
+
+---
+
+[Source: paper1_rag_revised.txt | Section: RESULT SUMMARY]
+The analyses indicate a continuous increase in temperature from the
+historical period towards all future climate scenarios.
+
+Projected precipitation patterns suggest an increasing concentration of
+rainfall in mountain areas together with progressively drier conditions
+across most of the Massaciuccoli Lake basin.
+
+The combined effect of these environmental changes is expected to
+produce substantial modifications in biodiversity distribution,
+particularly after 2050.
+
+Bird communities are projected to undergo the strongest habitat loss,
+whereas several insect species are expected to increase their habitat
+suitability.
+
+Other terrestrial and aquatic species are predicted to progressively
+shift towards cooler and more water-rich areas.
+
+These projected biodiversity changes are consistent with the overall
+environmental differences observed between historical and future
+climate scenarios.
+
+---
+
+[Source: paper2_rag_revised.txt | Section: PREVIOUS STUDIES ON THE MASSACIUCCOLI LAKE BASIN]
+Previous ecosystem studies on the Massaciuccoli Lake basin have mainly
+focused on specific environmental components or restricted portions of
+the territory.
+
+These investigations include:
+
+• hydrological dynamics and water quality;
+
+• anthropogenic pressures associated with agriculture, urbanisation
+  and habitat fragmentation;
+
+• habitats of community interest and vegetation dynamics;
+
+• biodiversity conservation;
+
+• ecological effects of climate change.
+
+Despite the richness of these thematic investigations, no previous
+study has provided a comprehensive, spatially explicit ecosystem-risk
+assessment integrating anthropogenic pressures, climatic drivers,
+ecological fragility and biodiversity indicators across the entire
+Massaciuccoli Lake basin.
+
+---
+
+[Source: paper2_rag_revised.txt | Section: INTRODUCTION]
+Wetlands are among the most productive ecosystems on Earth and provide
+essential ecosystem services including biodiversity conservation, water
+purification, flood regulation, carbon storage and climate regulation.
+
+Despite their ecological importance, wetlands are increasingly exposed
+to multiple anthropogenic pressures, including land-use change,
+urbanisation, agricultural intensification, habitat fragmentation and
+climate change.
+
+The simultaneous action of multiple stressors produces cumulative
+ecological effects that are often difficult to quantify using
+traditional environmental assessment methods.
+
+The complexity of wetland ecosystems therefore requires integrated
+approaches capable of combining heterogeneous environmental
+information into coherent ecosystem-risk indicators.
+
+Scientific Interpretation:
+
+/no_think

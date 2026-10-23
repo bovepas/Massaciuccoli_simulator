@@ -328,11 +328,16 @@ def handle_semantic_catalog_request(question: str, dataset, intent: str):
         )
     elif intent == "stressor_variables":
         interpretation = (
-            f"Under the application's definition, environmental stressors are the {len(selected)} "
-            "variables classified by the semantic catalog as harmful_force. Fragile-condition "
-            "indicators are excluded from this list. This role classification identifies potential "
-            "harmful drivers; it does not prove a causal effect in every grid cell. Baseline values "
-            f"are included where available.{listing_text}"
+            f"The scientific catalog identifies {len(selected)} stressor variables "
+            "in the dataset, following the taxonomy adopted in the source article. "
+            "These variables are divided into two ecological roles: harmful_force "
+            "(potentially harmful drivers) and fragile_condition "
+            "(ecosystem states or conditions relevant to sensitivity and resilience). "
+            "A fragile-condition indicator is not, by itself, a harmful pressure. "
+            "The list below reports the variables selected from the scientific catalog "
+            "and their available baseline values. For categorical features, baseline "
+            "values may represent category codes rather than continuous measurements."
+            f"{listing_text}"
         )
     else:
         category_explanations = {

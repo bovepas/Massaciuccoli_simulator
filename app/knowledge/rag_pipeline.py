@@ -39,7 +39,7 @@ DEBUG = True
 
 USE_SEMANTIC_CONTEXT = True
 
-MAX_CONTEXT_CHARS = 1500
+MAX_CONTEXT_CHARS = 2500
 
 # ======================================================
 # DEBUG FLAGS
@@ -93,16 +93,20 @@ def build_context(retrieved):
     if not retrieved:
         return ""
 
-    chunks = [
+    chunks = []
+    for r in retrieved:
+        # Preserve provenance in the prompt while leaving the chunk text intact.
+        source = str(r.get("source", "unknown"))
+        section = str(r.get("section", "N/A"))
+        page = str(r.get("page", "N/A"))
+        header_parts = [f"Source: {source}"]
+        if section and section != "N/A":
+            header_parts.append(f"Section: {section}")
+        if page and page != "N/A":
+            header_parts.append(f"Page: {page}")
+        chunks.append("[" + " | ".join(header_parts) + "]\n" + str(r.get("text", "")))
 
-        r["text"]
-
-        for r in retrieved
-    ]
-
-    context = "\n\n".join(
-        chunks
-    )
+    context = "\n\n---\n\n".join(chunks)
 
     if len(context) > MAX_CONTEXT_CHARS:
 
@@ -184,6 +188,7 @@ def generate_answer(
     features=None,
     extra_prompt: str = "",
     prompt_question: str | None = None,
+    modular_prompt: bool = False,
 ):
 
     # ==================================================
@@ -222,7 +227,8 @@ def generate_answer(
                 f"distance={doc['distance']:.2f}"
             )
 
-            print(doc["text"][:300])
+            #print(doc["text"][:300])
+            print(doc["text"])
 
     end_timer("retrieval")
 
@@ -293,36 +299,37 @@ def generate_answer(
     start_timer("prompt_building")
 
     # ==================================================
-    # SEMANTIC CONTEXT
+    # PROMPT ASSEMBLY
     # ==================================================
+    # In modular mode, all instructions must already be present in extra_prompt,
+    # which the caller builds from base/model/style/task .txt files. This branch
+    # appends only runtime data (question and retrieved context), without adding
+    # another hardcoded role or task instruction. Legacy callers retain the old
+    # wrapper unless they explicitly opt into modular mode.
 
-    semantic_context = ""
+    if modular_prompt:
+        # The only instruction text is extra_prompt (modular .txt components).
+        # Everything appended here is runtime source data, not additional prompting.
+        prompt_parts = [extra_prompt.strip(), context.strip()]
+        if displayed_question and displayed_question.strip():
+            prompt_parts.insert(1, displayed_question.strip())
+        prompt = "\n\n".join(part for part in prompt_parts if part)
+    else:
+        semantic_context = ""
+        if USE_SEMANTIC_CONTEXT and features:
+            semantic_context = build_semantic_context(features)
+            debug_print("\n[RAG] Semantic context:")
+            debug_print(semantic_context)
 
-    if USE_SEMANTIC_CONTEXT and features:
-
-
-         semantic_context = build_semantic_context(
-             features
-         )
-        
-         debug_print(
-             "\n[RAG] Semantic context:"
-         )
-
-         debug_print(
-             semantic_context
-         )
-        
-
-    prompt = f"""
+        prompt = f"""
 You are an environmental scientist assisting
-the Massaciuccoli Digital Twin.
+ the Massaciuccoli Digital Twin.
 
 TASK:
 Provide a clear and concise scientific interpretation.
 
 Use the retrieved scientific knowledge to interpret
-the environmental model outputs provided below.
+ the environmental model outputs provided below.
 
 Do not introduce unsupported ecological claims.
 

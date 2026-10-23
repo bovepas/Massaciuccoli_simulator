@@ -8,6 +8,7 @@ risk or confuse an absolute risk score with the difference from baseline.
 
 import math
 import re
+from decimal import Decimal, ROUND_HALF_UP
 
 from knowledge.retriever import retrieve_documents
 from tools.llm_client import call_llm
@@ -18,7 +19,7 @@ from utils.prompt_builder import build_prompt, USE_LEGACY_PROMPTS
 # CONFIG
 # ======================================================
 
-MAX_CONTEXT_CHARS = 1500
+MAX_CONTEXT_CHARS = 6000
 DEBUG = True
 DEBUG_DISABLE_RAG = False
 
@@ -65,30 +66,41 @@ def _as_finite_float(value):
     return number if math.isfinite(number) else None
 
 
+def _round_to_three_decimals(number: float) -> Decimal:
+    """Round decimal display values conventionally (ties away from zero)."""
+    return Decimal(str(number)).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP)
+
+
 def _format_score(value) -> str:
     """Format an absolute risk score to three decimals without hiding tiny values."""
     number = _as_finite_float(value)
     if number is None:
         return "Not provided to the RAG component"
 
-    rounded = round(number, 3)
-    if number != 0 and rounded == 0:
+    rounded = _round_to_three_decimals(number)
+    if number != 0 and rounded == Decimal("0.000"):
         sign = "−" if number < 0 else ""
         return f"{sign}<0.001"
+    if rounded == Decimal("0.000"):
+        return "0.000"
     return f"{rounded:.3f}"
 
 
 def _format_delta(value) -> str:
-    """Format scenario-minus-baseline with its sign and three decimal places."""
+    """Format scenario-minus-baseline with its sign and three decimal places.
+
+    Decimal ROUND_HALF_UP avoids Python round()'s ties-to-even behaviour and
+    makes halfway cases such as -0.1605 display consistently as −0.161.
+    """
     number = _as_finite_float(value)
     if number is None:
         return "Not provided to the RAG component"
 
-    rounded = round(number, 3)
-    if number != 0 and rounded == 0:
+    rounded = _round_to_three_decimals(number)
+    if number != 0 and rounded == Decimal("0.000"):
         sign = "+" if number > 0 else "−"
         return f"{sign}<0.001"
-    if rounded == 0:
+    if rounded == Decimal("0.000"):
         return "0.000"
     sign = "+" if rounded > 0 else "−"
     return f"{sign}{abs(rounded):.3f}"
@@ -130,14 +142,14 @@ def build_assessment_report(
     primary = "None"
     if primary_drivers:
         primary = "\n".join(
-            f"• {name} (association score: {abs(value):.2f})"
+            f"• {name} (Delta-SHAP contribution: {value:+.5f})"
             for name, value in primary_drivers.items()
         )
 
     secondary = "None"
     if secondary_responses:
         secondary = "\n".join(
-            f"• {name} (association score: {abs(value):.2f})"
+            f"• {name} (Delta-SHAP contribution: {value:+.5f})"
             for name, value in secondary_responses.items()
         )
 
@@ -167,7 +179,7 @@ IMPORTANT DISTINCTION:
 - If an absolute score says it was not provided, do not infer it from the difference.
 
 ============================================================
-PRIMARY MODEL DRIVERS
+PRIMARY DELTA-SHAP CONTRIBUTIONS
 ------------------------------------------------------------
 {primary}
 
@@ -185,28 +197,49 @@ SECONDARY ECOSYSTEM ASSOCIATIONS
 
 def build_ecological_notes(primary_drivers, secondary_responses):
     notes = [
-        "Primary model drivers identify variables most strongly associated "
-        "with the predicted ecosystem response.",
-        "Secondary ecosystem associations describe components statistically "
-        "associated with the simulated scenario. An association does not, by "
-        "itself, mean that a component increased or decreased during the simulation.",
+        "DELTA-SHAP INTERPRETATION:",
+        "Delta-SHAP for a feature is calculated as its SHAP value "
+        "in the scenario minus its SHAP value in the baseline.",
+        "A positive Delta-SHAP contributes positively to the "
+        "scenario-minus-baseline risk difference. A negative "
+        "Delta-SHAP contributes negatively.",
+        "The sign describes the change in the model attribution, "
+        "not whether the environmental variable itself increased "
+        "or decreased.",
+        "Delta-SHAP values describe model attribution changes; "
+        "they do not establish ecological causation.",
     ]
 
     if primary_drivers:
-        notes.extend(["", "Primary drivers reported by the Digital Twin:"])
-        for feature in primary_drivers:
-            notes.append(
-                f"• {feature} is identified as a primary model driver associated "
-                "with the predicted ecosystem response."
-            )
+        notes.extend([
+            "",
+            "DIRECTLY MODIFIED FEATURES:",
+            "This list identifies features explicitly modified "
+            "in the requested scenario. Their contributions are "
+            "shown separately and are not necessarily the largest "
+            "contributors to the overall risk-score difference.",
+        ])
 
     if secondary_responses:
-        notes.extend(["", "Secondary ecosystem associations:"])
-        for feature in secondary_responses:
-            notes.append(
-                f"• {feature} is identified as a secondary ecosystem association. "
-                "This does not establish that the variable itself changed."
-            )
+        notes.extend([
+            "",
+            "OTHER FEATURE CONTRIBUTIONS:",
+            "These are attribution changes for other model features. "
+            "Their presence does not mean that the corresponding "
+            "environmental variables were directly modified or "
+            "that they physically changed during the simulation.",
+        ])
+
+    notes.extend([
+        "",
+        "The overall risk-score difference reflects the combined "
+        "contributions. Positive and negative contributions can "
+        "offset one another, so the total can decrease even when "
+        "some individual contributions are positive.",
+        "Do not present these contributions as ecological causes "
+        "unless independent supporting evidence establishes the "
+        "relevant mechanism.",
+    ])
 
     return (
         "============================================================\n"
@@ -307,13 +340,9 @@ def generate_assessment_explanation(
     baseline_risk: float = None,
     scenario_risk: float = None,
 ):
-    """Generate a scientific explanation from the assessment's computed outputs.
+    """Generate ecological interpretation and render risk values deterministically."""
 
-    The new baseline_risk and scenario_risk parameters are appended to preserve
-    compatibility with existing keyword/positional callers. task_assessment.py
-    must pass them explicitly for the RAG prompt to receive all three values.
-    """
-    print("\n[RAG-ASSESSMENT v3.1] START")
+    print("\n[RAG-ASSESSMENT v3.2] START")
 
     driver_text = ", ".join((drivers or [])[:3])
     query = f"""
@@ -350,6 +379,7 @@ def generate_assessment_explanation(
 
     print("\n[RAG] BASELINE RISK:", _format_score(baseline_risk))
     print("[RAG] SCENARIO RISK:", _format_score(scenario_risk))
+    print("[RAG] RISK DELTA (raw):", repr(risk_delta))
     print("[RAG] RISK DELTA:", _format_delta(risk_delta))
     print("[RAG] PRIMARY DRIVERS:", primary_drivers)
     print("[RAG] SECONDARY RESPONSES:", secondary_responses)
@@ -373,10 +403,12 @@ def generate_assessment_explanation(
             baseline_risk=baseline_risk,
             scenario_risk=scenario_risk,
         )
+
         ecological_notes = build_ecological_notes(
             primary_drivers,
             secondary_responses,
         )
+
         prompt = (
             build_prompt("assessment", question=question)
             + report
@@ -393,22 +425,237 @@ RETRIEVED SCIENTIFIC EVIDENCE
             + _assessment_answering_rules()
         )
 
+    # These final instructions override conflicting instructions earlier
+    # in the prompt.
+    prompt += """
+
+STRICT FINAL OUTPUT CONTRACT
+
+Return ONLY the ecological interpretation, in no more than two
+concise sentences.
+
+Do not report or repeat the baseline risk, scenario risk, or
+risk-score difference. Python will append these values separately.
+
+A risk-score difference is not an absolute risk score.
+
+Model-driver and secondary-association scores describe statistical
+associations; they do not prove causation.
+
+Do not claim that a driver caused, explains, or is responsible for
+the direction of the overall risk change.
+
+If the available evidence does not explain the direction of the
+specific result, explicitly acknowledge this limitation.
+
+Do not use the terms SHAP, Delta-SHAP, feature attribution,
+or association score in the user-facing answer.
+
+Describe model contributions in ordinary language, explaining
+which components push the predicted score upward or downward.
+
+Do not imply that an environmental variable physically changed
+unless the scenario inputs explicitly specify that change.
+
+Distinguish the model's numerical explanation from a demonstrated
+ecological mechanism.
+"""
+
     try:
         if DEBUG:
             print("\n========== FINAL PROMPT ==========\n")
             print(prompt)
             print("\n==================================\n")
 
-        raw = call_llm(prompt, role="interpretation")
+        raw = call_llm(prompt)
         print("[RAG] RAW:", raw)
 
         if not is_valid_output(raw):
-            return fallback()
+            ecological_explanation = fallback()
 
-        cleaned = clean_text(raw)
-        print("[RAG-ASSESSMENT v3.1] END\n")
-        return cleaned
+        else:
+            # 1. Remove sentences that repeat the numerical results.
+            sentences = re.split(
+                r"(?<=[.!?])\s+",
+                clean_text(raw),
+            )
+
+            numeric_result_sentence = re.compile(
+                r"\b(?:baseline risk score|scenario risk score|"
+                r"risk[- ]score difference|risk score difference|"
+                r"predicted risk score|ecosystem risk score)\b.*\d",
+                re.IGNORECASE,
+            )
+
+            sentences = [
+                sentence.strip()
+                for sentence in sentences
+                if sentence.strip()
+                and not numeric_result_sentence.search(sentence)
+            ]
+
+            ecological_explanation = " ".join(sentences[:2]).strip()
+
+            if not is_valid_output(ecological_explanation):
+                ecological_explanation = fallback()
+
+            else:
+                # 2. Detect unsupported causal attribution even when
+                #    the LLM ignores the instructions in the prompt.
+                unsupported_causality = re.compile(
+                    r"\battribut(?:e|es|ed|ing)\s+"
+                    r"(?:(?:primarily|mainly)\s+)?to\b|"
+                    r"\b(?:caused|explained|accounted for|driven)\s+by\b|"
+                    r"\b(?:due to|because of|results? from|"
+                    r"stems? from|arises? from)\b|"
+                    r"\b(?:driver|temperature change|precipitation change)\s+"
+                    r"(?:caused|explains?|accounts for)\b",
+                    re.IGNORECASE,
+                )
+
+                if unsupported_causality.search(ecological_explanation):
+                    primary_items = [
+                        (name, _as_finite_float(value))
+                        for name, value in (primary_drivers or {}).items()
+                    ]
+                    primary_items = [
+                        (name, value)
+                        for name, value in primary_items
+                        if value is not None
+                    ]
+
+                    secondary_items = [
+                        (name, _as_finite_float(value))
+                        for name, value in (secondary_responses or {}).items()
+                    ]
+                    secondary_items = [
+                        (name, value)
+                        for name, value in secondary_items
+                        if value is not None
+                    ]
+
+                    primary_text = "; ".join(
+                        f"{name} ({value:+.5f})"
+                        for name, value in primary_items
+                    ) or "not available"
+
+                    negative_items = sorted(
+                        [
+                            (name, value)
+                            for name, value in secondary_items
+                            if value < 0
+                        ],
+                        key=lambda item: item[1],
+                    )[:2]
+
+                    positive_items = sorted(
+                        [
+                            (name, value)
+                            for name, value in secondary_items
+                            if value > 0
+                        ],
+                        key=lambda item: item[1],
+                        reverse=True,
+                    )[:3]
+
+                    negative_text = ", ".join(
+                        f"{name} ({value:+.5f})"
+                        for name, value in negative_items
+                    ) or "none among the reported components"
+
+                    positive_text = ", ".join(
+                        f"{name} ({value:+.5f})"
+                        for name, value in positive_items
+                    ) or "none among the reported components"
+
+                    ecological_explanation = (
+                        f"The requested inputs have the following model "
+                        f"contributions: {primary_text}. Among the other "
+                        f"components, the largest downward contributions are "
+                        f"{negative_text}, while the upward contributions "
+                        f"include {positive_text}. These contributions describe "
+                        f"the model's prediction, not proof that the corresponding "
+                        f"environmental variables physically changed or caused "
+                        f"the result. The retrieved knowledge base does not "
+                        f"establish the specific ecological mechanism behind "
+                        f"this scenario."
+                    )
 
     except Exception as exc:
         print("[RAG-ASSESSMENT ERROR]", exc)
-        return fallback()
+        ecological_explanation = fallback()
+
+    # 3. Python produces a natural-language numerical summary.
+    baseline_number = _as_finite_float(baseline_risk)
+    scenario_number = _as_finite_float(scenario_risk)
+    delta_number = _as_finite_float(risk_delta)
+
+    if (
+        baseline_number is not None
+        and scenario_number is not None
+        and delta_number is not None
+    ):
+        if delta_number < 0:
+            relative_change = (
+                abs(delta_number) / abs(baseline_number) * 100
+                if baseline_number != 0
+                else None
+            )
+
+            relative_text = (
+                f", approximately {relative_change:.0f}% of the baseline score"
+                if relative_change is not None
+                else ""
+            )
+
+            quantitative_summary = (
+                f"The model's predicted ecosystem-risk score falls from "
+                f"{_format_score(baseline_risk)} in the baseline scenario to "
+                f"{_format_score(scenario_risk)} in the requested scenario: "
+                f"a decrease of {_format_score(abs(delta_number))}"
+                f"{relative_text}."
+            )
+
+        elif delta_number > 0:
+            relative_change = (
+                abs(delta_number) / abs(baseline_number) * 100
+                if baseline_number != 0
+                else None
+            )
+
+            relative_text = (
+                f", approximately {relative_change:.0f}% of the baseline score"
+                if relative_change is not None
+                else ""
+            )
+
+            quantitative_summary = (
+                f"The model's predicted ecosystem-risk score rises from "
+                f"{_format_score(baseline_risk)} in the baseline scenario to "
+                f"{_format_score(scenario_risk)} in the requested scenario: "
+                f"an increase of {_format_score(abs(delta_number))}"
+                f"{relative_text}."
+            )
+
+        else:
+            quantitative_summary = (
+                f"The model's predicted ecosystem-risk score remains unchanged "
+                f"at {_format_score(baseline_risk)}."
+            )
+
+    else:
+        quantitative_summary = (
+            "The model did not provide all the numerical values needed "
+            "to describe the change in predicted ecosystem risk."
+        )
+
+    final_answer = (
+        quantitative_summary
+        + "\n\n"
+        + clean_text(ecological_explanation)
+    )
+
+    print("[RAG-ASSESSMENT v3.2] FINAL RESPONSE:", final_answer)
+    print("[RAG-ASSESSMENT v3.2] END\n")
+
+    return final_answer

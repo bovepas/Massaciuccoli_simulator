@@ -369,10 +369,19 @@ def qualitative_to_delta(
     # BASE DELTA
     # ----------------------------------
 
-    if variable in SPECIAL_DELTAS:
+    special_key = {
+        "Change in average temperature compared to a recent past":
+            "temperature",
+        "Cumulative change in precipitation compared to a recent past":
+            "precipitation",
+        "Relative change in the potential evapotranspiration compared to a recent past":
+            "evapotranspiration",
+    }.get(dataset_feature)
+
+    if special_key is not None:
 
         delta = (
-            SPECIAL_DELTAS[variable]
+            SPECIAL_DELTAS[special_key]
             *
             MAGNITUDE_MULTIPLIER.get(
                 magnitude,

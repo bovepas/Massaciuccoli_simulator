@@ -840,6 +840,68 @@ def run():
                     indicators = data.get("indicators", []) if isinstance(data, dict) else []
                     if indicators:
                         print("Indicators examined:", ", ".join(map(str, indicators)))
+            elif task_type == "assessment":
+                # User-friendly rendering for Assessment results.
+                if isinstance(data, dict) and data:
+                    print("\nMODEL COMPONENTS CONTRIBUTING TO THE PREDICTED CHANGE:")
+
+                    friendly_names = {
+                        "temperature change": "Temperature change",
+                        "precipitation change": "Precipitation change",
+                        "tree cover density": "Tree cover density",
+                        "land-use change": "Land-use change",
+                        "species richness": "Potential number of species",
+                        "evapotranspiration change": "Potential evapotranspiration change",
+                        "vegetation productivity": "Vegetation productivity",
+                        "grassland presence": "Grassland presence",
+                    }
+
+                    upward = []
+                    downward = []
+
+                    for name, value in data.items():
+                        try:
+                            score = float(value)
+                        except (TypeError, ValueError):
+                            continue
+
+                        label = friendly_names.get(
+                            name,
+                            str(name).replace("_", " ").capitalize()
+                        )
+
+                        if score > 0:
+                            upward.append((label, score))
+                        elif score < 0:
+                            downward.append((label, score))
+
+                    if upward:
+                        print("\nComponents contributing upward:")
+                        for label, score in sorted(
+                            upward,
+                            key=lambda item: item[1],
+                            reverse=True
+                        ):
+                            print(f"- {label}: {score:+.5f}")
+
+                    if downward:
+                        print("\nComponents contributing downward:")
+                        for label, score in sorted(
+                            downward,
+                            key=lambda item: item[1]
+                        ):
+                            print(f"- {label}: {score:+.5f}")
+
+                    print(
+                        "\nThese values describe each component's contribution "
+                        "to the change predicted by the model. They do not "
+                        "necessarily mean that the corresponding environmental "
+                        "variables physically increased or decreased."
+                    )
+
+                print("\nINTERPRETATION:")
+                print(result.get("interpretation", ""))
+
             else:
                 # Keep the existing rendering for every other task unchanged.
                 if data:

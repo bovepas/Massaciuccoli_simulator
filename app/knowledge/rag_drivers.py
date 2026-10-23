@@ -2,15 +2,20 @@
 """RAG Drivers — v10.
 
 The Digital Twin owns driver selection, ranking, direction and strength.
-The LLM supplies ecological context only; the authoritative association
-statements in the final interpretation are assembled deterministically.
+The LLM interprets the authoritative driver report using the modular task prompt.
+A deterministic fallback is used when the generated interpretation fails validation.
 """
 
 import re
 
 from knowledge.rag_pipeline import generate_answer
 from utils.feature_semantics import build_semantic_context
-from utils.prompt_builder import load_base_prompt, load_model_prompt, load_style_prompt
+from utils.prompt_builder import (
+    load_base_prompt,
+    load_model_prompt,
+    load_style_prompt,
+    load_task_prompt,
+)
 
 DEBUG = True
 
@@ -20,68 +25,9 @@ def debug_print(*args):
         print(*args)
 
 
-def build_drivers_notes(semantic_context):
-    return f"""
-============================================================
-ECOLOGICAL INTERPRETATION NOTES
-============================================================
-
-The Digital Twin has already selected and ranked the reported
-statistical associations. Positive and negative describe the
-reported direction; strong and moderate describe the supplied
-association-strength categories.
-
-These categories are not, by themselves, statistical significance
-tests. Do not claim that an association is or is not statistically
-significant unless the input explicitly reports such a test.
-
-Semantic descriptions provide ecological context only. They do not
-prove that a variable causes or mechanistically explains the target.
-
-Semantic descriptions of the target and reported variables:
-
-{semantic_context}
-"""
-
-
 # ======================================================
 # PROMPT
 # ======================================================
-
-
-def build_legacy_prompt(target, drivers, semantic_context):
-    drivers_text = "\n".join(
-        f"- {d['feature']} (direction: {d['direction']}, strength: {d['strength']})"
-        for d in drivers
-    )
-    return f"""
-You are a scientific assistant for the Massaciuccoli Digital Twin.
-
-TARGET VARIABLE:
-{target}
-
-AUTHORITATIVE DRIVERS REPORT:
-{drivers_text}
-
-ECOLOGICAL INTERPRETATION NOTES:
-{semantic_context}
-
-Your role in this generation is limited to giving ecological context for
-the reported variables. The final answer will state the authoritative
-association directions separately using the Digital Twin's data.
-Do not restate or reinterpret association directions and strengths.
-Do not describe a causal relationship between any driver and the target.
-Do not mention the target variable in your generated text.
-
-Use only context supported by the supplied semantic notes and retrieved
-scientific evidence. Do not introduce observed changes, mechanisms,
-recommendations, numerical results, or statistical-significance claims.
-If the sources do not provide relevant context, say that the supplied
-material does not establish a specific ecological explanation.
-
-Write 1–3 concise sentences of ecological context only.
-ECOLOGICAL CONTEXT:
-"""
 
 
 # ======================================================
@@ -107,6 +53,9 @@ def _claims_unreported_significance(text):
     normalised = _normalise_for_match(text)
     patterns = (
         r"\bstatistically significant\b",
+        r"\bsignificantly associated\b",
+        r"\bsignificant association\b",
+        r"\bsignificant correlation\b",
         r"\bnot significant\b",
         r"\bno other reported associations\b",
         r"\bno other associations\b",
@@ -115,54 +64,143 @@ def _claims_unreported_significance(text):
     return any(re.search(pattern, normalised) for pattern in patterns)
 
 
-# The LLM output is context-only. These checks reject generated prose that
-# tries to restate associations, connect a driver to the target, or assert a
-# causal mechanism. Association directions are rendered from Python data.
-_CONTEXT_RELATION_PATTERNS = (
-    r"\bassociated with\b",
-    r"\bassociation(s)?\b",
-    r"\bcorrelat(?:e|ed|es|ion|ions)\b",
-    r"\brelationship(s)?\b",
-    r"\blinked to\b",
-    r"\brelated to\b",
-    r"\bconnect(?:s|ed|ing)? to\b",
-    r"\bcause(?:s|d)?\b",
+# The drivers task prompt asks the LLM to interpret the reported associations.
+# These checks allow association language but reject unsupported causal claims.
+_CAUSAL_CLAIM_PATTERNS = (
+    # Reject causal claims, but allow association language required by drivers.txt.
+    r"\bcaus(?:e|es|ed|ing)\b",
     r"\blead(?:s|ing)? to\b",
     r"\bresult(?:s|ing)? in\b",
     r"\bcontribut(?:e|es|ed|ing) to\b",
-    r"\bdrive(?:s|n)?\b",
+    r"\bdrives?\b",
     r"\binfluenc(?:e|es|ed|ing)\b",
     r"\baffect(?:s|ed|ing)?\b",
     r"\bimpact(?:s|ed|ing)?\b",
-    r"\breflect(?:s|ed|ing)?\b",
     r"\bdue to\b",
-    r"\bbecause\b",
-    r"\btherefore\b",
-    r"\bconsequently\b",
     r"\bresponsible for\b",
-    r"\bexplains?\b",
     r"\bdetermines?\b",
-    r"\bmodif(?:y|ies|ied|ying)\b",
-    r"\balter(?:s|ed|ing)?\b",
-    r"\bexacerbat(?:e|es|ed|ing)\b",
-    r"\b(?:increas(?:e|es|ed|ing)|decreas(?:e|es|ed|ing)|reduc(?:e|es|ed|ing)|lower(?:s|ed|ing)?|rais(?:e|es|ed|ing)|higher|lower|greater|less|more|positive|negative)\b",
-    r"\bplay(?:s|ed|ing)? a role\b",
+    r"\bplays? a role in\b",
 )
 
 
-def is_safe_context(text):
-    """Return True only for context prose, not a new association analysis."""
+def validate_interpretation(text, target=None, drivers=None):
+    """Return concrete validation issues instead of a silent boolean rejection."""
+    issues = []
     if not is_valid(text):
-        return False
+        issues.append("empty_or_too_short")
+        return issues
+
     normalised = _normalise_for_match(text)
+
     if _claims_unreported_significance(text):
-        return False
-    # The contextual paragraph must not contain figures, coefficients or years.
+        issues.append("unsupported_statistical_significance_claim")
+
     if re.search(r"\d", str(text)):
-        return False
-    if any(re.search(pattern, normalised) for pattern in _CONTEXT_RELATION_PATTERNS):
-        return False
-    return True
+        issues.append("contains_unrequested_numeric_value")
+
+    recommendation_patterns = (
+        r"\brecommend(?:s|ed|ing)?\b",
+        r"\brecommendation(?:s)?\b",
+        r"\bprioriti[sz](?:e|es|ed|ing|ation)\b",
+        r"\bshould\s+(?:be\s+)?(?:protected|preserved|conserved|managed|monitored|restored)\b",
+        r"\bmust\s+(?:be\s+)?(?:protected|preserved|conserved|managed|monitored|restored)\b",
+        r"\bneed(?:s)? to\s+(?:protect|preserve|conserve|manage|monitor|restore)\b",
+        r"\bessential to\s+(?:protect|preserve|conserve|manage|monitor|restore)\b",
+    )
+    if any(re.search(pattern, normalised) for pattern in recommendation_patterns):
+        issues.append("management_recommendation")
+
+    causal_hits = [
+        pattern for pattern in _CAUSAL_CLAIM_PATTERNS
+        if re.search(pattern, normalised)
+    ]
+    if causal_hits:
+        issues.append("unsupported_causal_language:" + ",".join(causal_hits))
+
+    # Every strong driver must be named and its reported direction preserved.
+    strong_drivers = [
+        d for d in (drivers or [])
+        if str(d.get("strength", "")).strip().lower() == "strong"
+    ]
+    for driver in strong_drivers:
+        feature = str(driver.get("feature", "")).strip()
+        direction = str(driver.get("direction", "")).strip().lower()
+        if feature and feature.lower() not in str(text).lower():
+            issues.append("missing_strong_driver:" + feature)
+            continue
+        if not feature:
+            continue
+        # Check the text around each occurrence, rather than requiring a rigid sentence form.
+        lowered = str(text).lower()
+        pos = lowered.find(feature.lower())
+        window = lowered[max(0, pos - 140): min(len(lowered), pos + len(feature) + 140)]
+        if direction in ("positive", "negative"):
+            direction_patterns = {
+                "positive": r"\bpositive(?:ly)?\b|\bdirect(?:ly)?\b",
+                "negative": r"\bnegative(?:ly)?\b|\binverse(?:ly)?\b",
+            }
+            if not re.search(direction_patterns[direction], window):
+                issues.append("direction_not_explicit_near_driver:" + feature)
+
+        # Catch an explicit strength label that contradicts the authoritative report.
+        feature_sentence_start = max(
+            lowered.rfind(".", 0, pos),
+            lowered.rfind("!", 0, pos),
+            lowered.rfind("?", 0, pos),
+            lowered.rfind("\n", 0, pos),
+        ) + 1
+        feature_sentence_end_candidates = [
+            candidate for candidate in (
+                lowered.find(".", pos + len(feature)),
+                lowered.find("!", pos + len(feature)),
+                lowered.find("?", pos + len(feature)),
+                lowered.find("\n", pos + len(feature)),
+            ) if candidate != -1
+        ]
+        feature_sentence_end = min(feature_sentence_end_candidates) if feature_sentence_end_candidates else len(lowered)
+        feature_sentence = lowered[feature_sentence_start:feature_sentence_end]
+        reported_strength = str(driver.get("strength", "")).strip().lower()
+        after_feature = lowered[pos + len(feature):pos + len(feature) + 90]
+        explicit_strength = re.search(r"\bstrength\s*:\s*(strong|moderate)\b", after_feature)
+        if explicit_strength and reported_strength in ("strong", "moderate"):
+            if explicit_strength.group(1) != reported_strength:
+                issues.append("reported_strength_mismatch_for_driver:" + feature)
+        elif reported_strength == "moderate":
+            before_feature = lowered[max(feature_sentence_start, pos - 140):pos]
+            strong_association = re.search(
+                r"\bstrong(?:ly)?\s+(?:(?:positive|negative)(?:ly)?\s+)?(?:statistical\s+)?associat(?:ed|ion)\b",
+                before_feature,
+            )
+            moderate_association = re.search(
+                r"\bmoderate(?:ly)?\s+(?:(?:positive|negative)(?:ly)?\s+)?(?:statistical\s+)?associat(?:ed|ion)\b",
+                before_feature[-100:],
+            )
+            if strong_association and not moderate_association:
+                issues.append("strength_overstated_for_driver:" + feature)
+
+    # If strong associations have opposing signs, reject a single net increase/decrease
+    # claim about the target: it would collapse distinct reported directions.
+    strong_directions = {
+        str(d.get("direction", "")).strip().lower()
+        for d in strong_drivers
+        if str(d.get("direction", "")).strip().lower() in ("positive", "negative")
+    }
+    if len(strong_directions) > 1 and target:
+        target_pattern = re.escape(str(target.lower()))
+        trend_pattern = (
+            r"\b(?:increase|increased|increasing|rise|rising|growth|decrease|"
+            r"decreased|decreasing|decline|declining|reduction|reduced)\b"
+            r"(?:\s+\w+){0,5}\s+(?:in|of)\s+(?:the\s+)?" + target_pattern
+        )
+        if re.search(trend_pattern, str(text).lower()):
+            issues.append("net_target_trend_inferred_from_mixed_direction_drivers")
+
+    return issues
+
+
+def is_safe_context(text, target=None, drivers=None):
+    """Boolean wrapper retained for callers that only need pass/fail."""
+    return not validate_interpretation(text, target=target, drivers=drivers)
 
 
 # ======================================================
@@ -262,7 +300,6 @@ TARGET VARIABLE:
 PRIMARY ASSOCIATED VARIABLES (already ranked by the Digital Twin):
 {associations}
 
-Do not change this ranking, direction, or strength classification.
 """
 
 
@@ -282,45 +319,25 @@ def generate_drivers_explanation(target, drivers, features=None):
             print(semantic_context)
 
         drivers_report = build_drivers_report(target, drivers)
-        drivers_notes = build_drivers_notes(semantic_context)
+        semantic_section = (
+            "\n\nECOLOGICAL SEMANTIC DESCRIPTIONS:\n" + semantic_context
+            if semantic_context else ""
+        )
 
-        # Compose only the general scientific prompt components. The task-specific
-        # drivers prompt asks for association interpretation, which would conflict
-        # with this deliberately narrower context-generation step.
+        # Load all modular prompt components, including the drivers task prompt.
         base_prompt = "\n\n".join(
             component for component in (
                 load_base_prompt(),
                 load_model_prompt(),
                 load_style_prompt(),
+                load_task_prompt("drivers"),
             ) if component
         )
 
-        # The authoritative associations are assembled separately below.
+        # Add the authoritative report and semantic descriptions as task context.
         prompt = (
             base_prompt
-            + f"\n\n{drivers_report}\n{drivers_notes}\n"
-            + """
-NARROW SUBTASK FOR THIS GENERATION — OVERRIDES ANY BROADER WORDING ABOVE:
-
-Generate ecological context only. The final interpretation will state the
-Digital Twin's authoritative association directions separately in code.
-Do not state, restate, rank, paraphrase or infer any relationship between a
-reported variable and the target. Do not mention the target variable.
-Do not use association language, directional relationship claims, or causal
-verbs (for example: associated, correlated, linked, causes, leads to, affects,
-influences, contributes to, reflects, determines). Do not claim observed changes.
-
-Describe only ecological meanings or background explicitly supported by the
-retrieved scientific evidence and the supplied semantic notes. General facts
-about wetlands are not evidence for a mechanism connecting a particular driver
-to the target. If there is no relevant supported context, say so cautiously.
-Do not include numbers, coefficients, years, percentages, significance claims,
-recommendations or additional environmental variables.
-
-Return 1–3 concise sentences of ecological context only. Do not add headings.
-
-ECOLOGICAL CONTEXT:
-"""
+            + f"\n\n{drivers_report}{semantic_section}\n"
         )
 
         if DEBUG:
@@ -338,8 +355,7 @@ ECOLOGICAL CONTEXT:
             "context of the target variable and the following environmental "
             f"variables: target={target}; drivers={top_drivers}. "
             "Relevant context may include wetland ecology, water availability, "
-            "climate conditions, biodiversity, and land-use characteristics. "
-            "Do not assume a causal relationship."
+            "climate conditions, biodiversity, and land-use characteristics."
         )
 
         print("\n[RAG] Query:")
@@ -349,24 +365,26 @@ ECOLOGICAL CONTEXT:
             question=rag_query,
             features=features,
             extra_prompt=prompt,
+            prompt_question="",
+            modular_prompt=True,
         )
 
         debug_print("\n[RAG-DRIVERS] Raw contextual output:")
         debug_print(raw)
 
-        context = clean_output(raw) if is_valid(raw) else ""
-        if not context or not is_safe_context(context):
-            debug_print(
-                "[RAG-DRIVERS] Context output crossed scope or failed validation; "
-                "using conservative context fallback."
-            )
-            context = build_context_fallback()
+        interpretation = clean_output(raw) if is_valid(raw) else ""
+        validation_issues = validate_interpretation(
+            interpretation, target=target, drivers=drivers
+        )
+        if validation_issues:
+            debug_print("[RAG-DRIVERS] Validation rejected interpretation:")
+            for issue in validation_issues:
+                debug_print("  -", issue)
+            debug_print("[RAG-DRIVERS] Using deterministic fallback.")
+            final_text = fallback_explanation(target, drivers)
+        else:
+            final_text = interpretation
 
-        association_summary = build_authoritative_association_summary(target, drivers)
-        final_text = f"{association_summary} {context}".strip()
-
-        debug_print("\n[RAG-DRIVERS] Authoritative association summary:")
-        debug_print(association_summary)
         debug_print("\n[RAG-DRIVERS] Final output:")
         debug_print(final_text)
         return final_text

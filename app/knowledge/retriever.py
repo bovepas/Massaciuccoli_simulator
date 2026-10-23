@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
 Massaciuccoli Digital Twin
@@ -9,10 +9,11 @@ Knowledge Engine Retriever — v5
 ✔ Chroma timing
 ✔ Query expansion observability
 ✔ Retrieval observability
-✔ Keeps retrieval logic unchanged
+✔ Best-distance deduplication and section metadata
 """
 
 import requests
+import re
 import chromadb
 
 from typing import List, Dict, Tuple
@@ -143,60 +144,60 @@ def get_embedding(text: str):
 # ======================================================
 
 def expand_query(query: str) -> List[str]:
+    """Keep the original query and add concise, topic-focused variants.
 
-    q = query.lower()
+    Avoid generic prefixes appended to the full query: those variants are
+    near-duplicates and waste embedding/retrieval calls. For Drivers queries,
+    preserve the target and driver names while removing boilerplate.
+    """
+    original = str(query).strip()
+    if not original:
+        return []
 
-    expansions = [query]
-
-    expansions.append(
-        f"ecosystem risk factors {q}"
+    expansions = [original]
+    target_match = re.search(
+        r"\btarget\s*=\s*(.*?)(?=;\s*drivers\s*=|$)",
+        original, re.I | re.S
     )
-
-    expansions.append(
-        f"lake ecosystem dynamics {q}"
+    drivers_match = re.search(
+        r"\bdrivers\s*=\s*(.*?)(?=\.\s*(?:Relevant context|Do not assume)|$)",
+        original, re.I | re.S
     )
+    target = target_match.group(1).strip(" ;.\n\t") if target_match else ""
+    drivers = drivers_match.group(1).strip(" ;.\n\t") if drivers_match else ""
 
-    if (
-        "temperature" in q
-        or
-        "precipitation" in q
-    ):
-
+    if target or drivers:
+        fields = []
+        if target:
+            fields.append(f"target: {target}")
+        if drivers:
+            fields.append(f"environmental variables: {drivers}")
+        variables = "; ".join(fields)
         expansions.append(
-            f"climate change impact "
-            f"lake ecosystem {q}"
+            f"Massaciuccoli wetland scientific ecological context — {variables}"
         )
 
-    if (
-        "biodiversity" in q
-        or
-        "species" in q
-    ):
+        terms = f"{target} {drivers}".lower()
+        if any(t in terms for t in ("productivity", "phenology", "tree cover", "grassland", "vegetation")):
+            expansions.append(f"Wetland vegetation ecology and ecological meaning of {variables}")
+        if any(t in terms for t in ("temperature", "precipitation", "evapotranspiration", "climate")):
+            expansions.append(f"Wetland climate and hydrological context of {variables}")
+        if any(t in terms for t in ("species", "biodiversity", "habitat")):
+            expansions.append(f"Wetland biodiversity and habitat context of {variables}")
+        if any(t in terms for t in ("land use", "imperviousness", "urban", "land cover")):
+            expansions.append(f"Wetland land-use and land-cover context of {variables}")
 
-        expansions.append(
-            f"biodiversity ecosystem "
-            f"resilience {q}"
-        )
-
-    if (
-        "land" in q
-        or
-        "tree" in q
-        or
-        "grassland" in q
-    ):
-
-        expansions.append(
-            f"land use change "
-            f"ecosystem impact {q}"
-        )
-
-    return expansions
+    # Remove exact/normalised duplicates while preserving order.
+    unique = []
+    seen = set()
+    for item in expansions:
+        key = re.sub(r"\s+", " ", item).strip().casefold()
+        if key and key not in seen:
+            seen.add(key)
+            unique.append(item)
+    return unique
 
 
-
-
-# ======================================================
 # LIGHT LEXICAL RE-RANKING
 # ======================================================
 
@@ -405,6 +406,12 @@ def retrieve_documents(
                         "N/A"
                     ),
 
+                "section":
+                    metadata.get(
+                        "section",
+                        "N/A"
+                    ),
+
                 "distance":
                     distance
             })
@@ -417,13 +424,14 @@ def retrieve_documents(
 
     start_timer("deduplication")
 
-    unique_results = list({
-
-        r["text"]: r
-
-        for r in all_results
-
-    }.values())
+    # Keep the occurrence with the smallest Chroma distance for each chunk.
+    best_by_text = {}
+    for result in all_results:
+        key = result["text"]
+        previous = best_by_text.get(key)
+        if previous is None or result["distance"] < previous["distance"]:
+            best_by_text[key] = result
+    unique_results = list(best_by_text.values())
 
     end_timer("deduplication")
 
@@ -436,58 +444,11 @@ def retrieve_documents(
         return [], 9999.0
 
     # ==================================================
-    # AVG DISTANCE
-    # ==================================================
-
-    start_timer("distance_analysis")
-
-    avg_distance = sum(
-
-        r["distance"]
-
-        for r in unique_results
-
-    ) / len(unique_results)
-
-    end_timer("distance_analysis")
-
-    debug_print(
-        "Avg distance (pre-filter):",
-        avg_distance
-    )
-
-    # ==================================================
-    # ADAPTIVE FILTER
-    # ==================================================
-
-    start_timer("adaptive_filter")
-
-    filtered_results = [
-
-        r for r in unique_results
-
-        if r["distance"] <= avg_distance * 3
-    ]
-
-    end_timer("adaptive_filter")
-
-    debug_print(
-        f"After adaptive filter: "
-        f"{len(filtered_results)} docs"
-    )
-
-    # --------------------------------------------------
-    # FILTER FALLBACK
-    # --------------------------------------------------
-
-    if not filtered_results:
-
-        debug_print(
-            "Filter too strict "
-            "→ fallback to all results"
-        )
-
-        filtered_results = unique_results
+    # CANDIDATES
+    # Rank all unique candidates. The previous avg_distance * 3 threshold
+    # had no validated relevance interpretation, so it is intentionally removed.
+    candidate_results = unique_results
+    debug_print(f"Unique candidate chunks: {len(candidate_results)}")
 
     # ==================================================
     # SORT + TOP_K
@@ -499,7 +460,7 @@ def retrieve_documents(
 
         query,
 
-        filtered_results
+        candidate_results
     )
 
     top_results = sorted_results[:TOP_K]

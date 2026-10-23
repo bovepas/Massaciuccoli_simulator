@@ -1,70 +1,45 @@
 TASK
 
-The user asks the Massaciuccoli Digital Twin to identify
-the environmental variables most strongly associated with
-ecosystem risk.
+The user asks the Massaciuccoli Digital Twin to identify the environmental variables most strongly associated with ecosystem risk.
 
-The Digital Twin has already analysed the environmental
-variables and ranked them according to their statistical
-association with the predicted ecosystem risk.
+The Digital Twin has already analysed the environmental variables and ranked them according to their statistical association with predicted ecosystem risk.
 
-Your task is not to identify additional variables or
-recompute their importance.
-
-Your task is to explain the reported importance analysis
-using the scientific information provided below.
-
-To prepare your answer, the Digital Twin provides three
-complementary sources of information.
+Your task is to explain the reported importance analysis using the information provided below. Do not recompute importance or introduce additional variables.
 
 1. DIGITAL TWIN IMPORTANCE REPORT
 
-This report identifies:
+The report is the authoritative source for:
+- dominant environmental domains;
+- variables associated with higher predicted ecosystem risk;
+- variables associated with lower predicted ecosystem risk;
+- reported impact values and strength labels.
 
-- the dominant environmental domains;
-- the variables most strongly associated with ecosystem risk;
-- the variables associated with lower ecosystem risk.
-
-Treat the Importance Report as the authoritative
-description of the Digital Twin analysis.
-
-Do not modify the reported ranking.
-
-Do not introduce additional variables.
+Accurately report the relevant variables and their direction of association. Do not omit a reported risk-increasing or risk-reducing variable when it is relevant to the user's question. Do not alter the ranking, signs, labels or values.
 
 2. ECOLOGICAL INTERPRETATION NOTES
 
-The reported variables represent statistical associations
-identified by the Digital Twin.
+The reported results describe statistical associations with predicted ecosystem risk. They do not establish direct ecological causality or necessarily represent observed environmental changes.
 
-Risk-increasing variables are statistically associated
-with higher predicted ecosystem risk.
+Do not describe an association as statistically significant unless the supplied evidence explicitly reports a statistical significance test.
 
-Risk-reducing variables are statistically associated
-with lower predicted ecosystem risk.
-
-These associations do not represent observed environmental
-changes and should not be interpreted as direct ecological
-causality.
+Do not infer that a variable represents another ecological property unless the supplied evidence explicitly supports that interpretation. In particular, do not automatically equate vegetation productivity with biodiversity, or interpret a negative association as proof that an environmental change has benefited the ecosystem.
 
 3. RETRIEVED SCIENTIFIC EVIDENCE
 
-These excerpts were retrieved from the curated scientific
-knowledge base describing the Massaciuccoli Lake ecosystem.
+Use retrieved scientific evidence to explain the ecological relevance of the reported variables only when the evidence supports the explanation.
 
-Use the retrieved scientific evidence only to explain the
-ecological relevance of the reported variables.
+Do not introduce unsupported ecological mechanisms, causal claims, management recommendations or conclusions. General information about wetlands must not be presented as evidence explaining a specific model result unless the connection is supported by the supplied context.
 
-Do not infer ecological mechanisms unless they are
-supported by both the Digital Twin outputs and the
-retrieved scientific evidence.
+4. ANSWER FOR A PARK MANAGER
 
-Do not introduce additional environmental variables,
-ecological processes, management actions or conclusions
-that are unsupported by the provided information.
+Write a concise, clear scientific explanation that directly answers the user's question.
 
-Focus on explaining why the reported variables are
-ecologically relevant rather than repeating the ranking.
+Prioritise:
+- what the Digital Twin actually found;
+- which variables are associated with higher or lower predicted risk, as relevant to the question;
+- what the available scientific evidence supports about their ecological relevance;
+- what cannot be concluded from the results.
 
-Write one concise scientific explanation that directly
-answers the user's question.
+Distinguish clearly between model results, evidence-based ecological interpretation and uncertainty. If the evidence does not support a specific explanation, state that limitation rather than filling the gap with speculation.
+
+The answer should help a manager understand the results without misleading them about causality, statistical significance or the implications for conservation management.

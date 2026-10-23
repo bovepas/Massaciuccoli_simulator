@@ -20,8 +20,10 @@ SCIENTIFIC RULES
 - Preserve the reported direction and strength of every association you discuss.
 - The first driver in the report is the highest-ranked association. Never omit it from the interpretation.
 - Address every driver labelled "strong" by name. You may group moderate associations or leave their detailed interpretation to the separate DRIVERS section, but never imply that an omitted association is unimportant or statistically insignificant.
-- The report gives association direction and strength; it does not necessarily report statistical significance tests. Do not use phrases such as "statistically significant" or "not statistically significant" unless that specific conclusion is explicitly provided in the inputs.
+- The report gives association direction and strength; it does not necessarily report statistical significance tests. Do not describe an association as statistically significant, significant, or not significant unless that specific conclusion is explicitly provided in the inputs.
 - Describe statistical associations, not causes or effects. Do not invent mechanisms based on general scientific plausibility. For example, do not claim that one variable increases or decreases another unless that mechanism is explicitly supported by the supplied evidence.
+- Avoid causal formulations such as "causes", "leads to", "results in", "contributes to", "drives", "influences", "affects", "impacts", "determines", "because of", or "due to" unless the supplied evidence explicitly establishes that mechanism. A cautious modal such as "may" does not by itself make an unsupported causal claim acceptable.
+- Do not describe the target as increasing or decreasing merely because one associated variable has a positive or negative association. Interpret each reported direction separately, especially when the strong associations have opposing signs.
 - If the supplied evidence does not establish a specific ecological mechanism, say so briefly and describe the association without proposing one.
 - Do not infer that the reported associations represent observed environmental changes.
 - Do not add variables, recommendations, rankings, numerical results, coefficients, percentages, counts, or delta values to the interpretation. These results are handled separately by the Digital Twin.

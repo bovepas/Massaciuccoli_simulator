@@ -40,25 +40,13 @@ def clean_output(text: str):
     if not text:
         return None
 
-    text = text.strip()
-
     text = re.sub(
         r"\s+",
         " ",
-        text
+        text.strip()
     )
 
-    sentences = re.split(
-        r'(?<=[.!?])\s+',
-        text
-    )
-
-    if not sentences:
-        return None
-
-    return " ".join(
-        sentences[:4]
-    ).strip()
+    return text or None
 
 
 # ======================================================
@@ -217,25 +205,67 @@ def build_importance_notes():
 ECOLOGICAL INTERPRETATION NOTES
 ============================================================
 
-The reported variables represent the strongest
-statistical associations identified by the
-Digital Twin.
+AUTHORITATIVE RESULTS
+---------------------
 
-Variables reported as risk-increasing are
-statistically associated with higher predicted
-ecosystem risk.
+The DIGITAL TWIN IMPORTANCE REPORT is the authoritative
+source for variable names, impact values, impact signs,
+strength labels, and risk direction.
 
-Variables reported as risk-reducing are
-statistically associated with lower predicted
-ecosystem risk.
+DOMAIN SCORES and VARIABLE IMPACTS are different quantities.
+A domain score must never be interpreted as the impact,
+sign, or ranking of an individual variable.
 
-These associations do not represent observed
-environmental changes and should not be interpreted
-as direct ecological causality.
+Never present a domain such as "biodiversity" or "land_use"
+as if it were an individual environmental variable.
 
-Use the retrieved scientific evidence only to
-explain the ecological relevance of the reported
-variables.
+VARIABLE DIRECTIONS
+-------------------
+
+A variable with a positive impact is associated with
+higher predicted ecosystem risk.
+
+A variable with a negative impact is associated with
+lower predicted ecosystem risk.
+
+Preserve the exact sign and value reported for every
+variable. Never infer a variable's direction from its
+domain score or from the direction of another variable
+in the same domain.
+
+For questions about the variables contributing most to
+risk, report the leading individual variables and their
+reported directions. Include both risk-increasing and
+risk-reducing variables when both are present in the report.
+
+For questions specifically about lower risk, focus on
+variables whose reported impact is negative.
+
+ECOLOGICAL INTERPRETATION
+-------------------------
+
+The reported associations describe the Digital Twin's
+predictions. They do not establish direct ecological
+causality or prove that changing a variable will change
+risk in the reported direction.
+
+Do not describe an association as statistically significant
+unless a statistical significance test is explicitly reported.
+
+Do not equate plant productivity with biodiversity.
+Use retrieved scientific evidence only to explain the
+ecological relevance of the reported variables. If the
+evidence does not establish a mechanism, state the
+association without inventing one.
+
+OUTPUT
+------
+
+Use the exact variable names from the report.
+Distinguish variables from environmental domains.
+Be concise, scientifically cautious, and useful to a
+manager of the Massaciuccoli basin.
+Do not omit leading variables merely to shorten the answer.
 """
 
 # ======================================================
@@ -543,52 +573,161 @@ RETRIEVED SCIENTIFIC EVIDENCE
 """
         )
 
+    
     # ======================================================
-    # CALL
+    # DETERMINISTIC FACTUAL INTERPRETATION + RAG CONTEXT
     # ======================================================
+
+    def format_driver(driver):
+        name = driver["name"]
+        impact = float(driver["impact"])
+        strength = driver.get("strength", "unknown")
+
+        return (
+            f"{name} (impact={impact:+.4f}, "
+            f"strength={strength})"
+        )
+
+    # ------------------------------------------------------
+    # 1. Build the authoritative numerical interpretation
+    # ------------------------------------------------------
+
+    sections = []
+
+    if increase:
+        increasing_text = "; ".join(
+            format_driver(d) for d in increase
+        )
+
+        sections.append(
+            "Variables associated with higher predicted "
+            f"ecosystem risk: {increasing_text}."
+        )
+
+    if decrease:
+        decreasing_text = "; ".join(
+            format_driver(d) for d in decrease
+        )
+
+        sections.append(
+            "Variables associated with lower predicted "
+            f"ecosystem risk: {decreasing_text}."
+        )
+
+    if not sections:
+        sections.append(
+            "No variables matching the requested risk "
+            "direction were identified in the importance report."
+        )
+
+    interpretation = " ".join(sections)
+
+    interpretation += (
+        " These are associations in the Digital Twin's "
+        "predictions, not proof of direct ecological causality. "
+        "The reported impacts do not establish that changing "
+        "a variable will cause risk to change in the same direction."
+    )
+
+    # ------------------------------------------------------
+    # 2. Retrieve scientific context through the existing RAG
+    # ------------------------------------------------------
+
+    ecological_prompt = """
+You are providing a short ecological-context note for the
+Massaciuccoli Digital Twin.
+
+TASK:
+Describe only the ecological meaning of the environmental
+variables listed below, using the retrieved scientific evidence.
+
+VARIABLES:
+""" + "\n".join(
+        f"- {d['name']}" for d in drivers[:5]
+    ) + """
+
+RULES:
+- Do not report, repeat, rank or reinterpret model impacts.
+- Do not infer causal mechanisms from statistical associations.
+- Do not claim that the retrieved evidence explains the signs
+  of the model impacts unless the evidence explicitly supports it.
+- Do not invent ecological facts or recommendations.
+- Distinguish general wetland ecology from evidence specific
+  to the Massaciuccoli basin.
+- If the retrieved documents do not provide relevant evidence,
+  state that they do not support a more specific explanation.
+- Use at most three concise sentences.
+- Return only the ecological-context note.
+"""
+
+    ecological_context = None
 
     try:
-        if DEBUG:
+        print("\n[RAG-IMPORTANCE] Retrieving ecological context...")
 
-            print("\n========== EXTRA PROMPT ==========\n")
-            print(prompt)
-            print("\n==================================\n")
-
-        result = generate_answer(
-
-            question=rag_query,
-
-            features=features,
-
-            extra_prompt=prompt
+        rag_output = generate_answer(
+            rag_query,
+            extra_prompt=ecological_prompt,
+            prompt_question=(
+                "Provide ecological context for these "
+                "Massaciuccoli Digital Twin variables: "
+                + ", ".join(d["name"] for d in drivers[:5])
+            ),
+            modular_prompt=True
         )
 
-        cleaned = clean_output(
-            result
+        ecological_context = clean_output(rag_output)
+
+    except Exception as exc:
+        print(
+            "[RAG-IMPORTANCE] Context retrieval/generation failed: "
+            f"{exc}"
         )
 
-        if cleaned:
+    # ------------------------------------------------------
+    # 3. Basic validation of the generated context
+    # ------------------------------------------------------
 
-            print("\n[RAG-IMPORTANCE] Output:")
-            print(cleaned)
+    if ecological_context:
+        lower_context = ecological_context.lower()
 
-            print("[RAG-IMPORTANCE v22] END\n")
+        # Reject output that repeats model-result claims.
+        forbidden_phrases = [
+            "variables associated with higher predicted",
+            "variables associated with lower predicted",
+            "impact=",
+            "strength=",
+            "statistically significant",
+        ]
 
-            return cleaned
+        if any(
+            phrase in lower_context
+            for phrase in forbidden_phrases
+        ):
+            print(
+                "[RAG-IMPORTANCE] Context rejected: "
+                "it repeats or introduces model-result claims."
+            )
+            ecological_context = None
 
-        return fallback_explanation(
-            drivers,
-            mode,
-            group_scores
+    # ------------------------------------------------------
+    # 4. Combine without allowing RAG to alter model results
+    # ------------------------------------------------------
+
+    if ecological_context:
+        interpretation += (
+            "\n\nEcological context: "
+            + ecological_context
+        )
+    else:
+        interpretation += (
+            "\n\nEcological context: the retrieved evidence "
+            "did not provide a sufficiently specific explanation "
+            "that could be added safely to this answer."
         )
 
-    except Exception as e:
+    print("\n[RAG-IMPORTANCE] Deterministic output:")
+    print(interpretation)
+    print("[RAG-IMPORTANCE v23] END\n")
 
-        print("\n# RAG-IMPORTANCE ERROR:")
-        print(e)
-
-        return fallback_explanation(
-            drivers,
-            mode,
-            group_scores
-        )
+    return interpretation

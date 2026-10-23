@@ -479,9 +479,9 @@ def get_catalog_summary() -> Dict[str, Any]:
         "catalog_version": CATALOG_VERSION,
         "source": deepcopy(SCIENTIFIC_SOURCE),
         "total_variables": len(VARIABLE_CATALOG),
-        # Application meaning: an environmental stressor is a harmful force.
-        "stressor_variables": len(get_harmful_forces()),
-        # Retain the source-paper terminology separately for traceability.
+        # All 12 model inputs are collectively treated as stressor variables
+        # by the source paper; harmful forces and fragile conditions are distinct roles.
+        "stressor_variables": len(get_stressor_variables()),
         "paper_stressor_inputs": len(get_stressor_variables()),
         "harmful_forces": len(get_harmful_forces()),
         "fragile_conditions": len(get_fragile_conditions()),
@@ -526,10 +526,9 @@ def format_variable_for_prompt(name: str) -> Optional[str]:
 # Intent -> tags used to select relevant records. `None` means all input features.
 DATA_INTENT_TAGS = {
     "dataset_inventory": None,
-    # Project convention: “environmental stressors” means harmful forces only.
-    # The source paper labels all 12 model inputs collectively as stressors, but
-    # this query category deliberately excludes fragile-condition indicators.
-    "stressor_variables": ("harmful_force",),
+    # The source paper collectively treats all 12 model inputs as stressor
+    # variables, distinguishing their ecological roles separately.
+    "stressor_variables": ("stressor_variable",),
     "harmful_forces": ("harmful_force",),
     "fragile_conditions": ("fragile_condition",),
     "anthropogenic_pressures": ("anthropogenic_pressure",),
@@ -552,12 +551,12 @@ DATA_INTENT_GUIDANCE = {
         "from coordinates and the ecosystem-risk model output."
     ),
     "stressor_variables": (
-        "In this application, interpret environmental stressors as variables whose "
-        "catalog role is harmful_force. Return only these records and exclude all "
-        "fragile_condition indicators. The source paper uses the term stressor variables "
-        "collectively for all 12 model inputs, but this query follows the project's narrower "
-        "operational definition. Describe these as potential harmful drivers, not as proven "
-        "causal effects in every grid cell."
+        "Return all variables tagged stressor_variable, following the source paper's "
+        "terminology for the 12 model inputs. Distinguish harmful_force (potentially "
+        "harmful drivers) from fragile_condition (ecosystem states or conditions relevant "
+        "to sensitivity and resilience). Do not describe fragile conditions as harmful "
+        "pressures in themselves. This role classification does not prove a causal effect "
+        "in every grid cell."
     ),
     "harmful_forces": (
         "Return only records whose role is harmful_force. Explain these as potential "

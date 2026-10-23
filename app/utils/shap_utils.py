@@ -220,31 +220,44 @@ def compute_delta_shap(
 # ======================================================
 
 def aggregate_onehot_features(shap_dict):
-
     """
-    Aggregates:
-    cat__Presence of grassland_0
-    cat__Presence of grassland_1
-
-    -> Presence of grassland
+    Aggregate one-hot Delta-SHAP contributions by their original
+    categorical feature, summing signed contributions before labels
+    are simplified or prettified.
     """
+    from collections import defaultdict
+
+    categorical_prefixes = [
+        "Change in land use and cover in the past decade",
+        "Change in grassland presence in the past decade",
+        "Land use and cover",
+        "Presence of grassland",
+    ]
+
+    # Match the longest categorical feature name first.
+    categorical_prefixes.sort(key=len, reverse=True)
 
     aggregated = defaultdict(float)
 
     for feature, value in shap_dict.items():
+        clean = feature.replace("num__", "").replace("cat__", "")
+        matched_prefix = None
 
-        clean = feature
+        for prefix in categorical_prefixes:
+            if clean.startswith(prefix + "_"):
+                matched_prefix = prefix
+                break
 
-        # remove sklearn prefixes
-        clean = clean.replace("num__", "")
-        clean = clean.replace("cat__", "")
+        if matched_prefix is not None:
+            # Sum category-level contributions under the original feature.
+            aggregated[matched_prefix] += float(value)
 
-        # detect one-hot suffixes
-        if clean.endswith("_0") or clean.endswith("_1"):
+        else:
+            # Preserve the previous handling of binary one-hot features.
+            if clean.endswith("_0") or clean.endswith("_1"):
+                clean = clean.rsplit("_", 1)[0]
 
-            clean = clean.rsplit("_", 1)[0]
-
-        aggregated[clean] += value
+            aggregated[clean] += float(value)
 
     return dict(aggregated)
 

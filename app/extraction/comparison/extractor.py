@@ -179,10 +179,12 @@ def _repair_addition_after_but(question, data):
     Repair the explicit construction:
       'a scenario with X and a scenario with X but Y'
 
-    Keep X in both scenarios when X is explicitly present in the second
-    scenario's text. Keep Y only in scenario_b when Y is introduced after
-    'but' and is not part of scenario_a's text. This repair is deliberately
-    limited to the recognizable wording pattern.
+    The first scenario contains X. The second contains the explicitly
+    repeated X plus the additional Y introduced after "but".
+
+    The LLM may incorrectly place Y in scenario_a. When that happens,
+    move the already-extracted Y modification to scenario_b rather than
+    dropping it. This repair never invents a modification or a value.
     """
     q = (question or "").strip()
     match = re.search(
@@ -206,22 +208,36 @@ def _repair_addition_after_but(question, data):
 
     scenario_a = data.get("scenario_a", [])
     scenario_b = data.get("scenario_b", [])
+    if not isinstance(scenario_a, list) or not isinstance(scenario_b, list):
+        return data
 
-    # If the LLM wrongly put the additional 'but Y' modification into A,
-    # remove it there only when the question text does not mention Y in A.
-    data["scenario_a"] = [
+    # Collect additional modifications before removing any misassigned ones.
+    # The extraction already contains their semantic details; we only repair
+    # scenario ownership and do not infer numeric values.
+    additional_modifications = [
         mod for mod in scenario_a
-        if _canonical_variable_name(mod.get("variable"))
-        not in variables_in_addition
+        if isinstance(mod, dict)
+        and _canonical_variable_name(mod.get("variable")) in variables_in_addition
     ]
 
-    # Restore explicitly shared modifications from A into B, but only when
-    # the variable is stated in the second scenario's pre-'but' clause.
+    # Remove the "but Y" modification from A when Y was not mentioned in A.
+    data["scenario_a"] = [
+        mod for mod in scenario_a
+        if not (
+            isinstance(mod, dict)
+            and _canonical_variable_name(mod.get("variable")) in variables_in_addition
+        )
+    ]
+
+    # Ensure the explicitly repeated condition X is present in B, if the LLM
+    # omitted it there but extracted it in A. Never copy unrelated variables.
     present_in_b = {
         _canonical_variable_name(mod.get("variable"))
-        for mod in scenario_b
+        for mod in scenario_b if isinstance(mod, dict)
     }
     for mod in data["scenario_a"]:
+        if not isinstance(mod, dict):
+            continue
         canonical = _canonical_variable_name(mod.get("variable"))
         if (
             canonical in variables_in_a_text
@@ -231,6 +247,107 @@ def _repair_addition_after_but(question, data):
             data["scenario_b"].append(copy.deepcopy(mod))
             present_in_b.add(canonical)
 
+    # Move the extracted additional condition to B. If B already contains a
+    # modification for that variable, preserve B's version and avoid a clash.
+    for mod in additional_modifications:
+        canonical = _canonical_variable_name(mod.get("variable"))
+        if canonical not in present_in_b:
+            data["scenario_b"].append(copy.deepcopy(mod))
+            present_in_b.add(canonical)
+
+    return data
+
+
+def _deduplicate_modifications_by_variable(modifications):
+    """
+    For a single-variable alternative, retain at most one extracted
+    modification per canonical variable. Prefer the first occurrence:
+    scenario order in the raw extraction is not treated as evidence that
+    repeated copies represent distinct requested changes.
+    """
+    result = []
+    seen = set()
+
+    for modification in modifications:
+        if not isinstance(modification, dict):
+            continue
+
+        canonical = _canonical_variable_name(
+            modification.get("variable")
+        )
+        if canonical in seen:
+            continue
+
+        seen.add(canonical)
+        result.append(modification)
+
+    return result
+
+
+def _repair_explicit_or_alternatives(question, data):
+    """
+    Repair a narrow, unambiguous comparison pattern:
+      "...: variable A ... or variable B ..."
+
+    Assign the already-extracted modification for each named variable to
+    its corresponding scenario. No modification or numeric value is invented.
+    """
+    q = (question or "").strip()
+
+    # Only handle a colon-introduced pair of alternatives, e.g.
+    # "Which ...: biodiversity -30% or tree cover -30%?"
+    match = re.search(
+        r":\s*(.+?)\s+\bor\b\s+(.+?)[.!?]*\s*$",
+        q,
+        flags=re.IGNORECASE,
+    )
+    if not match:
+        return data
+
+    left_text, right_text = match.groups()
+    left_variables = _canonical_variable_in_text(left_text)
+    right_variables = _canonical_variable_in_text(right_text)
+
+    # Leave ambiguous or multi-variable alternatives untouched.
+    if (
+        len(left_variables) != 1
+        or len(right_variables) != 1
+        or left_variables == right_variables
+    ):
+        return data
+
+    left_variable = next(iter(left_variables))
+    right_variable = next(iter(right_variables))
+
+    all_modifications = []
+    for key in ("scenario_a", "scenario_b"):
+        scenario = data.get(key, [])
+        if isinstance(scenario, list):
+            all_modifications.extend(
+                mod for mod in scenario if isinstance(mod, dict)
+            )
+
+    left_modifications = [
+        mod for mod in all_modifications
+        if _canonical_variable_name(mod.get("variable")) == left_variable
+    ]
+    right_modifications = [
+        mod for mod in all_modifications
+        if _canonical_variable_name(mod.get("variable")) == right_variable
+    ]
+
+    # Do not fabricate missing modifications.
+    if not left_modifications or not right_modifications:
+        return data
+
+    # Each alternative explicitly names one variable, so duplicate copies
+    # of that variable are extraction noise, not additional requested changes.
+    data["scenario_a"] = _deduplicate_modifications_by_variable(
+        left_modifications
+    )
+    data["scenario_b"] = _deduplicate_modifications_by_variable(
+        right_modifications
+    )
     return data
 
 
@@ -240,16 +357,45 @@ def _normalize_target(question, data):
     """
     q = (question or "").lower()
 
-    if re.search(r"\bresilien(?:ce|t)\\b", q):
+    if re.search(r"\bresilien(?:ce|t)\b", q):
         data["target"] = "ecosystem_resilience"
-    elif re.search(r"\becosystem health\\b|\\bhealth of the ecosystem\\b", q):
+    elif re.search(r"\becosystem health\b|\bhealth of the ecosystem\b", q):
         data["target"] = "ecosystem_health"
-    elif re.search(r"\brisk\\b", q):
+    elif re.search(r"\brisk\b", q):
         data["target"] = "ecosystem_risk"
     else:
         data["target"] = "ecosystem_risk"
 
     return data
+
+
+def _remove_exact_duplicate_modifications(modifications):
+    """Remove byte-for-byte-equivalent semantic modifications within a scenario."""
+    result = []
+    seen = set()
+
+    for modification in modifications:
+        if not isinstance(modification, dict):
+            result.append(modification)
+            continue
+
+        signature = (
+            _canonical_variable_name(modification.get("variable")),
+            modification.get("modification_type"),
+            str(modification.get("original_expression") or "").strip().lower(),
+            modification.get("value"),
+            modification.get("from_value"),
+            modification.get("to_value"),
+            modification.get("direction"),
+            modification.get("unit"),
+        )
+        if signature in seen:
+            continue
+
+        seen.add(signature)
+        result.append(modification)
+
+    return result
 
 
 def _normalize_comparison_data(data, question=""):
@@ -261,10 +407,14 @@ def _normalize_comparison_data(data, question=""):
     arithmetic or model calculations.
     """
     data = _repair_addition_after_but(question, data)
+    data = _repair_explicit_or_alternatives(question, data)
     data = _normalize_target(question, data)
 
     for scenario_key in ("scenario_a", "scenario_b"):
         scenario = data.get(scenario_key, [])
+        if isinstance(scenario, list):
+            scenario = _remove_exact_duplicate_modifications(scenario)
+            data[scenario_key] = scenario
 
         for modification in scenario:
             modification_type = modification.get(
@@ -328,12 +478,24 @@ def extract_comparison(question: str) -> ComparisonExtraction:
         )
 
     parsed_json = _extract_json(raw_text)
+    print("COMPARISON RAW JSON:", json.dumps(parsed_json, indent=2))
 
     parsed_json = _normalize_comparison_data(
         parsed_json,
         question=question,
     )
+    print("COMPARISON NORMALIZED JSON:", json.dumps(parsed_json, indent=2))
 
-    return ComparisonExtraction.model_validate(
-        parsed_json
-    )
+    if not isinstance(parsed_json, dict):
+        raise ValueError("Comparison extraction must be a JSON object.")
+
+    for scenario_key in ("scenario_a", "scenario_b"):
+        scenario = parsed_json.get(scenario_key)
+        if not isinstance(scenario, list) or not scenario:
+            raise ValueError(
+                f"Comparison extraction produced an empty or invalid "
+                f"{scenario_key}. Raw extraction: "
+                f"{json.dumps(parsed_json, ensure_ascii=False)}"
+            )
+
+    return ComparisonExtraction.model_validate(parsed_json)

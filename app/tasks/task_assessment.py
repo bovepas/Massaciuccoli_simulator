@@ -265,16 +265,19 @@ def handle_assessment(
     # SCENARIO INPUT
     # ==================================================
 
-    scenario_values = baseline_values.copy()
-
-    for k, v in grounded_features.items():
-        scenario_values[k] = v
-
+    # IMPORTANT:
+    # Pass only the requested modifications to build_input_df.
+    # The builder creates the baseline internally. Passing a full
+    # baseline+scenario dictionary here would make the builder
+    # reinterpret unchanged numeric baseline values as modifications.
     df_scenario = build_input_df(
-        scenario_values,
+        grounded_features,
         dataset,
         interpret_percentages=True
     )
+
+    print("\\n[ASSESSMENT] SCENARIO MODEL INPUT:")
+    print(df_scenario.T)
 
     scenario_risk = float(
         model.predict(df_scenario)[0]

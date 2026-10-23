@@ -1,0 +1,93 @@
+You are providing a short ecological-context note for the
+Massaciuccoli Digital Twin.
+
+TASK:
+Describe only the ecological meaning of the environmental
+variables listed below, using the retrieved scientific evidence.
+
+VARIABLES:
+- Index of total productivity by plant phenology
+- Change in land use and cover in the past decade
+
+RULES:
+- Do not report, repeat, rank or reinterpret model impacts.
+- Do not infer causal mechanisms from statistical associations.
+- Do not claim that the retrieved evidence explains the signs
+  of the model impacts unless the evidence explicitly supports it.
+- Do not invent ecological facts or recommendations.
+- Distinguish general wetland ecology from evidence specific
+  to the Massaciuccoli basin.
+- If the retrieved documents do not provide relevant evidence,
+  state that they do not support a more specific explanation.
+- Use at most three concise sentences.
+- Return only the ecological-context note.
+
+Provide ecological context for these Massaciuccoli Digital Twin variables: Index of total productivity by plant phenology, Change in land use and cover in the past decade
+
+[Source: paper2_rag_revised.txt | Section: INTRODUCTION]
+Wetlands are among the most productive ecosystems on Earth and provide
+essential ecosystem services including biodiversity conservation, water
+purification, flood regulation, carbon storage and climate regulation.
+
+Despite their ecological importance, wetlands are increasingly exposed
+to multiple anthropogenic pressures, including land-use change,
+urbanisation, agricultural intensification, habitat fragmentation and
+climate change.
+
+The simultaneous action of multiple stressors produces cumulative
+ecological effects that are often difficult to quantify using
+traditional environmental assessment methods.
+
+The complexity of wetland ecosystems therefore requires integrated
+approaches capable of combining heterogeneous environmental
+information into coherent ecosystem-risk indicators.
+
+---
+
+[Source: paper2_rag_revised.txt | Section: PREVIOUS STUDIES ON THE MASSACIUCCOLI LAKE BASIN]
+Previous ecosystem studies on the Massaciuccoli Lake basin have mainly
+focused on specific environmental components or restricted portions of
+the territory.
+
+These investigations include:
+
+• hydrological dynamics and water quality;
+
+• anthropogenic pressures associated with agriculture, urbanisation
+  and habitat fragmentation;
+
+• habitats of community interest and vegetation dynamics;
+
+• biodiversity conservation;
+
+• ecological effects of climate change.
+
+Despite the richness of these thematic investigations, no previous
+study has provided a comprehensive, spatially explicit ecosystem-risk
+assessment integrating anthropogenic pressures, climatic drivers,
+ecological fragility and biodiversity indicators across the entire
+Massaciuccoli Lake basin.
+
+---
+
+[Source: paper1_rag_revised.txt | Section: INTRODUCTION]
+WETLAND ECOSYSTEMS
+
+Wetlands are among the ecosystems most vulnerable to climate change.
+During the twentieth century their global extent declined by
+approximately 70%, with consequent reductions in biodiversity and in
+ecosystem services including water quality, food production, carbon
+sequestration and socio-economic functions.
+
+Climate change is recognized as one of the principal drivers affecting
+wetland ecosystems and biodiversity conservation. Long-term monitoring
+is therefore essential for assessing ecosystem conditions and supporting
+conservation activities.
+
+---
+
+[Source: paper2_rag_revised.txt | Section: ECOSYSTEM RISK ASSESSMENT (ERA)]
+Ecosystem Risk Assessment (ERA) is a methodological framework for
+identifying,
+
+/no_think

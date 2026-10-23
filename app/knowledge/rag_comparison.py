@@ -135,6 +135,22 @@ def _get_modification_value(mod):
         f"Unsupported modification type: {type(mod)}"
     )
 
+def _format_modification(feature, mod, value):
+    """Format a requested modification using the appropriate unit."""
+
+    if isinstance(mod, dict):
+        mod_type = str(mod.get("type", "")).lower()
+
+        if "percentage" in mod_type or mod_type == "percent":
+            return f"{abs(value):.1f}%"
+
+    feature_lower = feature.lower()
+
+    if "temperature" in feature_lower:
+        return f"{abs(value):.1f}°C"
+
+    return f"{abs(value):.1f}"
+
 def build_comparison_report(
     scenario_a,
     scenario_b,
@@ -158,7 +174,15 @@ def build_comparison_report(
     report.append("")
     report.append("Requested environmental modification")
 
+    descriptions = scenario_a.get(
+        "requested_modification_descriptions", {}
+    )
+
     for feature, mod in scenario_a["requested_modifications"].items():
+
+        if feature in descriptions:
+            report.append(f"• {descriptions[feature]}")
+            continue
 
         value = _get_modification_value(mod)
 
@@ -170,7 +194,7 @@ def build_comparison_report(
 
         report.append(
             f"• {direction} {feature} by "
-            f"{abs(value):.1f}%"
+            f"{_format_modification(feature, mod, value)}"
         )
 
     report.append("")
@@ -220,7 +244,15 @@ def build_comparison_report(
     report.append("")
     report.append("Requested environmental modification")
 
+    descriptions = scenario_b.get(
+        "requested_modification_descriptions", {}
+    )
+
     for feature, mod in scenario_b["requested_modifications"].items():
+
+        if feature in descriptions:
+            report.append(f"• {descriptions[feature]}")
+            continue
 
         value = _get_modification_value(mod)
 
@@ -232,7 +264,7 @@ def build_comparison_report(
 
         report.append(
             f"• {direction} {feature} by "
-            f"{abs(value):.1f}%"
+            f"{_format_modification(feature, mod, value)}"
         )
 
     report.append("")
@@ -474,15 +506,13 @@ def build_transition_query(
     # --------------------------------------------------
 
     query = f"""
-    Massaciuccoli Lake ecosystem comparison
-    {comparison_type}
+    Massaciuccoli Lake ecosystem risk comparison
     {transition_text}
-    ecosystem risk
-    ecological drivers
-    biodiversity
-    vegetation
-    hydrology
-    ecosystem resilience
+    biodiversity decline
+    species richness reduction
+    tree cover reduction
+    tree cover density
+    predicted ecosystem risk
     """
 
     return query

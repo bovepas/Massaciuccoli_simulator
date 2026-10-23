@@ -149,6 +149,7 @@ target = "ecosystem_risk"
 4. CRITICAL RULE: SPLIT SCENARIOS FIRST
 ==================================================
 
+
 Before extracting ANY variable, number, percentage, or modification:
 
 FIRST identify the exact textual content belonging to scenario A.
@@ -163,54 +164,241 @@ Never use information from scenario B while extracting scenario A.
 
 Never use information from scenario A while extracting scenario B.
 
+A comparison contains TWO INDEPENDENT ALTERNATIVES unless the wording explicitly states that the second scenario includes the first scenario's conditions plus additional modifications.
 
-Example:
+The first alternative described by the user is scenario_a.
 
-"Compare a scenario with temperature +3°C and precipitation -20%
-versus a scenario with temperature +5°C and precipitation -10%."
+The second alternative described by the user is scenario_b.
 
-The scenario boundaries are:
+--------------------------------------------------
+4.1. ALTERNATIVES INTRODUCED BY "OR"
+--------------------------------------------------
 
-SCENARIO A:
-"temperature +3°C and precipitation -20%"
+When the user asks which scenario produces a higher or lower outcome, or compares two possibilities using "or", treat the alternatives as TWO DISTINCT SCENARIOS.
 
-SCENARIO B:
-"temperature +5°C and precipitation -10%"
+The word "or" normally separates alternatives. It does NOT mean that the modifications from both alternatives must be combined into one scenario.
 
+EXAMPLE 1 — TWO DIFFERENT VARIABLES
 
-Therefore:
+Question:
 
-scenario_a:
-- temperature +3°C
-- precipitation -20%
+"Which scenario produces higher ecosystem risk: biodiversity -30% or tree cover -30%?"
 
-scenario_b:
-- temperature +5°C
-- precipitation -10%
-
-
-The following outputs are WRONG:
+Correct extraction:
 
 scenario_a:
-- temperature +3°C
-- precipitation -20%
-- precipitation -10%
+- biodiversity decreases by 30 percent
 
 scenario_b:
-- temperature +5°C
-- precipitation -10%
-- precipitation +20%
+- tree_cover decreases by 30 percent
 
+The following extraction is WRONG:
+
+scenario_a:
+- biodiversity decreases by 30 percent
+- tree_cover decreases by 30 percent
+
+scenario_b:
+- tree_cover decreases by 30 percent
+
+EXAMPLE 2 — DIFFERENT CLIMATE VARIABLES
+
+Question:
+
+"Which scenario produces higher ecosystem risk: temperature +3°C or precipitation -20%?"
+
+Correct extraction:
+
+scenario_a:
+- temperature increases by 3°C
+
+scenario_b:
+- precipitation decreases by 20 percent
+
+Do NOT add precipitation to scenario_a.
+
+Do NOT add temperature to scenario_b.
+
+EXAMPLE 3 — TWO DIFFERENT MODIFICATIONS OF THE SAME VARIABLE
+
+Question:
+
+"Which scenario produces higher ecosystem risk: tree cover -20% or tree cover -40%?"
+
+Correct extraction:
+
+scenario_a:
+- tree_cover decreases by 20 percent
+
+scenario_b:
+- tree_cover decreases by 40 percent
+
+Do NOT combine the two percentages.
+
+EXAMPLE 4 — TWO MULTI-VARIABLE ALTERNATIVES
+
+Question:
+
+"Which scenario produces higher ecosystem risk: temperature +3°C and precipitation -10%, or temperature +5°C and precipitation -20%?"
+
+Correct extraction:
+
+scenario_a:
+- temperature increases by 3°C
+- precipitation decreases by 10 percent
+
+scenario_b:
+- temperature increases by 5°C
+- precipitation decreases by 20 percent
+
+Each modification belongs ONLY to the alternative in which it is explicitly stated.
+
+Do NOT transfer the precipitation value from one scenario to the other.
+
+Do NOT transfer the temperature value from one scenario to the other.
+
+--------------------------------------------------
+4.2. ALTERNATIVES INTRODUCED BY "VERSUS", "VS", OR "COMPARED WITH"
+--------------------------------------------------
+
+When the user compares two scenarios using "versus", "vs", or "compared with", treat the two described alternatives as independent scenarios.
+
+EXAMPLE 5 — DIFFERENT VARIABLES
+
+Question:
+
+"Compare biodiversity -30% versus tree cover -30%."
+
+Correct extraction:
+
+scenario_a:
+- biodiversity decreases by 30 percent
+
+scenario_b:
+- tree_cover decreases by 30 percent
+
+EXAMPLE 6 — SAME VARIABLE, DIFFERENT VALUES
+
+Question:
+
+"Compare temperature +2°C versus temperature +4°C."
+
+Correct extraction:
+
+scenario_a:
+- temperature increases by 2°C
+
+scenario_b:
+- temperature increases by 4°C
+
+EXAMPLE 7 — MULTI-VARIABLE SCENARIOS
+
+Question:
+
+"Compare temperature +2°C and precipitation -10% versus temperature +4°C and precipitation -20%."
+
+Correct extraction:
+
+scenario_a:
+- temperature increases by 2°C
+- precipitation decreases by 10 percent
+
+scenario_b:
+- temperature increases by 4°C
+- precipitation decreases by 20 percent
+
+Do NOT merge the modifications of the two scenarios.
+
+--------------------------------------------------
+4.3. ALTERNATIVES DESCRIBED WITHOUT "OR" OR "VERSUS"
+--------------------------------------------------
+
+The user may describe two alternatives without using a specific comparison word.
+
+EXAMPLE 8 — "A SCENARIO WITH ... AND A SCENARIO WITH ..."
+
+Question:
+
+"Compare a scenario with biodiversity -30% and a scenario with tree cover -30%."
+
+Correct extraction:
+
+scenario_a:
+- biodiversity decreases by 30 percent
+
+scenario_b:
+- tree_cover decreases by 30 percent
+
+The word "and" connecting the descriptions of the two scenarios does NOT mean that both modifications belong to the same scenario.
+
+EXAMPLE 9 — COMPARISON QUESTION WITH AN OUTCOME
+
+Question:
+
+"Is ecosystem risk higher with a 20% reduction in grassland or with a 30% reduction in tree cover?"
+
+Correct extraction:
+
+scenario_a:
+- grassland decreases by 20 percent
+
+scenario_b:
+- tree_cover decreases by 30 percent
+
+The question about which outcome is higher does not change the assignment of modifications to scenarios.
+
+--------------------------------------------------
+4.4. MULTIPLE MODIFICATIONS WITHIN EACH SCENARIO
+--------------------------------------------------
+
+A scenario may contain more than one modification when the wording explicitly places those modifications within the same alternative.
+
+EXAMPLE 10 — TWO MODIFICATIONS IN SCENARIO A, ONE IN SCENARIO B
+
+Question:
+
+"Compare a scenario with temperature +3°C and precipitation -20% versus a scenario with tree cover -30%."
+
+Correct extraction:
+
+scenario_a:
+- temperature increases by 3°C
+- precipitation decreases by 20 percent
+
+scenario_b:
+- tree_cover decreases by 30 percent
+
+Do NOT add tree_cover to scenario_a.
+
+Do NOT add temperature or precipitation to scenario_b.
+
+EXAMPLE 11 — DIFFERENT MODIFICATIONS IN EACH ALTERNATIVE
+
+Question:
+
+"Which scenario produces higher ecosystem risk: biodiversity -30% and temperature +2°C, or tree cover -40% and precipitation -10%?"
+
+Correct extraction:
+
+scenario_a:
+- biodiversity decreases by 30 percent
+- temperature increases by 2°C
+
+scenario_b:
+- tree_cover decreases by 40 percent
+- precipitation decreases by 10 percent
+
+There are EXACTLY four modifications.
 
 Each modification belongs ONLY to the scenario whose text explicitly contains it.
 
-==================================================
-ADDITIONAL MODIFICATIONS BETWEEN SCENARIOS
-==================================================
+--------------------------------------------------
+4.5. EXPLICITLY SHARED CONDITIONS PLUS AN ADDITIONAL MODIFICATION
+--------------------------------------------------
 
-When the second scenario repeats the first scenario's conditions
-and then introduces an additional modification using words such as
-"but", "while", "with the addition of", or "in addition":
+A different rule applies when the user explicitly states that the second scenario repeats the first scenario's conditions and adds another modification.
+
+When the second scenario repeats the first scenario's conditions and then introduces an additional modification using words such as "but", "while", "with the addition of", or "in addition":
 
 1. Include the explicitly shared modifications in both scenarios.
 2. Include the additional modification ONLY in scenario_b.
@@ -218,27 +406,76 @@ and then introduces an additional modification using words such as
 4. Preserve qualitative modifications as qualitative.
 5. Do not invent numerical magnitudes.
 
-Example:
+EXAMPLE 12 — ADDITIONAL TREE COVER MODIFICATION
 
 Question:
-"Compare a scenario with temperature +2°C and a scenario
-with temperature +2°C but increased tree cover."
+
+"Compare a scenario with temperature +2°C and a scenario with temperature +2°C but increased tree cover."
 
 Correct extraction:
 
 scenario_a:
-- temperature +2°C
+- temperature increases by 2°C
 
 scenario_b:
-- temperature +2°C
-- tree_cover, qualitative, direction = increase,
-  value = null
+- temperature increases by 2°C
+- tree_cover increases qualitatively
+- direction = increase
+- value = null
 
-The word "but" introduces an additional condition in scenario_b.
+The phrase "but increased tree cover" introduces an additional condition in scenario_b.
+
 It does not make that condition part of scenario_a.
 
-This rule applies only when the wording explicitly establishes
-the additional modification as belonging to the second scenario.
+EXAMPLE 13 — ADDITIONAL CLIMATE MODIFICATION
+
+Question:
+
+"Compare a scenario with precipitation -10% and a scenario with precipitation -10% but temperature +3°C."
+
+Correct extraction:
+
+scenario_a:
+- precipitation decreases by 10 percent
+
+scenario_b:
+- precipitation decreases by 10 percent
+- temperature increases by 3°C
+
+The explicitly repeated precipitation condition belongs to both scenarios.
+
+The additional temperature modification belongs ONLY to scenario_b.
+
+--------------------------------------------------
+4.6. FINAL SCENARIO-ASSIGNMENT CHECK
+--------------------------------------------------
+
+Before returning the JSON, verify the following:
+
+1. Identify the two alternatives before extracting any modifications.
+
+2. For "or", "versus", "vs", and "compared with", assign each modification only to the alternative in which it is stated.
+
+3. For constructions such as "a scenario with X and a scenario with Y", do not interpret the connecting "and" as combining X and Y into one scenario.
+
+4. Multiple modifications belong to the same scenario only when the wording places them within that scenario.
+
+5. Copy a modification into both scenarios only when the wording explicitly establishes that the condition is shared by both scenarios.
+
+6. When the second scenario adds a condition to explicitly repeated conditions, preserve the shared modifications in both scenarios and assign the additional condition only to scenario_b.
+
+7. Do not infer that an unmentioned variable has changed.
+
+8. Do not invent modifications to make the scenarios symmetrical.
+
+9. Every extracted modification must be traceable to the text of its assigned scenario, except for a condition explicitly shared by the wording.
+
+10. If a modification cannot be assigned confidently to a scenario, do not arbitrarily assign it to both scenarios.
+
+11. Verify that scenario_a and scenario_b represent the two alternatives actually requested by the user.
+
+12. Return ONLY valid JSON matching the required schema.
+
 ==================================================
 5. NO INVENTION / NO CROSS-CONTAMINATION
 ==================================================
