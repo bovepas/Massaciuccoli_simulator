@@ -1,0 +1,212 @@
+DOCUMENT: BANESCHI_2007_RAG
+SOURCE: Ilaria Baneschi (2007), Geochemical and Environmental Study of a Coastal Ecosystem: Massaciuccoli Lake (Northern Tuscany, Italy), doctoral thesis.
+CASE STUDY: Massaciuccoli Lake basin, northern Tuscany, Italy.
+DOMAIN: Hydrogeochemistry; surface water; agricultural drainage; coastal salinity; former sand quarries; sediments; carbon and nitrogen; radiocarbon.
+PURPOSE: Source-grounded scientific knowledge for retrieval by the Massaciuccoli Digital Twin. The document preserves quantitative summaries, sampling compartments, methods, interpretations and limitations. It is not a present-day monitoring dataset and is not, by itself, a calibration dataset for the ecological risk emulator.
+
+================================================================
+1. STUDY SCOPE AND DATA PROVENANCE
+================================================================
+
+The thesis investigates the geochemical characteristics of the Massaciuccoli Lake coastal ecosystem and the processes affecting water and sediment composition. The main sampling campaigns were conducted in 2004–2005. Some summer 2002 samples are also included for comparison.
+
+The water dataset includes lake water, the agricultural drainage network, streams (Farabola and Gora di Stiava), the Burlamacca channel, former quarries, seawater, the Serchio River and Villa Spinola spring. The number of samples differs by parameter because not every analysis was available for every sample.
+
+The sediment dataset includes 49 samples for water-content statistics and 20 or 36 samples for different chemical parameters. Radiocarbon analyses were performed on selected sediment-core samples.
+
+All numerical values in this document are those reported in the thesis. They describe the sampled locations and periods, not current conditions throughout the basin. Sample groups are not necessarily spatially or temporally balanced.
+
+================================================================
+2. WATER CHEMISTRY — AGGREGATED STATISTICS
+================================================================
+
+Table 2.1. Basic statistics for lake water and the agricultural drainage network. Values are means, medians, minima, maxima and standard deviations reported by the thesis. N is the number of observations used for that parameter. Units are shown in the column headings.
+
+PARAMETER | UNIT | LAKE N | LAKE MEAN | LAKE MEDIAN | LAKE MIN | LAKE MAX | LAKE SD | AGRICULTURAL N | AGRICULTURAL MEAN | AGRICULTURAL MEDIAN | AGRICULTURAL MIN | AGRICULTURAL MAX | AGRICULTURAL SD
+Temperature | °C | 46 | 23.3 | 25.9 | 4.1 | 29.7 | 7.1 | 50 | 22.4 | 25.6 | 4.4 | 29.8 | 7.6
+pH | dimensionless | 46 | 8.62 | 8.75 | 7.4 | 9.05 | 0.4 | 50 | 8.159 | 8.180 | 6.990 | 8.890 | 0.457
+Conductivity | µS/cm at 20°C | 42 | 2009 | 1965 | 1847 | 2413 | 164 | 34 | 3513 | 3606 | 1280 | 7901 | 1539
+Total dissolved solids (TDS) | mg/L | 42 | 2009.37 | 1965.19 | 1847.22 | 2413.46 | 164.00 | 50 | 2249.65 | 2216.92 | 1092.24 | 3941.16 | 555.00
+Alkalinity | meq/L | 46 | 3.04 | 2.63 | 2.2 | 7.3 | 1.05 | 50 | 4.11 | 3.57 | 2.80 | 8.80 | 1.34
+Chloride (Cl) | mg/L | 46 | 790.22 | 749.08 | 688.25 | 1139.03 | 99.21 | 50 | 884.45 | 830.66 | 285.35 | 1838.61 | 311.61
+Sulphate (SO4) | mg/L | 46 | 366.22 | 369.01 | 201.56 | 435.05 | 43.53 | 50 | 365.94 | 369.43 | 233.69 | 526.82 | 58.29
+Sodium (Na) | mg/L | 46 | 462.03 | 442.24 | 408.26 | 595.36 | 49.42 | 50 | 506.79 | 469.51 | 158.58 | 1006.74 | 171.30
+Potassium (K) | mg/L | 46 | 18.35 | 18.52 | 8.79 | 25.54 | 3.5 | 50 | 19.68 | 20.20 | 4.00 | 40.09 | 7.38
+Calcium (Ca) | mg/L | 46 | 120.94 | 115.78 | 101.57 | 174.39 | 15.89 | 50 | 140.28 | 137.94 | 110.08 | 215.70 | 21.32
+Magnesium (Mg) | mg/L | 46 | 73.1 | 71.51 | 63.47 | 96.66 | 7.33 | 50 | 78.94 | 76.61 | 31.12 | 133.53 | 19.35
+
+Interpretation of the aggregated lake and drainage values:
+- Mean chloride and sodium concentrations are higher in the agricultural network than in the lake in this dataset (Cl: 884.45 versus 790.22 mg/L; Na: 506.79 versus 462.03 mg/L).
+- Mean sulphate is very similar in the two groups (365.94 versus 366.22 mg/L).
+- The agricultural network has substantially larger variability for chloride, sodium, conductivity and magnesium than the lake group.
+- These group summaries do not establish a single source for salinity. The thesis explicitly cautions that increasing chloride or salinity does not necessarily imply seawater mixing.
+
+Table 2.2. Mean values for other water groups. The thesis table reports only means for seawater, the Serchio River, Villa Spinola spring and Case Rosse well; sample counts are not consistently provided for all these rows. Do not interpret these means as basin-wide reference values.
+
+PARAMETER | UNIT | SEAWATER | SERCHIO RIVER | VILLA SPINOLA SPRING | CASE ROSSE WELL
+TDS | mg/L | 39076.89 | 552.62 | not reported | not reported
+Alkalinity | meq/L | 2.68 | 3.25 | 3.07 | not reported
+Chloride | mg/L | 21485.95 | 56.3655 | 19.65 | 35.5
+Sulphate | mg/L | 2853.32 | 146.49 | 381.25 | 17.01
+Sodium | mg/L | 12073.52 | 38.62 | 8.53 | 21.72
+Potassium | mg/L | 528.36 | 2.81 | 0.93 | 0.89
+Calcium | mg/L | 452.02 | 95.20 | 144.49 | not reported
+Magnesium | mg/L | 1369.64 | 14.88 | 10.78 | 4.96
+Temperature | °C | 26.75 | 29.4 | not reported | not reported
+pH | dimensionless | 8.11 | 8.03 | not reported | not reported
+Conductivity | µS/cm at 20°C | 65076 | 868 | 752.82 | 80.07
+
+Table 2.3. Mean values for additional surface-water groups.
+
+PARAMETER | UNIT | FARABOLA AND GORA DI STIAVA STREAMS | BURLAMACCA CHANNEL | FORMER QUARRIES
+N (temperature) | samples | 7 | 18 | 50
+Temperature | °C | 25.0 | 25.7 | 17.212
+pH | dimensionless | 7.917 | 8.181 | 7.680
+Conductivity | µS/cm at 20°C | 7870 | 43417 | 7469
+TDS | mg/L | 4325.87 | 13304.30 | 6206.48
+Alkalinity | meq/L | 5.21 | 3.71 | 6.43
+Chloride | mg/L | 1977.14 | 9543.25 | 3093.31
+Sulphate | mg/L | 511.44 | 1474.28 | 564.28
+Sodium | mg/L | 1194.22 | 3820.59 | 1670.64
+Potassium | mg/L | 50.40 | 142.52 | 64.00
+Calcium | mg/L | 134.11 | 235.07 | 180.62
+Magnesium | mg/L | 136.40 | 473.14 | 211.21
+
+For Table 2.3, the N values vary by parameter. For example, the Burlamacca chloride and sulphate means use 23 samples, whereas several other parameters use 15–18 samples; former-quarry sample counts also vary (generally 49–50). The table above is a compact transcription of reported means, not a claim that all means use the same sample count.
+
+================================================================
+3. WATER GEOCHEMISTRY — INTERPRETATION AND PROCESSES
+================================================================
+
+The thesis identifies several possible controls on lake-water chemistry:
+1. Net evaporation, especially during summer, and plant transpiration during spring, which can concentrate conservative solutes.
+2. Inflows from the agricultural drainage network, which modify lake composition according to the relative contribution of different inflows.
+3. Groundwater discharge, described as a non-point source that can progressively modify water composition.
+
+Most waters are classified as Na-Cl type. Exceptions or mixed compositions include the Villa Spinola spring (Ca-sulphate type), the Serchio River, Gora di Stiava stream and two agricultural-network samples (Quiesa L6 and Barra L12).
+
+The thesis uses ionic relationships (including Na/Cl, B/Cl, Br/Cl, Mg/Ca, Ca/Na and (Ca+Mg)/SO4) to investigate seawater mixing, anthropogenic inputs, vegetation/soil interactions, mineral weathering, precipitation/dissolution and evaporation. The author emphasizes that identifying the origin of salinity is difficult where multiple saline sources occur.
+
+A strong Cl-Br correlation (r² = 0.98) is reported for samples from the quarries, Burlamacca channel and sea. The thesis interprets this as supporting seawater intrusion along the Burlamacca channel up to the excavation area. This interpretation applies to those sampled waters and should not be generalized to every saline sample in the basin.
+
+Some Burlamacca samples have Cl/Br ratios above the seawater value; the thesis suggests possible urban or industrial chloride pollution. For lake and agricultural samples, bromide behaviour is more complex; plant uptake or release from manure/peat are discussed as possible explanations, not established source apportionment.
+
+The Ca-Mg and Ca-SO4 relationships distinguish:
+- a trend including lake and agricultural-network samples, generally with Ca/Mg greater than 1 and Ca/SO4 close to 1;
+- a trend including seawater, Burlamacca channel and quarry waters, with a reported Ca/Mg ratio around 0.14.
+
+Lake samples collected in summer 2004 show a calcium deficit. The thesis attributes this primarily to CaCO3 precipitation; a contribution from bacterial sulphate reduction (BSR) is not excluded. Winter and spring 2005 lake samples show higher calcium, which the author relates to dissolution of calcium-bearing minerals in the reclaimed area and drainage inputs.
+
+The thesis proposes that agricultural drainage is a principal influence on lake chemistry during winter and spring, when runoff inflow is greatest. During summer, evaporation and possible marine influence are discussed as alternative or concurrent processes. These are geochemical interpretations of the sampled dataset, not a quantified contemporary water budget.
+
+================================================================
+4. FORMER QUARRIES — WATER COLUMN AND REDOX CONDITIONS
+================================================================
+
+The former sand-extraction ponds show marked vertical and seasonal geochemical stratification.
+
+The thesis reports summer thermoclines in the quarry ponds. Some ponds may occasionally receive seawater; because saline water is denser, it can sink and contribute to persistent stratification. San Rocchino and Incrociata deep waters have higher density throughout the year in the observations discussed by the thesis, limiting vertical mixing and favouring anoxic conditions at depth.
+
+Dissolved oxygen decreases from saturation near the surface to values close to zero within the first 4–5 m in the profiles described. CO2 increases with depth. Variations in chloride, sulphate, alkalinity, redox potential (Eh) and H2S are discussed as evidence consistent with bacterial sulphate reduction and other redox processes.
+
+The oxic-anoxic interface influences iron and manganese:
+- In oxygenated surface waters, Fe and Mn oxides can form.
+- Under oxygen-depleted conditions, dissolved Fe(II) and Mn(II) are favoured and can accumulate.
+- In the presence of sulphide, iron sulphide (FeS) precipitation may occur.
+
+The thesis reports isotopic patterns (including decreasing δ13C of dissolved inorganic carbon and increasing δ34S of sulphate in the relevant profiles) as consistent with biogenic CO2 production and sulphate/nitrate reduction. These are interpretations of the sampled profiles.
+
+The author discusses the former quarries as potentially acting as a hydraulic barrier to marine intrusion and as a nutrient sink. These are thesis interpretations/hypotheses based on the studied system; they should not be represented as independently demonstrated, universally applicable or currently quantified functions.
+
+================================================================
+5. SEDIMENTS — AGGREGATED COMPOSITIONAL DATA
+================================================================
+
+Sediments are described mainly as brown organic silts or grey silts, sometimes with black layers, vegetal fragments and shells. Samples from the Burlamacca channel are comparatively sand-rich.
+
+Table 5.1. Sediment water content (n = 49).
+
+PARAMETER | UNIT | N | MEAN | STANDARD DEVIATION | MINIMUM | MAXIMUM
+Water content | % | 49 | 76.78 | 12.59 | 26 | 94
+
+Table 5.2. Sediment chemical and loss-on-ignition statistics.
+
+PARAMETER | UNIT | N | MEAN | MEDIAN | MINIMUM | MAXIMUM | STANDARD DEVIATION
+LOI105 | % | 20 | 6.54 | 4.78 | 0.79 | 20.38 | 4.80
+LOI375 | % | 20 | 20.58 | 15.30 | 2.11 | 53.80 | 14.77
+LOI550 | % | 20 | 3.71 | 3.19 | 0.90 | 11.61 | 2.10
+LOI950 | % | 20 | 10.11 | 4.99 | 1.31 | 30.39 | 10.09
+LOIres | % | 20 | 60.18 | 58.25 | 24.49 | 92.63 | 17.34
+Total nitrogen (TN) | % | 36 | 1.00 | 0.97 | 0.07 | 2.18 | 0.53
+Total carbon (TC) | % | 36 | 19.06 | 20.05 | 3.33 | 47.80 | 10.70
+Total organic carbon (TOC) | % | 36 | 17.89 | 19.70 | 2.33 | 47.90 | 11.59
+Total inorganic carbon (TIC) | % | 36 | 1.19 | 0.06 | 0.00 | 12.90 | 2.77
+C/N ratio | dimensionless | 36 | 20.74 | 17.72 | 12.05 | 56.86 | 9.59
+
+LOI105, LOI375, LOI550 and LOI950 refer to mass loss at the corresponding heating steps in the sequential loss-on-ignition procedure; LOIres is the residue after heating at 950°C. The thesis reports a relationship TOC = 0.6 × LOI375 with R² = 0.877 for the studied samples.
+
+Important methodological qualification: loss-on-ignition can be influenced by clay, gypsum, sulphides, metal oxides and carbonates. The author considers LOI375 the best estimator for the studied lake sediments, noting their low clay content. The reported relationship should not be treated as a universal conversion applicable to all soils or sediments.
+
+Mineralogical observations:
+- Sediment samples L14 and L15 are dominated by calcite (approximately 80%), with quartz around 10%.
+- For these samples, reported SiO2 is approximately 11% and CaO approximately 43%.
+- Burlamacca sample L10 has the lowest carbon content and is dominated by quartz (approximately 73%).
+
+These mineralogical values refer to specific samples and are not basin-wide sediment averages.
+
+================================================================
+6. SEDIMENT CORES AND RADIOCARBON — AGGREGATED FINDINGS
+================================================================
+
+Radiocarbon dating was performed on three sediment cores:
+- L13: southern site near the mouth of the Barra channel.
+- L14: northern side of the lake.
+- L7: near the entrance of the Burlamacca channel.
+
+In the southern L13 core (90 cm long), the author identifies a possible bomb-radiocarbon peak around 55 cm and another smaller peak around 80 cm. The thesis explicitly notes that this interpretation is based on one long core and requires further analysis.
+
+The northern core shows a radiocarbon peak around 15–20 cm. The difference between the southern and northern profiles is interpreted as suggesting higher sedimentation in the southern part of the lake.
+
+For the southern site, the thesis estimates a sedimentation rate of approximately 1.3 cm/year, assuming constant sedimentation over the relevant interval. This is a site-specific estimate based on the stated assumption, not a basin-wide rate.
+
+The author proposes that the Barra channel drains an agricultural area and may transport organic matter to the southern lake. This is a hypothesis discussed to explain the spatial pattern, not a direct quantified measurement of organic-matter flux.
+
+================================================================
+7. LIMITATIONS AND INTERPRETATION RULES FOR RETRIEVAL
+================================================================
+
+- The main water sampling period is 2004–2005, with some comparative samples from summer 2002. Do not describe these data as current.
+- Sample numbers vary by parameter and group. Always retain N where a statistic is quoted; do not assume that every parameter has the same sample count.
+- The study includes multiple water types and potential salinity sources. Elevated chloride or sodium alone does not prove seawater intrusion.
+- The Cl-Br relationship and the thesis interpretation of seawater intrusion apply particularly to sampled quarry and Burlamacca waters; avoid extending this conclusion indiscriminately to the whole lake.
+- The proposed roles of former quarries as hydraulic barrier and nutrient sink are interpretations advanced by the thesis, not established general laws or current measured services.
+- The sediment statistics are based on limited sample subsets (n = 20 or n = 36 depending on the parameter). They are not a spatially exhaustive sediment map.
+- The TOC–LOI375 relationship is empirical for the studied sediments and has methodological caveats.
+- The 1.3 cm/year sedimentation estimate applies to the southern L13 site under an assumption of constant sedimentation. It is not a basin-wide rate.
+- Radiocarbon interpretation of the southern core is explicitly tentative and based on one long core.
+- The thesis does not provide a contemporary, spatially complete hydrological or geochemical monitoring dataset, nor a calibrated ecological risk model.
+
+================================================================
+8. SCIENTIFIC VALUE FOR THE MASSACIUCCOLI DIGITAL TWIN
+================================================================
+
+High-value local evidence:
+- Historical, site-specific baseline of major-ion chemistry for lake water, agricultural drainage, streams, Burlamacca channel and former quarries.
+- Quantitative ranges and variability for chloride, sulphate, sodium, calcium, magnesium, conductivity, TDS and alkalinity.
+- Geochemical mechanisms relevant to salinity interpretation: evaporation, evapotranspiration, drainage inputs, groundwater contribution, mineral dissolution/precipitation and possible seawater intrusion.
+- Vertical redox stratification in former quarries, including oxygen depletion, CO2 increase and Fe/Mn behaviour.
+- Sediment organic matter, carbon, nitrogen, loss-on-ignition and mineralogical observations.
+- Site-specific sediment-core and radiocarbon evidence relevant to sedimentation history.
+
+Potential DT use:
+- RAG contextual explanation of the basin's hydrogeochemical complexity and historical observations.
+- Identification of candidate variables and relationships for future monitoring: Cl, Na, SO4, Ca, Mg, conductivity, TDS, alkalinity, dissolved oxygen, CO2, Eh, Fe, Mn, H2S, TOC, TN and sediment water content.
+- Historical reference for comparing future measurements, provided differences in sampling design, location, method and period are made explicit.
+
+Not suitable without additional harmonization or new data:
+- Direct calibration of the ecological risk emulator.
+- Treating 2002–2005 statistics as present-day values.
+- Inferring causal nutrient-removal or hydraulic-barrier performance of the former quarries from this thesis alone.
+- Extrapolating the southern-core sedimentation rate to the entire lake basin.
+
+END OF DOCUMENT

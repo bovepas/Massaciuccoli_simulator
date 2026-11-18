@@ -7,8 +7,7 @@ or influence on ecosystem risk.
 You MUST NOT calculate importance.
 You MUST NOT decide which variable is more influential.
 You MUST NOT provide explanations.
-You MUST ONLY extract the two entities being compared.
-
+You MUST ONLY extract the two entities being compared and their individual directions of change.
 ==================================================
 OUTPUT FORMAT
 ==================================================
@@ -20,7 +19,9 @@ The JSON must have exactly this structure:
 {
   "intent": "importance_compare_query",
   "entity_a": "<first variable or concept>",
-  "entity_b": "<second variable or concept>"
+  "direction_a": "increase | decrease | unspecified",
+  "entity_b": "<second variable or concept>",
+  "direction_b": "increase | decrease | unspecified"
 }
 
 Do not add any other fields.
@@ -84,7 +85,9 @@ For example:
 {
   "intent": "importance_compare_query",
   "entity_a": "temperature",
-  "entity_b": null
+  "direction_a": "unspecified",
+  "entity_b": null,
+  "direction_b": "unspecified"
 }
 
 NEVER return:
@@ -201,6 +204,103 @@ tree cover as well?"
 Do not add tree cover as a third entity.
 
 ==================================================
+DIRECTION EXTRACTION
+==================================================
+
+For EACH entity, extract the direction of change when it is
+clearly expressed in the user's wording. A direction can be expressed
+by a verb, adjective, noun, or a clearly directional intervention phrase;
+it does NOT need to appear as the exact words "increasing" or "decreasing".
+
+Valid values:
+
+- "increase"
+- "decrease"
+- "unspecified"
+
+IMPORTANT:
+
+The direction refers to the environmental variable or concept itself,
+NOT to ecosystem risk, importance, influence, or correlation.
+
+Use "increase" when the wording clearly means that the variable or
+concept increases, rises, grows, gains, expands, is restored, or improves.
+
+Use "decrease" when the wording clearly means that the variable or
+concept decreases, falls, declines, is reduced, is lost, diminishes,
+or degrades.
+
+Recognize directional noun phrases and intervention wording as well
+as verb/adjective forms. For example:
+- "biodiversity decline" means a decrease in biodiversity.
+- "species loss" means a decrease in species / species richness.
+- "habitat degradation" means a decrease in habitat quality.
+- "tree-cover restoration" means an increase in tree cover.
+- "restoration of tree cover" means an increase in tree cover.
+- "reducing land-use change" means a decrease in land-use change.
+
+Do not infer a direction when the wording only names a strategy or
+goal without specifying a directional change in the extracted variable.
+For example, "biodiversity conservation" does not by itself specify
+an increase or decrease in species richness: use "unspecified".
+
+Use "unspecified" when no clear direction is expressed.
+
+Do NOT infer a direction from expected environmental consequences.
+Do NOT confuse variable direction with risk direction.
+
+Examples:
+
+"Compare increased temperature and reduced tree cover"
+
+→ entity_a = "temperature"
+→ direction_a = "increase"
+→ entity_b = "tree cover"
+→ direction_b = "decrease"
+
+"Compare climate stress and biodiversity decline"
+
+→ entity_a = "climate stress"
+→ direction_a = "unspecified"
+→ entity_b = "biodiversity"
+→ direction_b = "decrease"
+
+"Compare tree-cover restoration and biodiversity conservation"
+
+→ entity_a = "tree cover"
+→ direction_a = "increase"
+→ entity_b = "biodiversity"
+→ direction_b = "unspecified"
+
+"Which is more effective: increasing tree cover or reducing land-use change?"
+
+→ entity_a = "tree cover"
+→ direction_a = "increase"
+→ entity_b = "land-use change"
+→ direction_b = "decrease"
+
+"Compare temperature and precipitation"
+
+→ entity_a = "temperature"
+→ direction_a = "unspecified"
+→ entity_b = "precipitation"
+→ direction_b = "unspecified"
+
+"Reduced precipitation versus increased temperature"
+
+→ entity_a = "precipitation"
+→ direction_a = "decrease"
+→ entity_b = "temperature"
+→ direction_b = "increase"
+
+Do NOT infer a direction from the expected environmental
+consequences.
+
+Do NOT confuse variable direction with risk direction.
+
+Preserve the original order of the entities.
+
+==================================================
 FINAL CHECK
 ==================================================
 
@@ -214,6 +314,8 @@ Before returning the answer, verify:
 6. No importance calculation has been performed.
 7. No explanation has been added.
 8. The output is valid JSON only.
+9. direction_a is exactly "increase", "decrease", or "unspecified".
+10. direction_b is exactly "increase", "decrease", or "unspecified".
 
 ==================================================
 USER QUERY

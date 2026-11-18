@@ -5,7 +5,7 @@ Massaciuccoli Digital Twin
 RAG — IMPORTANCE COMPARE
 
 Interpreta il confronto tra due driver
-utilizzando gli score prodotti da
+interpretando gli effetti direzionali calcolati da
 task_importance_compare.
 """
 
@@ -73,97 +73,87 @@ def build_legacy_prompt(
 ):
 
     return f"""
-You are an environmental scientist.
+You are a scientific assistant for the Massaciuccoli Digital Twin.
 
 QUESTION
-
 {question}
 
-COMPUTED RESULT
-
+COMPUTED DIRECTIONAL SENSITIVITY RESULTS
 {comparison_statement}
 
-IMPORTANT
-
-The comparison has already been computed.
-
-Accept the computed result exactly as provided.
-
-Do NOT determine which driver is stronger.
-
-Do NOT compare the scores.
-
-Do NOT reverse the ranking.
-
-Do NOT restate the computed result.
-
 TASK
+Compare the changes in predicted ecosystem risk caused by the two
+numerical perturbations, each evaluated against the same baseline.
 
-Explain the ecological meaning of the computed result.
+This is a comparison of model sensitivity to the specific perturbations
+tested. It is NOT a classical feature-importance ranking, a measure of
+intrinsic ecological importance, or an evaluation of management
+intervention effectiveness.
 
-Focus primarily on plausible ecological mechanisms
-associated with the higher-ranked driver.
+The task applies a perturbation of 0.5 standard deviations to each
+numerical feature: upward for increase/unspecified and downward for
+decrease. When direction is unspecified, the upward perturbation is a
+computational convention, not a direction requested by the user.
 
-You may briefly mention the lower-ranked driver,
-but do NOT describe it as unimportant,
-ineffective, negligible, or irrelevant.
+A positive impact means predicted ecosystem risk increased relative to
+the common baseline; a negative impact means it decreased. A zero or
+near-zero value means little or no change was detected by this model for
+the tested perturbation at the reported precision. It does not prove
+that the variable has no ecological influence.
 
-A lower score only indicates lower sensitivity
-within the current predictive model.
+Do not equate broad ecological concepts with their numerical proxies.
+Do not describe a feature perturbation as restoration, conservation,
+stress reduction, or another real-world intervention unless that action
+is explicitly represented in the scenario. The model predicts risk; it
+does not directly measure ecosystem resilience.
 
-Interpret associations rather than direct causality.
+Accept the reported values and signs exactly as provided. Do not
+recalculate them or infer direct ecological causality. Use retrieved
+evidence only as supported ecological context, not as an unsupported
+explanation of the numerical result.
 
-Avoid generic conclusions.
-
-Do not finish with statements such as:
-
-- overall...
-- these findings highlight...
-- both drivers are important...
-
-Start directly with the ecological interpretation.
-
-Write approximately 3–4 concise sentences.
+Answer the user's question directly and concisely. If the requested
+comparison cannot be answered by the reported model outputs, state
+that limitation explicitly.
 
 Answer:
 """
+
 
 # ======================================================
 # FALLBACK
 # ======================================================
 
 def fallback_compare_explanation(
-
     entity_a,
     entity_b,
-
-    score_a,
-    score_b
+    direction_a,
+    direction_b,
+    impact_a,
+    impact_b
 ):
-
-    if score_a > score_b:
-
-        return (
-
-            f"{entity_a} appears more strongly "
-            f"associated with ecosystem risk "
-            f"than {entity_b} in the current model."
-        )
-
-    elif score_b > score_a:
+    def scenario_text(entity, direction, impact):
+        if direction == "unspecified":
+            direction_text = (
+                "with no direction specified by the user "
+                "(positive-perturbation convention applied by the task)"
+            )
+        else:
+            direction_text = f"with the requested {direction}"
 
         return (
-
-            f"{entity_b} appears more strongly "
-            f"associated with ecosystem risk "
-            f"than {entity_a} in the current model."
+            f"For {entity} {direction_text}, "
+            f"the predicted risk change is {impact:+.6f}"
         )
 
     return (
-
-        f"{entity_a} and {entity_b} "
-        f"show similar influence on "
-        f"ecosystem risk."
+        scenario_text(entity_a, direction_a, impact_a)
+        + "; "
+        + scenario_text(entity_b, direction_b, impact_b)
+        + ". Positive values indicate an increase in predicted ecosystem "
+        "risk; negative values indicate a decrease. These are model "
+        "responses under the tested scenarios, not evidence of direct "
+        "causality or intrinsic variable importance."
     )
 
 
@@ -176,14 +166,18 @@ def build_importance_compare_report(
     question,
     entity_a,
     entity_b,
-    score_a,
-    score_b,
+    direction_a,
+    direction_b,
+    impact_a,
+    impact_b,
+    perturbations_a,
+    perturbations_b,
     comparison_statement
 ):
 
     return f"""
 ============================================================
-DIGITAL TWIN IMPORTANCE COMPARISON REPORT
+DIGITAL TWIN DIRECTIONAL SENSITIVITY COMPARISON REPORT
 ============================================================
 
 QUESTION
@@ -191,28 +185,46 @@ QUESTION
 
 {question}
 
-============================================================
-COMPARED VARIABLES
+IMPORTANT DISTINCTION
 ------------------------------------------------------------
 
-Variable A:
-{entity_a}
+The concepts in the question are the user's ecological framing.
+The feature names and perturbation values below identify what the
+computational task actually changed. The two are not necessarily
+equivalent.
 
-Variable B:
-{entity_b}
-
-============================================================
-MODEL RESULTS
+SCENARIOS EVALUATED
 ------------------------------------------------------------
 
-Variable A importance score:
-{score_a:.4f}
+Scenario A
+Question concept/entity: {entity_a}
+Direction extracted from the question: {direction_a}
+Actual numerical feature perturbations (feature, baseline, delta,
+scenario value): {perturbations_a}
+Change in predicted ecosystem risk: {impact_a:+.6f}
 
-Variable B importance score:
-{score_b:.4f}
+Scenario B
+Question concept/entity: {entity_b}
+Direction extracted from the question: {direction_b}
+Actual numerical feature perturbations (feature, baseline, delta,
+scenario value): {perturbations_b}
+Change in predicted ecosystem risk: {impact_b:+.6f}
+
+COMPUTATIONAL METHOD
+------------------------------------------------------------
+
+Each scenario is evaluated independently against the same baseline.
+The task perturbs each numerical feature by 0.5 standard deviations:
+increase/unspecified applies +0.5 standard deviations; decrease applies
+-0.5 standard deviations. Unspecified direction therefore means the
+task's positive-perturbation convention, not a direction requested by
+the user.
+
+The reported risk impacts are rounded upstream to four decimal places.
+A zero or near-zero value must be interpreted at that precision.
 
 ============================================================
-DIGITAL TWIN RESULT
+COMPUTED COMPARISON
 ------------------------------------------------------------
 
 {comparison_statement}
@@ -223,127 +235,255 @@ def build_importance_compare_notes():
 
     return """
 ============================================================
-ECOLOGICAL INTERPRETATION NOTES
+TASK-SPECIFIC SCIENTIFIC INTERPRETATION RULES
 ============================================================
 
-The reported comparison was computed by the
-Digital Twin.
+TASK MEANING: DIRECTIONAL SENSITIVITY COMPARISON
+------------------------------------------------------------
 
-The reported ranking reflects the relative
-statistical association of the compared variables
-with predicted ecosystem risk.
+This task compares how the model's predicted ecosystem-risk score
+responds to two separate numerical perturbations, each evaluated
+against the SAME baseline prediction.
 
-A higher importance score indicates greater
-model sensitivity within the current prediction.
+It is a comparison of model sensitivity to the specific perturbations
+tested. It is NOT:
+- a classical feature-importance ranking;
+- a ranking of intrinsic ecological importance;
+- proof that one variable causes more ecological damage;
+- an evaluation of the effectiveness of real-world interventions.
 
-The reported scores do not represent direct
-ecological causality or observed environmental
-change.
+1. QUESTION CONCEPTS AND ACTUAL NUMERICAL FEATURES
+------------------------------------------------------------
 
-Use the retrieved scientific evidence only to
-explain the ecological relevance of the reported
-variables.
+The ecological concepts in the user's question and the numerical
+features used by the Digital Twin are not necessarily equivalent.
+
+Always distinguish:
+- the original ecological concept mentioned by the user;
+- the numerical feature(s) actually perturbed, as listed in the
+  perturbation dictionaries in the report.
+
+The feature names and their baseline, delta and scenario values are
+the authoritative description of what the task actually changed.
+
+Do not claim that a feature fully represents a broader ecological
+concept unless this correspondence is supported by the available
+information. If it is an indirect representation or proxy, say so.
+Do not describe the numerical simulation as a complete simulation
+of the broader ecological process.
+
+2. DIRECTION AND PERTURBATION MAGNITUDE
+------------------------------------------------------------
+
+For each numerical feature, the task applies a perturbation of
+0.5 standard deviations:
+- increase: +0.5 standard deviations;
+- decrease: -0.5 standard deviations;
+- unspecified: +0.5 standard deviations by the task's existing
+  positive-perturbation convention.
+
+When direction is unspecified, this is a computational convention,
+NOT a direction requested by the user.
+
+Use the sign of the actual DELTA in the report to determine whether
+each feature increased or decreased:
+- positive delta = the numerical feature increased;
+- negative delta = the numerical feature decreased.
+
+Never infer direction from whether the baseline or scenario value
+is positive or negative. For example, a change from -0.94 to -0.93
+is an increase in the numerical feature.
+
+For entities mapped to multiple features, describe the actual
+perturbation of each component. Do not assume that the broad
+ecological concept itself was directly simulated.
+
+Although the perturbation is standardized in units of each feature's
+standard deviation, the physical/ecological meaning and magnitude
+are not necessarily comparable across different features. Do not
+treat the two perturbations as equivalent real-world changes.
+
+3. NUMERICAL PERTURBATIONS ARE NOT MANAGEMENT INTERVENTIONS
+------------------------------------------------------------
+
+A numerical increase or decrease in a feature must not automatically
+be described as a real-world ecological intervention or management
+action.
+
+For example:
+- increasing tree-cover density is not automatically a simulation
+  of tree-cover restoration;
+- increasing the number of potentially living species is not
+  automatically a simulation of biodiversity conservation;
+- perturbing precipitation or evapotranspiration features is not
+  automatically a complete simulation of hydrological stress,
+  climate stress, or a stress-reduction intervention.
+
+If the user asks which management intervention would be more
+effective, state explicitly that this task does not evaluate
+intervention effectiveness. Report only the model responses to the
+numerical feature perturbations actually performed. Do not select
+or recommend an intervention based on these results.
+
+4. INTERPRETATION OF SIGNED RISK IMPACTS
+------------------------------------------------------------
+
+The two impacts are changes in predicted ecosystem risk calculated
+independently against the SAME baseline prediction.
+
+Interpret the signs as follows:
+- positive impact = predicted ecosystem risk increased relative
+  to the common baseline;
+- negative impact = predicted ecosystem risk decreased relative
+  to the common baseline;
+- zero or near-zero impact = little or no change was detected in
+  the model prediction for that tested perturbation at the reported
+  numerical precision.
+
+The task rounds impacts to four decimal places before they are
+passed to this RAG layer. Therefore, a reported zero may reflect
+rounding and must not be described as proof of exactly zero
+sensitivity or ecological influence.
+
+The absolute value represents the magnitude of the model response.
+If one absolute impact is larger, state only that the model response
+was larger for THAT tested perturbation.
+
+Do not conclude that the corresponding variable is intrinsically
+more important, more influential in general, or ecologically more
+significant. Do not describe the result as a causal contribution
+or as proof that a variable has no ecological influence.
+
+5. GROUPS OF FEATURES
+------------------------------------------------------------
+
+For an entity composed of multiple numerical features, all component
+features are perturbed simultaneously in the specified direction.
+The group effect is computed from the combined scenario prediction;
+component effects are not summed.
+
+Describe the component features actually perturbed. Do not attribute
+the combined numerical response to a specific component feature
+unless the available results support that conclusion.
+
+6. RISK IS NOT RESILIENCE
+------------------------------------------------------------
+
+The model output reported by this task is a predicted ecosystem-risk
+score. It is not a direct measurement of ecosystem resilience.
+
+If the user asks which factor controls, determines, or improves
+ecosystem resilience, do not claim that this task has measured
+resilience. Explain that the available result supports only a
+comparison of predicted risk responses to the tested perturbations.
+Do not equate lower predicted risk with a directly measured increase
+in resilience.
+
+7. ECOLOGICAL INTERPRETATION AND RETRIEVED EVIDENCE
+------------------------------------------------------------
+
+These outputs describe model responses under numerical scenarios.
+They do not establish direct ecological causality or observed
+environmental change.
+
+Use retrieved scientific evidence only to provide ecological
+context directly supported by the retrieved material.
+
+Documented ecological mechanisms may be described as scientific
+context when supported by retrieved evidence. Do not present them
+as the explanation for a numerical model response unless the
+evidence directly supports that connection. The numerical output
+alone does not identify the ecological mechanism responsible
+for the predicted impact.
+
+Do not invent mechanisms, claim unsupported causal relations,
+or force an ecological explanation when the retrieved evidence
+is not sufficiently relevant. Do not introduce unsupported
+conservation or management recommendations.
+
+8. FINAL RESPONSE
+------------------------------------------------------------
+
+Clearly distinguish:
+- the ecological concepts mentioned in the question;
+- the numerical features actually perturbed;
+- the actual direction and magnitude of each perturbation;
+- the resulting change in predicted ecosystem risk;
+- the ecological context supported by retrieved evidence.
+
+Answer the user's specific question directly. If the requested
+claim (for example, intervention effectiveness or resilience)
+cannot be established by these outputs, say so explicitly and
+then state what the model comparison can establish.
+
+Do not change, recalculate, reverse, or contradict the reported
+impact values or their signs. Do not produce an intrinsic
+importance ranking.
 """
+
 
 # ======================================================
 # MAIN
 # ======================================================
 
 def generate_importance_compare_explanation(
-
     question,
-
     entity_a,
     entity_b,
-
     feature_a,
     feature_b,
-
-    score_a,
-    score_b,
-
+    direction_a,
+    direction_b,
+    impact_a,
+    impact_b,
+    perturbations_a,
+    perturbations_b,
     features=None
 ):
 
-    print(
-        "\n[RAG-IMPORTANCE-COMPARE] START\n"
-    )
+    print("\n[RAG-IMPORTANCE-COMPARE] START\n")
 
     print(
         f"[RAG] profile={LLM_PROFILE} "
         f"style={LLM_STYLE}"
     )
 
-    # --------------------------------------------------
-    # WINNER
-    # --------------------------------------------------
+    def describe_scenario(entity, direction, impact):
+        if direction == "unspecified":
+            direction_text = (
+                "the user did not specify a direction; "
+                "the task applied its positive-perturbation convention "
+                "(+0.5 standard deviations to each mapped feature)"
+            )
+        else:
+            direction_text = (
+                f"the task applied a {direction} perturbation "
+                "(0.5 standard deviations) to the mapped numerical feature(s)"
+            )
 
-    if score_a > score_b:
-
-        winner = entity_a
-        winner_score = score_a
-
-        loser = entity_b
-        loser_score = score_b
-
-        comparison_statement = (
-
-            f"In the current model, "
-            f"{winner} shows a stronger influence "
-            f"on ecosystem risk than {loser} "
-            f"({winner_score:.4f} vs "
-            f"{loser_score:.4f})."
+        return (
+            f"For the question concept '{entity}', {direction_text}; "
+            f"the model predicts a risk change of {impact:+.6f}"
         )
 
-    elif score_b > score_a:
-
-        winner = entity_b
-        winner_score = score_b
-
-        loser = entity_a
-        loser_score = score_a
-
-        comparison_statement = (
-
-            f"In the current model, "
-            f"{winner} shows a stronger influence "
-            f"on ecosystem risk than {loser} "
-            f"({winner_score:.4f} vs "
-            f"{loser_score:.4f})."
-        )
-
-    else:
-
-        winner = None
-        loser = None
-
-        comparison_statement = (
-
-            f"In the current model, "
-            f"{entity_a} and {entity_b} "
-            f"show similar influence "
-            f"on ecosystem risk."
-        )
-
-    print(
-        "[DEBUG] winner =",
-        winner
+    comparison_statement = (
+        describe_scenario(entity_a, direction_a, impact_a)
+        + ". "
+        + describe_scenario(entity_b, direction_b, impact_b)
+        + "."
     )
+
+    print("[DEBUG] computed comparison =", comparison_statement)
 
     # --------------------------------------------------
     # FEATURE TEXT
     # --------------------------------------------------
 
-    feature_a_text = feature_to_text(
-        feature_a
-    )
-
-    feature_b_text = feature_to_text(
-        feature_b
-    )
+    feature_a_text = feature_to_text(feature_a)
+    feature_b_text = feature_to_text(feature_b)
 
     # --------------------------------------------------
-    # RETRIEVAL QUERY
+    # RETRIEVAL QUERY — keep feature-based retrieval unchanged
     # --------------------------------------------------
 
     rag_query = f"""
@@ -358,58 +498,66 @@ def generate_importance_compare_explanation(
     hydrology
     """
 
-    print(
-        "\n[DEBUG] RAG QUERY:"
-    )
-
-    print(
-        rag_query
-    )
+    print("\n[DEBUG] RAG QUERY:")
+    print(rag_query)
 
     # --------------------------------------------------
     # PROMPT
     # --------------------------------------------------
 
     if USE_LEGACY_PROMPTS:
-
-            prompt = build_legacy_prompt(
-                question,
-                comparison_statement
-            )
-
+        prompt = build_legacy_prompt(
+            question,
+            comparison_statement
+        )
     else:
+        report = build_importance_compare_report(
+            question=question,
+            entity_a=entity_a,
+            entity_b=entity_b,
+            direction_a=direction_a,
+            direction_b=direction_b,
+            impact_a=impact_a,
+            impact_b=impact_b,
+            perturbations_a=perturbations_a,
+            perturbations_b=perturbations_b,
+            comparison_statement=comparison_statement
+        )
 
-            report = build_importance_compare_report(
-                question,
-                entity_a,
-                entity_b,
-                score_a,
-                score_b,
-                comparison_statement
-            )
+        notes = build_importance_compare_notes()
 
-            notes = build_importance_compare_notes()
+        prompt = f"""
+    QUESTION:
+    {question}
 
-            prompt = (
-                build_prompt("importance_compare")
-                + f"""
+    {report}
 
-QUESTION:
-{question}
+    {notes}
 
-{report}
+    ============================================================
+    FINAL INSTRUCTION — APPLY THIS TASK DEFINITION
+    ============================================================
 
-{notes}
+    The task-specific rules above define the meaning of this request
+    and take precedence over generic or legacy wording about importance
+    scores, variable rankings, driver contributions, or higher-ranked
+    drivers.
 
-============================================================
-RETRIEVED SCIENTIFIC EVIDENCE
-============================================================
+    Interpret this as a comparison of model sensitivity to the two
+    numerical perturbations reported above. Do not produce an intrinsic
+    importance ranking. Do not infer intervention effectiveness or
+    ecosystem resilience from predicted-risk changes. Explicitly state
+    when the user's broader ecological concept is not directly measured.
 
-"""
-            )
+    ============================================================
+    RETRIEVED SCIENTIFIC EVIDENCE
+    ============================================================
+
+    """
+        
 
     # --------------------------------------------------
-    # CALL
+    # CALL — preserve modular RAG invocation
     # --------------------------------------------------
 
     try:
@@ -419,49 +567,32 @@ RETRIEVED SCIENTIFIC EVIDENCE
             print("\n==================================\n")
 
         result = generate_answer(
-
             question=rag_query,
-
+            prompt_question=question,
             features=features,
-
-            extra_prompt=prompt
+            extra_prompt=prompt,
+            modular_prompt=True
         )
 
-        cleaned = clean_output(
-            result
-        )
+        cleaned = clean_output(result)
 
         if cleaned:
-
-            print(
-                "\n[RAG OUTPUT]"
-            )
-
-            print(
-                cleaned
-            )
-
-            print(
-                "\n[RAG-IMPORTANCE-COMPARE] END\n"
-            )
-
+            print("\n[RAG OUTPUT]")
+            print(cleaned)
+            print("\n[RAG-IMPORTANCE-COMPARE] END\n")
             return cleaned
 
         return comparison_statement
 
     except Exception as e:
-
-        print(
-            "\n[RAG ERROR]"
-        )
-
+        print("\n[RAG ERROR]")
         print(e)
 
         return fallback_compare_explanation(
-
             entity_a,
             entity_b,
-
-            score_a,
-            score_b
+            direction_a,
+            direction_b,
+            impact_a,
+            impact_b
         )

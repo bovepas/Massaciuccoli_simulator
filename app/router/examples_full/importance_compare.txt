@@ -3,6 +3,9 @@ Compare increased temperature and reduced tree cover in terms of ecosystem risk.
 Which contributes more to ecosystem risk: biodiversity or tree cover?
 Which has a stronger effect on ecosystem risk: evapotranspiration increase or precipitation decrease?
 Compare climate stress and biodiversity decline as drivers of ecosystem risk.
+Compare increased temperature and reduced tree cover in terms of ecosystem risk
+Compare the effect of biodiversity decline and tree-cover reduction on ecosystem risk
+Compare increased precipitation and decreased temperature in terms of ecosystem risk
 Compare tree-cover restoration and biodiversity conservation as risk mitigation strategies.
 Which intervention would be more effective: increasing tree cover or reducing land-use change?
 Compare hydrological stress and biodiversity stress in terms of ecosystem resilience.

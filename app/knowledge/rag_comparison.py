@@ -776,7 +776,7 @@ def enhance_with_rag(
             print(prompt)
             print("\n==================================\n")
 
-        raw = call_llm(prompt)
+        raw = call_llm(prompt, role="interpretation")
 
         if not raw:
             return comparison_report

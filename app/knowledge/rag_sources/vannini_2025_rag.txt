@@ -1,0 +1,246 @@
+DOCUMENT: Vannini et al. (2025) — A FAIR and open geographic data collection for the Massaciuccoli Lake basin wetland in Italy
+SOURCE: G.L. Vannini, P. Bove, G. Coro (2025), Data in Brief, 59, 111303. DOI: 10.1016/j.dib.2025.111303.
+CASE STUDY: Massaciuccoli Lake basin wetland, Tuscany, Italy.
+DOMAIN: Wetlands; biodiversity; ecosystem services; geospatial data; climate change; land use and land cover; FAIR data.
+PURPOSE: Describe a harmonised, spatially and temporally aligned collection of geographic datasets for the Massaciuccoli Lake basin, and the Geodata Layers Harmonization Methodology (GLHM) used to collect, select, align and publish them.
+
+GENERAL IMPORTANCE OF WETLANDS
+================================
+
+Wetlands are important biodiversity reserves and provide habitats for plants, animals and aquatic organisms. They support the conservation of biological diversity and contribute to the functioning and quality of surrounding aquatic ecosystems.
+
+Wetlands can act as natural filters, improving water quality. They provide ecosystem services that include water-quality regulation, carbon sequestration, food supply and social and tourism-related benefits.
+
+Wetlands are vulnerable to climate change and continuing anthropogenic pressure. The loss and degradation of wetlands can negatively affect biodiversity and the ecosystem services they provide. The article cites a global estimate of a 70% decrease in wetland area during the twentieth century; this is a global background figure cited by the authors, not a measurement for the Massaciuccoli basin.
+
+These general statements provide background on why wetland monitoring, conservation, restoration and spatial planning are important. They should not be interpreted as measurements of the local condition of Massaciuccoli Lake.
+
+MASSACCIUCCOLI GEODATA COLLECTION: OVERVIEW
+===========================================
+
+The collection contains 148 harmonised geospatial datasets representing 75 environmental, geomorphological and socio-economic variables for the Massaciuccoli Lake basin in Tuscany, Italy.
+
+The 148 datasets comprise:
+- 109 raster datasets in GeoTIFF format.
+- 39 vector datasets in Shapefile format.
+
+Each geodata file represents a single variable. The variables cover climatic, agro-environmental, pedological, geological, morphological, ecological, biological, habitat, land-use and socio-economic information.
+
+The collection is organised into five temporal reference frames:
+- Remote past: 1950–1980; representative year 1950.
+- Near past: 1981–2015; representative year 2000.
+- Present: 2016–2024; representative year 2024.
+- Near future: 2025–2050; representative year 2050.
+- Far future: 2051–2100; representative year 2100.
+
+Near-future and far-future projections are distinguished, where available, by Representative Concentration Pathways (RCP):
+- RCP 2.6: low greenhouse-gas concentration scenario.
+- RCP 4.5: medium greenhouse-gas concentration scenario.
+- RCP 8.5: high greenhouse-gas concentration scenario.
+
+Not every variable is available for every time frame or RCP scenario. Availability must be checked in the catalogue metadata rather than assumed.
+
+SPATIAL REFERENCE AND HARMONISATION
+===================================
+
+The geodata are georeferenced in WGS84 / EPSG:4326 and clipped to the boundaries of the Massaciuccoli Lake basin.
+
+Raster data are resampled to a common spatial resolution of 0.0005 degrees, approximately 50 metres. This resolution was selected as a suitable compromise for regional-scale ecological models and monitoring analyses.
+
+The collection is packaged in a QGIS project, including the datasets, legends and visualisation styles. A metadata table in Excel format describes the geodata. A PDF cartographic atlas provides a visual representation of the layers and their metadata.
+
+The standardised dataset names encode:
+1. Dataset identifier.
+2. Standardised geodata/variable name.
+3. Reference time frame.
+4. RCP scenario, where applicable.
+
+For example, `063_temperatures_avg_2100ff_rcp85` identifies dataset 063, average temperature, far-future time frame (2100), RCP 8.5.
+
+VARIABLES RELEVANT TO THE DIGITAL TWIN AND BENCHMARK RETRIEVAL
+==============================================================
+
+The article's Table 1 lists the harmonised geodata identifiers, variable names, measurement units and temporal/scenario availability. The following entries are particularly relevant to the Massaciuccoli Digital Twin and to benchmark questions about environmental drivers, changes and scenario assessment.
+
+Land cover and vegetation:
+- ID 1: Corine Land Cover (CLC) backbone; unit: classes.
+- ID 2: Land imperviousness density; unit: %.
+- ID 3: Land imperviousness density change; unit: %.
+- ID 4: Land imperviousness density classified change; unit: classes.
+- ID 5: Land imperviousness built-up; unit: classes.
+- ID 6: Dominant leaf type; unit: classes.
+- ID 7: Dominant leaf type change; unit: classes.
+- ID 8: Forest type; unit: classes.
+- ID 9: Tree cover density; unit: %.
+- ID 10: Tree cover density change; unit: classes.
+- ID 11: Grassland; unit: classes.
+- ID 12: Grassland change; unit: classes.
+- ID 17: Land use and cover, nature 2000; unit: classes.
+- ID 18: Land use and cover nature 2000 change; unit: classes.
+- ID 19: Land use and cover riparian zones; unit: classes.
+- ID 20: Land use and cover riparian zones change; unit: classes.
+
+Plant phenology:
+- ID 29: Plant phenology index end of season value.
+- ID 30: Plant phenology index season amplitude.
+- ID 31: Plant phenology index season maximum value.
+- ID 33: Plant phenology index season minimum value.
+- ID 34: Plant phenology index season length; unit: days.
+- ID 35: Plant phenology index start of season value.
+- ID 36: Plant phenology index slope of green-up period; unit: %.
+- ID 37: Plant phenology index slope of green-down period; unit: %.
+- ID 38: Plant phenology index seasonal productivity; unit: days.
+- ID 39: Plant phenology index total productivity; unit: days.
+
+Climate and water:
+- ID 57: Temperature average absolute change; unit: °C.
+- ID 58: Potential evapotranspiration relative change; unit: %.
+- ID 59: Precipitation cumulative relative change; unit: %.
+- ID 60: Electrical conductivity groundwater; unit: S/cm.
+- ID 61: Evapotranspiration cumulative; unit: mm.
+- ID 62: Precipitation cumulative; unit: mm.
+- ID 63: Temperatures average; unit: °C.
+- ID 64: Water surplus; unit: mm.
+
+Biodiversity:
+- ID 65: Number of species cumulative, all; unit: number of species.
+- ID 66: Number of species cumulative, birds; unit: number of species.
+- ID 67: Number of species cumulative, fishes and crustaceans; unit: number of species.
+- ID 68: Number of species cumulative, insects and clams; unit: number of species.
+- ID 69: Number of species cumulative, mammals; unit: number of species.
+- ID 70: Number of species cumulative, reptiles and amphibians; unit: number of species.
+- ID 71: Number of species cumulative, others; unit: number of species.
+
+Other environmental and territorial variables listed include hydrogeological/hydrographic units, physiographic units, geological classification, soil permeability and types, soil infiltration potential, waterways and drainage canals, waterway drainage sub-basins, capacity-use and fertility, useful soil depth, pebbles and rockiness at the surface, chemical fertility and salinity of soil horizons, internal drainage, flood risk, potential erosion, landslides, climate interference by altitude and climate interference by water deficit.
+
+The catalogue also includes habitat-related information, Natura 2000 and Ramsar areas, special conservation/protection zones, habitat status, land-use/land-cover history, crop types, digital terrain models and regional parks/reserves. Exact temporal coverage and units vary by variable and are specified in Table 1 and the metadata workbook.
+
+GEODATA LAYERS HARMONIZATION METHODOLOGY (GLHM)
+===============================================
+
+The authors developed the Geodata Layers Harmonization Methodology (GLHM), consisting of four phases.
+
+1. Geodata Census (GC)
+A census of geospatial data distributed by public institutions. The authors identified 151 geovariables comprising 783 geodata during the census phase. Metadata were organised in a structured table, including original name, producing institution, description, unit, spatial projection, coverage, representation, resolution, time coverage and primary source.
+
+When different institutions provide data for the same variable, the methodology gives preference to more local sources, because they may offer more detailed information than regional, national or European sources.
+
+2. Geodata Selection (GS)
+Datasets are selected according to:
+- Spatial resolution: preference for data at 0.0005 degrees or finer. Future projections may be retained at coarser resolution when they correspond to variables available at finer resolution.
+- Spatial coverage: datasets covering only part of the study area are excluded.
+- Temporal coverage and resolution: when alternatives describe the same variable over comparable periods, preference is given to longer temporal coverage and finer temporal resolution.
+- Usefulness: datasets should be useful for ecosystem modelling or spatial planning.
+- FAIR compliance and direct download availability.
+
+The selection phase retained 75 geovariables comprising 148 geodata, including the basin boundary dataset.
+
+3. Geodata Alignment (GA)
+Selected datasets are harmonised along semantic, temporal and spatial dimensions.
+
+Semantic alignment:
+- Assign a standard name to each geodata variable.
+- Resolve duplicates describing the same variable and time frame by selecting the dataset closest to the representative year; if needed, use the highest FAIRness score and then the longest time span.
+
+Temporal alignment:
+- Assign datasets to one of the five reference time frames.
+- Use RCP scenarios for future projections where available.
+- Select the most representative year for each time frame.
+
+Spatial alignment:
+- Reproject raster and vector datasets to WGS84 / EPSG:4326.
+- Clip datasets to the Massaciuccoli Lake basin boundaries.
+- Aggregate variables annually when their original temporal resolution is finer, such as monthly or daily.
+- Resample raster datasets to the common target resolution of 0.0005 degrees.
+
+GDAL and QGIS batch-processing workflows are used for spatial and temporal alignment.
+
+4. Geodata Publication (GP)
+The harmonised datasets are organised into a QGIS project with legends and styles, accompanied by an Excel metadata table and a PDF cartographic atlas. Data and metadata are published through open repositories and geospatial services.
+
+FAIRNESS ASSESSMENT
+===================
+
+The authors developed a FAIRness scoring system based on the Findable, Accessible, Interoperable and Reusable principles.
+
+The system evaluates 15 subcriteria:
+- Findable: F1, F2, F3, F4.
+- Accessible: A1, A1.1, A1.2, A2.
+- Interoperable: I1, I2, I3.
+- Reusable: R1, R1.1, R1.2, R1.3.
+
+Each subcriterion receives a score of 0, 0.5 or 1:
+- 0: the requirement is not met.
+- 0.5: the requirement is partially met.
+- 1: the requirement is fully met.
+
+The FAIRness index is the sum of the 15 subcriterion scores. The authors define the following classes:
+- 0–6: Insufficient.
+- 6.5–10.5: Sufficient.
+- 11–15: Good.
+
+Two additional conditions apply:
+- Each of F1, F2, F3 and F4 must have a score of at least 0.5. Otherwise, the dataset is classified as Insufficient.
+- The dataset must be directly downloadable. If it cannot be downloaded, it is classified as Insufficient.
+
+The FAIRness assessment was initially performed automatically using Microsoft Copilot and a prompt implementing the authors' scoring rules. The scores for the Massaciuccoli datasets were subsequently hand-revised. The authors report agreement with approximately 80% of the automated assessments. This is therefore a semi-automated assessment with human revision, not an entirely manual or independent certification.
+
+PUBLICATION, ACCESS AND LICENCE
+===============================
+
+The 148 harmonised geodata layers are made openly available through:
+- Zenodo dataset: DOI 10.5281/zenodo.10953582.
+- Harmonised geographic atlas: DOI 10.5281/zenodo.13912261.
+
+The collection is also made available through the ITINERIS Critical Zone Virtual Research Environment hosted on the D4Science e-infrastructure. The article describes:
+- GeoServer for geospatial data and map services, including OGC WMS and WFS.
+- GeoNetwork for discovery and consultation of metadata compliant with ISO 19139 and the INSPIRE Directive.
+
+The geodata collection is released under the Creative Commons Attribution 4.0 International (CC-BY 4.0) licence.
+
+SCIENTIFIC AND DIGITAL TWIN RELEVANCE
+=====================================
+
+The main contribution of this article is the provision of a structured, harmonised and documented geospatial information base for the Massaciuccoli Lake basin.
+
+For the Digital Twin, the article is particularly useful for:
+- Identifying the environmental variables available for the basin.
+- Linking model features to catalogue identifiers, standard names and units.
+- Checking which variables are available in the past, present and future periods.
+- Checking which future RCP scenarios are available for each variable.
+- Understanding the common spatial reference system and raster resolution.
+- Tracing dataset provenance and consulting the original data sources.
+- Supporting reproducibility, data integration and spatial comparison.
+- Identifying complementary environmental, biodiversity, habitat and socio-economic layers.
+
+The catalogue can support retrieval questions asking which variables describe a given environmental driver, which datasets are available for a given period or scenario, and how spatial and temporal harmonisation was performed.
+
+The article is a data-collection and methodology paper. It does not itself provide a complete set of measured values for all 75 variables, nor does it estimate causal relationships among the variables, ecological response functions, risk scores or the effects of individual scenario changes. Numerical answers about the state or change of a variable must be retrieved from the underlying geodata or from studies analysing those data.
+
+RETRIEVAL-ORIENTED NOTES FOR THE MASSACIUCCOLI BENCHMARK
+======================================================
+
+Useful question types and supported content:
+
+- General wetland questions: ecological importance of wetlands, biodiversity habitats, natural water filtration, ecosystem services, carbon sequestration, and pressures from climate change and anthropogenic activity.
+- Variable inventory / drivers: which climatic, land-cover, vegetation, soil, hydrological, biodiversity or habitat variables are represented in the Massaciuccoli geodata collection.
+- Variable identification: catalogue identifiers, standardised variable names and measurement units, including land imperviousness, tree cover, grassland, phenology, temperature, precipitation, evapotranspiration, water surplus and species counts.
+- Temporal comparison: which reference periods are used and how datasets are assigned to remote past, near past, present, near future and far future.
+- Scenario assessment: which RCP scenarios are represented in future geodata and how their availability varies by variable.
+- Spatial analysis: what coordinate reference system, basin boundary and raster resolution are used.
+- Data provenance and FAIRness: how datasets are selected, evaluated, harmonised, documented and published.
+
+The article supports identification, metadata retrieval and methodological questions. It does not, on its own, support quantitative delta calculations, causal dependency claims or predictions of ecological risk. For those questions, retrieve the underlying data or complementary scientific studies.
+
+SOURCE LIMITATIONS AND INTERPRETATION
+=====================================
+
+- The paper describes a curated collection of geodata; it is not a new field campaign measuring all the variables.
+- Not all variables have complete temporal coverage or all RCP scenarios.
+- Future projections can have coarser spatial resolution than the target resolution used for most raster layers.
+- Datasets with partial spatial coverage or insufficient quality, relevance or FAIRness were excluded from the final collection.
+- The FAIRness scores include automated assessment and subsequent human revision; the reported approximately 80% agreement should be retained when describing this procedure.
+- The article documents data availability and harmonisation, not ecological cause-and-effect relationships or model predictions.
+- The global wetland-loss estimate in the introduction is background information cited by the authors, not a local estimate for the Massaciuccoli basin.
+
+END OF DOCUMENT

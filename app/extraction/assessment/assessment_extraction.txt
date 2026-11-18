@@ -101,6 +101,14 @@ Examples:
 
 Preserve the original wording of the modification in original_expression.
 
+CRITICAL SOURCE-FIDELITY RULE:
+- original_expression MUST be copied verbatim from the user's question.
+- It must be an exact source excerpt, not a paraphrase or normalized rewrite.
+- NEVER add a number, percentage, unit, direction, or magnitude that is absent
+  from the user's question.
+- In particular, NEVER convert a qualitative expression such as "moderate"
+  into a numerical percentage such as "20%".
+
 ==================================================
 MODIFICATION TYPES
 ==================================================
@@ -341,7 +349,7 @@ decrease for decreasing, declining, falling, lower, less, etc.
 
 change only when a change is explicitly stated but its direction cannot be determined.
 
-magnitude MUST contain the qualitative modifier explicitly expressed by the user, if one is present.
+magnitude MUST use the canonical grounding label corresponding to the qualitative modifier explicitly expressed by the user, if one is present. The exact original wording remains preserved in original_expression and interpretation.
 
 If no qualitative modifier is explicitly present, magnitude MUST be null.
 
@@ -395,13 +403,20 @@ If there is no additional qualitative expression describing the magnitude of the
 
 CRITICAL RULE FOR QUALITATIVE MAGNITUDE
 
-The magnitude field must preserve the exact qualitative expression used by the user.
+The magnitude field must use the canonical label expected by qualitative grounding.
 
-Do NOT replace a qualitative expression with a synonym.
+Normalize only grammatical variants (adjective/adverb) within the same magnitude class:
+- slight / slightly -> "slightly"
+- moderate / moderately -> "moderately"
+- significant / significantly -> "significantly"
+- substantial / substantially -> "substantially"
+- strong / strongly -> "strongly"
+- severe / severely -> "severely"
+- extreme / extremely -> "extremely"
 
-Do NOT normalize qualitative expressions into a preferred vocabulary.
-
+Do NOT replace one magnitude class with another (for example, moderate must never become significant).
 Do NOT invent a qualitative magnitude that is not present in the user's text.
+The exact user wording must remain in original_expression.
 
 For example:
 
@@ -439,7 +454,7 @@ In particular, NEVER transform:
 
 or any other qualitative expression into a synonym.
 
-The extractor is not asked to judge or reinterpret the magnitude. It must only extract the wording actually present in the user's question.
+The extractor is not asked to judge or reinterpret the magnitude. It must identify the magnitude class actually present in the user's question and express it using the canonical label above. The exact source wording remains in original_expression.
 
 QUALITATIVE VS NUMERICAL
 

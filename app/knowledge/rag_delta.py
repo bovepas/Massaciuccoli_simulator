@@ -603,6 +603,9 @@ def add_risk_alignment(text, delta, drivers=None, model_results=None):
     All quantitative values come from Python/model_results; the LLM contributes
     only the ecological interpretation. Keep the text layout consistent for
     positive, negative, and zero changes.
+
+    Add a sensitivity notice when an environmental variable changes but the
+    displayed surrogate-model risk variation is zero.
     """
     ecological_text = remove_risk_sentences(text).strip()
     display_delta = format_risk_delta_for_display(delta)
@@ -639,6 +642,42 @@ def add_risk_alignment(text, delta, drivers=None, model_results=None):
         f"Predicted risk change: {direction}",
         f"Risk-score change: {delta_text}",
     ])
+
+    # --------------------------------------------------
+    # SURROGATE MODEL SENSITIVITY NOTICE
+    # --------------------------------------------------
+
+    environmental_change = False
+
+    for _, value_from, value_to in (drivers or []):
+        try:
+            if not math.isclose(
+                float(value_from),
+                float(value_to),
+                rel_tol=0.0,
+                abs_tol=1e-12
+            ):
+                environmental_change = True
+                break
+        except (TypeError, ValueError):
+            continue
+
+    if environmental_change and display_delta == 0.0:
+        estimate_lines.extend([
+            "",
+            "**Model sensitivity notice**",
+            (
+                "Despite the environmental modification, the predicted "
+                "risk change is zero at the displayed precision. This result "
+                "may reflect limitations in the sensitivity of the surrogate "
+                "Random Forest model currently used during the system "
+                "development phase. Therefore, the absence of a predicted "
+                "risk variation should not necessarily be interpreted as "
+                "evidence that the environmental modification has no "
+                "ecological effect."
+            ),
+        ])
+
     sections.append("\n".join(estimate_lines))
 
     return "\n\n".join(sections)

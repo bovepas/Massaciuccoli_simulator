@@ -36,7 +36,7 @@ GENERATE_URL = os.getenv(
     "LLM_ENDPOINT",
     "http://localhost:11434/api/generate",
 )
-MAX_PREDICT = int(os.getenv("LLM_MAX_PREDICT", "1024"))
+MAX_PREDICT = int(os.getenv("LLM_MAX_PREDICT", "2048"))
 
 # ======================================================
 # BASE MODEL CONFIGURATION
@@ -79,7 +79,9 @@ MAX_RETRIES = 3
 RETRY_DELAY = 1
 TIMEOUT = int(os.getenv("LLM_TIMEOUT", "60"))
 TEMPERATURE = 0
-
+DEBUG = True
+DEBUG_SAVE_PROMPTS = True
+DEBUG_RESPONSE_DETAILS = True  # Diagnostic of raw Ollama response fields
 # ======================================================
 # PERSISTENT SESSION
 # ======================================================
@@ -133,6 +135,15 @@ def call_fallback_llm(prompt: str) -> str:
     )
     response.raise_for_status()
     data = response.json()
+    if DEBUG_RESPONSE_DETAILS:
+        print("[LLM CLIENT] Response keys:", list(data.keys()))
+        print("[LLM CLIENT] response type:", type(data.get("response")).__name__)
+        print("[LLM CLIENT] response length:", len(data.get("response") or ""))
+        print("[LLM CLIENT] thinking type:", type(data.get("thinking")).__name__)
+        print("[LLM CLIENT] thinking length:", len(data.get("thinking") or ""))
+        print("[LLM CLIENT] done_reason:", data.get("done_reason"))
+        print("[LLM CLIENT] eval_count:", data.get("eval_count"))
+
     output = data.get("response", "").strip()
 
     output = re.sub(
@@ -195,12 +206,14 @@ def call_llm(prompt: str, role: str = "default") -> str:
                 "options": {
                     "temperature": TEMPERATURE,
                     "num_predict": max_predict,
+                    "num_ctx": 16384,
                 },
             }
             normalized_role = (role or "default").strip().lower()
             if (
                 normalized_role == "interpretation"
-                and model.strip().lower().startswith("qwen3.5")
+                and model.strip().lower().startswith(("qwen3.5", "gemma4"))
+
             ):
                 payload["think"] = False
                 debug_print("Qwen3.5 interpretation: API thinking disabled")
@@ -217,8 +230,15 @@ def call_llm(prompt: str, role: str = "default") -> str:
             response.raise_for_status()
             data = response.json()
 
-            print("[LLM CLIENT] done_reason:", data.get("done_reason"))
-            print("[LLM CLIENT] eval_count:", data.get("eval_count"))
+            if DEBUG_RESPONSE_DETAILS:
+                print("[LLM CLIENT] Response keys:", list(data.keys()))
+                print("[LLM CLIENT] response type:", type(data.get("response")).__name__)
+                print("[LLM CLIENT] response length:", len(data.get("response") or ""))
+                print("[LLM CLIENT] thinking type:", type(data.get("thinking")).__name__)
+                print("[LLM CLIENT] thinking length:", len(data.get("thinking") or ""))
+                print("[LLM CLIENT] done_reason:", data.get("done_reason"))
+                print("[LLM CLIENT] eval_count:", data.get("eval_count"))
+
             log_data("llm_done_reason", data.get("done_reason"))
             log_data("llm_eval_count", data.get("eval_count"))
 

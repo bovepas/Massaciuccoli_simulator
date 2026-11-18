@@ -16,7 +16,9 @@ LLM_STYLES = {
 
     "llama70b": "scientific",
 
-    "llama3.2": "scientific"
+    "llama3.2": "scientific",
+
+    "gemma4": "scientific"
 }
 
 # ======================================================

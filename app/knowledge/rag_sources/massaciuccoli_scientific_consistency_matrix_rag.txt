@@ -1,0 +1,183 @@
+MASSACIUCCOLI DIGITAL TWIN
+SCIENTIFIC CONSISTENCY MATRIX
+Versione testuale per indicizzazione RAG
+Fonte: massaciuccoli_scientific_consistency_matrix.xlsx
+
+======================================================================
+1. SCOPO E CRITERI GENERALI
+======================================================================
+
+Scopo
+Confronto documentale tra affermazioni scientifiche; non sostituisce la verifica delle pubblicazioni originali.
+
+Compatibile
+Valori o affermazioni coerenti entro le differenze di approssimazione, definizione o metodo esplicitate.
+
+Compatibile con cautela
+Ordini di grandezza coerenti ma misure/statistiche o domini non identici.
+
+Differenza da chiarire
+Valori diversi per i quali le fonti disponibili non permettono ancora di stabilire la causa.
+
+Non contraddittorio
+Le affermazioni riguardano variabili, periodi, luoghi o disegni di campionamento diversi.
+
+Non confrontabile
+Metodi, domini o unità non consentono un confronto diretto.
+
+Separazione dati
+Nessun dato dei paper entra nei modelli quantitativi del Digital Twin: il CSV di progetto resta l'unica fonte quantitativa.
+
+Esclusioni
+La matrice non include, in questa fase, i contenuti di paper1, paper2 e paper3. Questa nota descrive il perimetro documentale della matrice originale e non costituisce un'indicazione di esclusione di tali file dall'ingestione RAG.
+
+Stato
+Versione iniziale da aggiornare dopo verifica puntuale dei PDF e dei metadati dei dataset.
+
+======================================================================
+2. MATRICE DI COERENZA SCIENTIFICA
+======================================================================
+
+ID 1 — SUPERFICIE DEL LAGO
+Affermazione / valore riportato: Circa 7 km²
+Unità: km²
+Fonte: Rossetto et al. (2010)
+Periodo della fonte: Dato descrittivo della fonte
+Dominio spaziale: Lago Massaciuccoli
+Metodo / natura dell'evidenza: Valore descrittivo riportato nella fonte
+Confronto tra fonti: Bertacchi riporta circa 690 ha (6,9 km²)
+Valutazione: COMPATIBILE
+Nota / verifica necessaria: Differenza compatibile con arrotondamento; conservare entrambi i valori e i rispettivi riferimenti.
+
+ID 2 — SUPERFICIE DEL LAGO
+Affermazione / valore riportato: Circa 690 ha
+Unità: ha
+Fonte: Bertacchi et al. (contributo presentato nel 2015; file denominato 2020)
+Periodo della fonte: Rilievi vegetazionali 2014–2015; dato descrittivo
+Dominio spaziale: Lago; contesto del bacino e Riserva del Chiarone
+Metodo / natura dell'evidenza: Valore descrittivo; non è una nuova misura di superficie
+Confronto tra fonti: Rossetto riporta circa 7 km²
+Valutazione: COMPATIBILE
+Nota / verifica necessaria: Non attribuire al 2020 la data dei rilievi o la data del file. 690 ha equivalgono a 6,9 km².
+
+ID 3 — PROFONDITÀ DEL LAGO
+Affermazione / valore riportato: Circa 1–2,5 m nelle aree non interessate dalle cave
+Unità: m
+Fonte: Bertacchi et al.
+Periodo della fonte: Dato descrittivo della fonte
+Dominio spaziale: Lago, con esclusione delle aree interessate dalle cave
+Metodo / natura dell'evidenza: Descrizione batimetrica riportata
+Confronto tra fonti: Rossetto riporta profondità media intorno a 2 m
+Valutazione: COMPATIBILE CON CAUTELA
+Nota / verifica necessaria: Non confrontare come statistiche identiche: intervallo locale/condizionato vs valore medio.
+
+ID 4 — PROFONDITÀ DEL LAGO
+Affermazione / valore riportato: Circa 2 m (media)
+Unità: m
+Fonte: Rossetto et al. (2010)
+Periodo della fonte: Dato descrittivo della fonte
+Dominio spaziale: Lago Massaciuccoli
+Metodo / natura dell'evidenza: Valore medio riportato
+Confronto tra fonti: Bertacchi: intervallo 1–2,5 m fuori dalle cave
+Valutazione: COMPATIBILE CON CAUTELA
+Nota / verifica necessaria: Verificare nel testo originale la definizione esatta di profondità e il dominio di misura.
+
+ID 5 — SUBSIDENZA
+Affermazione / valore riportato: Circa 2–3 m in 70 anni
+Unità: m / 70 anni
+Fonte: Pistocchi et al. (2012); Ciccolini et al. (2013); Rossetto et al. (2010)
+Periodo della fonte: Stima storica riportata da più fonti
+Dominio spaziale: Aree torbose/bonificate del bacino; non necessariamente l'intero bacino in modo uniforme
+Metodo / natura dell'evidenza: Stima storica, non serie di misure contemporanee
+Confronto tra fonti: Convergenza tra più documenti
+Valutazione: CONVERGENZA
+Nota / verifica necessaria: Conservare la natura storica e l'ambito territoriale. Non interpretare come tasso attuale né come subsidenza uniforme.
+
+ID 6 — QUOTA DELLE AREE BONIFICATE
+Affermazione / valore riportato: Circa 0–3 m sotto il livello medio del mare
+Unità: m
+Fonte: Pistocchi et al. (2012); Rossetto et al. (2010)
+Periodo della fonte: Descrizione del contesto territoriale
+Dominio spaziale: Aree drenate/bonificate considerate dalle fonti
+Metodo / natura dell'evidenza: Valore altimetrico descrittivo
+Confronto tra fonti: Ciccolini riporta 0–4 m sotto il livello del mare
+Valutazione: DIFFERENZA DA CHIARIRE
+Nota / verifica necessaria: Verificare delimitazione spaziale, fonte altimetrica e significato di intervallo prima di scegliere un valore.
+
+ID 7 — QUOTA DELLE AREE BONIFICATE
+Affermazione / valore riportato: Circa 0–4 m sotto il livello del mare
+Unità: m
+Fonte: Ciccolini et al. (2013)
+Periodo della fonte: Contesto storico del progetto RestoMedPeatland
+Dominio spaziale: Aree drenate del floodplain di Massaciuccoli
+Metodo / natura dell'evidenza: Valore descrittivo citato con riferimento a Rossetto et al. (2010)
+Confronto tra fonti: Pistocchi/Rossetto: 0–3 m
+Valutazione: DIFFERENZA DA CHIARIRE
+Nota / verifica necessaria: Possibile differenza di dominio o arrotondamento; non correggere senza riscontro nella fonte primaria.
+
+ID 8 — EVOLUZIONE TROFICA
+Affermazione / valore riportato: Transizione da condizioni oligotrofiche verso eutrofiche/ipertrofiche dalla seconda metà del XX secolo / dagli anni 1970
+Unità: Classi trofiche
+Fonte: Pistocchi et al. (2012); Ciccolini et al. (2013); Da Prato & Baneschi (2020); Bertacchi et al.
+Periodo della fonte: Ricostruzione storica basata anche su studi precedenti
+Dominio spaziale: Lago e sistema palustre; ambito preciso varia per fonte
+Metodo / natura dell'evidenza: Sintesi narrativa e riferimenti a studi precedenti; non una serie omogenea comune
+Confronto tra fonti: Convergenza qualitativa
+Valutazione: COMPATIBILE COME QUADRO STORICO
+Nota / verifica necessaria: Non presentare le fonti come misure simultanee o come un'unica serie quantitativa. Conservare il riferimento temporale specifico.
+
+ID 9 — QUALITÀ DELLE ACQUE: NITRATI
+Affermazione / valore riportato: Impatto delle pratiche agricole sui nitrati appare limitato nei campioni studiati
+Unità: Concentrazioni / interpretazione qualitativa
+Fonte: Pasquetti et al. (2024)
+Periodo della fonte: Monitoraggio 2020–2022; chimica in tre campagne 2020–2021
+Dominio spaziale: Settore sud-orientale drenato: sottobacini Vecchiano e Massaciuccoli, canali e Barra; limitati punti di falda
+Metodo / natura dell'evidenza: Monitoraggio idrochimico e isotopico; campionamento localizzato
+Confronto tra fonti: Non è direttamente equivalente alle descrizioni storiche di eutrofizzazione
+Valutazione: NON CONTRADDITTORIO
+Nota / verifica necessaria: Non generalizzare al lago intero o al bacino completo. Distinguere nitrati nelle acque campionate da stato trofico del lago.
+
+ID 10 — INFLUENZA MARINA E SALINITÀ
+Affermazione / valore riportato: Acque superficiali influenzate da mescolamento con acqua marina ed evapotraspirazione/precipitazione
+Unità: Parametri idrochimici e isotopici
+Fonte: Pasquetti et al. (2024)
+Periodo della fonte: Campagne 2020–2021; isotopi giugno 2021
+Dominio spaziale: Punti selezionati nel settore sud-orientale; lago campionato in un solo punto per isotopi nel giugno 2021
+Metodo / natura dell'evidenza: Analisi idrochimiche e isotopiche
+Confronto tra fonti: Da confrontare con fonti geochimiche storiche senza presumere identità dei punti e periodi
+Valutazione: COMPATIBILE, CONFRONTO CONTESTUALE
+Nota / verifica necessaria: La campagna è breve e localizzata; non costituisce una descrizione media e attuale dell'intero lago.
+
+ID 11 — HABITAT NATURA 2000
+Affermazione / valore riportato: Nove habitat Natura 2000 mappati; superficie poligonale complessiva 378,40 ha e copertura effettiva stimata 262,40 ha
+Unità: ha; numero habitat
+Fonte: Viciani et al. (2017)
+Periodo della fonte: Rilievi 2015–2016; ortofoto 2013
+Dominio spaziale: Sito Natura 2000 IT5120017, non intero bacino idrografico
+Metodo / natura dell'evidenza: Mappatura fitosociologica e cartografica 1:10.000; copertura parziale stimata in parte dagli autori
+Confronto tra fonti: Da confrontare solo con cartografie aventi stesso dominio, definizioni e metodo
+Valutazione: DATO CONTESTUALIZZATO
+Nota / verifica necessaria: Distinguere area dei poligoni dall'area effettivamente coperta. Non trattare la carta come serie temporale.
+
+ID 12 — VEGETAZIONE CHIARONE
+Affermazione / valore riportato: Rilievi fitosociologici e floristica 2014–2015; mosaico di comunità umide
+Unità: Rilievi / taxa / copertura
+Fonte: Bertacchi et al.
+Periodo della fonte: 2014–2015
+Dominio spaziale: Riserva Naturale del Chiarone
+Metodo / natura dell'evidenza: Metodo Braun-Blanquet e inventario floristico
+Confronto tra fonti: Complementare alla mappatura Viciani, ma con dominio e obiettivo differenti
+Valutazione: NON CONFRONTABILE DIRETTAMENTE
+Nota / verifica necessaria: Non estendere automaticamente i risultati della riserva a tutto il sito Natura 2000 o al bacino.
+
+======================================================================
+3. AVVERTENZE PER L'UTILIZZO NEL DIGITAL TWIN
+======================================================================
+
+- Questa matrice è uno strumento di confronto documentale e controllo della coerenza scientifica.
+- Le valutazioni riportate non sostituiscono la verifica delle pubblicazioni originali.
+- Conservare sempre fonte, periodo, dominio spaziale e natura dell'evidenza associati a ogni affermazione.
+- Non trasformare stime storiche, descrizioni qualitative o campionamenti localizzati in misure attuali e rappresentative dell'intero lago o bacino.
+- Non risolvere autonomamente le differenze segnalate come "Differenza da chiarire".
+- I dati dei paper non devono essere utilizzati come input quantitativi dei modelli del Digital Twin. Il CSV di progetto resta l'unica fonte quantitativa per i modelli.
+- I tre file paper1_rag_revised.txt, paper2_rag_revised.txt e paper3_rag_revised.txt sono documenti RAG autonomi da includere nell'ingestione secondo la configurazione del progetto. La loro assenza dalla matrice originale non implica la loro esclusione dalla knowledge base.

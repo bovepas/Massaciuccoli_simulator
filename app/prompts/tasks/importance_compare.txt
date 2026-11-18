@@ -1,74 +1,127 @@
 TASK
 
-The user asks the Massaciuccoli Digital Twin to compare
-the relative importance of two environmental variables
-with respect to predicted ecosystem risk.
+The user asks the Massaciuccoli Digital Twin to compare the effects of
+two environmental variables on predicted ecosystem risk, with each
+variable evaluated in the direction specified by the user.
 
-The Digital Twin has already computed the comparison.
+The Digital Twin has already performed the numerical analysis.
 
-Your task is not to compare the variables again.
+Your task is not to recalculate the impacts, repeat the simulations,
+rank the variables by intrinsic importance, or reinterpret the numerical
+results. Your task is to explain the reported directional comparison
+using only the information provided by the Digital Twin.
 
-Your task is to explain the reported comparison using
-the scientific information provided below.
+The Digital Twin provides three complementary sources of information.
 
-To prepare your answer, the Digital Twin provides three
-complementary sources of information.
+1. DIGITAL TWIN DIRECTIONAL IMPACT COMPARISON REPORT
 
-1. DIGITAL TWIN IMPORTANCE COMPARISON REPORT
+The report identifies:
+- the two environmental variables being compared;
+- the direction requested by the user for each variable;
+- the perturbations applied by the computational task;
+- the baseline prediction;
+- the predicted ecosystem risk under each tested scenario;
+- the signed change in predicted ecosystem risk for each scenario.
 
-This report identifies:
+Treat the report as the authoritative description of the computational
+analysis.
 
-- the compared environmental variables;
-- their importance scores;
-- the variable showing the stronger statistical
-  association with predicted ecosystem risk.
+The two impacts are calculated independently against the same baseline,
+one scenario at a time. Explain the reported impacts as changes in
+predicted ecosystem risk relative to that common baseline.
 
-Treat the Importance Comparison Report as the
-authoritative description of the Digital Twin analysis.
+Do not modify, recalculate, reverse, or contradict the reported values
+or their signs.
 
-Do not modify the reported comparison.
+2. SCIENTIFIC INTERPRETATION OF THE MODEL OUTPUTS
 
-Do not determine a different ranking.
+The direction refers to the environmental variable itself:
+- increase means that the variable was perturbed upward;
+- decrease means that the variable was perturbed downward;
+- unspecified means that the user did not specify a direction.
 
-Do not compare the scores beyond what is already
-reported by the Digital Twin.
+When a direction is unspecified, the computational task may apply its
+existing perturbation convention. Do not describe that direction as
+having been requested by the user.
 
-2. ECOLOGICAL INTERPRETATION NOTES
+A positive or negative perturbation of a numerical feature does not
+automatically imply an increase or decrease in the ecological stress or
+process described by the user. Describe the actual feature perturbation
+reported by the Digital Twin. Infer its ecological meaning only when
+this interpretation is directly supported by the feature definition
+and the retrieved scientific evidence.
 
-The reported importance scores describe the relative
-statistical sensitivity of the compared variables
-within the current Digital Twin prediction.
+Interpret the signed impacts as follows:
+- a positive impact means predicted ecosystem risk increased relative
+  to the common baseline;
+- a negative impact means predicted ecosystem risk decreased relative
+  to the common baseline;
+- a zero or near-zero impact means that the tested perturbation produced
+  no or very little change in the model prediction at the reported
+  numerical precision.
 
-A higher importance score indicates a stronger
-statistical association with predicted ecosystem risk.
+The absolute value of an impact represents the magnitude of the model
+response. If one absolute impact is larger, state only that the model
+response was larger for that particular tested perturbation.
 
-The reported comparison does not represent observed
-environmental changes and should not be interpreted
-as direct ecological causality.
+Do not conclude that one variable is intrinsically more important,
+generally more influential, or ecologically more significant than the
+other. This task is a directional impact comparison, not an intrinsic
+variable-importance ranking.
+
+The perturbations are defined by the computational task for each
+feature. Their physical magnitudes may differ between variables.
+Therefore, do not describe the two perturbations as equivalent
+environmental changes, and do not infer a general sensitivity ranking
+from this single comparison.
+
+For an entity composed of multiple numeric features, the report may
+describe a combined perturbation in which all component features are
+changed simultaneously. Interpret the reported group impact as the
+result of that combined scenario; do not sum component effects unless
+the report explicitly provides such a calculation.
+
+Distinguish the ecological concept expressed in the user's question
+from the numerical feature or features actually perturbed by the
+Digital Twin. Do not present a model feature or a group of features as
+a direct simulation of an ecological process, environmental
+intervention, or management action unless the report explicitly
+establishes that correspondence. When the report identifies a proxy
+or an indirect representation, make this limitation clear. If the
+report does not provide enough information to establish a
+correspondence between the user's concept and the perturbed feature,
+describe the feature that was actually tested without claiming that
+it fully represents the broader ecological concept.
+
+These outputs describe model responses under the tested scenarios.
+They do not establish direct ecological causality, observed
+environmental change, or the ecological irrelevance of a variable
+whose predicted impact is zero or small.
 
 3. RETRIEVED SCIENTIFIC EVIDENCE
 
-These excerpts were retrieved from the curated
-scientific knowledge base describing the
-Massaciuccoli Lake ecosystem.
+The retrieved excerpts come from the curated scientific knowledge
+base describing the Massaciuccoli Lake ecosystem.
 
-Use the retrieved scientific evidence only to explain
-the ecological relevance of the reported variables.
+Use this evidence only to provide ecological context that is directly
+supported by the retrieved material and relevant to the variables
+being compared.
 
-Focus primarily on the ecological interpretation of
-the higher-ranked variable.
+Do not invent ecological mechanisms, causal relationships, or
+explanations for the numerical results. Do not force an ecological
+explanation when the retrieved evidence is not sufficiently relevant.
 
-The second variable may be mentioned only to provide
-ecological context.
+Clearly distinguish the Digital Twin's numerical results from the
+ecological context provided by the retrieved scientific evidence.
 
-Do not infer ecological mechanisms unless they are
-supported by both the Digital Twin outputs and the
-retrieved scientific evidence.
+Do not introduce environmental variables, ecological processes,
+or management actions that are not directly supported by the retrieved
+scientific evidence. Relevant mechanisms explicitly documented in the
+retrieved excerpts may be used to provide ecological context, but must
+not be presented as explanations of the numerical model impacts unless
+the evidence directly supports that interpretation. Do not introduce
+conservation recommendations or other unsupported conclusions.
 
-Do not introduce additional environmental variables,
-ecological processes, management actions,
-conservation recommendations or unsupported
-conclusions.
-
-Write one concise scientific explanation that directly
-answers the user's question.
+Write one concise, scientifically cautious explanation that directly
+answers the user's question. Compare only the two directional scenario
+impacts reported by the Digital Twin.

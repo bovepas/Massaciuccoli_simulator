@@ -4,13 +4,15 @@
 Massaciuccoli Digital Twin
 Importance Compare Task
 
-Confronta l'influenza relativa di due driver
-utilizzando lo stesso algoritmo di importance.
+Confronta gli effetti sul rischio delle variazioni indicate
+per due variabili o gruppi di variabili numeriche.
 
-NOTA:
-Il calcolo degli impact è volutamente duplicato
-da task_importance.py per evitare regressioni.
+Le entita' composte vengono valutate perturbando simultaneamente
+le rispettive feature numeriche.
+Le variabili categoriche non sono ancora supportate.
 """
+
+import math
 
 from utils.model_input_builder import (
     build_input_df,
@@ -25,6 +27,8 @@ from utils.feature_mapping import (
     normalize_feature_name
 )
 
+from versions.v6_1_emulator import NUM_FEATURES
+
 from knowledge.rag_importance_compare import (
     generate_importance_compare_explanation
 )
@@ -34,132 +38,155 @@ from knowledge.rag_importance_compare import (
 # IMPACT STRENGTH
 # ======================================================
 
-def classify_impact_strength(score):
+def classify_impact_strength(impact):
+    """Classifica l'intensita' assoluta della variazione di rischio."""
 
-    score = abs(score)
+    magnitude = abs(float(impact))
 
-    if score < 0.01:
+    if magnitude < 0.01:
         return "weak"
 
-    if score < 0.05:
+    if magnitude < 0.05:
         return "moderate"
 
     return "strong"
 
+
 # ======================================================
-# ENTITY SCORE
+# DIRECTION
 # ======================================================
 
-def compute_entity_score(
+def get_direction_sign(direction):
+    """Converte la direzione estratta nel segno della perturbazione."""
+
+    direction = (direction or "unspecified").strip().lower()
+
+    if direction == "decrease":
+        return -1.0
+
+    if direction in ("increase", "unspecified"):
+        return 1.0
+
+    raise ValueError(
+        f"Unsupported direction '{direction}'. "
+        "Expected increase, decrease or unspecified."
+    )
+
+
+# ======================================================
+# ENTITY FEATURES VALIDATION
+# ======================================================
+
+def get_numeric_entity_features(entity_features):
+    """
+    Restituisce le feature numeriche di un'entita'.
+
+    Le liste rappresentano gruppi: in questa versione tutte le
+    componenti devono essere numeriche e vengono perturbate insieme.
+    """
+
+    if isinstance(entity_features, str):
+        features = [entity_features]
+    elif isinstance(entity_features, list) and entity_features:
+        features = entity_features
+    else:
+        raise ValueError("Entity is empty or has an unsupported format.")
+
+    unsupported = [
+        feature for feature in features
+        if feature not in NUM_FEATURES
+    ]
+
+    if unsupported:
+        raise ValueError(
+            "This version supports numeric variables only. "
+            f"Unsupported or categorical feature(s): {unsupported}"
+        )
+
+    return features
+
+
+# ======================================================
+# ENTITY IMPACT
+# ======================================================
+
+def compute_entity_impact(
     entity_features,
-    impacts
+    direction,
+    baseline_values,
+    dataset,
+    model,
+    baseline_prediction
 ):
+    """
+    Calcola l'effetto di una variazione specifica sul rischio.
 
-    print(
-        "\n[DEBUG] compute_entity_score:"
-    )
+    Per i gruppi, tutte le feature numeriche vengono perturbate
+    simultaneamente nella direzione richiesta. L'impatto del gruppo
+    e' la differenza tra la predizione dello scenario combinato e
+    la predizione baseline: gli effetti non vengono sommati.
+    """
 
-    print(
-        "entity_features =",
-        entity_features
-    )
+    features = get_numeric_entity_features(entity_features)
+    direction_sign = get_direction_sign(direction)
 
-    # --------------------------------------------------
-    # SINGLE FEATURE
-    # --------------------------------------------------
+    scenario_values = baseline_values.copy()
+    perturbations = {}
 
-    if isinstance(
-        entity_features,
-        str
-    ):
+    for feature in features:
+        baseline_value = baseline_values.get(feature)
 
-        print(
-            "[DEBUG] SINGLE FEATURE"
-        )
-
-        if entity_features not in impacts:
-
-            print(
-                "[DEBUG] NOT FOUND:",
-                entity_features
+        if baseline_value is None or not isinstance(
+            baseline_value, (int, float)
+        ) or not math.isfinite(float(baseline_value)):
+            raise ValueError(
+                f"Baseline value for '{feature}' is not a valid number."
             )
 
-            return 0.0
+        try:
+            feature_std = float(dataset[feature].std())
+        except Exception as exc:
+            raise ValueError(
+                f"Could not calculate standard deviation for '{feature}'."
+            ) from exc
 
-        score = abs(
-
-            impacts[
-                entity_features
-            ]["impact"]
-        )
-
-        print(
-            "[DEBUG] FOUND:",
-            entity_features,
-            "->",
-            score
-        )
-
-        return score
-
-    # --------------------------------------------------
-    # FEATURE GROUP
-    # --------------------------------------------------
-
-    if isinstance(
-        entity_features,
-        list
-    ):
-
-        print(
-            "[DEBUG] FEATURE GROUP"
-        )
-
-        score = 0.0
-
-        for feature in entity_features:
-
-            if feature not in impacts:
-
-                print(
-                    "[DEBUG] NOT FOUND:",
-                    feature
-                )
-
-                continue
-
-            impact_value = abs(
-
-                impacts[
-                    feature
-                ]["impact"]
+        if not math.isfinite(feature_std) or feature_std <= 0:
+            raise ValueError(
+                f"Feature '{feature}' has no usable standard deviation; "
+                "a directional perturbation cannot be calculated."
             )
 
-            print(
-                "[DEBUG] FOUND:",
-                feature,
-                "->",
-                impact_value
-            )
+        delta = direction_sign * 0.5 * feature_std
+        scenario_value = float(baseline_value) + delta
+        scenario_values[feature] = scenario_value
 
-            score += impact_value
+        perturbations[feature] = {
+            "baseline_value": round(float(baseline_value), 6),
+            "delta": round(float(delta), 6),
+            "scenario_value": round(float(scenario_value), 6)
+        }
 
-        print(
-            "[DEBUG] GROUP SCORE =",
-            score
-        )
-
-        return score
-
-    # --------------------------------------------------
-    # FALLBACK
-    # --------------------------------------------------
-
-    print(
-        "[DEBUG] UNKNOWN ENTITY TYPE"
+    scenario_df = build_input_df(
+        scenario_values,
+        dataset
     )
 
-    return 0.0
+    scenario_prediction = float(
+        model.predict(scenario_df)[0]
+    )
+
+    raw_impact = scenario_prediction - baseline_prediction
+    impact = round(raw_impact, 4)
+
+    return {
+        "impact": impact,
+        "strength": classify_impact_strength(impact),
+        "baseline_prediction": round(float(baseline_prediction), 4),
+        "scenario_prediction": round(scenario_prediction, 4),
+        "perturbations": perturbations,
+        "features": features
+    }
+
 
 # ======================================================
 # MAIN
@@ -181,314 +208,161 @@ def handle_importance_compare(
     # --------------------------------------------------
 
     if model is None or dataset is None:
-
         return {
-
-            "summary":
-                "Model not available",
-
-            "data":
-                {},
-
-            "drivers":
-                [],
-
-            "interpretation":
-                "The model or dataset is missing."
+            "summary": "Model not available",
+            "data": {},
+            "drivers": [],
+            "interpretation": "The model or dataset is missing."
         }
 
     # --------------------------------------------------
-    # PARSER
+    # EXTRACTION / LEGACY PARSER
     # --------------------------------------------------
 
     if importance_compare_inputs is not None:
-
         parsed = importance_compare_inputs
 
-        feature_a = parsed["entity_a"]
-        feature_b = parsed["entity_b"]
+        # Original semantic entities
+        entity_a = parsed.get("entity_a")
+        entity_b = parsed.get("entity_b")
+
+        # Normalized numerical features
+        feature_a = parsed.get("feature_a") or normalize_feature_name(entity_a)
+        feature_b = parsed.get("feature_b") or normalize_feature_name(entity_b)
+
+        direction_a = parsed.get("direction_a", "unspecified")
+        direction_b = parsed.get("direction_b", "unspecified")
 
     else:
-
-        parsed = parse_importance_compare(
-            question
-        )
+        parsed = parse_importance_compare(question)
 
         print("\n[DEBUG] Parsed:")
         print(parsed)
 
         if not parsed:
             return {
-                "summary":
-                    "Comparison not recognized",
-                "data":
-                    {},
-                "drivers":
-                    [],
-                "interpretation":
+                "summary": "Comparison not recognized",
+                "data": {},
+                "drivers": [],
+                "interpretation": (
                     "Could not identify the variables to compare."
+                )
             }
 
-        feature_a = normalize_feature_name(
-            parsed["entity_a"]
-        )
+        feature_a = normalize_feature_name(parsed.get("entity_a"))
+        feature_b = normalize_feature_name(parsed.get("entity_b"))
+        direction_a = parsed.get("direction_a", "unspecified")
+        direction_b = parsed.get("direction_b", "unspecified")
 
-        feature_b = normalize_feature_name(
-            parsed["entity_b"]
-        )
-
-    print("\n[DEBUG] Normalized features:")
-    print("entity_a =", parsed["entity_a"])
+    print("\n[DEBUG] Normalized entities:")
+    print("entity_a =", parsed.get("entity_a"))
     print("feature_a =", feature_a)
-
-    print("entity_b =", parsed["entity_b"])
+    print("direction_a =", direction_a)
+    print("entity_b =", parsed.get("entity_b"))
     print("feature_b =", feature_b)
+    print("direction_b =", direction_b)
 
-    print("\n[DEBUG] Feature types:")
-
-    print(
-        "feature_a_is_list =",
-        isinstance(feature_a, list)
-    )
-
-    print(
-        "feature_b_is_list =",
-        isinstance(feature_b, list)
-    )
-
-    # ======================================================
+    # --------------------------------------------------
     # BASELINE
-    # ======================================================
+    # --------------------------------------------------
 
-    baseline_values = compute_baseline(
-        dataset
-    )
+    baseline_values = compute_baseline(dataset)
 
-    df_base = build_input_df(
+    baseline_df = build_input_df(
         {},
         dataset
     )
 
-    base_pred = float(
-        model.predict(df_base)[0]
+    baseline_prediction = float(
+        model.predict(baseline_df)[0]
     )
 
     print(
-        f"[DEBUG] Baseline prediction: {base_pred}"
+        f"[DEBUG] Baseline prediction: {baseline_prediction}"
     )
 
-    # ======================================================
-    # IMPORTANCE CALCULATION
-    # (copiato da task_importance)
-    # ======================================================
+    # --------------------------------------------------
+    # DIRECTIONAL ENTITY IMPACTS
+    # --------------------------------------------------
 
-    impacts = {}
-
-    for feature in baseline_values.keys():
-
-        val = baseline_values[feature]
-        print(
-            "[FEATURE LOOP]",
-            repr(feature)
+    try:
+        result_a = compute_entity_impact(
+            entity_features=feature_a,
+            direction=direction_a,
+            baseline_values=baseline_values,
+            dataset=dataset,
+            model=model,
+            baseline_prediction=baseline_prediction
         )
 
-        if not isinstance(
-            val,
-            (int, float)
-        ):
-            continue
-
-        try:
-
-            feature_std = dataset[
-                feature
-            ].std()
-
-        except Exception:
-
-            continue
-
-        if feature_std is None:
-            continue
-
-        if feature_std == 0:
-            continue
-
-        delta = 0.5 * feature_std
-
-        test_values = baseline_values.copy()
-
-        test_values[feature] = (
-            val + delta
+        result_b = compute_entity_impact(
+            entity_features=feature_b,
+            direction=direction_b,
+            baseline_values=baseline_values,
+            dataset=dataset,
+            model=model,
+            baseline_prediction=baseline_prediction
         )
 
-        df_test = build_input_df(
-            test_values,
-            dataset
-        )
+    except ValueError as exc:
+        message = str(exc)
+        print("[IMPORTANCE COMPARE VALIDATION ERROR]", message)
 
-        pred = float(
-            model.predict(df_test)[0]
-        )
-
-        raw_impact = (
-            pred - base_pred
-        )
-
-        impact = round(
-            raw_impact,
-            4
-        )
-
-        if feature in [
-
-            "Density of tree cover",
-
-            "Cumulative change in precipitation compared to a recent past",
-
-            "Relative change in the potential evapotranspiration compared to a recent past"
-        ]:
-
-            print(
-                "\n[DEBUG FEATURE]"
-            )
-
-            print(
-                "feature =",
-                feature
-            )
-
-            print(
-                "delta =",
-                delta
-            )
-
-            print(
-                "base_pred =",
-                base_pred
-            )
-
-            print(
-                "pred =",
-                pred
-            )
-
-            print(
-                "raw_impact =",
-                raw_impact
-            )
-
-            print(
-                "rounded_impact =",
-                impact
-            )
-
-        impacts[feature] = {
-
-            "impact":
-                impact,
-
-            "strength":
-                classify_impact_strength(
-                    impact
-                ),
-
-            "perturbation_delta":
-                round(
-                    float(delta),
-                    4
-                )
+        return {
+            "summary": "Unsupported comparison",
+            "data": {},
+            "drivers": [],
+            "interpretation": message
         }
 
-    print(
-        "[DEBUG] impacts:"
-    )
+    print("\n[DEBUG] Directional impacts:")
+    print("impact_a =", result_a)
+    print("impact_b =", result_b)
 
-    print(
-        impacts
-    )
-    # ======================================================
-    # ENTITY SCORES
-    # ======================================================
-
-    score_a = compute_entity_score(
-
-        feature_a,
-
-        impacts
-    )
-
-    score_b = compute_entity_score(
-
-        feature_b,
-
-        impacts
-    )
-
-    print("\n[DEBUG] Entity scores:")
-
-    print(
-        "score_a =",
-        score_a
-    )
-
-    print(
-        "score_b =",
-        score_b
-    )
-
-    # ======================================================
+    # --------------------------------------------------
     # RAG
-    # ======================================================
+    # --------------------------------------------------
 
-    interpretation = (
-
-        generate_importance_compare_explanation(
-
-            question=question,
-
-            entity_a=parsed["entity_a"],
-            entity_b=parsed["entity_b"],
-
-            feature_a=feature_a,
-            feature_b=feature_b,
-
-            score_a=score_a,
-            score_b=score_b
-        )
+    interpretation = generate_importance_compare_explanation(
+        question=question,
+        entity_a=parsed.get("entity_a"),
+        entity_b=parsed.get("entity_b"),
+        feature_a=feature_a,
+        feature_b=feature_b,
+        direction_a=direction_a,
+        direction_b=direction_b,
+        impact_a=result_a["impact"],
+        impact_b=result_b["impact"],
+        perturbations_a=result_a["perturbations"],
+        perturbations_b=result_b["perturbations"]
     )
 
     print(
         "\n[DEBUG] interpretation:"
     )
-
-    print(
-        interpretation
-    )
+    print(interpretation)
 
     return {
-
-        "summary":
-            "Importance comparison",
-
+        "summary": "Directional impact comparison",
         "data": {
-
-            "feature_a":
-                feature_a,
-
-            "feature_b":
-                feature_b,
-
-            "score_a":
-                score_a,
-
-            "score_b":
-                score_b
+            "feature_a": feature_a,
+            "feature_b": feature_b,
+            "direction_a": direction_a,
+            "direction_b": direction_b,
+            "baseline_risk": round(baseline_prediction, 4),
+            # Backward-compatible magnitude fields; signed effects are
+            # exposed separately as impact_a and impact_b.
+            "score_a": abs(result_a["impact"]),
+            "score_b": abs(result_b["impact"]),
+            "impact_a": result_a["impact"],
+            "impact_b": result_b["impact"],
+            "strength_a": result_a["strength"],
+            "strength_b": result_b["strength"],
+            "scenario_risk_a": result_a["scenario_prediction"],
+            "scenario_risk_b": result_b["scenario_prediction"],
+            "perturbations_a": result_a["perturbations"],
+            "perturbations_b": result_b["perturbations"]
         },
-
-        "drivers":
-            [],
-
-        "interpretation":
-            interpretation
+        "drivers": [],
+        "interpretation": interpretation
     }

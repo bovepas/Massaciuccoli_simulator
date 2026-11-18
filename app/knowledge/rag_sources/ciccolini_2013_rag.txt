@@ -1,0 +1,188 @@
+DOCUMENT: ciccolini_2013_rag
+SOURCE: Ciccolini, V.; Giannini, V.; Bosco, S.; Pellegrino, E.; Pistocchi, C.; Sabbatini, T.; Rossetto, R.; Silvestri, N.; Bonari, E. (2013). "Restoration of a Mediterranean drained peatland: The case study of the Massaciuccoli Lake basin (Tuscany, IT)". Contribution presented at AWARE – Approaches in Wetland Restoration, Warsaw, 21–23 April 2013; contribution to the SER Europe Knowledge Base on Ecological Restoration in Europe.
+CASE STUDY: Massaciuccoli Lake basin, Tuscany, Italy
+DOMAIN: Peatland restoration; wetland management; hydrology; nutrient dynamics; greenhouse-gas monitoring; vegetation and biodiversity
+PURPOSE: Describe the experimental design and multidisciplinary monitoring programme of the RestoMedPeatland project. The contribution mainly documents project objectives, experimental treatments and methods; it does not report conclusive comparative results on restoration effectiveness.
+
+GENERAL CONTEXT
+================
+
+The contribution addresses the restoration of a drained Mediterranean peatland in the Massaciuccoli Lake basin. The area is affected by drainage, agricultural land use, peat degradation and nutrient inputs to the lake.
+
+The authors report that nutrient loads, particularly nitrogen (N) and phosphorus (P) transported by surface water and groundwater, contribute to eutrophication. The lake is described as having shifted from an oligotrophic condition to a eutrophic or hypertrophic condition since approximately 1970.
+
+The contribution reports peatland subsidence of approximately 2–3 m over 70 years, attributed to peat compaction and mineralisation following drainage. The drained area is described as lying approximately 0–4 m below sea level. Peaty soils are reported to contain organic matter up to 50%.
+
+These figures and descriptions are background information reported in the contribution. They should not be interpreted as measurements newly produced by the RestoMedPeatland experiment.
+
+RESTOMEDPEATLAND PROJECT AND EXPERIMENTAL DESIGN
+================================================
+
+The RestoMedPeatland project began in 2011. The contribution describes a pilot experimental area of approximately 15 hectares in the Massaciuccoli Lake basin.
+
+The project was designed to investigate different approaches to peatland rewetting and vegetation-based treatment, and to compare them with drained control areas. The experimental design comprises three restoration or treatment systems and two controls:
+
+- A: constructed wetland;
+- B: vegetation filters;
+- C: natural wetland;
+- D: conventionally cultivated control;
+- E: uncultivated but drained control, where natural vegetation succession can occur.
+
+The contribution presents the experimental setup and monitoring programme. It states that the effectiveness of the systems would be evaluated through comparison with the control areas. It does not provide final comparative evidence establishing that one treatment is more effective than another.
+
+RESTORATION AND MANAGEMENT SYSTEMS
+==================================
+
+A. CONSTRUCTED WETLAND
+---------------------
+
+The constructed wetland is designed with internal and external embankments approximately 0.4–0.5 m high. Its layout creates a convoluted water-flow path intended to increase water residence time. The inflow is regulated.
+
+The system is planted with Phragmites australis and Typha angustifolia. Biomass harvesting is part of the management approach.
+
+The described design is intended to support treatment of drainage water through a managed wetland system. The contribution does not report measured treatment efficiencies or demonstrate a quantified reduction in nutrient loads.
+
+B. VEGETATION FILTERS
+--------------------
+
+The vegetation-filter system consists of seven non-food crop or vegetation types. Channels are used to distribute drainage water, allowing lateral infiltration through the vegetated areas.
+
+The species and vegetation types listed in the contribution are:
+
+- Populus;
+- Salix;
+- Arundo donax;
+- Miscanthus × giganteus;
+- Phragmites;
+- Festuca arundinacea;
+- Poa pratensis;
+- Lolium perenne;
+- Paspalum vaginatum.
+
+The contribution describes periodic cutting and biomass harvesting as part of system management. The listed vegetation is intended to be evaluated in relation to water treatment and biomass production. No comparative removal rates or treatment outcomes are reported in this contribution.
+
+C. NATURAL WETLAND
+------------------
+
+The natural-wetland treatment consists of a rewetted area in which vegetation is allowed to recolonise spontaneously. The natural topography is expected to favour the development of different vegetation patterns.
+
+Floating structures are included to support plants with extensive root systems.
+
+The contribution describes this as a less intensively managed restoration approach. It does not provide final measurements of ecological recovery or water-quality improvement.
+
+D–E. CONTROL AREAS
+------------------
+
+Two control conditions are included in the experimental design:
+
+- D: an area under conventional cultivation;
+- E: an uncultivated but drained area in which natural vegetation succession can take place.
+
+The controls are intended to provide reference conditions for evaluating the restoration and treatment systems. Their inclusion is part of the experimental design; the contribution does not report a completed comparative assessment.
+
+MULTIDISCIPLINARY MONITORING PROGRAMME
+======================================
+
+The project combines hydrological, water-chemistry, soil, microbiological, greenhouse-gas, vegetation and fauna monitoring. The programme is intended to characterise the experimental systems and evaluate their responses to rewetting and vegetation management.
+
+HYDROLOGY AND WATER QUALITY
+---------------------------
+
+The hydrological monitoring programme includes meteorological conditions, water inflows and outflows, relationships between surface water and shallow/deep aquifers, infiltration and exfiltration, evapotranspiration, and possible salinity influence.
+
+Continuous probes are used or planned for monitoring:
+
+- pH;
+- dissolved oxygen;
+- water temperature;
+- electrical conductivity (EC).
+
+Water sampling and chemical analyses include:
+
+- electrical conductivity (EC);
+- total suspended solids (TSS);
+- total phosphorus (TP);
+- total Kjeldahl nitrogen (TN);
+- nitrate (NO3);
+- ammonium (NH4);
+- dissolved organic carbon (DOC);
+- dissolved inorganic carbon (DIC);
+- anions and cations.
+
+Groundwater is also subject to discrete sampling. The resulting observations are intended to support the characterisation of water exchanges and the development or application of models for the unsaturated and saturated zones, together with spatially distributed data analysis.
+
+SOIL CHARACTERISATION
+---------------------
+
+Soil monitoring includes measurements or analyses of:
+
+- pH and electrical conductivity;
+- total nitrogen and available nitrogen;
+- nitrate and ammonium;
+- total phosphorus, available phosphorus and organic phosphorus;
+- carbon-to-nitrogen ratio (C:N);
+- soil organic matter (SOM);
+- soil texture.
+
+The contribution describes a baseline characterisation before rewetting and repeated measurements after the experimental systems have been established. Baseline characterisation and planned post-intervention monitoring must be distinguished from completed post-treatment results.
+
+MICROBIAL COMMUNITIES AND PROCESSES
+-----------------------------------
+
+The microbiological programme includes PCR, DNA sequencing and high-throughput approaches to investigate bacteria, fungi, microorganisms involved in the nitrogen cycle (including bacteria and archaea), and arbuscular mycorrhizal fungi.
+
+A baseline microbial characterisation before the experiment is described. Quantitative PCR (qPCR) of genes related to nitrogen cycling and methane (CH4) processes is included in the programme.
+
+Methanogenesis and methane oxidation are identified as processes to be investigated following rewetting. The contribution describes these as research topics and monitoring objectives, not as processes for which final treatment effects have already been quantified.
+
+GREENHOUSE-GAS FLUXES
+---------------------
+
+The project includes in-situ measurements of carbon dioxide (CO2) and methane (CH4) fluxes. The purpose is to investigate how rewetting and phytoremediation or vegetation-based treatments may affect greenhouse-gas emissions, peat mineralisation, subsidence and nutrient release.
+
+The contribution discusses the possibility that rewetting may shift soil conditions from predominantly aerobic towards more anaerobic conditions. In this context, an increase in CH4 emissions and a decrease in CO2 emissions are presented as possible mechanisms or expected responses to be examined. They are not reported as measured outcomes of the experiment.
+
+The described methods include manual chambers coupled with an infrared analyser for CO2 and floating accumulation chambers with a methane detector for CH4. Soil respiration measurements are also intended to distinguish heterotrophic respiration from total soil respiration.
+
+VEGETATION AND BIOMASS
+----------------------
+
+Vegetation monitoring includes biomass production and plant nutrient uptake, particularly N and P. Biomass is scheduled for harvesting in spring and late summer.
+
+The contribution also identifies ash content and calorific value as parameters for characterising harvested biomass. These measurements are part of the planned evaluation of vegetation and biomass management; no final production or nutrient-uptake results are presented.
+
+FAUNA
+-----
+
+Birds and amphibians are included in the fauna monitoring programme. Their observation is intended to contribute to the ecological assessment of the experimental areas. The contribution does not report final biodiversity responses attributable to the treatments.
+
+STATE OF EVIDENCE AND LIMITATIONS
+=================================
+
+The document is primarily a description of a restoration project, its experimental layout and its planned or ongoing monitoring methods.
+
+The following distinctions are essential when using this source:
+
+- The project is reported to have started in 2011, with a pilot area of approximately 15 hectares.
+- The three treatment systems and two controls are descriptions of the experimental design.
+- The contribution describes baseline characterisation and a broad monitoring programme. Some measurements are described as baseline activities already undertaken, while repeated post-establishment monitoring and evaluation are presented as planned or ongoing activities.
+- The effectiveness of the restoration systems is an objective to be evaluated by comparison with controls, not a result demonstrated in this contribution.
+- No conclusive ranking of the constructed wetland, vegetation filters and natural wetland is provided.
+- No quantified final reduction in nitrogen or phosphorus loads, improvement in lake water quality, reduction in peat subsidence, or change in CO2 and CH4 emissions is established by the contribution.
+- Potential increases in methane and decreases in carbon dioxide following rewetting are described as possible responses or mechanisms to investigate, not as measured experimental findings.
+- The contribution's statements about the lake's trophic evolution, peat subsidence and soil organic matter are background information reported by the authors, not new outcomes of the pilot experiment.
+
+The document therefore provides methodological and conceptual information rather than calibration-ready quantitative evidence of treatment performance.
+
+SCIENTIFIC CONTRIBUTION TO THE MASSACIUCCOLI DIGITAL TWIN
+========================================================
+
+The contribution is relevant to the Massaciuccoli Digital Twin in several ways:
+
+1. It documents the connection between drainage, peat degradation, peat mineralisation and long-term land subsidence in the Massaciuccoli basin.
+2. It identifies nutrient transport through surface water and groundwater as an important pressure associated with eutrophication.
+3. It describes three distinct restoration and water-management approaches that can inform the representation of alternative land and wetland management strategies.
+4. It provides a multidisciplinary monitoring framework linking hydrology, water chemistry, soil properties, microbial processes, greenhouse-gas fluxes, vegetation and fauna.
+5. It highlights processes and variables that may be relevant to future integrated modelling, including water balance, infiltration and exfiltration, evapotranspiration, nutrient cycling, organic-matter dynamics and greenhouse-gas exchange.
+
+The contribution does not provide validated numerical response functions or final comparative treatment effects that could be directly used to calibrate the Digital Twin's emulator. Its principal value is to document the local restoration experiment, its conceptual framework, the variables considered and the monitoring methods adopted.

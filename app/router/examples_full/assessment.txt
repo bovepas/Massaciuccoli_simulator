@@ -1,5 +1,8 @@
 Assess ecosystem risk under a scenario with increased temperature, reduced precipitation and lower biodiversity.
 Assess ecosystem risk under a scenario with reduced tree cover, lower biodiversity and decreased precipitation.
+Assess ecosystem risk under a scenario with a moderate increase in tree cover and a significant decrease in biodiversity.
+Assess ecosystem risk under a scenario with a moderate decrease in precipitation and a significant increase in tree cover.
+Assess ecosystem risk under a scenario with a severe decrease in biodiversity and a moderate increase in tree cover.
 Assess ecosystem risk under a scenario with increased evapotranspiration, reduced grassland cover and lower species richness.
 Assess ecosystem risk under a scenario with increased temperature, reduced precipitation and lower biodiversity.
 What is the ecosystem risk if temperature increases by 3°C and precipitation decreases by 20%?

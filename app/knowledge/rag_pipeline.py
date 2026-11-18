@@ -432,7 +432,7 @@ Scientific Interpretation:
 
         start_timer("llm_generation")
 
-        raw = call_llm(prompt)
+        raw = call_llm(prompt, role="interpretation")
 
         end_timer("llm_generation")
 

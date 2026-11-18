@@ -670,6 +670,93 @@ The value MUST NOT be negative when modification_type is "percentage".
 The field "magnitude" MUST be null for explicit numerical percentages.
 
 
+--------------------------------------------------
+9.1. PERCENTAGE IN PARENTHESES WITH A DIRECTIONAL MODIFICATION
+--------------------------------------------------
+
+When a variable is explicitly described as increasing or decreasing,
+and a percentage is provided in parentheses to quantify that
+modification, interpret the percentage as the RELATIVE CHANGE
+with respect to the baseline.
+
+The percentage represents the magnitude of the change,
+NOT the final absolute value of the variable.
+
+This rule applies to expressions such as:
+
+- "increased tree cover (70%)"
+- "reduced biodiversity (30%)"
+- "increased precipitation (+20%)"
+- "reduced grassland (-40%)"
+- "tree cover increases (70%)"
+- "biodiversity decreases (30%)"
+
+For:
+
+"increased tree cover (70%)"
+
+extract:
+
+variable = "tree_cover"
+original_expression = "increased tree cover (70%)"
+interpretation = "tree cover increases by 70 percent relative to baseline"
+modification_type = "percentage"
+value = 70
+unit = "percent"
+direction = "increase"
+magnitude = null
+
+For:
+
+"reduced biodiversity (-30%)"
+
+extract:
+
+variable = "biodiversity"
+original_expression = "reduced biodiversity (-30%)"
+interpretation = "biodiversity decreases by 30 percent relative to baseline"
+modification_type = "percentage"
+value = 30
+unit = "percent"
+direction = "decrease"
+magnitude = null
+
+CRITICAL DISTINCTION:
+
+A directional verb followed by a percentage in parentheses
+describes a relative percentage change.
+
+Do NOT interpret that percentage as an absolute target value.
+
+Compare:
+
+1. "increased tree cover (70%)"
+
+   → modification_type = "percentage"
+   → value = 70
+   → direction = "increase"
+
+2. "tree cover increased to 70%"
+
+   → modification_type = "target"
+   → value = 70
+   → unit = "percent"
+
+3. "tree cover reaches 70%"
+
+   → modification_type = "target"
+   → value = 70
+   → unit = "percent"
+
+The directional verb and the grammatical relationship between
+the verb and the percentage determine the interpretation.
+
+The percentage value must always be stored as a positive magnitude.
+The direction must be stored separately.
+
+Do NOT calculate the resulting value from the baseline.
+Python performs the numerical calculation later.
+
 ==================================================
 10. TARGET
 ==================================================

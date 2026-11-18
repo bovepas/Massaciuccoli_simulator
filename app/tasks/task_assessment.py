@@ -385,7 +385,7 @@ def handle_assessment(
             primary_drivers=primary_drivers,
             secondary_responses=secondary_drivers,
             risk_delta=risk_delta,
-            features=modified_features,
+            scenario_modifications=grounded_features,
             baseline_risk=baseline_risk,
             scenario_risk=scenario_risk
         )
@@ -406,26 +406,17 @@ def handle_assessment(
     return {
 
         "summary": "Scenario-based ecosystem risk assessment",
-
         "baseline_risk": round(baseline_risk, 4),
-
         "scenario_risk": round(scenario_risk, 4),
-
         "risk_delta": round(risk_delta, 4),
-
         # backward-compatible
         "data": combined_drivers,
-
         "drivers": drivers,
-
         # new UX structure
         "primary_drivers": primary_drivers,
-
         "secondary_drivers": secondary_drivers,
-
         "grounded_features": grounded_features,
-
+        "scenario_modifications": grounded_features,
         "qualitative_changes": qualitative_changes,
-
         "interpretation": explanation
     }

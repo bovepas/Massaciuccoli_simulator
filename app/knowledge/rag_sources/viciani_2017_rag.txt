@@ -1,0 +1,469 @@
+VICIANI ET AL. (2017) — NATURA 2000 PROTECTED HABITATS, MASSACIUCCOLI LAKE
+RAG KNOWLEDGE DOCUMENT
+================================================================================
+
+SOURCE
+Viciani, D., Dell’Olmo, L., Vicenti, C., & Lastrucci, L. (2017).
+“Natura 2000 protected habitats, Massaciuccoli Lake (northern Tuscany, Italy).”
+Journal of Maps, 13(2), 219–226.
+DOI: https://doi.org/10.1080/17445647.2017.1290557
+
+SCOPE AND DATA-SEPARATION RULE
+This document is intended exclusively for the scientific knowledge base and
+retrieval-augmented generation (RAG) layer of the Massaciuccoli Digital Twin.
+It provides published ecological context, habitat descriptions, methodological
+information, reported results, and limitations.
+
+CRITICAL ARCHITECTURAL CONSTRAINT:
+All quantitative models and calculations in the Massaciuccoli Digital Twin
+(including Random Forest emulators, VAE-related components, dynamic models,
+risk scores, training, calibration, and quantitative scenario inputs) must use
+the project CSV as their sole data source. No measurements, values, map layers,
+or derived quantities from this article, its supplementary map, or external
+habitat datasets may be imported into, fused with, used to train, or used to
+calibrate those quantitative models. This article is available only to the
+RAG/KB layer for scientific explanation and contextualization.
+
+1. STUDY PURPOSE AND GEOGRAPHIC DOMAIN
+--------------------------------------------------------------------------------
+The article presents a Natura 2000 habitat map for the Site of Community
+Importance (SCI) “Lago e Padule di Massaciuccoli”, code IT5120017, in
+north-western Tuscany, Italy. The site is mainly in the Province of Lucca and
+partly in the Province of Pisa. The article describes the site as recently
+approved as a Special Area of Conservation (SAC) at the time of publication.
+
+The study-area description reports a surface of 1,908 ha and an altitude of
+0–1 m above sea level. Table 1 reports an SCI total area of 1,905.57 ha.
+These are the two figures as stated in different parts of the paper; they
+should not be silently treated as identical.
+
+The mapped domain is the Natura 2000 site, not the entire hydrological
+catchment and not an automatically transferable representation of every
+part of Lake Massaciuccoli or its surrounding basin.
+
+The area is also described as:
+- a Tuscan Ramsar wetland (MedWet Inventory site code ITE12W0400);
+- part of the Migliarino-San Rossore-Massaciuccoli Regional Park;
+- an Important Bird Area (IBA 077).
+
+2. DATA SOURCES AND TEMPORAL REFERENCE
+--------------------------------------------------------------------------------
+The habitat map integrates cartographic, phytosociological, photographic, and
+field information from different dates.
+
+2.1 Phytosociological surveys
+The vegetation survey reported by the authors was conducted during 2015–2016.
+More than 90 phytosociological relevés were surveyed and analysed across the
+study area. The surveys identified vegetation types at different
+syntaxonomical levels. Additional field surveys during the same period were
+conducted to recognize habitats of conservation interest.
+
+2.2 Aerial imagery
+The authors used georeferenced true-colour RGB orthophotos acquired by the
+Tuscany Region in June and July 2013. The stated spatial resolution is
+50 × 50 cm.
+
+2.3 Previous cartography and literature
+The interpretation also incorporated previous vegetation maps and studies,
+vegetation-series information, and the authors’ field knowledge of the area.
+The article identifies Lastrucci et al. (2017) as the main source for
+vegetation information, alongside earlier studies and cartographic material.
+
+IMPORTANT TEMPORAL QUALIFICATION:
+The map is a composite interpretation based on 2013 orthophotos, field and
+phytosociological surveys from 2015–2016, and sources from other dates.
+It is not a synchronous survey in which every mapped attribute was measured
+on one common date. It is not a time series and does not quantify habitat
+change through time.
+
+3. MAPPING METHOD, SCALE, AND ATTRIBUTES
+--------------------------------------------------------------------------------
+The authors used photo-interpretation and the “Photo Guided Method”, together
+with field observations and analysis of vegetation and land-use patterns.
+The identification of land-use and vegetation types through orthophoto
+interpretation was carried out at scales between 1:3,000 and 1:5,000.
+The final Natura 2000 habitat map was released at a scale of 1:10,000.
+
+The authors considered:
+- georeferenced locations of phytosociological relevés and their floristic
+  composition;
+- orthophoto colours, tones, textures, and grain around relevé locations;
+- local hydrology, soil-water management, and geolithological characteristics;
+- field checks conducted in different seasons.
+
+The minimum mapping unit was set at 50 m². Habitat types occupying polygons
+smaller than 50 m² were represented as points on the map. Five of the nine
+identified habitat types had areas below this minimum mapping unit and were
+represented as points.
+
+Each map polygon was assigned:
+1. vegetation type, according to the vegetation classification source used;
+2. habitat typology, including the Natura 2000 code;
+3. estimated percentage cover of the habitat type within the polygon.
+
+Where a polygon contained both a Natura 2000 habitat and other vegetation,
+the percentage cover of the Natura 2000 habitat was estimated on the basis of
+the authors’ professional and scientific experience acquired during field
+surveys. It was therefore not necessarily a direct measurement or an
+automatically classified pixel-level estimate.
+
+For Natura 2000 habitat 7210, “Calcareous fens with Cladium mariscus”, the
+authors distinguished four cartographic conditions based on approximate
+Cladium cover:
+- close to 100%: optimal condition;
+- around 75%: suboptimal condition;
+- around 50%: medium condition;
+- around 25%: fragmented condition.
+
+These are interpretative mapping categories based on aerial photographs and
+field work. They should not be represented as a validated quantitative
+ecological-condition index or as a repeated monitoring series.
+
+4. HABITAT RESULTS AND SURFACE AREAS
+--------------------------------------------------------------------------------
+The authors identified nine Natura 2000 habitat types, all associated with
+aquatic, hygrophilous, or marsh environments.
+Table 1 distinguishes:
+- “Polygon area (ha)”: the area of the mapped polygons assigned to a habitat;
+- “Actual area covered (ha)”: the estimated area actually occupied by that
+  habitat within those polygons, accounting for partial cover.
+
+The distinction is essential. Polygon area and actual habitat cover are not
+interchangeable.
+
+NATURA 2000 HABITAT TABLE (VALUES AS REPORTED IN TABLE 1)
+
+Code    Habitat name (shortened)                                      Polygon area (ha)    Actual area covered (ha)
+3130    Oligotrophic to mesotrophic standing waters                    <0.005              <0.005
+3150    Natural eutrophic lakes with Magnopotamion or                  3.30                2.35
+        Hydrocharition-type vegetation
+3270    Rivers with muddy banks and Chenopodion/Bidention               <0.005              <0.005
+        vegetation
+3280    Mediterranean rivers with Paspalo-Agrostidion                  <0.005              <0.005
+        species and hanging curtains of Salix and Populus alba
+6420    Mediterranean tall humid herb grasslands                       <0.005              <0.005
+6430    Hydrophilous tall herb fringe communities                      <0.005              <0.005
+7140    Transition mires and quaking bogs                               0.33                0.29
+7210*   Calcareous fens with Cladium mariscus                          371.70              256.68
+91E0*   Alluvial forests with Alnus glutinosa and                      3.06                3.06
+        Fraxinus excelsior
+
+The five types shown with values below 0.005 ha are represented as point
+habitats because they fall below the 50 m² minimum mapping unit.
+
+Reported totals and site composition:
+- Natura 2000 habitat total polygon area: 378.40 ha.
+- Natura 2000 habitat total actual covered area: 262.40 ha.
+- SCI Lake Massaciuccoli total area in Table 1: 1,905.57 ha.
+- Natura 2000 habitat polygon area as a share of the SCI area: 19.86%.
+- Other habitat types not listed in Directive 92/43/EEC, mainly Phragmites
+  australis communities: 255.79 ha, or 13.42%.
+- Lake and canals: 1,271.37 ha, or 66.72%.
+
+The paper’s 19.86% figure is calculated using the 378.40 ha polygon-area
+total, not the 262.40 ha actual-cover total. Do not substitute one denominator
+or numerator for the other. The table labels the percentages with respect to
+the total area covered by Natura 2000 habitats, while the site-composition
+rows report the polygon-area proportions relative to the SCI area.
+
+4.1 Habitat 7210* — Calcareous fens with Cladium mariscus
+This habitat dominates the mapped Natura 2000 habitat area:
+- polygon area: 371.70 ha;
+- actual area covered: 256.68 ha;
+- share of the actual area covered by the nine Natura 2000 habitat types:
+  97.82%, as reported in Table 1.
+
+The authors state that the Massaciuccoli site contains the largest surface
+area of this habitat type among sites on the Italian peninsula, citing the
+MATTM (2016) Natura 2000 database. This is a comparative conclusion reported
+by the authors and based on the cited national source; the paper does not
+present a new independent national survey.
+
+4.2 Habitat 91E0* — Alluvial forests
+The paper maps 3.06 ha of polygon area and 3.06 ha of actual cover for this
+priority habitat. The authors describe small, fragmented patches of marshy
+woodland and discuss pressures including alteration of the hydrological
+regime, water eutrophication, and agriculture. These are descriptions and
+interpretations in the paper, not quantified causal effects.
+
+4.3 Habitat 7140 — Transition mires and quaking bogs
+The paper reports 0.33 ha of polygon area and 0.29 ha of actual cover.
+The authors describe small patches of Sphagnum carpets, including
+Sphagnum palustre and Sphagnum subnitens, within reedbeds developing on
+floating islands rich in decomposing organic matter. The authors consider
+these communities of conservation interest even though they are not listed
+as habitats of conservation importance under Directive 92/43/EEC.
+
+4.4 Other vegetation and aquatic habitats
+The paper reports 255.79 ha of other habitat types not listed in the Habitats
+Directive, mainly Phragmites australis communities, and 1,271.37 ha of lake
+and canals in the site-area breakdown.
+
+5. ECOLOGICAL INTERPRETATIONS REPORTED BY THE AUTHORS
+--------------------------------------------------------------------------------
+5.1 Cladium mariscus and Phragmites australis
+The authors describe areas where Cladium mariscus stands are in contact with
+Phragmites australis communities. In some places the two species form mixed
+communities; in others Phragmites may become dominant.
+
+The paper cites eutrophication, including nutrient abundance such as nitrates
+and phosphates, as a possible factor favouring Phragmites australis at the
+expense of Cladium mariscus. It also reports increasing eutrophication as a
+problem for Lake Massaciuccoli, citing other local sources.
+
+The authors discuss the possibility that expansion of reed communities may
+locally transform Cladium-dominated areas into Phragmites-dominated
+communities, with deterioration, fragmentation, or disappearance of the
+Cladium habitat. They state that this process had already been reported in
+the study area and suggest that abandonment of traditional management of
+Cladium communities for craft purposes may have facilitated it.
+
+RAG QUALIFICATION:
+Present this as a local ecological interpretation and literature-supported
+mechanism discussed by the authors. Do not state that this paper experimentally
+demonstrates a causal effect of eutrophication or management abandonment.
+Do not generalize the described transition to every part of the lake or basin.
+
+5.2 Habitat 91E0* and pressures
+The mapped alder woodland patches are described as small and fragmented.
+The authors discuss changes in hydrological regime, eutrophication, and
+agriculture as threats or pressures. The paper does not provide a time-series
+quantification of the loss or a causal attribution for each pressure.
+
+5.3 Habitat 7140 and Sphagnum communities
+The authors describe Sphagnum carpets in small patches within reedbeds on
+floating islands. These observations concern the particular communities and
+locations described in the study, not all reedbeds or all wetlands around
+Massaciuccoli.
+
+6. LIMITATIONS AND INTERPRETATION RULES
+--------------------------------------------------------------------------------
+The following qualifications must remain associated with the relevant
+results, including when a RAG system retrieves only one section or chunk.
+SPATIAL DOMAIN:
+All mapped area statistics refer to the Natura 2000 site IT5120017 as mapped
+in the paper. They must not be presented as statistics for the entire
+hydrological catchment or as automatically representative of all areas
+surrounding the lake.
+
+TEMPORAL DOMAIN:
+The mapping integrates orthophotos from June–July 2013, phytosociological
+surveys from 2015–2016, and earlier cartographic and literature sources.
+It is a composite map, not a single-date observation and not a time series.
+The paper does not quantify changes between successive comparable maps.
+
+MAPPING SCALE AND MINIMUM UNIT:
+The final map scale is 1:10,000. The minimum mapping unit is 50 m².
+Five habitat types below this threshold are represented as points. Point
+features should not be interpreted as polygon areas of equivalent mapping
+precision.
+
+PARTIAL POLYGON COVER:
+The “actual area covered” values depend partly on estimated habitat
+percentages within polygons. These values are not all direct measurements
+of homogeneous habitat polygons. Keep polygon area distinct from actual
+covered area in every numerical explanation.
+
+INTERPRETATIVE BOUNDARIES:
+The authors explicitly state that transitions between vegetation communities
+may be gradual and that assigned boundaries and calculated surface areas
+may be subject to change. The map is an expert interpretation of vegetation
+and habitat boundaries, not an error-free delineation of immutable ecological
+units.
+
+HABITAT CONDITION:
+The four Cladium-cover classes for habitat 7210 are approximate interpretative
+categories. They are not a validated, instrument-based ecological status
+index and do not provide temporal trends.
+
+CAUSALITY:
+Statements connecting eutrophication, reed expansion, Cladium decline,
+hydrological alteration, or management abandonment must be attributed to
+the authors and their cited literature. The paper is a habitat-mapping study,
+not an experimental causal study.
+
+7. RELEVANCE TO MASSACIUCCOLI DIGITAL TWIN BENCHMARK QUESTIONS
+--------------------------------------------------------------------------------
+This paper can support RAG answers concerning:
+- the identity, distribution, and relative mapped extent of Natura 2000
+  habitats within the SCI;
+- the importance of Cladium mariscus calcareous fens in the mapped site;
+- qualitative ecological relationships discussed between Cladium and
+  Phragmites communities;
+- habitat conservation pressures discussed for alder woodland and wetland
+  vegetation;
+- the mapping methodology, spatial scale, observation periods, and
+  interpretation limits;
+- the distinction between mapped polygon extent and estimated actual
+  habitat cover.
+
+Potential task relevance:
+- importance: relative importance and mapped dominance of habitat types;
+- dependency: qualitative relationships discussed between eutrophication,
+  reed communities, and Cladium-dominated vegetation;
+- drivers: pressures and management factors discussed by the authors;
+- assessment: scientific context for explaining ecological implications,
+  without using this paper to calculate quantitative scenario outputs;
+- ENM: habitat context only. This article does not provide a suitable,
+  structured species occurrence dataset for direct use as ENM model input.
+
+The paper does not provide a comparable time series of habitat maps and
+should not be used to answer quantitative habitat-change questions as if it
+did.
+
+8. DATA AND RESOURCE DISCOVERY — FAIRNESS ASSESSMENT
+--------------------------------------------------------------------------------
+This section distinguishes the paper’s published cartographic output from
+the original GIS data and from later regional habitat datasets.
+
+8.1 Article and supplementary map
+Persistent article identifier:
+https://doi.org/10.1080/17445647.2017.1290557
+
+The publisher page lists supplementary material titled:
+“Natura 2000 protected habitats, Massaciuccoli Lake (northern Tuscany, Italy).pdf”
+The supplementary item is a large PDF map (publisher listing reports
+approximately 75.2 MB). The existence of this map supports access to a
+published cartographic output, but does not by itself establish that the
+original editable GIS polygons, geometries, and attribute table are publicly
+available.
+
+Article license:
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0
+(CC BY-NC-ND 4.0), as stated in the article. This license permits
+non-commercial reuse and distribution with attribution, but does not permit
+sharing adapted or transformed versions under the license terms. Do not
+assume that the license of the article automatically applies to third-party
+source data or to later regional datasets.
+
+FAIR assessment of the article/supplementary map:
+- Findable: yes, through the article DOI and publisher page.
+- Accessible: the article and supplementary map are listed by the publisher;
+  access to the map has been identified.
+- Interoperable: limited. The supplementary map is a PDF cartographic output,
+  not a confirmed machine-readable vector dataset.
+- Reusable: restricted by CC BY-NC-ND 4.0; the PDF is useful for consultation
+  and citation but is not equivalent to openly reusable GIS source data.
+
+Status: published cartographic output verified; original GIS source-data
+availability not verified.
+
+8.2 Tuscany Region HaSCITu habitat cartography
+The Tuscany Region’s HaSCITu project provides regional Natura 2000 habitat
+cartography. Regional and national catalogue records describe the resource
+as downloadable open data in ESRI Shapefile format, distributed as a ZIP
+archive, with a CC BY license declared in the metadata.
+
+The RNDT metadata identifier reported for the resource is:
+r_toscan:698f7bb0-936a-4149-810b-7b87bcb1d140
+
+This regional resource is potentially useful for independent GIS consultation
+and reuse. However, it must not be automatically identified as the exact
+original GIS dataset used to produce the 2017 article map. It is a separate
+regional cartographic resource and may represent a later or differently
+managed data product.
+
+Preliminary FAIR assessment of HaSCITu:
+- Findable: good; regional and RNDT catalogue metadata are identified.
+- Accessible: catalogue records declare open download of a Shapefile ZIP.
+  The actual archive and its contents should be checked before operational
+  use.
+- Interoperable: potentially good because ESRI Shapefile is a widely used
+  vector GIS format. The CRS, field definitions, geometry validity, and
+  attribute semantics must still be checked in the downloaded files.
+- Reusable: metadata declare CC BY. Confirm the exact license notice,
+  attribution requirements, source provenance, update date, and any
+  dataset-specific restrictions in the actual distribution.
+
+Status: catalogue record and declared distribution identified, but the
+HaSCITu resource has not been independently verified here. Its actual
+download, CRS, attributes, version, and license remain to be checked
+before treating it as operationally reusable or fully FAIR.
+
+8.3 ITINERIS catalogue reference
+The ITINERIS resource “Habitat hascitu - Present” is considered a verified
+FAIR resource for the purposes of this knowledge document. The catalogue
+identifies the habitat layer and its 2017 source-data reference and provides
+a link to the associated Zenodo resource/collection.
+
+This verification applies to the ITINERIS resource as catalogued. It does
+not establish that the resource is the exact original GIS dataset used to
+produce the Viciani et al. (2017) map, nor that its geometries and attributes
+are identical to those used in the article. It must therefore be cited and
+described as an ITINERIS/HaSCITu-related resource, not as the confirmed
+original source file of the 2017 publication.
+
+FAIR assessment:
+- Findable: verified through the ITINERIS catalogue and its linked
+  persistent-resource record.
+- Accessible: verified at the resource/catalogue level through the
+  published ITINERIS/Zenodo reference.
+- Interoperable: treat according to the formats and metadata supplied with
+  the catalogued resource; do not infer additional properties beyond those
+  metadata.
+- Reusable: treat according to the license and reuse conditions attached to
+  the verified resource record.
+
+Status: ITINERIS resource verified as a FAIR catalogue resource. Its
+equivalence to the original GIS data behind the 2017 article map is not
+established.
+
+8.4 Other cited sources and software
+The paper cites the Italian Ministry of Environment Natura 2000 database
+“N2000IT_2015.mdb” and regional geological cartography among its sources.
+These are source/reference datasets, not datasets newly published by the
+authors in this article. Their current access conditions, metadata, and
+reuse licenses require separate verification.
+
+The paper states that Esri ArcGIS 10.4 was used to create and edit the maps.
+ArcGIS is software, not a dataset.
+
+FAIR SUMMARY:
+- Article and supplementary PDF map: findable and accessible as a published
+  cartographic output; limited interoperability and reuse; original editable
+  GIS data not verified.
+- HaSCITu regional dataset: promising open GIS resource with catalogue
+  metadata, declared Shapefile ZIP distribution, and CC BY license; verify
+  the actual files, CRS, attributes, provenance, and version.
+- ITINERIS “Habitat hascitu - Present”: verified FAIR catalogue resource;
+  its identity/equivalence with the original GIS dataset used for the 2017
+  article map is not established.
+- Natura 2000 2015 database and geological cartography: cited source data,
+  not article-generated datasets; FAIR status not established here.
+
+9. DIGITAL TWIN DATA GOVERNANCE — CSV-ONLY QUANTITATIVE MODELS
+--------------------------------------------------------------------------------
+No numerical values, mapped areas, habitat polygons, habitat classifications,
+or external environmental data from this article or related HaSCITu/ITINERIS
+resources may be used as inputs to the Digital Twin’s quantitative models.
+They must not be used for Random Forest or VAE training, emulator calibration,
+dynamic-model parameterization, risk-score calculation, or quantitative
+scenario construction.
+
+The project CSV remains the sole data source for all quantitative model
+outputs. This paper is retained only in the RAG/KB layer to explain published
+ecological context, terminology, reported habitat patterns, qualitative
+relationships, and scientific limitations.
+
+10. BIBLIOGRAPHIC AND RESOURCE NOTES
+--------------------------------------------------------------------------------
+Main article:
+Viciani, D., Dell’Olmo, L., Vicenti, C., & Lastrucci, L. (2017).
+Natura 2000 protected habitats, Massaciuccoli Lake (northern Tuscany, Italy).
+Journal of Maps, 13(2), 219–226.
+https://doi.org/10.1080/17445647.2017.1290557
+
+Key cited resources relevant to data provenance:
+- MATTM (2016), Natura 2000 database N2000IT_2015.mdb, cited by the authors
+  for the national comparison of habitat 7210.
+- Tuscany Region orthophotos, true-colour RGB, June–July 2013, 50 cm
+  resolution, used in the mapping workflow.
+- Lastrucci et al. (2017), vegetation survey and classification source
+  cited as the main vegetation information source.
+- Tuscany Region HaSCITu habitat cartography, a related regional resource
+  to be catalogued separately from the article’s original map.
+- ITINERIS catalogue layer “Habitat hascitu - Present”, a related resource
+  whose exact dataset-level access and metadata require verification.
+
+END OF DOCUMENT
+================================================================================

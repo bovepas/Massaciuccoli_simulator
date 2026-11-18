@@ -58,6 +58,11 @@ def importance_compare_extraction_to_inputs(
         )
 
     return {
-        "entity_a": entity_a,
-        "entity_b": entity_b
-    }
+    "entity_a": extraction.entity_a,
+    "feature_a": entity_a,
+    "direction_a": extraction.direction_a,
+
+    "entity_b": extraction.entity_b,
+    "feature_b": entity_b,
+    "direction_b": extraction.direction_b
+}

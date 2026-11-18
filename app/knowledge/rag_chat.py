@@ -212,9 +212,7 @@ def generate_chat_answer(question):
 
     try:
 
-        raw = call_llm(
-            prompt
-        )
+        raw = call_llm(prompt, role="interpretation")
 
         if (
             not raw

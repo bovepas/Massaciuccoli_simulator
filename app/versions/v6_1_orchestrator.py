@@ -340,6 +340,7 @@ def run():
         importance_inputs = None
         importance_compare_inputs = None
         enm_inputs = None
+        assessment_validation_failed = False
         try:
 
             start_timer("parsing")
@@ -359,6 +360,10 @@ def run():
                 parsed = assessment_inputs
                 features = assessment_inputs["features"]
 
+                unsupported = assessment_inputs.get(
+                    "unsupported_modifications", []
+                )
+
                 log_data(
                     "assessment_extraction",
                     assessment_extraction
@@ -373,6 +378,47 @@ def run():
                     "qualitative_changes",
                     assessment_inputs["qualitative_changes"]
                 )
+
+                log_data(
+                    "unsupported_modifications",
+                    unsupported
+                )
+
+                # --------------------------------------------------
+                # VALIDATION: PREVENT PARTIAL ASSESSMENTS
+                # --------------------------------------------------
+
+                if unsupported:
+
+                    log_section("ASSESSMENT VALIDATION")
+
+                    print(
+                        "\n[ASSESSMENT] Simulation aborted: "
+                        "unsupported modifications detected."
+                    )
+
+                    for item in unsupported:
+                        print(
+                            f"- {item.get('variable', 'Unknown variable')}: "
+                            f"{item.get('reason', 'Unsupported modification')}"
+                        )
+
+                    result = {
+                        "summary": "Assessment unavailable",
+                        "data": {},
+                        "drivers": [],
+                        "interpretation": (
+                            "Changes to non-numeric variables are not yet implemented "
+                            "at this stage of development. Therefore, the requested "
+                            "assessment task has not been executed. "
+                            "No partial simulation has been performed."
+                        )
+                    }
+
+
+                    # Skip task execution and continue with output rendering.
+                    # The result will be displayed by the existing output section.
+                    assessment_validation_failed = True
 
 
             elif task_type == "importance":
@@ -599,7 +645,10 @@ def run():
             # ASSESSMENT
             # --------------------------------------------------
 
-            if task_type == "assessment":
+            if task_type == "assessment" and assessment_validation_failed:
+                pass
+
+            elif task_type == "assessment":
 
                 result = handle_assessment(
 
@@ -654,7 +703,9 @@ def run():
                     
                     parsed,
 
-                    model
+                    model,
+
+                    dataset
                 )
 
             # --------------------------------------------------

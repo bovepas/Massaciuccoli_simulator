@@ -398,6 +398,7 @@ def _remove_exact_duplicate_modifications(modifications):
     return result
 
 
+
 def _normalize_comparison_data(data, question=""):
     """
     Deterministic normalization of the LLM extraction.
@@ -410,13 +411,81 @@ def _normalize_comparison_data(data, question=""):
     data = _repair_explicit_or_alternatives(question, data)
     data = _normalize_target(question, data)
 
+    # --------------------------------------------------
+    # Repair an explicit qualitative tree-cover increase
+    # in constructions such as:
+    # "a scenario with X and a scenario with X but
+    # increased tree cover"
+    # --------------------------------------------------
+    q = (question or "").strip()
+
+    additional_tree_cover = re.search(
+        r"\bbut\s+(?:(?:increased|increases|increase)\s+tree cover"
+        r"|tree cover\s+(?:increased|increases))\b",
+        q,
+        flags=re.IGNORECASE,
+    )
+
+    if additional_tree_cover:
+        scenario_b = data.get("scenario_b", [])
+
+        if isinstance(scenario_b, list):
+            for modification in scenario_b:
+                if not isinstance(modification, dict):
+                    continue
+
+                if (
+                    _canonical_variable_name(
+                        modification.get("variable")
+                    ) != "tree_cover"
+                ):
+                    continue
+
+                expression = str(
+                    modification.get("original_expression") or ""
+                ).strip().lower()
+
+                # Repair only an explicitly qualitative increase.
+                # Do not overwrite an existing numeric value.
+                if (
+                    re.search(
+                        r"\bincreas(?:e|es|ed|ing)\b",
+                        expression,
+                    )
+                    and re.search(r"\btree cover\b", expression)
+                    and modification.get("value") is None
+                ):
+                    modification.setdefault(
+                        "interpretation",
+                        "tree cover increases",
+                    )
+                    modification.setdefault(
+                        "modification_type",
+                        "qualitative",
+                    )
+                    modification.setdefault("unit", None)
+                    modification.setdefault("from_value", None)
+                    modification.setdefault("to_value", None)
+                    modification.setdefault("direction", "increase")
+                    modification.setdefault("magnitude", None)
+                    modification.setdefault("confidence", None)
+
+    # --------------------------------------------------
+    # Normalize modifications in both scenarios
+    # --------------------------------------------------
     for scenario_key in ("scenario_a", "scenario_b"):
         scenario = data.get(scenario_key, [])
-        if isinstance(scenario, list):
-            scenario = _remove_exact_duplicate_modifications(scenario)
-            data[scenario_key] = scenario
+
+        if not isinstance(scenario, list):
+            continue
+
+        scenario = _remove_exact_duplicate_modifications(scenario)
+        data[scenario_key] = scenario
 
         for modification in scenario:
+            if not isinstance(modification, dict):
+                continue
+
             modification_type = modification.get(
                 "modification_type"
             )
@@ -433,8 +502,12 @@ def _normalize_comparison_data(data, question=""):
                 # Direction belongs in 'direction', not 'magnitude'.
                 magnitude = modification.get("magnitude")
                 direction = modification.get("direction")
-                if (isinstance(magnitude, str) and isinstance(direction, str)
-                        and magnitude.lower() == direction.lower()):
+
+                if (
+                    isinstance(magnitude, str)
+                    and isinstance(direction, str)
+                    and magnitude.lower() == direction.lower()
+                ):
                     modification["magnitude"] = None
 
     return data

@@ -9,6 +9,7 @@ import pandas as pd
 
 from knowledge.rag_delta import generate_delta_explanation
 from utils.feature_mapping import normalize_feature_name
+from utils.model_input_builder import build_scenario, compute_baseline
 from output_formatter import format_result, dumps_llm_context
 
 
@@ -404,7 +405,8 @@ def handle_delta(
     range_info,
     features,
     parsed,
-    model
+    model,
+    dataset
 ):
 
     print("\n========== DELTA TASK START ==========")
@@ -502,10 +504,12 @@ def handle_delta(
                     "data": {},
                     "drivers": [],
                     "interpretation": (
-                        "The dataset represents grassland through "
-                        "binary presence (0/1), not percentage coverage. "
-                        "The requested scenario cannot be simulated "
-                        "with the available variables."
+                        "Grassland percentage coverage is not supported "
+                        "by the current dataset. Grassland is represented "
+                        "only as a binary presence/absence variable (0/1). "
+                        "Changes in percentage coverage are not yet "
+                        "implemented at this stage of development. "
+                        "Therefore, the requested delta task has not been executed."
                     ),
                 }
 
@@ -581,18 +585,21 @@ def handle_delta(
             "data": {},
             "drivers": [],
             "interpretation": (
-                "The dataset contains binary grassland presence, "
-                "not percentage grassland coverage. "
-                "The requested scenario cannot be simulated."
+                "Grassland percentage coverage is not supported "
+                "by the current dataset. Grassland is represented "
+                "only as a binary presence/absence variable (0/1). "
+                "Changes in percentage coverage are not yet "
+                "implemented at this stage of development. "
+                "Therefore, the requested delta task has not been executed."
             )
         }
 
     # --------------------------------------------------
-    # Build scenarios
+    # Build baseline from dataset
     # --------------------------------------------------
 
-    base = get_base_scenario()
-    
+    base = compute_baseline(dataset)
+
     # --------------------------------------------------
     # Validate scenario before building modifications
     # --------------------------------------------------
@@ -617,131 +624,94 @@ def handle_delta(
         }
 
     # ----------------------------------------------
-    # Case 1:
-    # baseline → modified baseline
+    # Build scenarios using shared Scenario Builder
     # ----------------------------------------------
 
-    if range_info.get(
-        "mode"
-    ) == "baseline_delta":
+    if range_info.get("mode") == "baseline_delta":
 
-        delta_value = range_info[
-            "delta"
-        ]
+        delta_value = range_info["delta"]
 
         delta_type = range_info.get(
             "delta_type",
             "percentage_change"
         )
 
-        baseline_value = base[
-            feature
-        ]
+        # Map Delta modification types to Scenario Builder types.
+        modification_types = {
+            "absolute_delta": "absolute_delta",
+            "absolute_target": "absolute_target",
+            "percentage_change": "percentage_change"
+        }
 
-        scenario_a = base.copy()
-        scenario_b = base.copy()
+        builder_type = modification_types.get(delta_type)
 
-        # ------------------------------------------
-        # Absolute variation
-        # Example:
-        # temperature +2°C
-        # ------------------------------------------
-
-        if delta_type == "absolute_delta":
-
-            scenario_b[
-                feature
-            ] = baseline_value + delta_value
-
-        # ------------------------------------------
-        # Absolute target
-        # Example:
-        # tree cover increases to 70%
-        # ------------------------------------------
-
-        elif delta_type == "absolute_target":
-
-            scenario_b[
-                feature
-            ] = delta_value
-
-        # ------------------------------------------
-        # Percentage variation
-        # Example:
-        # biodiversity -30%
-        # ------------------------------------------
-
-        else:
-
-            change_variables = {
-                "Relative change in the potential evapotranspiration compared to a recent past",
-                "Cumulative change in precipitation compared to a recent past"
+        if builder_type is None:
+            return {
+                "summary": "Invalid scenario",
+                "data": {},
+                "drivers": [],
+                "interpretation": (
+                    f"Unsupported modification type: '{delta_type}'."
+                )
             }
 
-            if feature in change_variables:
+        modifications = {
+            feature: {
+                "type": builder_type,
+                "value": delta_value
+            }
+        }
 
-                scenario_b[
-                    feature
-                ] = baseline_value + delta_value
-
-            else:
-
-                scenario_b[
-                    feature
-                ] = (
-                    baseline_value
-                    * (
-                        1
-                        + delta_value / 100
-                    )
-                )
-
-        v_from = baseline_value
-
-        v_to = scenario_b[
-            feature
-        ]
-
-        print(
-
-            "[DEBUG] Baseline delta:",
-
-            baseline_value,
-
-            "->",
-
-            v_to
+        df_a, df_b = build_scenario(
+            modifications,
+            dataset
         )
 
-    # ----------------------------------------------
-    # Case 2:
-    # explicit range
-    # ----------------------------------------------
+        v_from = float(df_a.iloc[0][feature])
+        v_to = float(df_b.iloc[0][feature])
 
     else:
 
-        v_from = range_info[
-            "from"
-        ]
+        v_from = range_info["from"]
+        v_to = range_info["to"]
 
-        v_to = range_info[
-            "to"
-        ]
+        # Build the first scenario using the explicit starting value.
+        modifications_a = {
+            feature: {
+                "type": "absolute_target",
+                "value": v_from
+            }
+        }
 
-        scenario_a = base.copy()
-        scenario_b = base.copy()
+        df_a_baseline, df_a = build_scenario(
+            modifications_a,
+            dataset
+        )
 
-        scenario_a[
-            feature
-        ] = v_from
+        # Build the second scenario using the explicit ending value.
+        modifications_b = {
+            feature: {
+                "type": "absolute_target",
+                "value": v_to
+            }
+        }
 
-        scenario_b[
-            feature
-        ] = v_to
+        df_b_baseline, df_b = build_scenario(
+            modifications_b,
+            dataset
+        )
+
+        # Both scenarios must share exactly the same baseline.
+        if not df_a_baseline.equals(df_b_baseline):
+            raise ValueError(
+                "Inconsistent baseline detected between Delta scenarios."
+            )
 
     # --------------------------------------------------
-    # Prediction
+    # Scenario information
     # --------------------------------------------------
+
+    print("\n[DEBUG] Shared Scenario Builder applied.")
 
     print(
         f"[DEBUG] Feature: {feature}"
@@ -751,19 +721,15 @@ def handle_delta(
         f"[DEBUG] Range: {v_from} → {v_to}"
     )
 
-    df_a = pd.DataFrame(
-        [scenario_a]
-    )
-
-    df_b = pd.DataFrame(
-        [scenario_b]
-    )
-
     print("\n[DEBUG SCENARIO A]")
     print(df_a.T)
 
     print("\n[DEBUG SCENARIO B]")
     print(df_b.T)
+
+    # --------------------------------------------------
+    # Prediction
+    # --------------------------------------------------
 
     score_a = float(
         model.predict(df_a)[0]
@@ -771,6 +737,16 @@ def handle_delta(
 
     score_b = float(
         model.predict(df_b)[0]
+    )
+
+    print("\n[DEBUG] Predictions completed.")
+
+    print(
+        f"[DEBUG] Baseline risk: {score_a}"
+    )
+
+    print(
+        f"[DEBUG] Scenario risk: {score_b}"
     )
 
     delta_raw = score_b - score_a

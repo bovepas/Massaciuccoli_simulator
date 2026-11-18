@@ -146,73 +146,61 @@ def _compute_raw_shap(model, df_input):
 # ======================================================
 
 def compute_delta_shap(
-    model,
-    df_baseline,
-    df_scenario,
-    top_k=5,
-    min_impact=0.001
+    model, df_baseline, df_scenario, top_k=5, min_impact=0.001
 ):
+    baseline_shap, _ = _compute_raw_shap(model, df_baseline)
+    scenario_shap, _ = _compute_raw_shap(model, df_scenario)
 
-    """
-    Computes:
-    SHAP(scenario) - SHAP(baseline)
-    """
+    delta_shap = {}
+    raw_delta_shap = {}
 
-    try:
+    all_features = set(
+        list(baseline_shap.keys()) + list(scenario_shap.keys())
+    )
 
-        baseline_shap, _ = _compute_raw_shap(
-            model,
-            df_baseline
-        )
+    for feature in all_features:
+        base_val = baseline_shap.get(feature, 0.0)
+        scen_val = scenario_shap.get(feature, 0.0)
+        delta = scen_val - base_val
 
-        scenario_shap, _ = _compute_raw_shap(
-            model,
-            df_scenario
-        )
+        # Conserva tutti i contributi, senza filtro né arrotondamento
+        raw_delta_shap[feature] = float(delta)
 
-        delta_shap = {}
+        # Mantiene invariato il comportamento originale
+        if abs(delta) < min_impact:
+            continue
 
-        all_features = set(
-            list(baseline_shap.keys()) +
-            list(scenario_shap.keys())
-        )
+        delta_shap[feature] = round(delta, 5)
 
-        for feature in all_features:
+    # Diagnostica: contributi completi e loro somma
+    print("\n[SHAP DIAGNOSTIC] All raw Delta-SHAP:")
+    for feature, value in sorted(
+        raw_delta_shap.items(),
+        key=lambda x: abs(x[1]),
+        reverse=True
+    ):
+        print(f"  {feature}: {value:+.10f}")
 
-            base_val = baseline_shap.get(feature, 0.0)
+    print(
+        f"[SHAP DIAGNOSTIC] Sum of all raw Delta-SHAP: "
+        f"{sum(raw_delta_shap.values()):+.10f}"
+    )
 
-            scen_val = scenario_shap.get(feature, 0.0)
+    print(
+        f"[SHAP DIAGNOSTIC] Sum after min_impact filter: "
+        f"{sum(delta_shap.values()):+.10f}"
+    )
 
-            delta = scen_val - base_val
+    ranking = sorted(
+        delta_shap.items(),
+        key=lambda x: abs(x[1]),
+        reverse=True
+    )
+    top = ranking[:top_k]
+    result = dict(top)
 
-            if abs(delta) < min_impact:
-                continue
-
-            delta_shap[feature] = round(delta, 5)
-
-        # --------------------------------------------------
-        # Ranking
-        # --------------------------------------------------
-
-        ranking = sorted(
-            delta_shap.items(),
-            key=lambda x: abs(x[1]),
-            reverse=True
-        )
-
-        top = ranking[:top_k]
-
-        result = dict(top)
-
-        debug_print("Delta SHAP:", result)
-
-        return result
-
-    except Exception as e:
-
-        print("[DELTA SHAP ERROR]", e)
-
-        return {}
+    debug_print("Delta SHAP:", result)
+    return result
 
 
 # ======================================================

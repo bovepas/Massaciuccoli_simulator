@@ -100,7 +100,7 @@ def process_question(question, model, dataset, route):
             top_k=importance_inputs["top_k"], mode=importance_inputs["focus"],
         )
     elif task_type == "delta":
-        result = orch.handle_delta(question, range_info, features, parsed, model)
+        result = orch.handle_delta(question, range_info, features, parsed, model, dataset)
     elif task_type == "dependency":
         result = orch.handle_dependency(question, route, dependency_inputs=dependency_inputs)
     elif task_type == "comparison":

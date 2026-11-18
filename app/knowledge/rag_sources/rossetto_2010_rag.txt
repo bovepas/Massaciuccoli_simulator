@@ -1,0 +1,107 @@
+DOCUMENT: ROSSETTO ET AL. (2010) — WATER MANAGEMENT SUSTAINABILITY IN RECLAIMED COASTAL AREAS: THE CASE OF THE MASSACIUCCOLI LAKE BASIN (TUSCANY, ITALY)
+
+SOURCE IDENTIFICATION
+Authors: Rudy Rossetto, Ilaria Baneschi, Paolo Basile, Massimo Guidi, Chiara Pistocchi, Tiziana Sabbatini, Nicola Silvestri, and Enrico Bonari.
+Title: “Water management sustainability in reclaimed coastal areas. The case of the Massaciuccoli lake basin (Tuscany, Italy)”.
+Publication: Geophysical Research Abstracts, Vol. 12, EGU2010-12158-2, 2010; EGU General Assembly 2010.
+Source type: two-page conference abstract.
+The abstract reports a multidisciplinary assessment of the water budget and summer water stress in the Massaciuccoli Lake basin, based on activities carried out during 2008–2009 and water-budget estimates referring to an average dry season of approximately 100 days. The authors combine hydrological and hydrogeochemical monitoring, agronomical investigations, statistical methods, time-series analysis, shallow-aquifer numerical modelling and hydrological modelling.
+
+ROLE IN THE MASSACIUCCOLI DIGITAL TWIN KNOWLEDGE BASE
+This document is a documentary source for the Knowledge Base (KB) and RAG retrieval only. It can contextualize and explain the basin water budget, summer water stress, drainage of reclaimed land, irrigation, evaporation and evapotranspiration, groundwater contributions and anthropogenic pressures.
+STRICT DATA-SEPARATION RULE: no measurements, estimates, percentages, model outputs or other information extracted from this article may be used as input, training data, calibration data, parameter source or numerical supplement for the Random Forest emulator, VAE, dynamic model, risk-score calculations or any other quantitative model in the Digital Twin. The only data source for those models is the project’s designated CSV dataset. This article is available solely to the KB/RAG layer for scientific context and explanation. Do not merge its data with the project CSV.
+
+STUDY AREA AND HYDROLOGICAL SETTING
+- Lake Massaciuccoli: approximately 7 km² in area and about 2 m deep.
+- Nearby palustrine areas: approximately 13 km².
+- The residual coastal lake and marsh system had been largely drained by 1930.
+- The basin is bordered by carbonate-to-arenaceous reliefs to the east, a shallow sandy coastal aquifer to the west, the Serchio River to the south, and the alignment of the Burlamacca–Gora di Stiava channels to the north.
+- The western shallow coastal aquifer is described as preventing groundwater salinisation.
+- Reclamation of peat soils was followed by subsidence estimated at 2–3 m over 70 years.
+- The lake became perched and central relative to the lower drained areas, which are reported at approximately 0 to −3 m above/below? The source states “0 to −3 m below m.s.l.” (metres below mean sea level). The system required construction of approximately 16 km of embankments.
+Preserve the source’s distinction between the lake and the reclaimed low-lying land; they are interconnected but not the same hydrological subsystem.
+
+SUMMER WATER STRESS AND SEAWATER INTRUSION
+The authors describe severe water stress in the lake during the dry summer season. Together with nutrient inputs, this stress is associated in the abstract with continuing ecosystem degradation, water salinisation and eutrophication.
+The proposed hydrological mechanism is:
+- summer water stress causes hydraulic head to fall below mean sea level;
+- this favours seawater intrusion along the main lake outlet;
+- the intrusion reaches its greatest extent toward the end of summer.
+Common head values are reported between −0.40 and −0.50 m relative to mean sea level (a.m.s.l., as written in the source).
+These values are reported by the authors for the described conditions; the abstract does not provide a complete time series or spatial distribution of the head measurements.
+
+WATER-BUDGET ASSESSMENT
+The authors computed a water budget for an average dry season lasting approximately 100 days, considering an estimated 10% error. The assessment was intended to identify and evaluate the components contributing to summer water stress.
+The multidisciplinary activities were conducted during 2008–2009 and included:
+- literature review;
+- hydrological and hydrogeochemical monitoring and testing of surface water and the shallow aquifer;
+- agronomical investigations to characterize cropping systems, evapotranspiration rates and irrigation schemes;
+- statistical processing and time-series analysis;
+- numerical modelling of the shallow aquifer and hydrological modelling.
+The abstract identifies two interrelated hydrological subsystems: the lake subsystem and the reclaimed-land subsystem.
+
+LAKE WATER INPUTS
+The reported average lake inflow is divided into anthropogenic and natural components:
+1. Anthropogenic inflow from drainage of reclaimed land: approximately 1.1 m³/s, corresponding to 75–81% of total lake inflow.
+2. Natural inflow, including recharge through rainfall and contributions from the western coastal aquifer and eastern reliefs: approximately 0.25 m³/s, corresponding to 19–25% of total lake inflow.
+The source presents these as estimates for the water-budget assessment. Do not interpret the 75–81% as the share of the lake’s total water volume, or as the share of all water in the wider basin; it is the reported share of total lake inflow.
+
+LAKE WATER LOSSES
+The reported average lake water losses are divided into three main components:
+1. Evaporation from the lake surface and evapotranspiration from palustrine vegetation: approximately 1.31 m³/s, corresponding to 56–61% of total lake outflow.
+2. Inefficient irrigation schemes using lake water: approximately 0.325 m³/s, corresponding to 13–15% of total lake outflow.
+3. Recharge to the reclaimed-land aquifer through infiltration along the embankments, because the lake is perched relative to the reclaimed land: approximately 0.64 m³/s, corresponding to 26–29% of total lake outflow.
+Keep the denominators explicit: these percentages refer to the reported total lake outflow, not to total inflow or to the basin’s overall water resources.
+
+NET WATER LOSS
+For the years 2000–2009, the authors report an average net daily lake water loss during the summer season of approximately 4.2 mm/day, equivalent in the abstract to approximately 0.975 m³/s.
+The abstract does not specify the surface-area basis and calculation details needed to independently reconstruct this conversion. Preserve the value and its stated equivalence as reported by the authors; do not silently recalculate or reinterpret it.
+
+ANTHROPOGENIC PRESSURE AND WATER DEFICIT
+The authors report that several springs along the eastern margin, which would naturally contribute approximately 0.160 m³/s to the lake system, are tapped for residential, tourism and industrial uses.
+They estimate that anthropogenic impacts account for approximately 50% of the total water deficit:
+- 34% attributed to irrigation;
+- 16% attributed to other users (residential, tourism and industrial uses).
+This is the authors’ assessment in the abstract. The two percentages describe the reported partition of anthropogenic impact on the water deficit; they should not be confused with the inflow or outflow percentages in the water-budget tables above.
+The authors conclude that a naturally induced water deficit, already recognized in historical sources, is strongly modified by anthropogenic pressure, producing an unsustainable balance between the socioeconomic system and the natural system. They recommend revising and improving irrigation schemes and the distribution of water for residential, industrial and tourism uses as part of a basin-wide water-management strategy.
+
+RETRIEVAL-RELEVANT RELATIONSHIPS
+- Peatland reclamation → subsidence and a changed topographic/hydrological relationship between the lake and the drained land.
+- Lake perched above reclaimed areas → infiltration through embankments and recharge of the reclaimed-land aquifer.
+- Drainage of reclaimed land → major anthropogenic contribution to lake inflow (reported as 75–81% of total lake inflow).
+- Summer water stress → hydraulic head below mean sea level → seawater intrusion along the main outlet, strongest toward the end of summer.
+- Lake surface evaporation and palustrine vegetation evapotranspiration → major components of lake water loss (reported as 56–61% of total outflow).
+- Lake-water irrigation → an additional outflow, associated by the authors with inefficient irrigation schemes.
+- Capturing eastern-margin springs for human uses → reduction of water that would otherwise flow toward the lake system.
+- Anthropogenic pressures → approximately 50% of the total water deficit in the authors’ assessment, partitioned into irrigation (34%) and other users (16%).
+
+LIMITATIONS AND EVIDENCE BOUNDARIES
+- This is a two-page conference abstract, not a full technical report or peer-reviewed detailed model description.
+- The water budget refers to an average dry season of approximately 100 days; it is not a continuous annual water budget.
+- An estimated 10% error is stated, but the abstract does not provide a complete uncertainty budget or detailed calculation tables.
+- Monitoring and investigations were conducted during 2008–2009; the abstract also reports a summer-loss estimate for 2000–2009. Do not present these as current measurements.
+- The abstract does not provide all underlying observations, complete time series, model equations, calibration statistics or input datasets.
+- It does not quantify nutrient loads or provide a numerical attribution of nitrogen and phosphorus sources.
+- The association between water stress, nutrient inputs, salinisation and eutrophication is described by the authors, but this abstract does not establish a fully quantified causal model for ecological degradation.
+- The reported 4.2 mm/day and 0.975 m³/s equivalence cannot be independently reconstructed from the information supplied; retain it as a source-reported result with this caveat.
+- Do not infer that the 75–81% drainage contribution is the share of all lake water or that the 50% anthropogenic impact is a percentage of total lake inflow.
+
+USE IN RAG ANSWERING
+This source can support contextual and explanatory answers about:
+- the relative importance of natural and anthropogenic inflows to Lake Massaciuccoli;
+- the main components of lake water loss during an average dry summer season;
+- the hydrological relationship between the lake and reclaimed low-lying land;
+- the contribution of drainage from reclaimed land to lake inflow;
+- the relationship described by the authors between summer water stress, hydraulic head and seawater intrusion;
+- the role of irrigation and water abstraction in the estimated water deficit;
+- the role of evaporation and evapotranspiration in summer water losses;
+- the authors’ proposed water-management priorities.
+When a question asks for current conditions, a continuous time series, detailed uncertainty estimates, nutrient loads or a quantified ecological response, state that this abstract does not provide the required evidence. Do not infer missing values or update historical estimates without another explicitly identified source.
+
+FAIR DATA AND RESOURCE TRACKING
+The abstract cites:
+- Autorità di Bacino del Fiume Serchio (2007), “Piano di Bacino — Bilancio idrico del bacino del lago di Massaciuccoli”, Relazione di piano, Lucca, Italy.
+This is a potentially useful documentary reference for the basin water budget. The 2010 abstract does not provide a DOI, persistent dataset identifier, repository link, downloadable data package or explicit data licence for the underlying monitoring and modelling data.
+FAIR status for the 2007 plan and underlying data is therefore unverified. Record it as “documentary source to locate and assess; no verified FAIR dataset link documented in this article”. Do not label it FAIR without checking findability, access, interoperability, reuse conditions and metadata separately.
+
+END OF DOCUMENT

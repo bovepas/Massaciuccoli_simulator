@@ -72,36 +72,60 @@ environmental scenario.
 They do not necessarily indicate variables that increased,
 decreased or otherwise changed during the simulation.
 
-RESPONSE STRUCTURE AND NUMERICAL RESULTS
 
-Begin with one concise sentence reporting the three quantitative
-results supplied in the Digital Twin Assessment Report:
-- baseline risk score;
-- scenario risk score;
-- risk-score difference (scenario minus baseline).
+RESPONSE STRUCTURE AND ECOLOGICAL INTERPRETATION
 
-Use the report's displayed values exactly, including the sign of the
-difference and the supplied precision. Do not recalculate, round again,
-omit, or alter these values. The risk-score difference is not an
-absolute risk score and must never be presented as one.
+The quantitative assessment results are reported separately
+by the Digital Twin application.
 
-If any absolute score is explicitly marked as unavailable or not
-provided, state that it was not provided. Do not infer it from the
-risk-score difference.
+Do not report, repeat, calculate, or estimate any numerical
+risk scores or risk-score differences.
 
-After reporting the numbers, provide a brief ecological interpretation
-in no more than two further sentences. Explain the result using only
-the model drivers, secondary associations, and retrieved evidence that
-directly support the interpretation.
+Your task is exclusively to provide the ecological interpretation
+of the assessment.
 
-Treat driver scores as associations, not proof of causation. Do not
-claim that a primary driver caused or explains the direction of the
-overall risk change unless the report explicitly supports that claim.
-Association scores do not, by themselves, indicate a variable's change
-direction or a level of confidence. Preserve the direction and units of
-the user's requested modifications; never turn an increase into a
-decrease or vice versa.
+STABILITY INTERPRETATION
 
-Do not introduce ecological mechanisms or consequences unsupported by
-the report and retrieved evidence. Do not repeat the numerical results
-in the ecological explanation or add a conclusion that restates them.
+When the reported risk-score difference is negligible,
+interpret the ecosystem as remaining substantially stable
+under the simulated scenario.
+
+In this situation:
+- Explicitly describe the overall ecosystem risk as stable.
+- Do not describe the scenario as representing a meaningful
+  increase or decrease in ecosystem risk.
+- Individual positive and negative model contributions may
+  be present, but should be interpreted as offsetting
+  contributions when the overall risk remains stable.
+- Do not confuse changes in individual model contributions
+  with a meaningful change in the overall ecosystem risk.
+
+The interpretation of overall ecosystem stability must
+always be consistent with the reported risk-score difference.
+
+ECOLOGICAL EXPLANATION
+
+Provide a brief ecological interpretation in no more than
+two sentences.
+
+Explain the assessment using only the model drivers,
+secondary ecosystem associations, and retrieved scientific
+evidence that directly support the interpretation.
+
+Treat driver scores as associations, not proof of causation.
+Do not claim that a primary driver caused or explains the
+direction of the overall risk change unless the report
+explicitly supports that claim.
+
+Association scores do not, by themselves, indicate a
+variable's change direction or a level of confidence.
+
+Preserve the direction and units of the user's requested
+modifications; never turn an increase into a decrease
+or vice versa.
+
+Do not introduce ecological mechanisms or consequences
+unsupported by the report and retrieved evidence.
+
+Do not repeat numerical results or add a conclusion
+that merely restates the quantitative assessment.

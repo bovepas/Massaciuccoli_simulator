@@ -1,0 +1,399 @@
+Massaciuccoli Digital Twin — FAIR Dataset Catalogue
+
+Version: 1.0 — initial consolidated inventory
+Date: 4 November 2026
+Scope: documentary inventory of datasets and data resources cited or
+used by the reviewed sources.
+Excluded from this phase: paper1, paper2, and paper3, as requested.
+
+1. Interpretation and status rules
+
+This catalogue distinguishes a publication from the data associated with
+it. An article DOI does not automatically identify a dataset. A
+catalogue record or a declared download does not prove that the actual
+files have been downloaded, inspected, or validated.
+
+Status labels used here:
+
+-   Verified FAIR resource: the resource has been explicitly verified as
+    FAIR for this project, or the publication provides a clearly
+    identified open repository and the resource identity/access route is
+    established. File-level technical validation may still be recorded
+    separately.
+-   Partially verified / access declared: an access route is stated by
+    the source, but the actual files, metadata, formats, licence, or
+    completeness have not all been independently checked.
+-   Catalogue identified / operational verification pending: a catalogue
+    entry or distribution is identified, but the actual data package and
+    its properties still require inspection.
+-   Not verified: a source mentions a database or dataset, but its
+    identity, access, or reuse conditions have not been established.
+-   Published map/document only: a cartographic or documentary output is
+    available, but editable source data are not confirmed.
+
+FAIR is not treated as a binary property inferred from a DOI.
+Findability, accessibility, interoperability, and reusability are
+assessed separately where evidence is available.
+
+2. Dataset and resource inventory
+
+2.1 Vannini et al. (2025) — harmonised geodata collection
+
+-   Resource: Massaciuccoli Lake Basin harmonised geodata collection.
+-   Publication: Vannini, G. L., Bove, P., & Coro, G. (2025). Data in
+    Brief, 59, 111303.
+-   Dataset DOI: 10.5281/zenodo.10953582
+-   Atlas DOI: 10.5281/zenodo.13912261
+-   Contents reported: 148 harmonised geodata layers representing 75
+    variables; 109 GeoTIFF rasters and 39 Shapefile vectors; QGIS
+    project, metadata workbook and cartographic atlas.
+-   Spatial reference / resolution: WGS84 / EPSG:4326; raster resolution
+    0.0005 degrees (approximately 50 m); data clipped to the
+    Massaciuccoli Lake basin.
+-   Temporal frames: remote past (1950–1980), near past (1981–2015),
+    present (2016–2024), near future (2025–2050), far future
+    (2051–2100); RCP 2.6, 4.5 and 8.5 where available. Not every
+    variable is available in every frame/scenario.
+-   Access and services: Zenodo; ITINERIS Critical Zone VRE; GeoServer
+    WMS/WFS and GeoNetwork metadata services are described by the
+    publication.
+-   Licence: CC BY 4.0, as stated for the collection.
+-   FAIR assessment: Findable and accessible via persistent Zenodo
+    identifiers; interoperable through documented formats, CRS, metadata
+    and OGC services; reusable under the declared CC BY 4.0 licence,
+    subject to attribution and source-level conditions.
+-   Status: Verified FAIR resource for the purposes of this catalogue.
+    For operational use, retain dataset version and source-layer
+    provenance.
+-   Important limitation: the article describes a data collection and
+    harmonisation methodology; it does not itself provide response
+    functions, causal relationships, ecological risk scores, or
+    numerical scenario response models.
+-   Digital Twin rule: the collection is useful for provenance, variable
+    inventory and contextual geospatial consultation. It does not
+    override the project rule that quantitative model inputs and outputs
+    use the designated project CSV as their sole data source.
+
+2.2 Coro et al. (2024) — modelling inputs, outputs and source code
+
+-   Resource: repository associated with the Ecological Informatics
+    study.
+-   Repository: Zenodo record 8380273 —
+    https://zenodo.org/record/8380273
+-   Publication: Ecological Informatics, 81 (2024), 102644.
+-   Contents declared by the paper: source code, input and output data,
+    ESRI-GRID raster files, tables, images, animations,
+    data-manipulation scripts, species list and observation records.
+-   Additional environment: ITINERIS Critical Zone Virtual Research
+    Environment on D4Science; the paper states that data and scripts are
+    continuously updated there and that free registration is required.
+-   Licence: the paper describes the code and data as open source, but
+    the exact dataset-level licence should be read from the repository
+    record and individual files before reuse.
+-   FAIR assessment: persistent repository route and detailed content
+    description are declared. Exact file inventory, version, metadata
+    completeness, licence and download integrity should be checked
+    against the live Zenodo record.
+-   Status: Partially verified / access declared. The repository
+    identifier and declared contents are established from the
+    publication; file-level inspection remains a separate step.
+-   Digital Twin rule: the repository is documentary and reproducibility
+    context only. Its measurements and outputs must not be merged into,
+    used to train, calibrate, validate or parameterise the Digital Twin
+    quantitative models.
+
+2.3 Pasquetti et al. (2024) — supplementary hydrochemical data
+
+-   Publication: Pasquetti, F., Natali, S., Luppichini, M., Bini, M.,
+    Del Seppia, N., Delgado-Huertas, A., & Giannecchini, R. (2024).
+    Hydrodynamics and water quality of a highly anthropized wetland: the
+    case study of the Massaciuccoli basin (Tuscany, Italy).
+    Environmental Science and Pollution Research, 31, 43117–43137.
+-   Article DOI: 10.1007/s11356-024-33899-2
+-   Data availability statement: the article states that all data are
+    available as supplementary material through the article page.
+-   Study domain: south-eastern drained sector of the basin, especially
+    the Vecchiano and Massaciuccoli sub-catchments, drainage ditches and
+    Barra canal; groundwater observations from a small number of
+    wells/piezometers; lake sampling limited to one point during the
+    June 2021 isotope survey.
+-   Temporal coverage: field parameters monitored monthly from October
+    2020 to October 2021; groundwater levels extended to 2022 at
+    selected points; chemistry on three sampling dates; stable isotopes
+    in June 2021.
+-   Licence: article is reported as CC BY 4.0. This does not
+    automatically establish the licence of every supplementary file.
+-   FAIR assessment: article DOI and supplementary-data route are
+    identified. Actual supplementary files, persistent dataset
+    identifier, formats, metadata, completeness, licence and successful
+    download have not all been independently verified.
+-   Status: Partially verified / access declared.
+-   Important limitation: do not generalise measurements from selected
+    ditches, wells and one lake point to the entire lake or the full
+    hydrological basin.
+
+2.4 Viciani et al. (2017) — Natura 2000 habitat map and related GIS resources
+
+-   Publication: Viciani, D., Dell’Olmo, L., Vicenti, C., &
+    Lastrucci, L. (2017). Natura 2000 protected habitats, Massaciuccoli
+    Lake (northern Tuscany, Italy). Journal of Maps, 13(2), 219–226.
+-   Article DOI: 10.1080/17445647.2017.1290557
+-   Published cartographic output: supplementary PDF map listed by the
+    publisher (approximately 75.2 MB).
+-   Article licence: CC BY-NC-ND 4.0, as stated in the article. Do not
+    automatically transfer this licence to external regional datasets.
+-   Original GIS: editable original GIS polygons and attribute table are
+    not confirmed as publicly accessible.
+-   FAIR assessment of PDF: findable and accessible as a published
+    cartographic output; interoperability is limited because a PDF map
+    is not a confirmed machine-readable vector dataset; reuse is
+    restricted by CC BY-NC-ND 4.0.
+-   Status of map: Published map/document only; original GIS source data
+    not verified.
+
+Related resource: Tuscany Region HaSCITu
+
+-   Resource: regional Natura 2000 habitat cartography, HaSCITu.
+-   RNDT metadata identifier:
+    r_toscan:698f7bb0-936a-4149-810b-7b87bcb1d140
+-   Distribution declared in catalogues: ESRI Shapefile ZIP; open
+    download declared.
+-   Licence declared in metadata: CC BY; verify the exact licence notice
+    and attribution requirements in the actual distribution.
+-   Checks pending: download archive; inspect file list; CRS; geometry
+    validity; field names and definitions; data version/date;
+    provenance; licence.
+-   Status: Catalogue identified / operational verification pending.
+-   Relationship to Viciani 2017: do not assume this is the exact
+    original GIS used for the article map.
+
+Related resource: ITINERIS “Habitat hascitu - Present”
+
+-   Resource name: “Habitat hascitu - Present”.
+-   Catalogue context: ITINERIS catalogue; source-data year indicated as
+    2017; associated Zenodo resource/collection.
+-   Project verification: treated as a verified FAIR resource, following
+    the user’s confirmation.
+-   Caveat: this verification does not establish identity with the
+    original GIS dataset used to produce Viciani et al. (2017).
+
+Other cited inputs
+
+-   Natura 2000 database: N2000IT_2015.mdb, cited by the article.
+    Current access, metadata and reuse licence not verified.
+-   Regional geological cartography: cited as a source; exact
+    dataset/version and licence require separate verification.
+-   ArcGIS 10.4: software, not a dataset.
+
+2.5 Da Prato & Baneschi (2020) — IGGDATABASE stratigraphic records
+
+-   Publication: Da Prato, S., & Baneschi, I. (2020). The coastal
+    wetland systems of northern Tuscany: Massaciuccoli Lake and ex Porta
+    Lake. State of knowledge and new opportunities for multidisciplinary
+    approach. Acque Sotterranee, DOI 10.7343/as-2020-478.
+-   Resource mentioned: IGGDATABASE, described as a QGIS-organised
+    collection of stratigraphic logs and sediment cores.
+-   Data content relevant to the paper: stratigraphic information used
+    to discuss subsurface geology and the need for detailed
+    multidisciplinary reconstruction.
+-   Access / identifier / licence: not verified for the specific records
+    cited in the paper.
+-   FAIR assessment: the paper’s reference to a database does not prove
+    that the cited records are publicly accessible or reusable.
+-   Status: Not verified.
+-   Important scope note: the paper is a synthesis and does not provide
+    a new basin-wide groundwater model or a new experimental dataset.
+    The former Lake Porta is a separate wetland system and must remain
+    distinct from Lake Massaciuccoli.
+
+2.6 Baneschi (2007) — doctoral dissertation
+
+-   Publication: Baneschi, I. (2007). Geochemical and environmental
+    study of a coastal ecosystem: Massaciuccoli Lake (Northern Tuscany,
+    Italy). Doctoral dissertation.
+-   Repository: HAL open archive.
+-   Persistent identifier: tel-00400140; version URL
+    https://theses.hal.science/tel-00400140v1
+-   Deposit date reported: 30 June 2009.
+-   Access: dissertation deposited in the HAL open archive.
+-   Dataset status: the dissertation is an accessible research document,
+    but a separate machine-readable dataset deposit, dataset DOI, data
+    licence and reusable raw-data package have not been established from
+    the reviewed material.
+-   Status: Document accessible; separate dataset not verified.
+-   Note: do not conflate access to the thesis PDF with FAIR
+    availability of the underlying measurements.
+
+2.7 Pistocchi et al. (2012) — drainage network nutrient study
+
+-   Publication: Pistocchi, C., Silvestri, N., Rossetto, R., Sabbatini,
+    T., Guidi, M., Baneschi, I., Bonari, E., & Trevisan, D. (2012). A
+    Simple Model to Assess Nitrogen and Phosphorus Contamination in
+    Ungauged Surface Drainage Networks: Application to the Massaciuccoli
+    Lake Catchment, Italy. Journal of Environmental Quality, 41,
+    544–553. DOI 10.2134/jeq2011.0302.
+-   Study domain: approximately 2,255 ha in the southern part of the
+    catchment, including Vecchiano and Massaciuccoli subcatchments.
+-   Data described: measurements and model outputs for nutrient
+    transport in artificial drainage networks.
+-   Separate repository / dataset DOI / licence: not identified in the
+    reviewed TXT.
+-   Status: Not verified as a separate FAIR dataset.
+-   Important limitation: historical investigation and model results are
+    not current basin-wide observations. Do not use the article’s
+    measurements or model outputs as Digital Twin quantitative inputs.
+
+2.8 Ciccolini et al. (2013) — RestoMedPeatland pilot
+
+-   Publication/resource: contribution to the SER Europe Knowledge Base
+    on Ecological Restoration in Europe (2010); the supplied document
+    describes the RestoMedPeatland project, started in 2011.
+-   Study domain: Massaciuccoli Lake floodplain and a 15 ha pilot
+    experimental field.
+-   Data described: hydrological cycle, surface- and groundwater
+    quality, peat oxidation, microbial diversity/functionality, CH4 and
+    CO2 emissions, plant nutrient removal, biomass production and energy
+    efficiency.
+-   Separate repository, persistent identifier and licence: not
+    identified in the reviewed material.
+-   Status: Not verified as a separate FAIR dataset.
+-   Important limitation: pilot-scale observations must not be
+    generalised automatically to the entire basin.
+
+2.9 Bertacchi et al. — Chiarone Reserve vegetation surveys
+
+-   Contribution: Vegetation Landscape Management of the Natural Reserve
+    of Chiarone, Massaciuccoli Lake Basin (Tuscany, Italy); presented at
+    the 110th Congress of the Società Botanica Italiana / II
+    International Plant Science Conference, Pavia, 14–17 September 2015.
+-   Survey period: 2014–2015.
+-   Data described: Braun-Blanquet phytosociological relevés, floristic
+    list, vegetation tables and vegetation-landscape map for the Natural
+    Reserve of Chiarone.
+-   Repository / dataset DOI / licence: no separate dataset repository
+    identified in the reviewed material.
+-   Status: Not verified as a separate FAIR dataset.
+-   Important limitation: the observations concern the Chiarone Reserve,
+    not the whole lake basin. The PDF filename does not establish a 2020
+    publication date.
+
+2.10 Venturi et al. (2021) — resource status pending source-level confirmation
+
+-   Publication: Venturi et al. (2021), as represented in the reviewed
+    knowledge-base collection.
+-   Separate dataset repository / persistent identifier / licence: not
+    confirmed in the evidence currently consolidated for this catalogue.
+-   Status: Not verified.
+-   Action required: inspect the original publication’s data
+    availability statement, references to institutional databases,
+    supplementary files and any linked repository before assigning a
+    stronger FAIR status.
+
+2.11 Rossetto et al. (2010) — and related surface-focused document
+
+-   Documents in the collection: rossetto_2010_rag.txt and
+    rossetto_2010_surface_rag.txt.
+-   Dataset/repository/DOI: a separate persistent dataset identifier and
+    repository have not been established from the evidence consolidated
+    for this catalogue.
+-   Status: Not verified as a separate FAIR dataset.
+-   Action required: confirm whether the two documents refer to the same
+    underlying publication/data, identify any primary data repositories,
+    and distinguish article-derived values from independently
+    downloadable datasets.
+
+3. Summary status table
+
+  -----------------------------------------------------------------------------------------------
+  Resource                Identifier / route                              Current status
+  ----------------------- ----------------------------------------------- -----------------------
+  Vannini 2025 harmonised Zenodo 10.5281/zenodo.10953582                  Verified FAIR resource
+  geodata                                                                 
+
+  Vannini 2025 atlas      Zenodo 10.5281/zenodo.13912261                  Published atlas
+                                                                          identified
+
+  Coro et al. 2024        Zenodo 8380273                                  Access declared;
+  code/data                                                               file-level verification
+                                                                          pending
+
+  Pasquetti 2024          Article DOI 10.1007/s11356-024-33899-2          Partially verified /
+  supplementary data                                                      access declared
+
+  Viciani 2017            Article DOI 10.1080/17445647.2017.1290557       Published map/document
+  supplementary PDF map                                                   only
+
+  Viciani original GIS    Not identified                                  Not verified
+
+  Tuscany Region HaSCITu  RNDT                                            Catalogue identified;
+                          r_toscan:698f7bb0-936a-4149-810b-7b87bcb1d140   operational
+                                                                          verification pending
+
+  ITINERIS “Habitat       ITINERIS catalogue / associated Zenodo resource Verified FAIR resource
+  hascitu - Present”                                                      per user confirmation;
+                                                                          not proven identical to
+                                                                          Viciani GIS
+
+  Da Prato & Baneschi     Institutional database mentioned                Not verified
+  2020 IGGDATABASE                                                        
+
+  Baneschi 2007 thesis    HAL tel-00400140                                Thesis accessible;
+                                                                          separate dataset not
+                                                                          verified
+
+  Pistocchi 2012          Article DOI 10.2134/jeq2011.0302                Separate dataset not
+                                                                          verified
+
+  Ciccolini 2013 /        Project and contribution references             Separate dataset not
+  RestoMedPeatland                                                        verified
+
+  Bertacchi Chiarone      Conference contribution, 2015 surveys           Separate dataset not
+  surveys                                                                 verified
+
+  Venturi 2021            Source-level identifier pending                 Not verified
+
+  Rossetto 2010 documents Source-level identifier pending                 Not verified
+  -----------------------------------------------------------------------------------------------
+
+4. Required verification actions before operational reuse
+
+1.  Download and inspect the Vannini Zenodo deposit; record version,
+    file inventory, licence file and checksums.
+2.  Inspect the Coro et al. Zenodo record and capture the exact version,
+    file inventory, metadata and dataset-level licences.
+3.  Open Pasquetti’s supplementary files and record filenames, formats,
+    licences, metadata and any independent persistent identifiers.
+4.  Download the HaSCITu archive and inspect CRS, geometry validity,
+    attribute schema, version/date, provenance and licence.
+5.  Record the exact ITINERIS “Habitat hascitu - Present” resource
+    identifier, Zenodo landing page, files and licence; preserve the
+    distinction from Viciani’s original GIS.
+6.  Investigate IGGDATABASE access and determine whether cited
+    stratigraphic records can be identified and reused.
+7.  Inspect the original Venturi, Rossetto, Pistocchi, Ciccolini and
+    Bertacchi sources for supplementary datasets and data availability
+    statements.
+8.  Do not promote a resource from “not verified” to “verified FAIR”
+    based only on an article citation or catalogue label.
+
+5. Digital Twin data-separation rule
+
+All resources in this catalogue are documentary, contextual, provenance
+or external research resources. Their measurements, raster layers,
+observations, model outputs and supplementary files MUST NOT be used to
+train, calibrate, validate, parameterise or provide inputs to the
+Digital Twin’s quantitative models.
+
+The designated project CSV remains the sole quantitative data source for
+the Random Forest emulator, VAE-related components, dynamic model, risk
+scores and numerical scenario calculations. External sources may be used
+only for scientific context, explanation of mechanisms, provenance,
+uncertainty and limitations in natural-language RAG responses.
+
+6. Change log
+
+-   2026-11-04 — Version 1.0: initial consolidated catalogue; paper1,
+    paper2 and paper3 excluded by user instruction; ITINERIS “Habitat
+    hascitu - Present” recorded as verified FAIR based on user
+    confirmation; no claim of equivalence with Viciani et al. (2017)
+    original GIS.

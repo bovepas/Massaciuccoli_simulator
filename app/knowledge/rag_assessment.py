@@ -116,6 +116,119 @@ def _risk_direction(risk_delta) -> str:
         return "The scenario risk score is lower than the baseline risk score"
     return "The scenario risk score equals the baseline risk score"
 
+def _format_scenario_modifications(scenario_modifications) -> str:
+    """Format the actual feature values applied to the assessment scenario."""
+
+    if not scenario_modifications:
+        return "No scenario modifications provided to the RAG component"
+
+    return "\n".join(
+        f"• {name}: applied scenario value = {value}"
+        for name, value in scenario_modifications.items()
+    )
+
+def has_contribution_sign_contradiction(
+    text,
+    primary_drivers,
+    secondary_responses,
+) -> bool:
+    """Detect explicit positive/negative contribution claims that contradict Python values.
+
+    This deliberately checks only explicit polarity language near a feature name.
+    Scenario wording such as "reduced tree cover" is not treated as a contribution
+    sign unless the answer also explicitly describes a positive/negative or
+    upward/downward model contribution.
+    """
+    if not text:
+        return False
+
+    features = []
+    for group in (primary_drivers or {}, secondary_responses or {}):
+        for name, value in group.items():
+            number = _as_finite_float(value)
+            if number is not None and number != 0:
+                features.append((str(name), number))
+
+    if not features:
+        return False
+
+    # Keep the vocabulary intentionally narrow: these words explicitly describe
+    # contribution polarity, unlike "increased/decreased", which may describe
+    # the environmental input itself.
+    polarity_pattern = re.compile(
+        r"\bpositive\b|\bpositively\b|\bupward\b|"
+        r"\bnegative\b|\bnegatively\b|\bdownward\b",
+        re.IGNORECASE,
+    )
+
+    # Sentence boundaries prevent a polarity statement from leaking into the
+    # next sentence. The nearest named feature is associated with each polarity
+    # cue, avoiding attribution to every feature mentioned in a long sentence.
+    sentences = re.split(r"(?<=[.!?;])\s+", clean_text(text))
+    for sentence in sentences:
+        feature_occurrences = []
+        for name, value in features:
+            pattern = re.compile(
+                rf"(?<!\w){re.escape(name)}(?!\w)",
+                re.IGNORECASE,
+            )
+            for match in pattern.finditer(sentence):
+                feature_occurrences.append((match.start(), match.end(), name, value))
+
+        if not feature_occurrences:
+            continue
+
+        for cue in polarity_pattern.finditer(sentence):
+            cue_word = cue.group(0).lower()
+            claimed_sign = (
+                1 if cue_word in {"positive", "positively", "upward"}
+                else -1
+            )
+
+            # Prefer an explicit construction such as "negative contributions,
+            # such as vegetation productivity" or "positive contribution from X".
+            following = [
+                item for item in feature_occurrences if item[0] >= cue.end()
+            ]
+            linked = None
+            if following:
+                candidate = min(following, key=lambda item: item[0])
+                bridge = sentence[cue.end():candidate[0]]
+                if (
+                    len(bridge) <= 100
+                    and re.search(r"\bcontributions?\b", bridge, re.IGNORECASE)
+                    and re.search(
+                        r"\b(?:such as|including|like|from|of)\b",
+                        bridge,
+                        re.IGNORECASE,
+                    )
+                ):
+                    linked = candidate
+
+            if linked is None:
+                linked = min(
+                    feature_occurrences,
+                    key=lambda item: min(
+                        abs(cue.start() - item[1]),
+                        abs(item[0] - cue.end()),
+                    ),
+                )
+
+            start, end, name, actual_value = linked
+            distance = min(abs(cue.start() - end), abs(start - cue.end()))
+
+            # A polarity word far from the feature is too ambiguous to judge.
+            if distance <= 100 and claimed_sign != (1 if actual_value > 0 else -1):
+                print(
+                    "[RAG] CONTRIBUTION SIGN CONTRADICTION:",
+                    name,
+                    "actual=", actual_value,
+                    "claimed=", cue_word,
+                )
+                return True
+
+    return False
+
 
 # ======================================================
 # REPORT
@@ -126,6 +239,7 @@ def build_assessment_report(
     risk_delta,
     primary_drivers,
     secondary_responses,
+    scenario_modifications=None,
     baseline_risk=None,
     scenario_risk=None,
 ):
@@ -137,6 +251,9 @@ def build_assessment_report(
     baseline_text = _format_score(baseline_risk)
     scenario_text = _format_score(scenario_risk)
     delta_text = _format_delta(risk_delta)
+    modifications = _format_scenario_modifications(
+        scenario_modifications
+    )
     direction_text = _risk_direction(risk_delta)
 
     primary = "None"
@@ -177,6 +294,15 @@ IMPORTANT DISTINCTION:
 - The risk-score difference is scenario risk score minus baseline risk score.
 - A risk-score difference is NOT an absolute risk score.
 - If an absolute score says it was not provided, do not infer it from the difference.
+============================================================
+SCENARIO MODIFICATIONS — ACTUAL MODEL INPUTS
+------------------------------------------------------------
+{modifications}
+
+IMPORTANT:
+These are the feature values actually applied to the scenario
+model input. They identify the requested scenario modifications.
+They are distinct from Delta-SHAP contributions.
 
 ============================================================
 PRIMARY DELTA-SHAP CONTRIBUTIONS
@@ -195,51 +321,67 @@ SECONDARY ECOSYSTEM ASSOCIATIONS
 # ECOLOGICAL NOTES
 # ======================================================
 
-def build_ecological_notes(primary_drivers, secondary_responses):
+def build_ecological_notes(
+    scenario_modifications,
+    primary_drivers,
+    secondary_responses
+):
     notes = [
+        "SCENARIO MODIFICATIONS:",
+        "The scenario modifications section lists the feature values "
+        "actually applied to the model input.",
+        "These modifications must not be confused with model "
+        "contributions.",
+        "",
+        "PRIMARY DELTA-SHAP CONTRIBUTIONS:",
+        "These are model attribution changes associated with features "
+        "identified as modified in the scenario.",
+        "They are not necessarily the largest contributors to the "
+        "overall risk-score difference.",
+        "",
+        "SECONDARY DELTA-SHAP CONTRIBUTIONS:",
+        "These are attribution changes for other model features.",
+        "Their presence does not mean that the corresponding "
+        "environmental variables were directly modified or "
+        "that they physically changed during the simulation.",
+        "",
         "DELTA-SHAP INTERPRETATION:",
         "Delta-SHAP for a feature is calculated as its SHAP value "
         "in the scenario minus its SHAP value in the baseline.",
         "A positive Delta-SHAP contributes positively to the "
         "scenario-minus-baseline risk difference. A negative "
         "Delta-SHAP contributes negatively.",
-        "The sign describes the change in the model attribution, "
+        "The sign describes the change in model attribution, "
         "not whether the environmental variable itself increased "
         "or decreased.",
         "Delta-SHAP values describe model attribution changes; "
         "they do not establish ecological causation.",
-    ]
-
-    if primary_drivers:
-        notes.extend([
-            "",
-            "DIRECTLY MODIFIED FEATURES:",
-            "This list identifies features explicitly modified "
-            "in the requested scenario. Their contributions are "
-            "shown separately and are not necessarily the largest "
-            "contributors to the overall risk-score difference.",
-        ])
-
-    if secondary_responses:
-        notes.extend([
-            "",
-            "OTHER FEATURE CONTRIBUTIONS:",
-            "These are attribution changes for other model features. "
-            "Their presence does not mean that the corresponding "
-            "environmental variables were directly modified or "
-            "that they physically changed during the simulation.",
-        ])
-
-    notes.extend([
         "",
         "The overall risk-score difference reflects the combined "
         "contributions. Positive and negative contributions can "
-        "offset one another, so the total can decrease even when "
-        "some individual contributions are positive.",
+        "offset one another.",
         "Do not present these contributions as ecological causes "
         "unless independent supporting evidence establishes the "
         "relevant mechanism.",
-    ])
+        "",
+        "ECOLOGICAL INTERPRETATION:",
+        "Start from the actual scenario modifications to identify "
+        "the environmental changes being assessed.",
+        "Use retrieved scientific evidence to explain the ecological "
+        "role and relevance of these modified variables in the "
+        "Massaciuccoli Lake ecosystem.",
+        "Use primary and secondary Delta-SHAP contributions to "
+        "describe how the model associates these features with "
+        "the predicted risk-score difference.",
+        "Distinguish scientific evidence describing the ecological "
+        "relevance of a variable from evidence supporting a specific "
+        "relationship or mechanism in the reported assessment.",
+        "Retrieved evidence may provide ecological context without "
+        "explaining the specific modelled risk response.",
+        "If the retrieved evidence does not establish why the "
+        "predicted risk changed, explicitly acknowledge this "
+        "limitation rather than inferring an ecological mechanism.",
+    ]
 
     return (
         "============================================================\n"
@@ -260,6 +402,7 @@ def build_legacy_prompt(
     primary_text,
     secondary_text,
     context,
+    scenario_modifications=None,
     baseline_risk=None,
     scenario_risk=None,
 ):
@@ -274,7 +417,8 @@ AUTHORITATIVE MODEL RESULTS (scores rounded to three decimals):
 Baseline risk score: {_format_score(baseline_risk)}
 Scenario risk score: {_format_score(scenario_risk)}
 Risk-score difference (scenario minus baseline): {_format_delta(risk_text)}
-
+SCENARIO MODIFICATIONS — ACTUAL MODEL INPUTS:
+{_format_scenario_modifications(scenario_modifications)}
 Primary drivers:
 {primary_text or 'None'}
 
@@ -293,7 +437,14 @@ RULES:
 - Driver associations do not, on their own, establish causal effects or actual increases/decreases in associated ecosystem variables.
 - Use cautious language and only ecological interpretations supported by the supplied evidence.
 - Be concise and directly answer the question.
-
+- Distinguish actual scenario modifications from primary and secondary
+  model contributions.
+- Only features listed under SCENARIO MODIFICATIONS were explicitly
+  modified in the model input.
+- Primary Delta-SHAP contributions are model attribution results,
+  not a list of all scenario modifications.
+- Secondary associations must never be described as physical changes
+  to environmental variables.
 Answer:
 """
 
@@ -322,6 +473,14 @@ MANDATORY ASSESSMENT ANSWERING RULES
    retrieved evidence. A cautious statement is preferable to unsupported detail.
 8. Answer the original question directly and concisely. Do not repeat the same
    result in a conclusion.
+9. Treat SCENARIO MODIFICATIONS as the authoritative list of environmental
+   features and values actually applied to the model input.
+10. Never infer that a feature was modified merely because it appears among
+    primary or secondary model contributions.
+11. Primary and secondary contributions describe changes in model attribution,
+    not additional scenario inputs.
+12. Never describe secondary features as physically changed unless they are
+    explicitly listed in SCENARIO MODIFICATIONS.
 ============================================================
 """
 
@@ -336,7 +495,7 @@ def generate_assessment_explanation(
     primary_drivers: dict = None,
     secondary_responses: dict = None,
     risk_delta: float = None,
-    features: list = None,
+    scenario_modifications: dict = None,
     baseline_risk: float = None,
     scenario_risk: float = None,
 ):
@@ -383,30 +542,34 @@ def generate_assessment_explanation(
     print("[RAG] RISK DELTA:", _format_delta(risk_delta))
     print("[RAG] PRIMARY DRIVERS:", primary_drivers)
     print("[RAG] SECONDARY RESPONSES:", secondary_responses)
+    print("[RAG] SCENARIO MODIFICATIONS:", scenario_modifications)
 
     if USE_LEGACY_PROMPTS:
         prompt = build_legacy_prompt(
-            question,
-            risk_delta,
-            primary_text,
-            secondary_text,
-            context,
-            baseline_risk=baseline_risk,
-            scenario_risk=scenario_risk,
-        )
+        question,
+        risk_delta,
+        primary_text,
+        secondary_text,
+        context,
+        scenario_modifications=scenario_modifications,
+        baseline_risk=baseline_risk,
+        scenario_risk=scenario_risk,
+    )
     else:
         report = build_assessment_report(
-            question=question,
-            risk_delta=risk_delta,
-            primary_drivers=primary_drivers,
-            secondary_responses=secondary_responses,
-            baseline_risk=baseline_risk,
-            scenario_risk=scenario_risk,
-        )
+        question=question,
+        risk_delta=risk_delta,
+        primary_drivers=primary_drivers,
+        secondary_responses=secondary_responses,
+        scenario_modifications=scenario_modifications,
+        baseline_risk=baseline_risk,
+        scenario_risk=scenario_risk,
+    )
 
         ecological_notes = build_ecological_notes(
-            primary_drivers,
-            secondary_responses,
+        scenario_modifications,
+        primary_drivers,
+        secondary_responses,
         )
 
         prompt = (
@@ -441,6 +604,11 @@ A risk-score difference is not an absolute risk score.
 
 Model-driver and secondary-association scores describe statistical
 associations; they do not prove causation.
+
+When describing model contributions, upward or downward refers
+only to the direction of the component's statistical contribution
+to the predicted risk-score difference, not to the direction of
+the environmental variable's change or to an ecological effect.
 
 Do not claim that a driver caused, explains, or is responsible for
 the direction of the overall risk change.
@@ -513,7 +681,16 @@ ecological mechanism.
                     re.IGNORECASE,
                 )
 
-                if unsupported_causality.search(ecological_explanation):
+                sign_contradiction = has_contribution_sign_contradiction(
+                    ecological_explanation,
+                    primary_drivers,
+                    secondary_responses,
+                )
+
+                if (
+                    unsupported_causality.search(ecological_explanation)
+                    or sign_contradiction
+                ):
                     primary_items = [
                         (name, _as_finite_float(value))
                         for name, value in (primary_drivers or {}).items()
@@ -539,46 +716,47 @@ ecological mechanism.
                         for name, value in primary_items
                     ) or "not available"
 
-                    negative_items = sorted(
-                        [
-                            (name, value)
-                            for name, value in secondary_items
-                            if value < 0
-                        ],
+                    # Include both modified-input contributions and secondary responses.
+                    # Keep the two groups distinct to avoid mixing their meanings.
+                    primary_negative_items = sorted(
+                        [(name, value) for name, value in primary_items if value < 0],
                         key=lambda item: item[1],
                     )[:2]
-
-                    positive_items = sorted(
-                        [
-                            (name, value)
-                            for name, value in secondary_items
-                            if value > 0
-                        ],
+                    primary_positive_items = sorted(
+                        [(name, value) for name, value in primary_items if value > 0],
+                        key=lambda item: item[1],
+                        reverse=True,
+                    )[:3]
+                    secondary_negative_items = sorted(
+                        [(name, value) for name, value in secondary_items if value < 0],
+                        key=lambda item: item[1],
+                    )[:2]
+                    secondary_positive_items = sorted(
+                        [(name, value) for name, value in secondary_items if value > 0],
                         key=lambda item: item[1],
                         reverse=True,
                     )[:3]
 
-                    negative_text = ", ".join(
-                        f"{name} ({value:+.5f})"
-                        for name, value in negative_items
-                    ) or "none among the reported components"
+                    def _format_contributions(items):
+                        return ", ".join(
+                            f"{name} ({value:+.5f})" for name, value in items
+                        ) or "none reported"
 
-                    positive_text = ", ".join(
-                        f"{name} ({value:+.5f})"
-                        for name, value in positive_items
-                    ) or "none among the reported components"
+                    primary_negative_text = _format_contributions(primary_negative_items)
+                    primary_positive_text = _format_contributions(primary_positive_items)
+                    secondary_negative_text = _format_contributions(secondary_negative_items)
+                    secondary_positive_text = _format_contributions(secondary_positive_items)
 
                     ecological_explanation = (
-                        f"The requested inputs have the following model "
-                        f"contributions: {primary_text}. Among the other "
-                        f"components, the largest downward contributions are "
-                        f"{negative_text}, while the upward contributions "
-                        f"include {positive_text}. These contributions describe "
-                        f"the model's prediction, not proof that the corresponding "
-                        f"environmental variables physically changed or caused "
-                        f"the result. The retrieved knowledge base does not "
-                        f"establish the specific ecological mechanism behind "
-                        f"this scenario."
+                        f"Among the modified inputs, downward contributions include "
+                        f"{primary_negative_text}, while upward contributions include "
+                        f"{primary_positive_text}. Among the secondary model responses, "
+                        f"downward contributions include {secondary_negative_text}, "
+                        f"while upward contributions include {secondary_positive_text}. "
+                        f"These are contributions to the model's prediction, not proof "
+                        f"that environmental variables physically changed or caused "
+                        f"the result; the retrieved knowledge base does not establish "
+                        f"the specific ecological mechanism behind this scenario."
                     )
 
     except Exception as exc:

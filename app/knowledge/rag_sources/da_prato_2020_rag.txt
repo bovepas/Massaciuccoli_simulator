@@ -1,0 +1,105 @@
+DOCUMENT
+The coastal wetland systems of northern Tuscany: Massaciuccoli Lake and ex Porta Lake. State of knowledge and new opportunities for multidisciplinary approach
+
+SOURCE
+da Prato, S.; Baneschi, I. (2020). Acque Sotterranee – Italian Journal of Groundwater.
+DOI: 10.7343/as-2020-478
+
+CASE STUDY
+Lago di Massaciuccoli (Tuscany, Italy) and ex Lago di Porta (Tuscany, Italy; distinct wetland system)
+
+DOMAIN
+Wetland ecosystems; lake and marsh water geochemistry; historical ecological change; coastal wetland knowledge gaps.
+
+PURPOSE
+This paper provides a synthesis of the state of knowledge concerning two coastal wetland systems in northern Tuscany: Lake Massaciuccoli and the former Lake Porta. It brings together information from previous studies and identifies knowledge gaps and opportunities for multidisciplinary research. It is a review and state-of-knowledge contribution, not a report of a new experimental campaign or a new quantitative model.
+
+============================================================
+1. LAKE MASSACIUCCOLI: GENERAL CHARACTERISTICS
+============================================================
+
+The present Lake Massaciuccoli is described as a shallow lake, with an average depth of approximately 2 m and a maximum depth of 4.4 m. The lake water has a salinity below 500 mg/L and a Na-Cl chemical composition.
+
+The lake waters are described as vertically well mixed. Their seasonal chemical variability is reported to be more pronounced than their spatial variability.
+
+The authors attribute lake-water salinity mainly to evaporation and anthropogenic factors. The northern marsh area is described as being more strongly affected by marine-water intrusion, including through cavities and the Burlamacca Canal.
+
+These characteristics refer to the state of knowledge summarized in the 2020 paper and to the studies cited by its authors. They should not be interpreted as a new set of measurements collected in 2020 or as a description of present-day conditions.
+
+============================================================
+2. WATER GEOCHEMISTRY AND SEASONAL VARIABILITY
+============================================================
+
+The paper summarizes previous observations concerning the chemical and physical characteristics of lake and marsh waters.
+
+Dissolved oxygen in the lake is reported to remain close to saturation throughout the year, with relatively limited seasonal variation.
+
+Lake-water samples are described as having low orthophosphate and dissolved organic carbon (DOC) levels. The seasonal carbon cycle is associated with photosynthetic activity. During summer, higher pH and lower pCO2 are reported.
+
+Ammonia (NH3) concentrations are reported to be higher in marsh waters than in lake waters. The authors relate this difference to the more reducing conditions in the marsh environment. In autumn, ammoniacal nitrogen in the canals is reported to be almost one order of magnitude higher than in summer.
+
+Seasonal variations in phosphate and nitrate are described as relatively small. Their average values are reported to be generally lower in autumn than in summer.
+
+The paper also describes differences between the lake and marsh environments in relation to salinity and marine influence. In particular, the northern marsh area is more affected by marine-water intrusion than the lake itself.
+
+All these geochemical observations are presented here as findings reported in the previous studies summarized by Da Prato and Baneschi (2020). The paper is a secondary synthesis; the observations must not be represented as newly measured values or as current monitoring data. No temporal updating or extrapolation is implied.
+
+============================================================
+3. HISTORICAL ECOLOGICAL CHANGE IN LAKE MASSACIUCCOLI
+============================================================
+
+The paper reports a historical change in the ecological condition of Lake Massaciuccoli.
+
+Studies conducted in 1940–1942 described the lake as oligotrophic and slightly brackish. Approximately ten years later, much of the submerged macrophyte vegetation had been lost and the lake had shifted towards a system dominated by phytoplankton.
+
+The authors associate this change with a loss of habitat quality and water transparency.
+
+This account is a historical reconstruction reported through studies cited in the paper. It should be used as evidence of documented past ecological change, not as a characterization of the current ecological status of the lake. The synthesis does not, by itself, establish a single causal factor for the transition.
+
+============================================================
+4. THE FORMER LAKE PORTA
+============================================================
+
+The paper also considers the former Lake Porta, a coastal wetland system distinct from Lake Massaciuccoli.
+
+Based on archaeological findings cited by the authors, the formation of the former lake is placed in pre-Roman times. Lacustrine deposits are reported to reach a maximum thickness of approximately 10 m.
+
+The canalization of watercourses is described as having contributed to the partial infilling of the basin and to the reduction of its surface area, eventually transforming the former lake into a pond.
+
+This information concerns the former Lake Porta only. Its environmental history and characteristics must not be transferred to Lake Massaciuccoli or treated as direct evidence of processes occurring in the Massaciuccoli basin.
+
+============================================================
+5. KNOWLEDGE GAPS AND RESEARCH NEEDS
+============================================================
+
+The paper emphasizes the need for improved knowledge of coastal wetland systems through a multidisciplinary approach. The authors identify gaps in the available knowledge and recommend more detailed monitoring of abiotic and biotic components.
+
+This section retains only the general observation concerning knowledge gaps and the need for multidisciplinary environmental monitoring. Detailed discussion of stratigraphic records, sediment cores, and the geological history of the wider coastal plain is outside the scope of this knowledge-base document.
+
+============================================================
+6. SCOPE AND LIMITATIONS OF THE SOURCE
+============================================================
+
+This paper is a synthesis of previous studies. It does not provide a new experimental dataset, a new basin-wide groundwater model, or new quantitative relationships suitable for direct calibration of the Massaciuccoli Digital Twin emulator.
+
+The geochemical information and historical ecological observations are useful as scientific context for questions about lake and marsh water characteristics, seasonal variability, and past ecological transformations. Their original study context and temporal limitations must be preserved.
+
+Information concerning the former Lake Porta is retained as contextual knowledge about a separate wetland system and must remain clearly distinguished from information about Lake Massaciuccoli.
+
+The general geological reconstruction of the Versilia coastal plain and the wider Viareggio basin is not included in this document because it is not considered sufficiently relevant to the current scope of the Digital Twin knowledge base.
+
+The IGGDATABASE mentioned in the paper, described as a QGIS-organized collection of stratigraphic logs and sediment cores, is not included as an operational data source. Its identity, accessibility, and compliance with the FAIR principles have not been verified for the specific records cited in the 2020 paper. The existence of a GIS database or its institutional location does not establish that its contents are FAIR. No claim is made here that IGGDATABASE is open, accessible, interoperable, or reusable.
+
+============================================================
+CORE SCIENTIFIC CONTRIBUTIONS
+============================================================
+
+- The paper summarizes the shallow-water characteristics and broad geochemical features of Lake Massaciuccoli, including Na-Cl water composition, low salinity, vertical mixing, and seasonal variability.
+- It reports differences between lake and marsh waters, including the stronger marine influence in the northern marsh area and higher ammonia concentrations in marsh waters.
+- It documents, through earlier studies, a historical transition from an oligotrophic, slightly brackish lake with submerged macrophytes towards a phytoplankton-dominated system, accompanied by reduced water transparency and habitat quality.
+- It provides a concise historical account of the former Lake Porta, which must be treated as a wetland system distinct from Lake Massaciuccoli.
+- It highlights the need for multidisciplinary knowledge and monitoring of coastal wetland systems.
+
+============================================================
+END OF DOCUMENT
+============================================================
