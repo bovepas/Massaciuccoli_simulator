@@ -143,18 +143,19 @@ def get_embedding(text: str):
 # QUERY EXPANSION
 # ======================================================
 
-def expand_query(query: str) -> List[str]:
-    """Keep the original query and add concise, topic-focused variants.
 
-    Avoid generic prefixes appended to the full query: those variants are
-    near-duplicates and waste embedding/retrieval calls. For Drivers queries,
-    preserve the target and driver names while removing boilerplate.
+def expand_query(query: str) -> List[str]:
+    """Keep the original query and add topic-focused variants.
+
+    For structured target/drivers queries, thematic expansions contain
+    only the drivers relevant to each topic. Other queries are unchanged.
     """
     original = str(query).strip()
     if not original:
         return []
 
     expansions = [original]
+
     target_match = re.search(
         r"\btarget\s*=\s*(.*?)(?=;\s*drivers\s*=|$)",
         original, re.I | re.S
@@ -163,39 +164,97 @@ def expand_query(query: str) -> List[str]:
         r"\bdrivers\s*=\s*(.*?)(?=\.\s*(?:Relevant context|Do not assume)|$)",
         original, re.I | re.S
     )
+
     target = target_match.group(1).strip(" ;.\n\t") if target_match else ""
     drivers = drivers_match.group(1).strip(" ;.\n\t") if drivers_match else ""
 
     if target or drivers:
+        driver_list = [
+            item.strip()
+            for item in re.split(r";|\n", drivers)
+            if item.strip()
+        ]
+
         fields = []
         if target:
             fields.append(f"target: {target}")
-        if drivers:
-            fields.append(f"environmental variables: {drivers}")
+        if driver_list:
+            fields.append(
+                "environmental variables: " + "; ".join(driver_list)
+            )
+
         variables = "; ".join(fields)
+
         expansions.append(
             f"Massaciuccoli wetland scientific ecological context — {variables}"
         )
 
-        terms = f"{target} {drivers}".lower()
-        if any(t in terms for t in ("productivity", "phenology", "tree cover", "grassland", "vegetation")):
-            expansions.append(f"Wetland vegetation ecology and ecological meaning of {variables}")
-        if any(t in terms for t in ("temperature", "precipitation", "evapotranspiration", "climate")):
-            expansions.append(f"Wetland climate and hydrological context of {variables}")
-        if any(t in terms for t in ("species", "biodiversity", "habitat")):
-            expansions.append(f"Wetland biodiversity and habitat context of {variables}")
-        if any(t in terms for t in ("land use", "imperviousness", "urban", "land cover")):
-            expansions.append(f"Wetland land-use and land-cover context of {variables}")
+        topic_rules = {
+            "vegetation": {
+                "description": "Wetland vegetation ecology and ecological meaning",
+                "keywords": (
+                    "productivity", "phenology", "tree cover",
+                    "grassland", "vegetation"
+                )
+            },
+            "climate": {
+                "description": "Wetland climate and hydrological context",
+                "keywords": (
+                    "temperature", "precipitation",
+                    "evapotranspiration", "climate", "hydrology"
+                )
+            },
+            "biodiversity": {
+                "description": "Wetland biodiversity and habitat context",
+                "keywords": (
+                    "species", "biodiversity", "habitat"
+                )
+            },
+            "land_use": {
+                "description": "Wetland land-use and land-cover context",
+                "keywords": (
+                    "land use", "land-use", "land cover",
+                    "land-cover", "imperviousness"
+                )
+            }
+        }
+
+        for topic in topic_rules.values():
+            relevant_drivers = [
+                driver
+                for driver in driver_list
+                if any(
+                    keyword in driver.casefold()
+                    for keyword in topic["keywords"]
+                )
+            ]
+
+            if not relevant_drivers:
+                continue
+
+            topic_fields = []
+            if target:
+                topic_fields.append(f"target: {target}")
+            topic_fields.append(
+                "environmental variables: " + "; ".join(relevant_drivers)
+            )
+
+            expansions.append(
+                f'{topic["description"]} — {"; ".join(topic_fields)}'
+            )
 
     # Remove exact/normalised duplicates while preserving order.
     unique = []
     seen = set()
+
     for item in expansions:
         key = re.sub(r"\s+", " ", item).strip().casefold()
         if key and key not in seen:
             seen.add(key)
             unique.append(item)
+
     return unique
+
 
 
 # LIGHT LEXICAL RE-RANKING

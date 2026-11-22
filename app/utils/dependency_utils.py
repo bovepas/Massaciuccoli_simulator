@@ -29,6 +29,9 @@ DATA_PATH = "/app/data/massaciuccoli_data.csv"
 
 FEATURE_CATEGORIES = {
 
+    # predicted ecosystem risk target (not an input feature)
+    "risk_score": "risk",
+
     # climate
     "Change in average temperature compared to a recent past":
         "climate",
@@ -363,3 +366,173 @@ def compute_dependency_strength(
 
             "confidence": "low"
         }
+
+# ======================================================
+# RANDOM FOREST RISK PERTURBATION SENSITIVITY
+# ======================================================
+
+def compute_risk_perturbation_sensitivity(
+    source,
+    model,
+    dataset,
+    direction="increase",
+    batch_size=8192,
+    tolerance=1e-9,
+):
+    """Estimate how changing one numeric model feature across Q10-Q90
+    changes the Random-Forest-predicted ecosystem risk.
+
+    For every cell, two counterfactual rows are created. All features except
+    `source` remain unchanged. The source is set to Q10 and Q90 (or reversed
+    for a requested decrease). The fitted emulator predicts risk_score in
+    [0, 1]. This is model sensitivity, not an estimate of ecological causality.
+    """
+    from versions.v6_1_emulator import (
+        NUM_FEATURES,
+        CAT_FEATURES,
+        preprocess_semantic_features,
+    )
+
+    if model is None or dataset is None:
+        raise ValueError("The trained risk emulator and dataset are required.")
+
+    feature_columns = list(NUM_FEATURES) + list(CAT_FEATURES)
+    if source not in NUM_FEATURES:
+        raise ValueError(
+            f"Driver '{source}' is not a numeric input feature of the risk emulator. "
+            "Q10-Q90 perturbation is currently implemented for numeric drivers only."
+        )
+
+    missing = [c for c in feature_columns if c not in dataset.columns]
+    if missing:
+        raise ValueError(f"Dataset is missing emulator input columns: {missing}")
+
+    X = dataset[feature_columns].copy().reset_index(drop=True)
+    source_values = pd.to_numeric(X[source], errors="coerce")
+    q10 = float(source_values.quantile(0.10))
+    q90 = float(source_values.quantile(0.90))
+
+    if not np.isfinite(q10) or not np.isfinite(q90) or q90 <= q10:
+        raise ValueError(
+            f"Cannot compute a non-degenerate Q10-Q90 range for '{source}'."
+        )
+
+    normalized_direction = str(direction or "increase").lower()
+    if normalized_direction in {"decrease", "decreasing", "down", "lower"}:
+        from_value, to_value = q90, q10
+        change_direction = "decrease"
+    else:
+        # With no explicit direction, the conventional sensitivity is the
+        # response to increasing the driver from its 10th to 90th percentile.
+        from_value, to_value = q10, q90
+        change_direction = "increase"
+
+    deltas = []
+    baseline_predictions = []
+    perturbed_predictions = []
+
+    for start in range(0, len(X), batch_size):
+        batch = X.iloc[start:start + batch_size].copy()
+        if batch.empty:
+            continue
+
+        from_df = batch.copy()
+        to_df = batch.copy()
+        from_df[source] = from_value
+        to_df[source] = to_value
+
+        # The emulator was trained after this semantic preprocessing step.
+        from_df = preprocess_semantic_features(from_df)
+        to_df = preprocess_semantic_features(to_df)
+        combined = pd.concat([from_df, to_df], ignore_index=True)
+        predictions = np.asarray(model.predict(combined), dtype=float)
+
+        n = len(batch)
+        pred_from = predictions[:n]
+        pred_to = predictions[n:]
+        delta = pred_to - pred_from
+
+        baseline_predictions.append(pred_from)
+        perturbed_predictions.append(pred_to)
+        deltas.append(delta)
+
+    if not deltas:
+        raise ValueError("No dataset rows were available for perturbation analysis.")
+
+    baseline = np.concatenate(baseline_predictions)
+    perturbed = np.concatenate(perturbed_predictions)
+    delta = np.concatenate(deltas)
+
+    positive = delta > tolerance
+    negative = delta < -tolerance
+    unchanged = ~(positive | negative)
+    mean_delta = float(np.mean(delta))
+    mean_abs_delta = float(np.mean(np.abs(delta)))
+
+    if mean_delta > tolerance:
+        risk_direction = "risk_increases"
+    elif mean_delta < -tolerance:
+        risk_direction = "risk_decreases"
+    else:
+        risk_direction = "mixed_or_neutral"
+
+    positive_fraction = float(np.mean(positive))
+    negative_fraction = float(np.mean(negative))
+    unchanged_fraction = float(np.mean(unchanged))
+    # Directional consistency among cells that actually respond
+    responsive_fraction = positive_fraction + negative_fraction
+
+    if responsive_fraction > 0:
+        directional_consistency = (
+            max(positive_fraction, negative_fraction)
+            / responsive_fraction
+        )
+    else:
+        directional_consistency = 0.0
+
+    # Confidence describes directional consistency,
+    # not the fraction of unchanged cells.
+    if responsive_fraction < 0.05:
+        confidence = "low"
+    elif directional_consistency >= 0.80:
+        confidence = "high"
+    elif directional_consistency >= 0.60:
+        confidence = "moderate"
+    else:
+        confidence = "low"
+
+    result = {
+        "supported": True,
+        "method": "random_forest_q10_q90_perturbation",
+        "target": "risk_score",
+        "driver": source,
+        "score": round(abs(mean_delta), 6),
+        "strength": classify_dependency(mean_delta),
+        "direction": risk_direction,
+        "change_direction": change_direction,
+        "responsive_fraction": responsive_fraction,
+        "directional_consistency": directional_consistency,
+        "interaction_type": classify_interaction(source, "risk_score"),
+        "confidence": confidence,
+        "confidence_basis": "directional_consistency_among_responsive_cells",
+        "perturbation": {
+            "type": "10th_90th_percentile_range",
+            "from_value": from_value,
+            "to_value": to_value,
+            "q10": q10,
+            "q90": q90,
+        },
+        "baseline_mean_risk": float(np.mean(baseline)),
+        "perturbed_mean_risk": float(np.mean(perturbed)),
+        "mean_delta_risk": mean_delta,
+        "mean_absolute_delta_risk": mean_abs_delta,
+        "positive_response_fraction": positive_fraction,
+        "negative_response_fraction": negative_fraction,
+        "unchanged_fraction": unchanged_fraction,
+        "n_cells": int(len(delta)),
+    }
+
+    print("[DEPENDENCY RF PERTURBATION] Result:")
+    print(result)
+    return result
+

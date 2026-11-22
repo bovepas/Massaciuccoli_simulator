@@ -5,7 +5,9 @@ Massaciuccoli Digital Twin
 Delta Task — v29 (final with implicit range support)
 """
 
+import re
 import pandas as pd
+import numpy as np
 
 from knowledge.rag_delta import generate_delta_explanation
 from utils.feature_mapping import normalize_feature_name
@@ -32,6 +34,227 @@ def get_base_scenario():
         'Change in grassland presence in the past decade': '0',
         'Change in tree cover density in the past decade': '0'
     }
+
+
+GRASSLAND_FEATURE = "Presence of grassland"
+GRASSLAND_RANDOM_SEED = 42
+
+
+def simulate_grassland_loss(model, dataset, loss_percent, seed=GRASSLAND_RANDOM_SEED):
+    """
+    Spatial approximation for a percentage loss of grassland presence.
+
+    A negative percentage change is interpreted as removing that proportion
+    of cells currently coded Presence of grassland = 1. All other cell
+    attributes are held fixed. Predictions are evaluated over the full grid.
+    """
+    from versions.v6_1_emulator import (
+        NUM_FEATURES,
+        CAT_FEATURES,
+        preprocess_semantic_features,
+    )
+
+    loss_percent = float(loss_percent)
+    if not np.isfinite(loss_percent) or not 0 <= loss_percent <= 100:
+        raise ValueError("Grassland loss must be between 0 and 100 percent.")
+
+    feature_columns = NUM_FEATURES + CAT_FEATURES
+    missing = [column for column in feature_columns if column not in dataset.columns]
+    if missing:
+        raise ValueError(
+            "The dataset is missing model features required for the spatial "
+            f"grassland simulation: {missing}"
+        )
+
+    raw = dataset.loc[:, feature_columns].copy()
+    grassland_values = pd.to_numeric(
+        raw[GRASSLAND_FEATURE], errors="coerce"
+    )
+
+    valid_values = grassland_values.isin([0, 1])
+    if not bool(valid_values.all()):
+        invalid_count = int((~valid_values).sum())
+        raise ValueError(
+            f"{invalid_count} cells have missing or non-binary "
+            f"'{GRASSLAND_FEATURE}' values; spatial simulation stopped."
+        )
+
+    raw[GRASSLAND_FEATURE] = grassland_values.astype(int)
+    positive_positions = np.flatnonzero(
+        grassland_values.to_numpy() == 1
+    )
+    total_cells = len(raw)
+    initial_grassland_cells = len(positive_positions)
+
+    if total_cells == 0 or initial_grassland_cells == 0:
+        raise ValueError(
+            "The dataset is empty or contains no cells with grassland presence."
+        )
+
+    cells_to_remove = int(
+        round(initial_grassland_cells * loss_percent / 100.0)
+    )
+
+    # One reproducible random selection of the cells to be transformed.
+    rng = np.random.default_rng(seed)
+    selected_positions = rng.permutation(positive_positions)[:cells_to_remove]
+
+    baseline_features = preprocess_semantic_features(raw)
+    baseline_predictions = np.asarray(
+        model.predict(baseline_features), dtype=float
+    )
+
+    scenario_raw = raw.copy()
+    if cells_to_remove:
+        grassland_column_position = scenario_raw.columns.get_loc(GRASSLAND_FEATURE)
+        scenario_raw.iloc[selected_positions, grassland_column_position] = 0
+
+    scenario_features = preprocess_semantic_features(scenario_raw)
+    scenario_predictions = np.asarray(
+        model.predict(scenario_features), dtype=float
+    )
+
+    if len(baseline_predictions) != total_cells or len(scenario_predictions) != total_cells:
+        raise ValueError(
+            "The emulator did not return one prediction for every dataset cell."
+        )
+    if not np.isfinite(baseline_predictions).all() or not np.isfinite(scenario_predictions).all():
+        raise ValueError("The emulator returned non-finite risk predictions.")
+
+    # Use the same Low/Medium/High thresholds already used by Delta.
+    def count_risk_classes(predictions):
+        low = int(np.sum(predictions < 0.33))
+        medium = int(np.sum((predictions >= 0.33) & (predictions < 0.66)))
+        high = int(np.sum(predictions >= 0.66))
+        return {
+            "low": low,
+            "medium": medium,
+            "high": high,
+            "at_risk": medium + high,
+        }
+
+    baseline_classes = count_risk_classes(baseline_predictions)
+    scenario_classes = count_risk_classes(scenario_predictions)
+
+    changed_predictions = (
+        np.abs(scenario_predictions - baseline_predictions) > 1e-12
+    )
+    remaining_grassland_cells = initial_grassland_cells - cells_to_remove
+
+    baseline_mean = float(np.mean(baseline_predictions))
+    scenario_mean = float(np.mean(scenario_predictions))
+    baseline_at_risk_percent = (
+        100.0 * baseline_classes["at_risk"] / total_cells
+    )
+    scenario_at_risk_percent = (
+        100.0 * scenario_classes["at_risk"] / total_cells
+    )
+
+    return {
+        "score_from": baseline_mean,
+        "score_to": scenario_mean,
+        "delta": scenario_mean - baseline_mean,
+        "total_cells": total_cells,
+        "grassland_cells_before": initial_grassland_cells,
+        "grassland_cells_removed": cells_to_remove,
+        "grassland_cells_remaining": remaining_grassland_cells,
+        "grassland_presence_percent_before": (
+            100.0 * initial_grassland_cells / total_cells
+        ),
+        "grassland_presence_percent_after": (
+            100.0 * remaining_grassland_cells / total_cells
+        ),
+        "cells_with_changed_prediction": int(changed_predictions.sum()),
+        "percent_cells_with_changed_prediction": (
+            100.0 * float(changed_predictions.mean())
+        ),
+        "baseline_low_risk_cells": baseline_classes["low"],
+        "baseline_medium_risk_cells": baseline_classes["medium"],
+        "baseline_high_risk_cells": baseline_classes["high"],
+        "baseline_at_risk_cells": baseline_classes["at_risk"],
+        "baseline_at_risk_percent": baseline_at_risk_percent,
+        "scenario_low_risk_cells": scenario_classes["low"],
+        "scenario_medium_risk_cells": scenario_classes["medium"],
+        "scenario_high_risk_cells": scenario_classes["high"],
+        "scenario_at_risk_cells": scenario_classes["at_risk"],
+        "scenario_at_risk_percent": scenario_at_risk_percent,
+        "delta_at_risk_cells": (
+            scenario_classes["at_risk"] - baseline_classes["at_risk"]
+        ),
+        "delta_at_risk_percentage_points": (
+            scenario_at_risk_percent - baseline_at_risk_percent
+        ),
+        "grassland_loss_percent": loss_percent,
+        "random_seed": int(seed),
+    }
+
+
+def build_grassland_loss_result(question, feature, loss_percent, stats):
+    """Create a transparent, non-causal explanation for the spatial approximation."""
+    score_from = stats["score_from"]
+    score_to = stats["score_to"]
+    delta = stats["delta"]
+
+    risk_from = risk_level_from_score(score_from)
+    risk_to = risk_level_from_score(score_to)
+
+    remaining_percent = stats["grassland_presence_percent_after"]
+    at_risk_delta = stats["delta_at_risk_cells"]
+    if at_risk_delta > 0:
+        area_change_text = f"an increase of {at_risk_delta:,} cells"
+    elif at_risk_delta < 0:
+        area_change_text = f"a decrease of {abs(at_risk_delta):,} cells"
+    else:
+        area_change_text = "no change in the number of cells"
+
+    interpretation = (
+        "**Simulation setup**\n"
+        f"The requested {loss_percent:g}% grassland decrease was operationalized "
+        "as converting the same proportion of cells currently coded "
+        f"`{GRASSLAND_FEATURE} = 1` to 0. The selection was random and "
+        f"reproducible (seed {stats['random_seed']}); all other cell attributes "
+        "were kept unchanged.\n\n"
+        "**Spatial model estimate**\n"
+        f"The simulation covers {stats['total_cells']:,} cells. Grassland "
+        f"presence changes from {stats['grassland_cells_before']:,} cells "
+        f"({stats['grassland_presence_percent_before']:.2f}% of the grid) to "
+        f"{stats['grassland_cells_remaining']:,} cells "
+        f"({remaining_percent:.2f}%). The mean predicted risk score changes "
+        f"from {score_from:.3f} to {score_to:.3f} "
+        f"({delta:+.3f}).\n\n"
+        "**Cells classified as at risk**\n"
+        "Using the task's existing score thresholds (Medium or High Risk, "
+        "score >= 0.33), the number of cells classified as at risk changes "
+        f"from {stats['baseline_at_risk_cells']:,} "
+        f"({stats['baseline_at_risk_percent']:.2f}%) to "
+        f"{stats['scenario_at_risk_cells']:,} "
+        f"({stats['scenario_at_risk_percent']:.2f}%), "
+        f"{area_change_text} "
+        f"({stats['delta_at_risk_percentage_points']:+.2f} percentage points). "
+        f"Predictions change in {stats['cells_with_changed_prediction']:,} "
+        f"cells ({stats['percent_cells_with_changed_prediction']:.2f}%).\n\n"
+        "**Interpretation limits**\n"
+        "This is a model-based spatial approximation, not a spatially targeted "
+        "land-cover forecast. The random selection does not represent where "
+        "grassland loss would occur in reality. The predicted changes reflect "
+        "associations learned by the surrogate model and must not be interpreted "
+        "as evidence that losing grassland improves ecological conditions."
+    )
+
+    return {
+        "summary": "Grassland loss scenario (spatial simulation)",
+        "data": {
+            **stats,
+            "score_from": round(score_from, 3),
+            "score_to": round(score_to, 3),
+            "delta": round(delta, 3),
+            "risk_from": risk_from,
+            "risk_to": risk_to,
+        },
+        "drivers": [(feature, 1, 0)],
+        "interpretation": interpretation,
+    }
+
 
 def validate_delta_scenario(feature, range_info, base):
     """
@@ -92,9 +315,22 @@ def validate_delta_scenario(feature, range_info, base):
         ):
             return "The requested modification must be numeric."
 
-        # Binary variables: only explicit state targets
-        # are supported. Percentage changes are invalid.
+        # Grassland presence has a dedicated spatial approximation:
+        # a negative percentage change removes that proportion of cells
+        # currently coded 1. Other binary modifications remain state targets.
         if feature in binary_features:
+
+            if (
+                feature == GRASSLAND_FEATURE
+                and delta_type == "percentage_change"
+            ):
+                if not -100 <= delta_value <= 0:
+                    return (
+                        "Grassland percentage changes are supported only "
+                        "as a loss between 0% and 100% of cells currently "
+                        "coded as present."
+                    )
+                return None
 
             if delta_type != "absolute_target":
                 return (
@@ -120,16 +356,7 @@ def validate_delta_scenario(feature, range_info, base):
                 "transitions are defined."
             )
 
-        # Absolute temperature changes must use degrees C.
-        if (
-            feature
-            == "Change in average temperature compared to a recent past"
-            and delta_type != "absolute_delta"
-        ):
-            return (
-                "Temperature modifications must use an "
-                "absolute change expressed in degrees Celsius."
-            )
+        
 
         # Validate the resulting value for bounded features.
         baseline_value = base[feature]
@@ -274,25 +501,29 @@ def infer_simple_range(question):
 
     q = question.lower()
 
-    # Grassland cover is not a percentage-based feature
-    # available in the dataset.
+    # Spatial approximation for explicit percentage changes in grassland cover.
     if "grassland" in q and any(
         term in q
-        for term in (
-            "cover",
-            "coverage",
-            "density",
-            "percentage",
-            "percent",
-            "copertura",
-            "percentuale",
-            "densità",
-        )
+        for term in ("cover", "coverage", "copertura", "percentage", "percent")
     ):
-        print(
-            "[DEBUG] Grassland cover requested, "
-            "but no percentage-coverage feature exists."
-        )
+        match = re.search(r"(\d+(?:[.,]\d+)?)\s*%", q)
+        if match:
+            magnitude = float(match.group(1).replace(",", "."))
+            if any(w in q for w in ("decrease", "decreases", "reduce", "reduces", "drop", "loss", "decline")):
+                direction = -1
+            elif any(w in q for w in ("increase", "increases", "rise", "gain")):
+                direction = 1
+            else:
+                return None
+
+            return {
+                "feature": normalize_feature_name("grassland"),
+                "mode": "baseline_delta",
+                "delta": direction * magnitude,
+                "delta_type": "percentage_change",
+            }
+
+        # Do not fall through to the generic 10% fallback for grassland cover.
         return None
 
     keywords = [
@@ -353,27 +584,6 @@ def infer_simple_range(question):
 def recover_feature_from_question(question):
 
     q = question.lower()
-
-    # Grassland cover is not a percentage-based feature
-    # available in the dataset.
-    if "grassland" in q and any(
-        term in q
-        for term in (
-            "cover",
-            "coverage",
-            "density",
-            "percentage",
-            "percent",
-            "copertura",
-            "percentuale",
-            "densità",
-        )
-    ):
-        print(
-            "[DEBUG] Refusing grassland feature recovery: "
-            "requested coverage is not available."
-        )
-        return None
 
     if "tree cover" in q:
         return normalize_feature_name("tree_cover")
@@ -557,44 +767,6 @@ def handle_delta(
         }
     
     # --------------------------------------------------
-    # Validate grassland cover requests
-    # --------------------------------------------------
-
-    q = question.lower()
-
-    if "grassland" in q and any(
-        term in q
-        for term in (
-            "cover",
-            "coverage",
-            "density",
-            "percentage",
-            "percent",
-            "copertura",
-            "percentuale",
-            "densità",
-        )
-    ):
-        print(
-            "[DEBUG] Unsupported request: grassland "
-            "percentage coverage is not available."
-        )
-
-        return {
-            "summary": "Unsupported environmental variable",
-            "data": {},
-            "drivers": [],
-            "interpretation": (
-                "Grassland percentage coverage is not supported "
-                "by the current dataset. Grassland is represented "
-                "only as a binary presence/absence variable (0/1). "
-                "Changes in percentage coverage are not yet "
-                "implemented at this stage of development. "
-                "Therefore, the requested delta task has not been executed."
-            )
-        }
-
-    # --------------------------------------------------
     # Build baseline from dataset
     # --------------------------------------------------
 
@@ -622,6 +794,105 @@ def handle_delta(
             "drivers": [],
             "interpretation": validation_error
         }
+
+    # --------------------------------------------------
+    # Dedicated spatial simulation for grassland loss
+    # --------------------------------------------------
+
+    delta_type = range_info.get("delta_type", "percentage_change")
+    if (
+        feature == GRASSLAND_FEATURE
+        and range_info.get("mode") == "baseline_delta"
+        and delta_type == "percentage_change"
+    ):
+        loss_percent = abs(float(range_info["delta"]))
+        print(
+            "[DEBUG] Running spatial grassland-loss approximation: "
+            f"{loss_percent:g}% (seed={GRASSLAND_RANDOM_SEED})."
+        )
+        try:
+            stats = simulate_grassland_loss(
+                model=model,
+                dataset=dataset,
+                loss_percent=loss_percent,
+                seed=GRASSLAND_RANDOM_SEED,
+            )
+        except Exception as exc:
+            print(f"[DEBUG] Grassland spatial simulation failed: {exc}")
+            return {
+                "summary": "Grassland spatial simulation failed",
+                "data": {},
+                "drivers": [],
+                "interpretation": (
+                    "The requested grassland-loss simulation could not be "
+                    f"completed: {exc}"
+                ),
+            }
+
+        result = build_grassland_loss_result(
+            question=question,
+            feature=feature,
+            loss_percent=loss_percent,
+            stats=stats,
+        )
+
+        # Describe the modification as a percentage of the cells that
+        # initially had grassland presence, not as a single-cell 1 -> 0 change.
+        rag_driver = (
+            "Grassland presence among initially grassland cells (%)",
+            100.0,
+            100.0 - loss_percent,
+        )
+        rag_drivers = [rag_driver]
+        result["drivers"] = rag_drivers
+
+        scenario_context = (
+            f"The scenario removes {loss_percent:g}% of the cells that "
+            "were initially coded Presence of grassland = 1. This is "
+            "operationalized by randomly converting that proportion of "
+            "those cells from 1 to 0, using the fixed random seed "
+            f"{GRASSLAND_RANDOM_SEED}. The selection is reproducible but "
+            "not spatially targeted. It is not a uniform reduction of "
+            "grassland cover within every cell, and it does not identify "
+            "where grassland loss would occur in reality."
+        )
+
+        try:
+            ecological_interpretation = generate_delta_explanation(
+                question,
+                rag_drivers,
+                delta=stats["delta"],
+                features=features,
+                model_results={
+                    "score_from": stats["score_from"],
+                    "score_to": stats["score_to"],
+                    "risk_from": risk_level_from_score(stats["score_from"]),
+                    "risk_to": risk_level_from_score(stats["score_to"]),
+                },
+                scenario_context=scenario_context,
+                ecological_only=True,
+            )
+
+            if ecological_interpretation:
+                result["interpretation"] = (
+                    "**Ecological interpretation**\n"
+                    f"{ecological_interpretation}\n\n"
+                    f"{result['interpretation']}"
+                )
+
+        except Exception as exc:
+            # Keep the completed spatial result if the explanatory RAG fails.
+            print(f"[DEBUG] Grassland ecological RAG failed: {exc}")
+
+        print(
+            "[DEBUG] Grassland spatial simulation completed: "
+            f"mean risk {stats['score_from']:.6f} -> "
+            f"{stats['score_to']:.6f}; at-risk cells "
+            f"{stats['baseline_at_risk_cells']} -> "
+            f"{stats['scenario_at_risk_cells']}."
+        )
+        print("========== DELTA TASK END (GRASSLAND SPATIAL) ==========\n")
+        return result
 
     # ----------------------------------------------
     # Build scenarios using shared Scenario Builder

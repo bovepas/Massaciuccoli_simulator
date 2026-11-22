@@ -5,7 +5,10 @@ Your task is to identify the two variables involved in a dependency question:
 - driver: the variable that influences, affects, determines, or drives another variable
 - target: the variable that is influenced, affected, determined, or explained by the driver
 
-The question must contain a specific driver variable and a specific target variable.
+The question must contain a specific driver variable. The target may be an explicit
+CSV feature, an explicit abstract concept, or a generic reference to the lake ecosystem.
+For a generic reference to the lake ecosystem, use the ecosystem risk classification
+as the target ("ecosystem risk").
 
 Return ONLY valid JSON.
 
@@ -38,14 +41,93 @@ RULES
 4. Preserve the semantic meaning of the variable.
    Use the most direct variable name expressed in the question.
 
-5. Do NOT calculate anything.
+
+5. TARGET MAPPING RULE:
+
+   Apply the following priority rules when identifying the target:
+
+   a. EXPLICIT TARGET HAS PRIORITY:
+      If the question explicitly names a target variable or ecological
+      concept, ALWAYS preserve that target, even when the question
+      also contains a reference to the lake ecosystem or the
+      Massaciuccoli ecosystem.
+
+      Examples:
+      - "How does temperature affect biodiversity in the Massaciuccoli ecosystem?"
+        → target = "biodiversity"
+      - "How does precipitation affect species richness in the lake basin?"
+        → target = "species richness"
+      - "How does biodiversity influence ecosystem stability?"
+        → target = "ecosystem stability"
+
+   b. GENERIC ECOSYSTEM REFERENCE:
+      Only when the question does NOT explicitly identify another
+      target variable or ecological concept, interpret generic
+      references such as "the lake ecosystem", "Massaciuccoli lake
+      ecosystem", "ecosystem health", or the environment of the lake
+      as:
+      target = "ecosystem risk".
+
+      This maps to the CSV risk-classification target.
+
+   c. Do NOT map an explicitly named target such as biodiversity,
+      species richness, ecosystem productivity, or ecosystem stability
+      to ecosystem risk merely because the question mentions
+      the lake ecosystem.
+
+   d. If no explicit target or recognizable ecological concept
+      is identified, use "ecosystem risk" only when the question
+      clearly refers generically to the lake ecosystem.
+
+   PRIORITY: IDENTIFY THE GRAMMATICAL TARGET
+
+   Identify the variable or concept that is the object of the
+   influence expressed by the question.
+
+   A phrase describing the location, environment, basin or
+   ecosystem where the relationship occurs is contextual
+   information, NOT the target.
+
+   In particular, when a specific ecological concept appears
+   before a contextual phrase such as "in the lake ecosystem",
+   preserve that ecological concept as the target.
+
+   Examples:
+
+   Question:
+   "How does temperature change affect biodiversity in the
+   Massaciuccoli ecosystem?"
+
+   Driver = "temperature change"
+   Target = "biodiversity"
+
+   Question:
+   "How does precipitation affect species richness in the
+   lake basin?"
+
+   Driver = "precipitation"
+   Target = "species richness"
+
+   Question:
+   "How does temperature affect the Massaciuccoli lake ecosystem?"
+
+   Driver = "temperature"
+   Target = "ecosystem risk"
+
+   IMPORTANT:
+   Never replace an explicitly identified target with
+   "ecosystem risk" merely because the question contains
+   the words "ecosystem", "lake", "basin" or "environment".
+
+
+6. Do NOT calculate anything.
    Dependency questions do not contain numerical variations, ranges, percentages, or scenario values that need to be processed.
 
-6. Do NOT add explanations, comments, or additional fields.
+7. Do NOT add explanations, comments, or additional fields.
 
-7. Do NOT infer a driver or target that is not supported by the wording of the question.
+8. Do NOT infer a driver or target that is not supported by the wording of the question.
 
-8. For questions explicitly asking how one variable affects another, preserve the direction expressed by the question.
+9. For questions explicitly asking how one variable affects another, preserve the direction expressed by the question.
 
 EXAMPLES
 
@@ -119,6 +201,12 @@ Output:
   "target": "biodiversity"
 }
 
-Now extract the dependency from this question:
+NOW EXTRACT THE DEPENDENCY FROM THE USER QUESTION.
 
+Identify the driver and target by applying all the rules
+defined above.
+
+Question:
 {{QUERY}}
+
+Return ONLY the JSON object with the required structure.

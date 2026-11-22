@@ -19,12 +19,21 @@ def importance_extraction_to_inputs(
         )
 
     focus = extraction.focus
-    if focus not in {"increase", "decrease", "all"}:
+    valid_focuses = {"all", "climate", "biodiversity", "land_use"}
+    if focus not in valid_focuses:
         raise ValueError(
             f"Unexpected focus: {focus}"
+        )
+
+    direction = extraction.direction
+    valid_directions = {"all", "increase", "decrease"}
+    if direction not in valid_directions:
+        raise ValueError(
+            f"Unexpected direction: {direction}"
         )
 
     return {
         "top_k": top_k,
         "focus": focus,
+        "direction": direction,
     }

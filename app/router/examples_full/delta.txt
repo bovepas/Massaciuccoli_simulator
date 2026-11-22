@@ -5,6 +5,7 @@ How does ecosystem risk change when grassland cover decreases by 40%?
 How does ecosystem risk change when grassland cover decreases by 50%?
 How does ecosystem risk change when grassland cover decreases by 60%?
 How does ecosystem risk change when grassland cover increases by 20%?
+What is the ecosystem risk if temperature decreases by 20%?
 What is the ecosystem risk if temperature increases by 3°C?
 What is the ecosystem risk if precipitation decreases by 20%?
 I’m interested in what effect a significant increase in evapotranspiration would have on ecosystem risk.

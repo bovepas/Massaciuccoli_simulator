@@ -579,7 +579,7 @@ END USER QUESTION
 ==================================================
 """
 
-    response = call_llm(llm_input)
+    response = call_llm(llm_input, role="extraction")
     print("\n========== RAW LLM RESPONSE ==========")
     print(response)
     print("========== END RAW RESPONSE ==========\n")

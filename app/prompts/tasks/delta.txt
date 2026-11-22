@@ -1,95 +1,59 @@
 TASK
 
-The user asks the Massaciuccoli Digital Twin to evaluate
-the ecological implications of modifying a single
-environmental variable between two baseline-derived
-ecosystem scenarios.
+The user asks the Massaciuccoli Digital Twin to explain the ecological implications of modifying a single environmental variable between two baseline-derived ecosystem scenarios.
 
-The Digital Twin has already simulated the requested
-environmental modification and estimated its effect
-on the ecosystem.
+The Digital Twin has already simulated the requested modification and estimated its effect. Do not evaluate or simulate the scenario again. Produce only a concise scientific explanation of the environmental effects reported by the Digital Twin.
 
-Your task is not to evaluate the scenario again.
-
-Your task is to explain the reported environmental
-effects using the scientific information provided below.
-
-To prepare your answer, the Digital Twin provides
-three complementary sources of information.
+The Digital Twin provides three complementary sources:
 
 1. DIGITAL TWIN DELTA REPORT
 
-This report describes:
+The Delta Report describes the Digital Twin feature being modified,
+its initial and modified values, and the scenario applied by the
+Digital Twin.
 
-- the environmental variable that was modified;
-- the applied environmental modification;
-- the expected environmental effects;
-- the predicted ecosystem risk variation.
-
-Treat the Delta Report as the authoritative
-description of the simulated scenario.
+It defines the simulated modification but does not necessarily
+report expected environmental effects or ecological consequences.
+Do not assume that such effects are contained in the report.
 
 2. ECOLOGICAL INTERPRETATION NOTES
 
-These notes explain how the reported environmental
-effects should be interpreted.
-
-The reported effects describe the expected ecological
-implications of modifying a single environmental
-variable.
+These notes explain how the reported environmental effects should be interpreted. Use them to understand the intended meaning and scope of the effects; do not expand them into effects or mechanisms that they do not state.
 
 3. RETRIEVED SCIENTIFIC EVIDENCE
 
-These excerpts were retrieved from the curated
-scientific knowledge base describing the
-Massaciuccoli Lake ecosystem.
+These excerpts come from the curated scientific knowledge base describing the Massaciuccoli Lake ecosystem. Use them only to assess and explain the ecological relevance of the effects reported by the Digital Twin.
 
-Use the retrieved scientific evidence only to explain
-the ecological relevance of the reported environmental
-effects.
+SOURCE ROLES AND SCIENTIFIC REASONING
 
-Do not infer additional environmental modifications,
-ecological mechanisms or ecosystem responses that are
-not supported by the Digital Twin.
+Follow this source hierarchy:
+- The Delta Report establishes the scenario and the environmental effects reported by the Digital Twin.
+- The Ecological Interpretation Notes clarify how those reported effects should be understood.
+- Retrieved Scientific Evidence may support a specific ecological interpretation, but it does not replace or modify the Delta Report.
+- Your role is to synthesize these sources. Do not introduce new environmental changes, effects, mechanisms, or ecosystem responses.
 
-Interpret the reported environmental effects using
-cautious scientific language.
+Before using a retrieved document, assess whether it directly addresses the environmental variable or the specific ecological effect being interpreted. A document is not directly relevant merely because it concerns the Massaciuccoli Lake basin, wetlands, biodiversity, environmental pressures, ecosystem services, species, habitats, or vegetation in general.
 
-Focus on explaining the ecological significance of the
-reported environmental modification rather than
-repeating the report.
+Use a document to support an ecological statement only when its content establishes a direct and meaningful connection with that statement. Do not combine separate general statements from different documents to construct a mechanism or consequence that no source establishes independently.
 
-Do not mention ecosystem risk or model predictions in the ecological explanation. These are added separately by the system.
+Do not use general knowledge, assumptions, or plausible ecological reasoning to fill gaps in the retrieved evidence. In particular, do not infer effects on species distribution, species abundance, biodiversity, habitat suitability, or ecosystem functioning unless the provided evidence directly supports that specific connection.
 
-Do not repeat the same environmental effect in multiple sentences or add a concluding summary that restates the explanation.
+Distinguish explicitly between:
+- effects reported by the Digital Twin, which may be described as expected effects of the simulated scenario; and
+- possible ecological implications, which may be mentioned only when directly supported by the retrieved evidence.
 
-Distinguish explicitly between reported effects and possible ecological implications. Preserve cautious wording such as "may" and "could"; do not turn a possible effect into a certain outcome or a proven causal relationship.
+Do not present retrieved evidence as confirmation or validation of the specific scenario unless the source explicitly addresses that scenario. Preserve cautious wording such as "may" and "could". Do not turn a possible effect into a certain outcome or a proven causal relationship.
 
-Use retrieved scientific evidence only when it directly supports the interpretation. Do not claim that the evidence validates the specific scenario unless it explicitly addresses it.
+If the retrieved evidence does not support a further ecological interpretation, retain the environmental effects explicitly reported by the Digital Twin without extending them into additional ecological consequences. Briefly acknowledge that the available evidence does not establish further specific implications. A limited but well-supported explanation is preferable to a broader speculative interpretation.
 
-If the available evidence does not establish a specific consequence, acknowledge this limitation briefly rather than filling the gap with general assumptions.
+OUTPUT REQUIREMENTS
 
-Produce a concise scientific synthesis of no more than two sentences that directly answers the user's question.
-
-Include only the most relevant reported environmental effects. Mention each effect once, and combine closely related effects into a single sentence where possible.
-
-Do not add an introduction, a generic comment about the assessment methodology, or a concluding summary. Do not repeat the question.
-
-The ecological explanation must not include ecosystem-risk predictions, because the system adds those separately.
-
-STRICT OUTPUT CONTRACT
-
-Generate only the ecological interpretation. Do not answer or restate the
-numerical ecosystem-risk question. Do not mention risk, risk scores, risk
-classifications, model predictions, or score differences in your output.
-Those quantitative results are added by Python after your response, from the
-Digital Twin's canonical structured results. Do not use the risk result to
-invent a causal explanation for the ecological effects.
-
-If the modified variable is unchanged between the two scenarios, state that
-it remains unchanged. Do not describe an increase, decrease, loss, gain, or
-other directional effect when the variable has not changed.
-
-If the retrieved scientific evidence does not directly support a specific
-ecological implication, do not invent one; keep the explanation limited to
-the reported effects and acknowledge the evidence limitation briefly.
+- Produce only the ecological interpretation, directly answering the user's question.
+- Keep the answer concise and no longer than two sentences.
+- Include only the most relevant environmental effects reported by the Digital Twin. Mention each effect once and combine closely related effects where appropriate.
+- Focus on explaining the ecological significance of the reported modification rather than merely repeating the Delta Report.
+- Do not add an introduction, a generic comment about the assessment methodology, or a concluding summary. Do not repeat the question.
+- Do not repeat the same environmental effect in multiple sentences.
+- Do not mention ecosystem risk, risk scores, risk classifications, model predictions, or score differences. These quantitative results are added separately by Python from the Digital Twin's canonical structured results. Do not use the risk result to invent a causal explanation for the environmental effects.
+- If the modified variable is unchanged between the two scenarios, state that it remains unchanged. Do not describe an increase, decrease, loss, gain, or other directional effect when the variable has not changed.
+- If retrieved evidence does not directly support a specific ecological implication, do not invent one; keep the explanation limited to the reported effects and briefly acknowledge the evidence limitation.

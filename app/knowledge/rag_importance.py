@@ -2,7 +2,7 @@
 
 """
 Massaciuccoli Digital Twin
-RAG — IMPORTANCE EXPLANATION v22
+RAG — IMPORTANCE EXPLANATION v24
 
 ✔ Compact prompt architecture
 ✔ Reduced verbosity
@@ -213,8 +213,8 @@ source for variable names, impact values, impact signs,
 strength labels, and risk direction.
 
 DOMAIN SCORES and VARIABLE IMPACTS are different quantities.
-A domain score must never be interpreted as the impact,
-sign, or ranking of an individual variable.
+Never interpret a domain score as the impact, sign, or
+ranking of an individual variable.
 
 Never present a domain such as "biodiversity" or "land_use"
 as if it were an individual environmental variable.
@@ -222,24 +222,21 @@ as if it were an individual environmental variable.
 VARIABLE DIRECTIONS
 -------------------
 
-A variable with a positive impact is associated with
-higher predicted ecosystem risk.
+A positive impact is associated with higher predicted
+ecosystem risk. A negative impact is associated with lower
+predicted ecosystem risk.
 
-A variable with a negative impact is associated with
-lower predicted ecosystem risk.
-
-Preserve the exact sign and value reported for every
-variable. Never infer a variable's direction from its
-domain score or from the direction of another variable
-in the same domain.
+Preserve the direction reported for each variable.
+Do not infer a variable's direction from its domain score
+or from another variable in the same domain.
 
 For questions about the variables contributing most to
-risk, report the leading individual variables and their
-reported directions. Include both risk-increasing and
-risk-reducing variables when both are present in the report.
+risk, cover the leading individual variables and their
+reported directions. Include both directions when present.
 
-For questions specifically about lower risk, focus on
-variables whose reported impact is negative.
+Exact impact magnitudes need not be repeated unless the
+question asks for numerical values. Never alter or invent
+a magnitude.
 
 ECOLOGICAL INTERPRETATION
 -------------------------
@@ -253,19 +250,34 @@ Do not describe an association as statistically significant
 unless a statistical significance test is explicitly reported.
 
 Do not equate plant productivity with biodiversity.
-Use retrieved scientific evidence only to explain the
-ecological relevance of the reported variables. If the
-evidence does not establish a mechanism, state the
-association without inventing one.
+Explain what each variable represents and why that
+environmental dimension matters in wetland ecosystems.
+
+Distinguish general ecological knowledge about wetland
+systems from evidence specifically concerning the
+Massaciuccoli basin. Do not present general knowledge as
+a finding demonstrated by the retrieved documents or
+by the Digital Twin.
+
+Do not invent mechanisms explaining the sign of an impact,
+site-specific trends, or management recommendations.
+If the retrieved evidence does not support a specific
+mechanism, explain the ecological relevance at a general
+level and retain the uncertainty.
 
 OUTPUT
 ------
 
-Use the exact variable names from the report.
-Distinguish variables from environmental domains.
-Be concise, scientifically cautious, and useful to a
-manager of the Massaciuccoli basin.
-Do not omit leading variables merely to shorten the answer.
+Produce one integrated, coherent answer, not separate
+"model results" and "ecological context" sections.
+
+Use clear, readable prose. Identify the leading variables,
+explain their complementary ecological dimensions, and
+connect them cautiously to wetland ecosystem functioning.
+
+Keep the answer concise (approximately 4-5 sentences).
+Use the canonical variable names or clear, faithful
+descriptions of them. Do not omit leading variables.
 """
 
 # ======================================================
@@ -324,7 +336,7 @@ def generate_importance_explanation(
 
 ):
 
-    print("\n[RAG-IMPORTANCE v22] START\n")
+    print("\n[RAG-IMPORTANCE v24] START\n")
     print(
     f"[RAG-IMPORTANCE] "
     f"profile={LLM_PROFILE} "
@@ -498,236 +510,170 @@ RISK-REDUCING DRIVERS:
     # RETRIEVAL QUERY
     # ======================================================
 
-    driver_names = [
-
-        d["name"]
-
-        for d in drivers[:5]
-    ]
-
-    group_names = []
-
-    if group_scores:
-
-        group_names = list(
-            group_scores.keys()
-        )[:2]
-
-    retrieval_terms = (
-        driver_names +
-        group_names
-    )
-
-    driver_text = ", ".join(
-        retrieval_terms
-    )
+    driver_names = [d["name"] for d in drivers[:5]]
+    driver_list = "; ".join(driver_names)
 
     rag_query = f"""
-    {driver_text}
+target=ecosystem risk in the Massaciuccoli wetland ecosystem;
+drivers={driver_list}.
 
-    ecosystem risk
-    lake ecosystem
-    
-    """
+Relevant context: ecological significance, environmental roles,
+and documented relationships with wetland ecosystem condition,
+habitat functioning, and resilience.
 
-    print("[DEBUG] RAG query:")
+Do not assume that the retrieved documents establish causality.
+Prioritize evidence specific to the Massaciuccoli basin where available.
+"""
+
+    print("[DEBUG] Importance RAG query:")
     print(rag_query)
 
+    # ======================================================
+    # AUTHORITATIVE RESULTS + INTEGRATED SYNTHESIS PROMPT
+    # ======================================================
 
-    # ======================================================
-    # PROMPT
-    # ======================================================
+    importance_report = build_importance_report(
+        question,
+        increase_block,
+        decrease_block,
+        group_block
+    )
+
+    importance_notes = build_importance_notes()
 
     if USE_LEGACY_PROMPTS:
-
-        prompt = build_legacy_prompt(
-            impact_text
-        )
-
+        base_prompt = build_legacy_prompt(impact_text)
     else:
+        base_prompt = build_prompt("importance")
 
-        importance_report = build_importance_report(
-            question,
-            increase_block,
-            decrease_block,
-            group_block
-        )
-
-        importance_notes = build_importance_notes()
-
-        prompt = (
-            build_prompt("importance")
-            + f"""
-
-QUESTION:
-{question}
-
-{importance_report}
-
-{importance_notes}
-
+    synthesis_instructions = """
 ============================================================
-RETRIEVED SCIENTIFIC EVIDENCE
+INTEGRATED ANSWER TASK
 ============================================================
 
+Answer the user's question by integrating:
+1. the authoritative Digital Twin importance results;
+2. the ecological meaning of the identified variables;
+3. the retrieved scientific context.
+
+Write one coherent paragraph of approximately 4-5 sentences.
+Do not produce a list followed by a separate ecological note.
+
+Explain how the selected variables describe complementary
+dimensions of ecosystem condition. Where appropriate, connect
+those dimensions to general wetland ecosystem functioning,
+but distinguish general ecological knowledge from
+Massaciuccoli-specific evidence.
+
+Preserve the risk direction reported for each variable.
+Do not imply that all variables have the same association.
+Do not claim that retrieved documents explain an impact sign
+unless they explicitly provide that evidence.
+
+Do not infer causality, intervention effects, or management
+priorities from model associations. In particular, do not
+suggest that increasing or decreasing a variable will
+necessarily reduce ecosystem risk.
+
+If the retrieved evidence is general or limited, use cautious
+wording; do not invent site-specific mechanisms or findings.
+
+Return only the final answer, with no headings, preamble,
+or separate "Ecological context" section.
 """
-        )
 
-    
-    # ======================================================
-    # DETERMINISTIC FACTUAL INTERPRETATION + RAG CONTEXT
-    # ======================================================
+    full_prompt = (
+        base_prompt
+        + "\n\n"
+        + importance_report
+        + "\n\n"
+        + importance_notes
+        + "\n\n"
+        + synthesis_instructions
+    )
 
+    # Deterministic fallback: preserve the model results if generation fails.
     def format_driver(driver):
-        name = driver["name"]
-        impact = float(driver["impact"])
-        strength = driver.get("strength", "unknown")
-
         return (
-            f"{name} (impact={impact:+.4f}, "
-            f"strength={strength})"
+            f"{driver['name']} "
+            f"(impact={float(driver['impact']):+.4f}, "
+            f"strength={driver.get('strength', 'unknown')})"
         )
-
-    # ------------------------------------------------------
-    # 1. Build the authoritative numerical interpretation
-    # ------------------------------------------------------
 
     sections = []
 
     if increase:
-        increasing_text = "; ".join(
-            format_driver(d) for d in increase
-        )
-
         sections.append(
-            "Variables associated with higher predicted "
-            f"ecosystem risk: {increasing_text}."
+            "Variables associated with higher predicted ecosystem risk: "
+            + "; ".join(format_driver(d) for d in increase)
+            + "."
         )
 
     if decrease:
-        decreasing_text = "; ".join(
-            format_driver(d) for d in decrease
-        )
-
         sections.append(
-            "Variables associated with lower predicted "
-            f"ecosystem risk: {decreasing_text}."
+            "Variables associated with lower predicted ecosystem risk: "
+            + "; ".join(format_driver(d) for d in decrease)
+            + "."
         )
 
     if not sections:
         sections.append(
-            "No variables matching the requested risk "
-            "direction were identified in the importance report."
+            "No variables matching the requested risk direction "
+            "were identified in the importance report."
         )
 
-    interpretation = " ".join(sections)
-
-    interpretation += (
-        " These are associations in the Digital Twin's "
-        "predictions, not proof of direct ecological causality. "
-        "The reported impacts do not establish that changing "
-        "a variable will cause risk to change in the same direction."
+    fallback_interpretation = " ".join(sections)
+    fallback_interpretation += (
+        " These are associations in the Digital Twin's predictions, "
+        "not proof of direct ecological causality or evidence that "
+        "changing a variable will cause risk to change in the same direction."
     )
 
-    # ------------------------------------------------------
-    # 2. Retrieve scientific context through the existing RAG
-    # ------------------------------------------------------
-
-    ecological_prompt = """
-You are providing a short ecological-context note for the
-Massaciuccoli Digital Twin.
-
-TASK:
-Describe only the ecological meaning of the environmental
-variables listed below, using the retrieved scientific evidence.
-
-VARIABLES:
-""" + "\n".join(
-        f"- {d['name']}" for d in drivers[:5]
-    ) + """
-
-RULES:
-- Do not report, repeat, rank or reinterpret model impacts.
-- Do not infer causal mechanisms from statistical associations.
-- Do not claim that the retrieved evidence explains the signs
-  of the model impacts unless the evidence explicitly supports it.
-- Do not invent ecological facts or recommendations.
-- Distinguish general wetland ecology from evidence specific
-  to the Massaciuccoli basin.
-- If the retrieved documents do not provide relevant evidence,
-  state that they do not support a more specific explanation.
-- Use at most three concise sentences.
-- Return only the ecological-context note.
-"""
-
-    ecological_context = None
+    # ======================================================
+    # RETRIEVAL + INTEGRATED GENERATION
+    # ======================================================
 
     try:
-        print("\n[RAG-IMPORTANCE] Retrieving ecological context...")
+        print("\n[RAG-IMPORTANCE] Generating integrated interpretation...")
 
         rag_output = generate_answer(
             rag_query,
-            extra_prompt=ecological_prompt,
-            prompt_question=(
-                "Provide ecological context for these "
-                "Massaciuccoli Digital Twin variables: "
-                + ", ".join(d["name"] for d in drivers[:5])
-            ),
+            extra_prompt=full_prompt,
+            # The original question is already included in importance_report.
+            # Empty displayed_question avoids duplicating it in the RAG prompt.
+            prompt_question="",
             modular_prompt=True
         )
 
-        ecological_context = clean_output(rag_output)
+        generated_answer = clean_output(rag_output)
+
+        # Do not return the generic RAG fallback as if it were an answer.
+        if generated_answer and any(
+            marker in generated_answer.lower()
+            for marker in (
+                "the system could not retrieve",
+                "the system could not provide",
+                "not enough information to provide",
+            )
+        ):
+            generated_answer = None
+
+        if generated_answer:
+            interpretation = generated_answer
+            print("[RAG-IMPORTANCE] Integrated LLM answer accepted.")
+        else:
+            interpretation = fallback_interpretation
+            print("[RAG-IMPORTANCE] Empty/fallback LLM output; using deterministic result.")
 
     except Exception as exc:
         print(
-            "[RAG-IMPORTANCE] Context retrieval/generation failed: "
+            "[RAG-IMPORTANCE] Retrieval/generation failed: "
             f"{exc}"
         )
+        interpretation = fallback_interpretation
 
-    # ------------------------------------------------------
-    # 3. Basic validation of the generated context
-    # ------------------------------------------------------
-
-    if ecological_context:
-        lower_context = ecological_context.lower()
-
-        # Reject output that repeats model-result claims.
-        forbidden_phrases = [
-            "variables associated with higher predicted",
-            "variables associated with lower predicted",
-            "impact=",
-            "strength=",
-            "statistically significant",
-        ]
-
-        if any(
-            phrase in lower_context
-            for phrase in forbidden_phrases
-        ):
-            print(
-                "[RAG-IMPORTANCE] Context rejected: "
-                "it repeats or introduces model-result claims."
-            )
-            ecological_context = None
-
-    # ------------------------------------------------------
-    # 4. Combine without allowing RAG to alter model results
-    # ------------------------------------------------------
-
-    if ecological_context:
-        interpretation += (
-            "\n\nEcological context: "
-            + ecological_context
-        )
-    else:
-        interpretation += (
-            "\n\nEcological context: the retrieved evidence "
-            "did not provide a sufficiently specific explanation "
-            "that could be added safely to this answer."
-        )
-
-    print("\n[RAG-IMPORTANCE] Deterministic output:")
+    print("\n[RAG-IMPORTANCE] Final output:")
     print(interpretation)
-    print("[RAG-IMPORTANCE v23] END\n")
+    print("[RAG-IMPORTANCE v24] END\n")
 
     return interpretation

@@ -635,7 +635,7 @@ ecological mechanism.
             print(prompt)
             print("\n==================================\n")
 
-        raw = call_llm(prompt)
+        raw = call_llm(prompt, role="interpretation")
         print("[RAG] RAW:", raw)
 
         if not is_valid_output(raw):

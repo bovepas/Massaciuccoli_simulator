@@ -19,7 +19,7 @@ from utils.prompt_builder import (
 
 DEBUG = True
 
-
+print("[RAG-DRIVERS MODULE]", __file__)
 def debug_print(*args):
     if DEBUG:
         print(*args)
@@ -46,6 +46,194 @@ def is_valid(text):
 def _normalise_for_match(text):
     """Normalise prose for stable phrase checks."""
     return re.sub(r"[^a-z0-9]+", " ", str(text).lower()).strip()
+
+
+# Explicit aliases derived from the CSV feature names and descriptions.
+# Keep aliases conservative: similar concepts are not necessarily the same feature.
+FEATURE_ALIASES = {
+    "density change in land imperviousness": [
+        "land imperviousness change",
+        "change in land imperviousness",
+        "changes in land imperviousness",
+        "imperviousness density change",
+        "change in imperviousness density",
+        "impervious surface change",
+        "change in impervious surfaces",
+        "land sealing change",
+        "change in land sealing",
+        "sealing density change",
+    ],
+    "density of tree cover": [
+        "current tree cover density",
+        "existing tree cover density",
+        "density of tree canopy",
+        "tree canopy density",
+        "tree cover density",
+    ],
+    "change in tree cover density in the past decade": [
+        "tree cover density change",
+        "change in tree cover density",
+        "past tree cover changes",
+        "changes in tree cover density",
+        "tree canopy density change",
+        "change in tree canopy density",
+        "tree cover change over the past decade",
+        "decadal tree cover change",
+        "tree cover loss or gain",
+    ],
+    "presence of grassland": [
+        "grassland presence",
+        "presence of grasslands",
+        "current grassland cover",
+        "grassland occurrence",
+        "grassland areas",
+    ],
+    "change in grassland presence in the past decade": [
+        "grassland presence change",
+        "changes in grassland presence",
+        "grassland cover change",
+        "changes in grassland cover",
+        "grassland gain or loss",
+        "grassland loss",
+        "loss of grassland",
+        "grassland gain",
+        "gain in grassland",
+        "decadal grassland change",
+        "grassland change over the past decade",
+    ],
+    "land use and cover": [
+        "current land use and cover",
+        "current land cover",
+        "land cover classes",
+        "land use classes",
+        "land use categories",
+        "land cover categories",
+        "land use characteristics",
+    ],
+    "index of total productivity by plant phenology": [
+        "vegetation productivity",
+        "plant productivity",
+        "plant phenology productivity",
+        "phenological productivity",
+        "productivity by plant phenology",
+        "growing season integral",
+        "vegetation growth integral",
+    ],
+    "change in average temperature compared to a recent past": [
+        "average temperature change",
+        "change in average temperature",
+        "changes in average temperature",
+        "average temperature changes",
+        "mean temperature change",
+        "change in mean temperature",
+        "temperature change relative to the reference period",
+        "temperature change compared with the reference period",
+        "shifts in average temperature",
+        "average temperature shifts",
+        "shifts in mean temperature",
+        "mean temperature shifts",
+        "temperature increases",
+        "rising average temperatures",
+        "increase in average temperature",
+        "increases in average temperature",
+    ],
+    "relative change in the potential evapotranspiration compared to a recent past": [
+        "potential evapotranspiration change",
+        "change in potential evapotranspiration",
+        "changes in potential evapotranspiration",
+        "potential et change",
+        "change in potential et",
+        "relative change in potential evapotranspiration",
+        "relative potential evapotranspiration change",
+    ],
+    "cumulative change in precipitation compared to a recent past": [
+        "cumulative precipitation change",
+        "cumulative changes in precipitation",
+        "change in cumulative precipitation",
+        "changes in cumulative precipitation",
+        "cumulative precipitation changes",
+        "precipitation change relative to the reference period",
+        "precipitation change compared with the reference period",
+    ],
+    "number of species potentially living in the cell": [
+        "species richness",
+        "potential species richness",
+        "potential animal species richness",
+        "number of potentially present species",
+        "number of species potentially present",
+        "potential number of species",
+        "species potentially present in the cell",
+        "number of animal species",
+    ],
+    "change in land use and cover in the past decade": [
+        "change in land use and cover over the past decade",
+        "changes in land use and cover",
+        "land use and cover changes",
+        "land use changes over the past decade",
+        "land cover changes over the past decade",
+        "land use change",
+        "land use changes",
+        "land cover change",
+        "land cover changes",
+        "land use and land cover change",
+        "land use and land cover changes",
+        "land use modification",
+        "land use modifications",
+        "land cover modification",
+        "land cover modifications",
+        "land-use changes over the past decade",
+    ],
+}
+
+# These guards prevent a current-state feature from being matched inside wording
+# that explicitly describes a temporal change feature.
+_ALIAS_PREFIX_GUARDS = {
+    "density of tree cover": (
+        r"(?:change|changes|loss|gain|increase|decrease)\s+(?:in|of)\s+$",
+        r"(?:change|changes)\s+in\s+(?:tree\s+)?canopy\s+$",
+    ),
+    "presence of grassland": (
+        r"(?:change|changes|loss|gain)\s+(?:in|of)\s+$",
+    ),
+    "land use and cover": (
+        r"(?:change|changes|modification|modifications)\s+in\s+$",
+    ),
+}
+
+
+def _compile_phrase_pattern(phrase):
+    """Compile a phrase allowing punctuation/hyphens between its words."""
+    tokens = re.findall(r"[a-z0-9]+", str(phrase).lower())
+    if not tokens:
+        return None
+    return re.compile(
+        r"\b" + r"[\W_]+".join(map(re.escape, tokens)) + r"\b",
+        flags=re.IGNORECASE,
+    )
+
+
+def _find_feature_match(text, feature):
+    """Find a canonical feature or one of its explicitly approved aliases."""
+    if not text or not feature:
+        return None
+
+    canonical = _normalise_for_match(feature)
+    candidates = [str(feature)] + FEATURE_ALIASES.get(canonical, [])
+    guards = _ALIAS_PREFIX_GUARDS.get(canonical, ())
+
+    # Prefer longer expressions, reducing accidental matches of short aliases.
+    candidates = sorted(set(candidates), key=len, reverse=True)
+    for candidate in candidates:
+        pattern = _compile_phrase_pattern(candidate)
+        if pattern is None:
+            continue
+        for match in pattern.finditer(str(text)):
+            prefix = str(text)[max(0, match.start() - 45):match.start()].lower()
+            if any(re.search(guard, prefix) for guard in guards):
+                continue
+            return match
+
+    return None
 
 
 def _claims_unreported_significance(text):
@@ -115,68 +303,118 @@ def validate_interpretation(text, target=None, drivers=None):
         if re.search(pattern, normalised)
     ]
     if causal_hits:
-        issues.append("unsupported_causal_language:" + ",".join(causal_hits))
+        print(
+            "[RAG-DRIVERS VALIDATION WARNING] "
+            "Potentially causal wording detected:",
+            causal_hits
+        )
 
     # Every strong driver must be named and its reported direction preserved.
     strong_drivers = [
         d for d in (drivers or [])
         if str(d.get("strength", "")).strip().lower() == "strong"
     ]
+    
     for driver in strong_drivers:
         feature = str(driver.get("feature", "")).strip()
         direction = str(driver.get("direction", "")).strip().lower()
-        if feature and feature.lower() not in str(text).lower():
-            issues.append("missing_strong_driver:" + feature)
-            continue
+
         if not feature:
             continue
-        # Check the text around each occurrence, rather than requiring a rigid sentence form.
+
+        feature_match = _find_feature_match(text, feature)
+
+        if not feature_match:
+            issues.append("missing_strong_driver:" + feature)
+            continue
+
+
+        # Check direction only in sentences that explicitly refer to
+        # this same feature, using its canonical name or an approved alias.
         lowered = str(text).lower()
-        pos = lowered.find(feature.lower())
-        window = lowered[max(0, pos - 140): min(len(lowered), pos + len(feature) + 140)]
+        pos = feature_match.start()
+        end_pos = feature_match.end()
+
         if direction in ("positive", "negative"):
             direction_patterns = {
                 "positive": r"\bpositive(?:ly)?\b|\bdirect(?:ly)?\b",
                 "negative": r"\bnegative(?:ly)?\b|\binverse(?:ly)?\b",
             }
-            if not re.search(direction_patterns[direction], window):
+
+            pattern = direction_patterns[direction]
+
+            feature_sentences = []
+
+            for sentence_match in re.finditer(r"[^.!?\n]+", lowered):
+                sentence = sentence_match.group(0).strip()
+
+                if _find_feature_match(sentence, feature):
+                    feature_sentences.append(sentence)
+
+            direction_match = None
+            matched_sentence = None
+
+            for sentence in feature_sentences:
+                candidate = re.search(pattern, sentence)
+
+                if candidate:
+                    direction_match = candidate
+                    matched_sentence = sentence
+                    break
+
+            print("[RAG-DRIVERS DIRECTION DEBUG]")
+            print("  Feature:", feature)
+            print("  Matched phrase:", repr(feature_match.group(0)))
+            print("  Reported direction:", repr(direction))
+            print("  Feature sentences:", repr(feature_sentences))
+            print("  Direction pattern:", pattern)
+            print("  Matched sentence:", repr(matched_sentence))
+            print(
+                "  Direction match:",
+                repr(direction_match.group(0)) if direction_match else None
+            )
+
+            if not direction_match:
                 issues.append("direction_not_explicit_near_driver:" + feature)
 
-        # Catch an explicit strength label that contradicts the authoritative report.
+
+        # Identify the sentence containing the matched feature.
         feature_sentence_start = max(
             lowered.rfind(".", 0, pos),
             lowered.rfind("!", 0, pos),
             lowered.rfind("?", 0, pos),
             lowered.rfind("\n", 0, pos),
         ) + 1
-        feature_sentence_end_candidates = [
-            candidate for candidate in (
-                lowered.find(".", pos + len(feature)),
-                lowered.find("!", pos + len(feature)),
-                lowered.find("?", pos + len(feature)),
-                lowered.find("\n", pos + len(feature)),
-            ) if candidate != -1
-        ]
-        feature_sentence_end = min(feature_sentence_end_candidates) if feature_sentence_end_candidates else len(lowered)
-        feature_sentence = lowered[feature_sentence_start:feature_sentence_end]
+
+        # Catch an explicit strength label that contradicts the authoritative report.
+        after_feature = lowered[end_pos:end_pos + 90]
+        explicit_strength = re.search(
+            r"\bstrength\s*:\s*(strong|moderate)\b", after_feature
+        )
         reported_strength = str(driver.get("strength", "")).strip().lower()
-        after_feature = lowered[pos + len(feature):pos + len(feature) + 90]
-        explicit_strength = re.search(r"\bstrength\s*:\s*(strong|moderate)\b", after_feature)
+
         if explicit_strength and reported_strength in ("strong", "moderate"):
             if explicit_strength.group(1) != reported_strength:
                 issues.append("reported_strength_mismatch_for_driver:" + feature)
+
         elif reported_strength == "moderate":
             before_feature = lowered[max(feature_sentence_start, pos - 140):pos]
+
             strong_association = re.search(
-                r"\bstrong(?:ly)?\s+(?:(?:positive|negative)(?:ly)?\s+)?(?:statistical\s+)?associat(?:ed|ion)\b",
+                r"\bstrong(?:ly)?\s+(?:(?:positive|negative)(?:ly)?\s+)?"
+                r"(?:statistical\s+)?associat(?:ed|ion)\b",
                 before_feature,
             )
+
             moderate_association = re.search(
-                r"\bmoderate(?:ly)?\s+(?:(?:positive|negative)(?:ly)?\s+)?(?:statistical\s+)?associat(?:ed|ion)\b",
+                r"\bmoderate(?:ly)?\s+(?:(?:positive|negative)(?:ly)?\s+)?"
+                r"(?:statistical\s+)?associat(?:ed|ion)\b",
                 before_feature[-100:],
             )
+
             if strong_association and not moderate_association:
                 issues.append("strength_overstated_for_driver:" + feature)
+
 
     # If strong associations have opposing signs, reject a single net increase/decrease
     # claim about the target: it would collapse distinct reported directions.
@@ -209,12 +447,11 @@ def is_safe_context(text, target=None, drivers=None):
 
 
 def _selected_associations_for_interpretation(drivers):
-    """Return strong associations; if none are strong, use the first three."""
-    strong = [
-        d for d in drivers
-        if str(d.get("strength", "")).strip().lower() == "strong"
-    ]
-    return strong if strong else list(drivers[:3])
+    """
+    Return all reported associations for interpretation,
+    preserving the original ranking and order.
+    """
+    return list(drivers or [])
 
 
 def build_authoritative_association_summary(target, drivers):
@@ -376,6 +613,16 @@ def generate_drivers_explanation(target, drivers, features=None):
         validation_issues = validate_interpretation(
             interpretation, target=target, drivers=drivers
         )
+
+        print("[RAG-DRIVERS VALIDATION]", validation_issues)
+        print(
+            "[RAG-DRIVERS TEMP MATCH]",
+            _find_feature_match(
+                interpretation,
+                "change in average temperature compared to a recent past"
+            )
+        )
+        
         if validation_issues:
             debug_print("[RAG-DRIVERS] Validation rejected interpretation:")
             for issue in validation_issues:

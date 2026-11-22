@@ -23,6 +23,7 @@ from knowledge.rag_dependency import (
 
 from utils.dependency_utils import (
     compute_dependency_strength,
+    compute_risk_perturbation_sensitivity,
     classify_dependency
 )
 
@@ -60,30 +61,22 @@ def humanize_feature(name: str):
 # ======================================================
 
 ABSTRACT_KEYWORDS = {
-
-    "water availability":
-        "hydrological dynamics",
-
-    "water":
-        "hydrological dynamics",
-
-    "water level":
-        "hydrological dynamics",
-
-    "nutrients":
-        "nutrient loading",
-
-    "productivity":
-        "ecosystem productivity",
-
-    "ecosystem":
-        "ecosystem stability",
-
-    "biodiversity":
-        "biodiversity",
-
-    "risk":
-        "ecosystem risk"
+    "ecosystem stability": "ecosystem stability",
+    "ecosystem productivity": "ecosystem productivity",
+    "ecosystem risk": "risk_score",
+    "ecological risk": "risk_score",
+    "risk score": "risk_score",
+    "risk": "risk_score",
+    "water availability": "hydrological dynamics",
+    "water level": "hydrological dynamics",
+    "water": "hydrological dynamics",
+    "nutrients": "nutrient loading",
+    "productivity": "ecosystem productivity",
+    "biodiversity": "biodiversity",
+    # Generic ecosystem references default to the CSV risk classification.
+    "ecosystem": "risk_score",
+    "lake": "risk_score",
+    "environment": "risk_score",
 }
 
 
@@ -111,11 +104,8 @@ ABSTRACT_DEPENDENCY_TARGETS = {
     ],
 
     "ecosystem stability": [
-
-        "Number of species potentially living in the cell",
-
-        "Index of total productivity by plant phenology"
-    ]
+    "risk_score"
+    ],
 }
 
 
@@ -132,7 +122,7 @@ def extract_abstract_target(question: str):
         if k in q:
             return v
 
-    return "ecosystem stability"
+    return None
 
 
 # ======================================================
@@ -152,7 +142,25 @@ def resolve_dependency_targets(target):
         "water level": "hydrological dynamics",
         "hydrology": "hydrological dynamics",
     }
-    abstract_target = target_aliases.get(str(target).strip().lower(), target)
+    raw_key = str(target).strip().lower().replace("_", " ")
+    risk_aliases = {
+        "risk", "risk score", "ecosystem risk", "ecological risk",
+        "ecological conditions",
+        "ecosystem risk classification according to a variational autoencoder with a later application of a multi k means process",
+        "massaciuccoli lake ecosystem", "lake ecosystem", "ecosystem health",
+        "environment of massaciuccoli",
+    }
+    explicit_nonrisk_abstract = any(term in raw_key for term in (
+        "ecosystem stability", "ecosystem productivity", "biodiversity"
+    ))
+    if (raw_key in risk_aliases
+            or "lake ecosystem" in raw_key
+            or "ecosystem health" in raw_key
+            or ("ecosystem" in raw_key and not explicit_nonrisk_abstract)
+            or "environment of massaciuccoli" in raw_key):
+        return ["risk_score"]
+
+    abstract_target = target_aliases.get(raw_key, target)
 
     if abstract_target in ABSTRACT_DEPENDENCY_TARGETS:
         return ABSTRACT_DEPENDENCY_TARGETS[abstract_target]
@@ -388,7 +396,7 @@ def aggregate_dependency_results(results):
 # MAIN
 # ======================================================
 
-def handle_dependency(question, route, dependency_inputs=None):
+def handle_dependency(question, route, dependency_inputs=None, model=None, dataset=None):
 
     print("\n========== DEPENDENCY TASK START ==========")
     print("# USING HYBRID DEPENDENCY TASK")
@@ -453,22 +461,50 @@ def handle_dependency(question, route, dependency_inputs=None):
     # DEPENDENCY COMPUTATION
     # --------------------------------------------------
 
-    all_results = []
+    if "risk_score" in resolved_targets:
+        # Infer whether the user explicitly asks about an increase/decrease.
+        q = question.lower()
+        if any(term in q for term in ("decreas", "reduc", "lower", "fall", "declin")):
+            perturbation_direction = "decrease"
+        else:
+            # Increasing from Q25 to Q75 is the conventional direction for
+            # qualitative dependency questions without a directional verb.
+            perturbation_direction = "increase"
 
-    for resolved_target in resolved_targets:
-
-        result = compute_dependency_strength(
-
-            source=source,
-
-            target=resolved_target
-        )
-
-        all_results.append(result)
-
-    dependency_info = aggregate_dependency_results(
-        all_results
-    )
+        try:
+            dependency_info = compute_risk_perturbation_sensitivity(
+                source=source,
+                model=model,
+                dataset=dataset,
+                direction=perturbation_direction,
+            )
+        except Exception as exc:
+            print("[DEPENDENCY RF PERTURBATION ERROR]", exc)
+            dependency_info = {
+                "supported": False,
+                "method": "random_forest_q25_q75_perturbation",
+                "target": "risk_score",
+                "driver": source,
+                "score": 0.0,
+                "strength": "unsupported",
+                "direction": "unknown",
+                "interaction_type": "generic ecosystem risk dependency",
+                "confidence": "low",
+                "error": str(exc),
+            }
+        resolved_targets = ["risk_score"]
+    else:
+        # Preserve existing feature-to-feature behavior. It is an observed
+        # Pearson association, not Random-Forest perturbation sensitivity.
+        all_results = []
+        for resolved_target in resolved_targets:
+            result = compute_dependency_strength(
+                source=source,
+                target=resolved_target
+            )
+            all_results.append(result)
+        dependency_info = aggregate_dependency_results(all_results)
+        dependency_info["method"] = "pearson_feature_association"
 
     print("[DEBUG] Aggregated dependency info:")
     print(dependency_info)
@@ -558,9 +594,9 @@ def handle_dependency(question, route, dependency_inputs=None):
     # --------------------------------------------------
 
     human_target = (
-        target_raw
-        if target_raw
-        else simplify(target)
+        "ecosystem risk"
+        if "risk_score" in resolved_targets
+        else (target_raw if target_raw else simplify(target))
     )
     #print("[DEBUG] target:", repr(target))
     #print("[DEBUG] target_raw:", repr(target_raw))
@@ -600,7 +636,27 @@ def handle_dependency(question, route, dependency_inputs=None):
             dependency_info.get("direction"),
 
         "resolved_targets":
-            resolved_targets
+            resolved_targets,
+
+        "method": dependency_info.get("method"),
+
+        "perturbation": dependency_info.get("perturbation"),
+
+        "baseline_mean_risk": dependency_info.get("baseline_mean_risk"),
+
+        "perturbed_mean_risk": dependency_info.get("perturbed_mean_risk"),
+
+        "mean_delta_risk": dependency_info.get("mean_delta_risk"),
+
+        "mean_absolute_delta_risk": dependency_info.get("mean_absolute_delta_risk"),
+
+        "positive_response_fraction": dependency_info.get("positive_response_fraction"),
+
+        "negative_response_fraction": dependency_info.get("negative_response_fraction"),
+
+        "unchanged_fraction": dependency_info.get("unchanged_fraction"),
+
+        "n_cells": dependency_info.get("n_cells")
     }
 
     print("\n========== DEPENDENCY TASK END ==========\n")

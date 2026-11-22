@@ -1,45 +1,75 @@
-TASK
+# TASK: SCIENTIFIC INTERPRETATION OF ENVIRONMENTAL IMPORTANCE
 
-The user asks the Massaciuccoli Digital Twin to identify the environmental variables most strongly associated with ecosystem risk.
+The user asks the Massaciuccoli Digital Twin to identify and explain the environmental variables that most strongly influence predicted ecosystem risk.
 
-The Digital Twin has already analysed the environmental variables and ranked them according to their statistical association with predicted ecosystem risk.
+The Digital Twin has already performed the importance analysis. Your task is to explain its findings and their ecological relevance using the model results and the retrieved scientific evidence.
 
-Your task is to explain the reported importance analysis using the information provided below. Do not recompute importance or introduce additional variables.
+## 1. DIGITAL TWIN IMPORTANCE RESULTS
 
-1. DIGITAL TWIN IMPORTANCE REPORT
+The supplied Digital Twin Importance Report is the authoritative source for the computational findings, including:
 
-The report is the authoritative source for:
-- dominant environmental domains;
-- variables associated with higher predicted ecosystem risk;
-- variables associated with lower predicted ecosystem risk;
-- reported impact values and strength labels.
+- the environmental variables identified by the analysis;
+- their ranking and relative importance;
+- the direction and magnitude of their reported impacts;
+- their impact strength labels;
+- the environmental domains involved.
 
-Accurately report the relevant variables and their direction of association. Do not omit a reported risk-increasing or risk-reducing variable when it is relevant to the user's question. Do not alter the ranking, signs, labels or values.
+Use these results as the factual foundation of your answer.
 
-2. ECOLOGICAL INTERPRETATION NOTES
+Preserve the reported variable names, ranking, signs, values and strength labels. Include the relevant variables identified by the analysis, giving particular attention to those with the strongest impacts.
 
-The reported results describe statistical associations with predicted ecosystem risk. They do not establish direct ecological causality or necessarily represent observed environmental changes.
+## 2. UNDERSTANDING THE IMPORTANCE ANALYSIS
 
-Do not describe an association as statistically significant unless the supplied evidence explicitly reports a statistical significance test.
+The importance analysis evaluates the sensitivity of the emulator's predicted ecosystem risk to perturbations of individual environmental variables.
 
-Do not infer that a variable represents another ecological property unless the supplied evidence explicitly supports that interpretation. In particular, do not automatically equate vegetation productivity with biodiversity, or interpret a negative association as proof that an environmental change has benefited the ecosystem.
+The reported impact values describe how the predicted risk score changes relative to the baseline following the perturbations used in the analysis.
 
-3. RETRIEVED SCIENTIFIC EVIDENCE
+Interpret the direction of the impacts as follows:
 
-Use retrieved scientific evidence to explain the ecological relevance of the reported variables only when the evidence supports the explanation.
+- Positive impact: the perturbation increases the predicted ecosystem risk.
+- Negative impact: the perturbation decreases the predicted ecosystem risk.
+- Impact close to zero: the perturbation produces little or no change in predicted ecosystem risk.
 
-Do not introduce unsupported ecological mechanisms, causal claims, management recommendations or conclusions. General information about wetlands must not be presented as evidence explaining a specific model result unless the connection is supported by the supplied context.
+The magnitude and strength labels indicate the intensity of the emulator's response to the perturbations.
 
-4. ANSWER FOR A PARK MANAGER
+Explain these results in terms of model sensitivity. Their ecological meaning must be considered separately from the numerical response of the emulator.
 
-Write a concise, clear scientific explanation that directly answers the user's question.
+## 3. ECOLOGICAL INTERPRETATION
 
-Prioritise:
-- what the Digital Twin actually found;
-- which variables are associated with higher or lower predicted risk, as relevant to the question;
-- what the available scientific evidence supports about their ecological relevance;
-- what cannot be concluded from the results.
+Use the retrieved scientific evidence to explain why the environmental variables identified by the emulator are relevant to freshwater lake and wetland ecosystems.
 
-Distinguish clearly between model results, evidence-based ecological interpretation and uncertainty. If the evidence does not support a specific explanation, state that limitation rather than filling the gap with speculation.
+In particular, consider:
 
-The answer should help a manager understand the results without misleading them about causality, statistical significance or the implications for conservation management.
+- the ecological processes and ecosystem functions associated with the reported variables;
+- their relationships with vegetation dynamics, biodiversity, land use, hydrology and climate, where supported by the retrieved evidence;
+- the relevance of these processes to the ecological condition and functioning of the Massaciuccoli basin.
+
+Build meaningful connections between the model findings and the scientific literature.
+
+Prioritise explanations that help the reader understand the ecological significance of the variables and the possible relevance of the reported patterns.
+
+The strength of each ecological interpretation should reflect the evidence available in the retrieved documents. Where a specific connection is not established, describe the model result and the available ecological context without forcing a direct explanation.
+
+## 4. ANSWERING THE USER
+
+Provide a clear and scientifically grounded answer that directly addresses the question.
+
+Start by communicating the main findings of the importance analysis. Explain which environmental variables show the strongest impacts on predicted ecosystem risk, their direction and magnitude, and the environmental domains they represent.
+
+Integrate ecological explanations from the retrieved scientific evidence wherever they help clarify the results.
+
+Adapt the organisation and level of detail to the user's question. The answer should read as a coherent scientific explanation, rather than a mechanical list of variables or a fixed report template.
+
+Help the reader understand both what the Digital Twin found and why the identified variables are ecologically relevant.
+
+## 5. INTERPRETATION AND LIMITATIONS
+
+The importance results describe the response of the emulator to individual variable perturbations. They do not, by themselves, establish ecological causality, intrinsic variable importance or interactions among environmental variables.
+
+The direction of a model impact should be interpreted in relation to the perturbation actually performed, not as an absolute judgement that an environmental variable is beneficial or harmful.
+
+If the user asks about changing climatic conditions or future scenarios, distinguish the importance analysis from an actual comparison of climate scenarios. Describe scenario-specific conclusions only when the corresponding simulations have been performed.
+
+Explain methodological limitations and uncertainties when they are relevant to understanding the results.
+
+The final answer should be informative, ecologically meaningful and consistent with the evidence provided.

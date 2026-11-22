@@ -211,12 +211,13 @@ def call_llm(prompt: str, role: str = "default") -> str:
             }
             normalized_role = (role or "default").strip().lower()
             if (
-                normalized_role == "interpretation"
+                normalized_role in {"interpretation", "extraction"}
                 and model.strip().lower().startswith(("qwen3.5", "gemma4"))
-
             ):
                 payload["think"] = False
-                debug_print("Qwen3.5 interpretation: API thinking disabled")
+                debug_print(
+                    f"{model} {normalized_role}: API thinking disabled"
+                )
 
             start_timer("ollama_request")
             response = SESSION.post(

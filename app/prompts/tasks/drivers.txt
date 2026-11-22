@@ -15,20 +15,104 @@ These notes provide concise semantic descriptions of the variables. They help id
 3. RETRIEVED SCIENTIFIC EVIDENCE
 Use retrieved excerpts only when they genuinely support an ecological interpretation relevant to the reported variables and target. General statements about wetlands or climate change do not, by themselves, prove a specific mechanism for a particular statistical association.
 
+SCIENTIFIC REASONING
+
+Build an ecological interpretation by integrating the three authoritative
+sources: the Drivers Report, the Ecological Interpretation Notes, and the
+Retrieved Scientific Evidence.
+
+The interpretation must go beyond restating statistical associations.
+Use the retrieved literature to explain why the reported environmental
+variables are ecologically relevant to the target and to the Massaciuccoli
+basin.
+
+Distinguish three levels of scientific support:
+
+1. DIRECT EVIDENCE
+   The retrieved literature explicitly documents a relationship or process
+   connecting a reported driver to the target, or to a closely related
+   ecological response. You may describe this relationship, preserving
+   the scope and strength of the original evidence.
+
+2. ECOLOGICAL CONTEXT
+   The literature documents ecological processes, environmental pressures,
+   or habitat conditions relevant to a reported driver, without directly
+   demonstrating the specific association calculated by the Digital Twin.
+   Use this evidence to explain the ecological relevance of the association,
+   but do not present it as proof of the observed statistical relationship.
+
+3. MODEL-BASED ASSOCIATION
+   When the literature does not provide a direct explanation, interpret
+   the direction and strength as a result of the Digital Twin's statistical
+   model. Explain what the association indicates, while making clear that
+   its ecological mechanism remains unresolved.
+
+Integrate these levels into a coherent explanation rather than listing
+them separately.
+
+Use specific information from the retrieved documents. Identify the
+ecological processes, pressures, habitat characteristics, or climatic
+conditions that are actually documented. Do not merely mention that
+the literature supports the importance of wetlands, biodiversity, or
+climate change in general.
+
+When multiple retrieved sources provide complementary information,
+combine them to construct a scientifically meaningful interpretation.
+Do not force a connection when the sources concern different processes
+or spatial and temporal scales.
+
+Pay particular attention to the meaning of each variable. The ecological
+meaning of a variable and the direction of its statistical association
+with the target are two different things. Explain both without assuming
+that a positive association represents an environmental benefit or that
+a negative association represents an environmental deterioration.
+
 SCIENTIFIC RULES
 
-- Preserve the reported direction and strength of every association you discuss.
-- The first driver in the report is the highest-ranked association. Never omit it from the interpretation.
-- Address every driver labelled "strong" by name. You may group moderate associations or leave their detailed interpretation to the separate DRIVERS section, but never imply that an omitted association is unimportant or statistically insignificant.
-- The report gives association direction and strength; it does not necessarily report statistical significance tests. Do not describe an association as statistically significant, significant, or not significant unless that specific conclusion is explicitly provided in the inputs.
-- Describe statistical associations, not causes or effects. Do not invent mechanisms based on general scientific plausibility. For example, do not claim that one variable increases or decreases another unless that mechanism is explicitly supported by the supplied evidence.
-- Avoid causal formulations such as "causes", "leads to", "results in", "contributes to", "drives", "influences", "affects", "impacts", "determines", "because of", or "due to" unless the supplied evidence explicitly establishes that mechanism. A cautious modal such as "may" does not by itself make an unsupported causal claim acceptable.
-- Do not describe the target as increasing or decreasing merely because one associated variable has a positive or negative association. Interpret each reported direction separately, especially when the strong associations have opposing signs.
-- If the supplied evidence does not establish a specific ecological mechanism, say so briefly and describe the association without proposing one.
-- Do not infer that the reported associations represent observed environmental changes.
-- Do not add variables, recommendations, rankings, numerical results, coefficients, percentages, counts, or delta values to the interpretation. These results are handled separately by the Digital Twin.
-- Do not repeat the complete driver list. Explain the ecological meaning of the strongest associations rather than merely restating the report.
-- Avoid generic ecosystem essays and generic concluding sentences.
+- Preserve the reported direction and strength of every association
+  discussed. The Drivers Report is authoritative.
+
+- Always address the highest-ranked driver and every driver labelled
+  "strong". Moderate associations may be grouped when appropriate.
+
+- Distinguish statistical association from ecological interpretation.
+  The sign of an association describes the direction of the statistical
+  relationship, not necessarily an environmental benefit or deterioration.
+
+- Use retrieved scientific evidence actively. When the literature documents
+  relevant ecological processes or environmental pressures, incorporate
+  them into the explanation, even when they do not establish the specific
+  mechanism behind the reported association.
+
+- Be explicit about the level of support: direct evidence, ecological
+  context, or model-based association. Do not present contextual evidence
+  as direct proof of a statistical relationship.
+
+- Do not invent causal mechanisms. Causal language is acceptable only
+  when the supplied scientific evidence explicitly supports the mechanism
+  being described.
+
+- Do not infer that the reported associations represent observed
+  environmental changes or temporal trends in the target.
+
+- Do not infer a general increase or decrease in the target from individual
+  positive or negative associations, especially when strong associations
+  have opposing directions.
+
+- Do not claim statistical significance unless the inputs explicitly
+  provide the relevant statistical test.
+
+- Do not add variables, rankings, numerical results, coefficients,
+  percentages, counts, or delta values not present in the inputs.
+
+- Do not simply reproduce the driver list. Explain its ecological meaning.
+
+- Do not use generic statements about ecosystem complexity or environmental
+  interactions as substitutes for evidence from the retrieved documents.
+
+- If the retrieved evidence does not explain a particular association,
+  state this limitation briefly, but retain any relevant ecological context
+  that helps interpret the result.
 
 OUTPUT
 

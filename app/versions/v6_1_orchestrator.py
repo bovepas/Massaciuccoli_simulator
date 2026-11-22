@@ -535,7 +535,8 @@ def run():
 
                 dependency_inputs = (
                     dependency_extraction_to_inputs(
-                        dependency_extraction
+                        dependency_extraction,
+                        question=question
                     )
                 )
 
@@ -673,18 +674,13 @@ def run():
             elif task_type == "importance":
 
                 result = handle_importance(
-
                     question=question,
-
                     features=features,
-
                     model=model,
-
                     dataset=dataset,
-
                     top_k=importance_inputs["top_k"],
-
-                    mode=importance_inputs["focus"]
+                    focus=importance_inputs["focus"],
+                    direction=importance_inputs.get("direction", "all")
                 )
 
             # --------------------------------------------------
@@ -717,7 +713,9 @@ def run():
                 result = handle_dependency(
                     question,
                     route,
-                    dependency_inputs=dependency_inputs
+                    dependency_inputs=dependency_inputs,
+                    model=model,
+                    dataset=dataset
                 )
 
             # --------------------------------------------------

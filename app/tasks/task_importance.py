@@ -2,14 +2,12 @@
 
 """
 Massaciuccoli Digital Twin
-Importance Task — v9 (focus-aware ranking)
+Importance Task — v10 (category + direction aware)
 
-✔ Distribution-aware perturbation scaling
-✔ Semantic ecosystem grouping
-✔ Focus-aware ranking
-✔ Correct top-k semantic filtering
-✔ Group-level ecosystem attribution
-✔ Improved ecosystem interpretability
+- focus selects the feature category (all/climate/biodiversity/land_use)
+- direction selects the risk-response sign (all/increase/decrease)
+- category and direction filters are independent
+- top-k is applied only after both filters
 """
 
 from collections import defaultdict
@@ -66,40 +64,48 @@ def assign_feature_group(feature_name):
 
 
 # ======================================================
-# FOCUS DETECTION
+# INPUT NORMALIZATION
 # ======================================================
 
-def detect_focus(question):
+VALID_FOCUSES = {"all", "climate", "biodiversity", "land_use"}
+VALID_DIRECTIONS = {"all", "increase", "decrease"}
 
-    q = question.lower()
 
-    increase_patterns = [
+def _normalize_importance_inputs(focus="all", direction="all", mode=None):
+    """
+    Normalize the new independent inputs while preserving compatibility
+    with the previous orchestrator, which passed the parser's focus through
+    the legacy `mode` argument.
 
-        "increase ecosystem risk",
-        "increasing ecosystem risk",
-        "higher ecosystem risk",
-        "raise ecosystem risk",
-        "drivers of ecosystem risk",
-        "risk increasing",
-        "increase risk"
-    ]
+    Legacy mode values increase/decrease are interpreted as direction.
+    New category values passed through mode are interpreted as focus.
+    """
+    normalized_focus = str(focus or "all").strip().lower()
+    normalized_direction = str(direction or "all").strip().lower()
 
-    decrease_patterns = [
+    if mode is not None:
+        legacy_mode = str(mode).strip().lower()
 
-        "reduce ecosystem risk",
-        "decreasing ecosystem risk",
-        "lower ecosystem risk",
-        "mitigate ecosystem risk",
-        "reduce risk"
-    ]
+        if legacy_mode in VALID_FOCUSES:
+            if normalized_focus == "all":
+                normalized_focus = legacy_mode
+        elif legacy_mode in {"increase", "decrease"}:
+            if normalized_direction == "all":
+                normalized_direction = legacy_mode
 
-    if any(p in q for p in increase_patterns):
-        return "increase"
+    if normalized_focus not in VALID_FOCUSES:
+        raise ValueError(
+            f"Invalid importance focus '{normalized_focus}'. "
+            f"Expected one of {sorted(VALID_FOCUSES)}."
+        )
 
-    if any(p in q for p in decrease_patterns):
-        return "decrease"
+    if normalized_direction not in VALID_DIRECTIONS:
+        raise ValueError(
+            f"Invalid importance direction '{normalized_direction}'. "
+            f"Expected one of {sorted(VALID_DIRECTIONS)}."
+        )
 
-    return "all"
+    return normalized_focus, normalized_direction
 
 
 # ======================================================
@@ -129,7 +135,9 @@ def handle_importance(
     model=None,
     dataset=None,
     top_k=5,
-    mode="increase"
+    focus="all",
+    direction="all",
+    mode=None
 ):
 
     print("\n========== IMPORTANCE TASK START ==========")
@@ -148,14 +156,31 @@ def handle_importance(
         }
 
     # ======================================================
-    # DETECT FOCUS
+    # NORMALIZE PARSED SEMANTIC CONSTRAINTS
     # ======================================================
 
-    focus = detect_focus(
-        question
-    )
+    try:
+        focus, direction = _normalize_importance_inputs(
+            focus=focus,
+            direction=direction,
+            mode=mode
+        )
+    except ValueError as exc:
+        return {
+            "summary": "Invalid importance query constraints",
+            "data": {},
+            "drivers": [],
+            "interpretation": str(exc)
+        }
 
-    print(f"[DEBUG] detected focus: {focus}")
+    try:
+        top_k = max(1, int(top_k))
+    except (TypeError, ValueError):
+        top_k = 5
+
+    print(f"[DEBUG] feature-category focus: {focus}")
+    print(f"[DEBUG] risk direction: {direction}")
+    print(f"[DEBUG] effective top_k: {top_k}")
 
     # ======================================================
     # BASELINE
@@ -180,7 +205,7 @@ def handle_importance(
     # DISTRIBUTION-AWARE IMPORTANCE
     # ======================================================
 
-    shap_values = {}
+    all_feature_impacts = {}
 
     structured_impacts = []
 
@@ -242,7 +267,7 @@ def handle_importance(
             4
         )
 
-        shap_values[feature] = impact
+        all_feature_impacts[feature] = impact
 
         # --------------------------------------------------
         # SEMANTIC GROUP
@@ -274,52 +299,47 @@ def handle_importance(
                 round(float(delta), 4)
         })
 
-    print("[DEBUG] shap_values:")
-    print(shap_values)
+    print("[DEBUG] raw perturbation impacts:")
+    print(all_feature_impacts)
 
     # ======================================================
-    # FILTER NOISE
+    # FILTER NUMERICALLY ZERO IMPACTS
     # ======================================================
 
     structured_impacts = [
-
         d for d in structured_impacts
-
-        if abs(d["impact"]) > 0.01
+        if abs(d["impact"]) > 0.0
     ]
 
     # ======================================================
-    # 🔥 FOCUS-AWARE FILTERING
+    # CATEGORY FILTER
     # ======================================================
 
-    if focus == "increase":
-
+    if focus != "all":
         structured_impacts = [
-
             d for d in structured_impacts
-
-            if d["impact"] > 0
+            if d["group"] == focus
         ]
 
-    elif focus == "decrease":
+    # ======================================================
+    # RISK-DIRECTION FILTER
+    # ======================================================
 
+    if direction == "increase":
         structured_impacts = [
-
             d for d in structured_impacts
-
+            if d["impact"] > 0
+        ]
+    elif direction == "decrease":
+        structured_impacts = [
+            d for d in structured_impacts
             if d["impact"] < 0
         ]
 
-    # ======================================================
-    # SHAP VALUES
-    # ======================================================
-
-    shap_values = {
-
-        d["name"]: d["impact"]
-
-        for d in structured_impacts
-    }
+    print(
+        "[DEBUG] candidates after category/direction filters: "
+        f"{len(structured_impacts)}"
+    )
 
     # ======================================================
     # RANKING
@@ -339,6 +359,12 @@ def handle_importance(
     # ======================================================
 
     top = ranking[:top_k]
+
+    # The returned data must respect top_k as well as the semantic filters.
+    impact_scores = {
+        d["name"]: d["impact"]
+        for d in top
+    }
 
     # ======================================================
     # GROUP ATTRIBUTION
@@ -472,25 +498,34 @@ def handle_importance(
     # RAG
     # ======================================================
 
-    try:
-
-        explanation = generate_importance_explanation(
-            top,
-            question,
-            group_scores=group_scores,
-            features=semantic_features
-        )
-
-    except Exception as e:
-
-        print("[IMPORTANCE][RAG ERROR]")
-        print(e)
-
+    if not top:
         explanation = (
-            "The identified variables influence "
-            "ecosystem risk through environmental "
-            "stress and ecosystem imbalance."
+            "No variables met the requested importance constraints "
+            f"(category: {focus}; risk direction: {direction}) "
+            "after the task's impact-noise filter. This does not mean "
+            "that no relationship exists; it means that this analysis "
+            "did not identify qualifying variables under the current "
+            "perturbation and filtering settings."
         )
+    else:
+        try:
+            explanation = generate_importance_explanation(
+                top,
+                question,
+                group_scores=group_scores,
+                features=semantic_features
+            )
+
+        except Exception as e:
+
+            print("[IMPORTANCE][RAG ERROR]")
+            print(e)
+
+            explanation = (
+                "The identified variables influence "
+                "ecosystem risk through environmental "
+                "stress and ecosystem imbalance."
+            )
 
     # ======================================================
     # OUTPUT
@@ -502,13 +537,19 @@ def handle_importance(
             "Top factors influencing ecosystem risk",
 
         "data":
-            shap_values,
+            impact_scores,
 
         "drivers":
             drivers,
 
         "group_scores":
             group_scores,
+
+        "query_constraints": {
+            "top_k": top_k,
+            "focus": focus,
+            "direction": direction
+        },
 
         "interpretation":
             explanation

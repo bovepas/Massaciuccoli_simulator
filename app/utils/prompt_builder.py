@@ -143,20 +143,20 @@ def build_prompt(
 
         print("\n========== COMPOSED PROMPT ==========\n")
 
-        print("\n[QUESTION]\n")
+        print("[QUESTION]\n")
         print(parts[1])
 
         print("[BASE]\n")
         print(parts[0])
 
-        print("\n[MODEL]\n")
-        print(parts[1])
-
-        print("\n[STYLE]\n")
+        print("[MODEL]\n")
         print(parts[2])
 
-        print("\n[TASK]\n")
+        print("[STYLE]\n")
         print(parts[3])
+
+        print("[TASK]\n")
+        print(parts[4])
 
         print("\n=====================================\n")
 

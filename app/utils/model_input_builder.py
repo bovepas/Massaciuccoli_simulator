@@ -35,6 +35,8 @@ def compute_baseline(dataset: pd.DataFrame) -> dict:
 def build_input_df(values: dict, dataset: pd.DataFrame,
                    interpret_percentages=False) -> pd.DataFrame:
     baseline = compute_baseline(dataset)
+    precip = "Cumulative change in precipitation compared to a recent past"
+
 
     if not interpret_percentages:
         baseline.update(values)
