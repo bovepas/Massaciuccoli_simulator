@@ -24,7 +24,11 @@ from utils.model_input_builder import compute_feature_statistics
 # Set to None or "all" to run the complete benchmark.
 # Valid values: data, drivers, dependency, importance, assessment, delta,
 # comparison, importance_compare, enm, chat.
+<<<<<<< HEAD
 TASK_FILTER = "comparison"
+=======
+TASK_FILTER = "all"
+>>>>>>> 5f24206 (improving LLM rooting)
 
 
 FAILURE_SUMMARIES = {

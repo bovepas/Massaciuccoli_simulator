@@ -177,6 +177,7 @@ def _delta_extraction_to_range_info(extraction):
             "feature": feature,
             "from": scenario.range.from_value,
             "to": scenario.range.to_value,
+            "unit": scenario.range.unit,
         }
 
     # --------------------------------------------------

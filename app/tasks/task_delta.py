@@ -943,8 +943,34 @@ def handle_delta(
 
     else:
 
-        v_from = range_info["from"]
-        v_to = range_info["to"]
+        range_from = range_info["from"]
+        range_to = range_info["to"]
+
+        # Biodiversity percentages refer to the baseline of the species-richness
+        # proxy, not to absolute species-count values. Convert each percentage
+        # endpoint into a feature value before calling the Scenario Builder.
+        species_richness_feature = (
+            "Number of species potentially living in the cell"
+        )
+        range_unit = range_info.get("unit")
+
+        if feature == species_richness_feature and range_unit == "percent":
+            baseline_value = float(base[feature])
+            v_from = baseline_value * (float(range_from) / 100.0)
+            v_to = baseline_value * (float(range_to) / 100.0)
+
+            print(
+                "[DEBUG] Biodiversity percentage range interpreted "
+                "relative to baseline species-richness proxy: "
+                f"baseline={baseline_value}, "
+                f"from={range_from}% -> {v_from}, "
+                f"to={range_to}% -> {v_to}"
+            )
+        else:
+            # Preserve the existing absolute-target semantics for every
+            # other feature and for non-percentage species-count ranges.
+            v_from = range_from
+            v_to = range_to
 
         # Build the first scenario using the explicit starting value.
         modifications_a = {

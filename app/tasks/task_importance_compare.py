@@ -13,6 +13,7 @@ Le variabili categoriche non sono ancora supportate.
 """
 
 import math
+from versions.v6_1_emulator import NUM_FEATURES, CAT_FEATURES
 
 from utils.model_input_builder import (
     build_input_df,
@@ -27,7 +28,6 @@ from utils.feature_mapping import (
     normalize_feature_name
 )
 
-from versions.v6_1_emulator import NUM_FEATURES
 
 from knowledge.rag_importance_compare import (
     generate_importance_compare_explanation
@@ -81,8 +81,8 @@ def get_numeric_entity_features(entity_features):
     """
     Restituisce le feature numeriche di un'entita'.
 
-    Le liste rappresentano gruppi: in questa versione tutte le
-    componenti devono essere numeriche e vengono perturbate insieme.
+    Le feature categoriche sono riconosciute ma non supportate:
+    senza una transizione esplicita, la perturbazione sarebbe ambigua.
     """
 
     if isinstance(entity_features, str):
@@ -92,15 +92,29 @@ def get_numeric_entity_features(entity_features):
     else:
         raise ValueError("Entity is empty or has an unsupported format.")
 
-    unsupported = [
+    categorical = [
         feature for feature in features
-        if feature not in NUM_FEATURES
+        if feature in CAT_FEATURES
     ]
 
-    if unsupported:
+    unknown = [
+        feature for feature in features
+        if feature not in NUM_FEATURES and feature not in CAT_FEATURES
+    ]
+
+    if categorical:
         raise ValueError(
-            "This version supports numeric variables only. "
-            f"Unsupported or categorical feature(s): {unsupported}"
+            "The comparison includes categorical variable(s): "
+            f"{categorical}. "
+            "Categorical variables cannot be perturbed using numerical "
+            "increases or decreases. Without an explicitly specified "
+            "categorical transition, the requested modification is "
+            "ambiguous and its impact cannot be evaluated."
+        )
+
+    if unknown:
+        raise ValueError(
+            f"Unrecognized model feature(s): {unknown}"
         )
 
     return features

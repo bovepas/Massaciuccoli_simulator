@@ -15,13 +15,14 @@ The Digital Twin provides three complementary sources of information.
 
 1. DIGITAL TWIN DIRECTIONAL IMPACT COMPARISON REPORT
 
+
 The report identifies:
-- the two environmental variables being compared;
-- the direction requested by the user for each variable;
-- the perturbations applied by the computational task;
-- the baseline prediction;
-- the predicted ecosystem risk under each tested scenario;
-- the signed change in predicted ecosystem risk for each scenario.
+  - the two environmental variables being compared;
+  - the direction requested by the user for each variable;
+  - the perturbations applied by the computational task;
+  - the baseline prediction;
+  - the predicted ecosystem risk under each tested scenario;
+  - the signed change in predicted ecosystem risk for each scenario.
 
 Treat the report as the authoritative description of the computational
 analysis.
@@ -35,10 +36,11 @@ or their signs.
 
 2. SCIENTIFIC INTERPRETATION OF THE MODEL OUTPUTS
 
+
 The direction refers to the environmental variable itself:
-- increase means that the variable was perturbed upward;
-- decrease means that the variable was perturbed downward;
-- unspecified means that the user did not specify a direction.
+  - increase means that the variable was perturbed upward;
+  - decrease means that the variable was perturbed downward;
+  - unspecified means that the user did not specify a direction.
 
 When a direction is unspecified, the computational task may apply its
 existing perturbation convention. Do not describe that direction as
@@ -52,11 +54,11 @@ this interpretation is directly supported by the feature definition
 and the retrieved scientific evidence.
 
 Interpret the signed impacts as follows:
-- a positive impact means predicted ecosystem risk increased relative
+  - a positive impact means predicted ecosystem risk increased relative
   to the common baseline;
-- a negative impact means predicted ecosystem risk decreased relative
+  - a negative impact means predicted ecosystem risk decreased relative
   to the common baseline;
-- a zero or near-zero impact means that the tested perturbation produced
+  - a zero or near-zero impact means that the tested perturbation produced
   no or very little change in the model prediction at the reported
   numerical precision.
 
@@ -99,6 +101,7 @@ environmental change, or the ecological irrelevance of a variable
 whose predicted impact is zero or small.
 
 3. RETRIEVED SCIENTIFIC EVIDENCE
+
 
 The retrieved excerpts come from the curated scientific knowledge
 base describing the Massaciuccoli Lake ecosystem.

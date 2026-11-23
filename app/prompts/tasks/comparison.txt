@@ -1,29 +1,77 @@
+
 The user asked the Massaciuccoli Digital Twin to compare two ecological scenarios.
 
 Each scenario consists of modifications applied to one or more environmental variables describing the Massaciuccoli ecosystem.
 
-The objective of the comparison is to determine which scenario produces the higher ecosystem risk, or whether both scenarios produce a similar level of ecosystem risk.
+The Digital Twin has already simulated both scenarios and computed the predicted ecosystem risk for each one.
 
-The Digital Twin has already simulated both scenarios and computed the ecosystem risk associated with each one.
+Your task is to explain the ecological meaning of the reported comparison.
 
-Your task is not to perform the comparison again.
+Do not perform the comparison again.
+Do not recalculate risk scores.
+Do not change, reinterpret, or contradict the numerical results.
 
-Your task is to explain the reported comparison using the information provided below.
+The Digital Twin provides four types of information:
 
-To prepare your answer, the Digital Twin will provide the following information.
+1. Comparison result
 
-1. The comparison result.
+The predicted ecosystem risk for each scenario and the numerical comparison between them.
 
-This reports the ecosystem risk predicted for the two simulated scenarios and indicates whether one scenario presents higher ecosystem risk or whether both scenarios are similar.
+2. Scenario drivers
 
-2. Scenario drivers.
+The environmental variables modified in each scenario and the main model drivers contributing to the predicted results.
 
-These identify the environmental variables that contributed to the reported comparison.
+3. Ecological interpretation notes
 
-3. Ecological interpretation notes.
+Descriptions of the environmental variables and their ecological meaning.
 
-These explain the ecological meaning of the variables involved in the comparison.
+4. Scientific knowledge
 
-4. Scientific knowledge.
+Excerpts retrieved from the scientific knowledge base concerning the Massaciuccoli ecosystem.
 
-These are excerpts retrieved from the scientific literature describing the Massaciuccoli ecosystem.
+SCIENTIFIC EVIDENCE AND RELEVANCE
+
+Use scientific knowledge only when it is relevant to the environmental variables or ecological processes involved in the comparison.
+
+Distinguish between:
+- Evidence directly relevant to the modified variables or processes.
+- General information about the ecosystem.
+- Methodological information about the models or datasets.
+
+General ecosystem descriptions and methodological information must not be presented as evidence of specific ecological relationships.
+
+Do not assume that every retrieved excerpt is relevant.
+Ignore excerpts that do not support the interpretation.
+
+If the retrieved scientific knowledge does not provide direct support for an ecological explanation, explicitly acknowledge this limitation rather than filling the gap with plausible but unverified mechanisms.
+
+SCIENTIFIC INTERPRETATION
+
+Use the model drivers to identify which environmental variables contribute to the predicted results.
+
+Remember that model drivers describe contributions to the surrogate model prediction. They do not establish ecological causality.
+
+Do not infer causal relationships, interactions, synergies, or feedback mechanisms unless they are explicitly supported by the scientific knowledge provided.
+
+Do not generalize the outcome of the two simulated scenarios into a universal ecological conclusion.
+
+A small difference in predicted risk indicates similarity between the model outputs for these scenarios. It does not demonstrate ecological stability, resilience, or absence of environmental effects.
+
+Do not claim that an environmental modification has no ecological effect merely because the predicted risk scores are similar.
+
+OUTPUT
+
+Write a concise scientific explanation of the comparison.
+
+The explanation should:
+- Identify the relevant environmental differences between the scenarios.
+- Explain the model result using the available drivers.
+- Connect the result to scientific evidence only where that evidence is relevant.
+- Distinguish model-based findings from ecological interpretation.
+- State clearly when the available evidence is insufficient.
+
+Avoid repeating all numerical values already reported by the Digital Twin.
+
+Do not introduce additional stressors, management actions, land-use changes, water-quality effects, or conservation recommendations unless they are explicitly supported by the provided information.
+
+Prefer a short, precise explanation over a longer speculative one.

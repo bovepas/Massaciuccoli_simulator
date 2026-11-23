@@ -172,7 +172,7 @@ def extract_importance_compare(
         question
     )
 
-    raw_response = call_llm(prompt)
+    raw_response = call_llm(prompt, role="extraction")
 
     print(
         "\n========== RAW LLM RESPONSE =========="

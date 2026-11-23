@@ -356,166 +356,60 @@ def build_comparison_report(
 
 
 
+
 # ======================================================
-# TRANSITION QUERY
+# COMPARISON QUERY
 # ======================================================
-
-def classify_transition(feature, value):
-
-    f = feature.lower()
-
-    # --------------------------------------------------
-    # TREE COVER
-    # --------------------------------------------------
-
-    if "tree" in f or "forest" in f:
-
-        if value is not None and value > 0:
-            return "tree cover restoration"
-
-        return "vegetation degradation"
-
-    # --------------------------------------------------
-    # BIODIVERSITY
-    # --------------------------------------------------
-
-    if "species" in f or "biodiversity" in f:
-
-        if value is not None and value < 0:
-            return "biodiversity decline"
-
-        return "biodiversity resilience"
-
-    # --------------------------------------------------
-    # TEMPERATURE
-    # --------------------------------------------------
-
-    if "temperature" in f:
-
-        if value is not None and value > 0:
-            return "warming stress"
-
-        return "temperature reduction"
-
-    # --------------------------------------------------
-    # PRECIPITATION
-    # --------------------------------------------------
-
-    if "precipitation" in f:
-
-        if value is not None and value < 0:
-            return "hydrological stress"
-
-        return "increased water availability"
-
-    # --------------------------------------------------
-    # EVAPOTRANSPIRATION
-    # --------------------------------------------------
-
-    if "evapotranspiration" in f:
-
-        return "water balance alteration"
-
-    # --------------------------------------------------
-    # GRASSLAND
-    # --------------------------------------------------
-
-    if "grassland" in f:
-
-        return "habitat structure change"
-
-    # --------------------------------------------------
-    # FALLBACK
-    # --------------------------------------------------
-
-    return feature
-
 
 def build_transition_query(
     scenario_a,
-    scenario_b,
-    risk_difference
+    scenario_b
 ):
+    """
+    Build a retrieval query using only the environmental
+    variables actually modified in the two scenarios.
 
-    transition_terms = []
-
-    # --------------------------------------------------
-    # SCENARIO A
-    # --------------------------------------------------
-
-    for feature, mod in scenario_a["requested_modifications"].items():
-
-        transition_terms.append(
-
-            classify_transition(
-                feature,
-                _get_modification_value(mod)
-            )
-
-        )
-
-    # --------------------------------------------------
-    # SCENARIO B
-    # --------------------------------------------------
-
-    for feature, mod in scenario_b["requested_modifications"].items():
-
-        transition_terms.append(
-
-            classify_transition(
-                feature,
-                _get_modification_value(mod)
-            )
-
-        )
-
-    # --------------------------------------------------
-    # REMOVE DUPLICATES
-    # --------------------------------------------------
-
-    transition_text = " vs ".join(
-
-        dict.fromkeys(transition_terms)
-
-    )
-
-    # --------------------------------------------------
-    # COMPARISON TYPE
-    # --------------------------------------------------
-
-    if abs(risk_difference) < 0.01:
-
-        comparison_type = (
-            "ecosystem stability comparison"
-        )
-
-    elif risk_difference > 0:
-
-        comparison_type = (
-            "ecosystem degradation comparison"
-        )
-
-    else:
-
-        comparison_type = (
-            "ecosystem resilience comparison"
-        )
-
-    # --------------------------------------------------
-    # QUERY
-    # --------------------------------------------------
-
-    query = f"""
-    Massaciuccoli Lake ecosystem risk comparison
-    {transition_text}
-    biodiversity decline
-    species richness reduction
-    tree cover reduction
-    tree cover density
-    predicted ecosystem risk
+    Prefer the original requested descriptions when available.
+    Do not introduce predefined ecological processes or drivers.
     """
 
-    return query
+    query_terms = []
+    seen = set()
+
+    for scenario in (scenario_a, scenario_b):
+
+        modifications = scenario.get(
+            "requested_modifications", {}
+        )
+
+        descriptions = scenario.get(
+            "requested_modification_descriptions", {}
+        )
+
+        for feature in modifications:
+
+            description = descriptions.get(feature)
+
+            term = (
+                description.strip()
+                if isinstance(description, str) and description.strip()
+                else feature.strip()
+            )
+
+            key = term.casefold()
+
+            if key and key not in seen:
+                query_terms.append(term)
+                seen.add(key)
+
+    if not query_terms:
+        return "Massaciuccoli Lake ecosystem"
+
+    return "\n".join([
+        "Massaciuccoli Lake ecosystem",
+        *query_terms
+    ])
+
 
 
 # ======================================================
@@ -642,8 +536,7 @@ def enhance_with_rag(
 
     query = build_transition_query(
         scenario_a,
-        scenario_b,
-        risk_difference
+        scenario_b
     )
 
     debug_print("[RAG] Transition Query:")
