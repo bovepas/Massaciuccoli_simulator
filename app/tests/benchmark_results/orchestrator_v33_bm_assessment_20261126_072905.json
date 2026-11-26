@@ -1,0 +1,944 @@
+{
+  "benchmark": "Massaciuccoli benchmark 2 - v33 orchestrator",
+  "created_at": "2026-11-26T07:29:05",
+  "task_filter": "assessment",
+  "questions_selected": 8,
+  "routing_correct": 8,
+  "routing_accuracy_percent": 100.0,
+  "execution_errors": 0,
+  "elapsed_seconds": 33.377,
+  "results": [
+    {
+      "benchmark_index": 49,
+      "question": "Assess ecosystem risk under a scenario with increased temperature, reduced precipitation and lower biodiversity.",
+      "source_intent": "Variation",
+      "expected_task": "assessment",
+      "predicted_task": "assessment",
+      "route": {
+        "type": "assessment",
+        "scores": {
+          "assessment": 1.0,
+          "importance": 0.8229379057884216,
+          "delta": 0.8953558206558228,
+          "dependency": 0.877345621585846,
+          "comparison": 0.9772236943244934,
+          "data": 0.771159827709198,
+          "drivers": 0.734135627746582,
+          "enm": 0.7915134429931641,
+          "importance_compare": 0.9253391027450562,
+          "chat": 0.0
+        }
+      },
+      "parsed": {
+        "features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "scenario_detected": false,
+        "modified_features": [],
+        "num_modified_features": 0,
+        "range_detected": false,
+        "range_feature": null,
+        "range_start": null,
+        "range_end": null,
+        "qualitative_changes": [],
+        "modifications": []
+      },
+      "features": {
+        "Density change in land imperviousness": 0,
+        "Density of tree cover": 50,
+        "Index of total productivity by plant phenology": 200,
+        "Change in average temperature compared to a recent past": 0,
+        "Relative change in the potential evapotranspiration compared to a recent past": 0,
+        "Cumulative change in precipitation compared to a recent past": 0,
+        "Number of species potentially living in the cell": 200,
+        "Presence of grassland": 1
+      },
+      "range_info": null,
+      "result": {
+        "summary": "Scenario-based ecosystem risk assessment",
+        "baseline_risk": 0.182,
+        "scenario_risk": 0.5224,
+        "risk_delta": 0.3404,
+        "data": {
+          "species richness": 0.19132,
+          "tree cover density": 0.11738,
+          "vegetation productivity": 0.1076,
+          "Change in grassland presence  in the past decade gain": 0.05026,
+          "temperature change": -0.04077
+        },
+        "drivers": [
+          "species richness",
+          "tree cover density",
+          "vegetation productivity",
+          "Change in grassland presence  in the past decade gain",
+          "temperature change"
+        ],
+        "primary_drivers": {},
+        "secondary_drivers": {
+          "species richness": 0.19132,
+          "tree cover density": 0.11738,
+          "vegetation productivity": 0.1076,
+          "Change in grassland presence  in the past decade gain": 0.05026,
+          "temperature change": -0.04077
+        },
+        "grounded_features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "qualitative_changes": [],
+        "interpretation": "The scenario with increased temperature, reduced precipitation, and lower biodiversity poses a significant threat to the ecosystem, with a risk increase of 0.34. The primary drivers of this risk are identified as species richness, tree cover density, vegetation productivity, and temperature change, which collectively contribute to the degradation of ecosystem functioning. The secondary ecosystem responses reveal that changes in species richness, tree cover density, and vegetation productivity are most strongly associated with the scenario, suggesting that these components are most vulnerable to the stressors. The ecological mechanisms underlying these associations may involve changes in nutrient cycling, altered fire regimes, and shifts in species interactions, which can have cascading effects on ecosystem resilience and biodiversity. These changes can lead to a decline in ecosystem services, including water quality and habitat connectivity, ultimately threatening the long-term sustainability of the ecosystem."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0815,
+        "parsing": 0.0103,
+        "task_execution": 8.6761
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 50,
+      "question": "Assess ecosystem risk under a scenario with reduced tree cover, lower biodiversity and decreased precipitation",
+      "source_intent": "Variation",
+      "expected_task": "assessment",
+      "predicted_task": "assessment",
+      "route": {
+        "type": "assessment",
+        "scores": {
+          "assessment": 1.0000001192092896,
+          "importance": 0.7973548173904419,
+          "delta": 0.8878100514411926,
+          "dependency": 0.8471450209617615,
+          "comparison": 0.9506551027297974,
+          "data": 0.7677275538444519,
+          "drivers": 0.7446855902671814,
+          "enm": 0.7781099081039429,
+          "importance_compare": 0.863952100276947,
+          "chat": 0.0
+        }
+      },
+      "parsed": {
+        "features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "scenario_detected": false,
+        "modified_features": [],
+        "num_modified_features": 0,
+        "range_detected": false,
+        "range_feature": null,
+        "range_start": null,
+        "range_end": null,
+        "qualitative_changes": [],
+        "modifications": []
+      },
+      "features": {
+        "Density change in land imperviousness": 0,
+        "Density of tree cover": 50,
+        "Index of total productivity by plant phenology": 200,
+        "Change in average temperature compared to a recent past": 0,
+        "Relative change in the potential evapotranspiration compared to a recent past": 0,
+        "Cumulative change in precipitation compared to a recent past": 0,
+        "Number of species potentially living in the cell": 200,
+        "Presence of grassland": 1
+      },
+      "range_info": null,
+      "result": {
+        "summary": "Scenario-based ecosystem risk assessment",
+        "baseline_risk": 0.182,
+        "scenario_risk": 0.5224,
+        "risk_delta": 0.3404,
+        "data": {
+          "species richness": 0.19132,
+          "tree cover density": 0.11738,
+          "vegetation productivity": 0.1076,
+          "Change in grassland presence  in the past decade gain": 0.05026,
+          "temperature change": -0.04077
+        },
+        "drivers": [
+          "species richness",
+          "tree cover density",
+          "vegetation productivity",
+          "Change in grassland presence  in the past decade gain",
+          "temperature change"
+        ],
+        "primary_drivers": {},
+        "secondary_drivers": {
+          "species richness": 0.19132,
+          "tree cover density": 0.11738,
+          "vegetation productivity": 0.1076,
+          "Change in grassland presence  in the past decade gain": 0.05026,
+          "temperature change": -0.04077
+        },
+        "grounded_features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "qualitative_changes": [],
+        "interpretation": "The scenario with reduced tree cover, lower biodiversity, and decreased precipitation is expected to increase ecosystem risk, with a primary driver of reduced tree cover density being the most strongly associated factor. This reduction in tree cover density is likely to lead to changes in vegetation productivity, as trees play a crucial role in regulating water cycles and maintaining soil health. The decrease in precipitation may further exacerbate these changes, leading to increased grassland presence and altered hydrological dynamics. The loss of tree cover and biodiversity is also expected to trigger changes in species richness and temperature change, highlighting the interconnectedness of ecosystem components. These changes may have cascading consequences for ecosystem services and socio-economic values, emphasizing the need for robust scientific assessments to inform management planning and mitigation strategies."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0686,
+        "parsing": 0.0005,
+        "task_execution": 2.2521
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 55,
+      "question": "What is the ecosystem risk if temperature increases by 3°C and precipitation decreases by 20%?",
+      "source_intent": "Variation",
+      "expected_task": "assessment",
+      "predicted_task": "assessment",
+      "route": {
+        "type": "assessment",
+        "scores": {
+          "assessment": 1.0,
+          "importance": 0.8334122896194458,
+          "delta": 0.9563878178596497,
+          "dependency": 0.8943394422531128,
+          "comparison": 0.955711305141449,
+          "data": 0.7635127902030945,
+          "drivers": 0.7360000610351562,
+          "enm": 0.7908050417900085,
+          "importance_compare": 0.9131618142127991,
+          "chat": 0.0
+        }
+      },
+      "parsed": {
+        "features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 3.0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": -20.0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "scenario_detected": true,
+        "modified_features": [
+          "Cumulative change in precipitation compared to a recent past",
+          "Change in average temperature compared to a recent past"
+        ],
+        "num_modified_features": 2,
+        "range_detected": false,
+        "range_feature": null,
+        "range_start": null,
+        "range_end": null,
+        "qualitative_changes": [],
+        "modifications": [
+          {
+            "variable": "Change in average temperature compared to a recent past",
+            "type": "absolute_delta",
+            "value": 3.0
+          },
+          {
+            "variable": "Cumulative change in precipitation compared to a recent past",
+            "type": "percentage_change",
+            "value": -20.0
+          }
+        ]
+      },
+      "features": {
+        "Density change in land imperviousness": 0,
+        "Density of tree cover": 50,
+        "Index of total productivity by plant phenology": 200,
+        "Change in average temperature compared to a recent past": 3.0,
+        "Relative change in the potential evapotranspiration compared to a recent past": 0,
+        "Cumulative change in precipitation compared to a recent past": -20.0,
+        "Number of species potentially living in the cell": 200,
+        "Presence of grassland": 1
+      },
+      "range_info": null,
+      "result": {
+        "summary": "Scenario-based ecosystem risk assessment",
+        "baseline_risk": 0.182,
+        "scenario_risk": 0.8856,
+        "risk_delta": 0.7035,
+        "data": {
+          "temperature change": 0.19577,
+          "precipitation change": -0.01841,
+          "species richness": 0.30767,
+          "grassland presence": 0.19314,
+          "tree cover density": 0.05462,
+          "vegetation productivity": 0.04883,
+          "evapotranspiration change": 0.02466
+        },
+        "drivers": [
+          "temperature change",
+          "precipitation change",
+          "species richness",
+          "grassland presence",
+          "tree cover density",
+          "vegetation productivity",
+          "evapotranspiration change"
+        ],
+        "primary_drivers": {
+          "temperature change": 0.19577,
+          "precipitation change": -0.01841
+        },
+        "secondary_drivers": {
+          "species richness": 0.30767,
+          "grassland presence": 0.19314,
+          "tree cover density": 0.05462,
+          "vegetation productivity": 0.04883,
+          "evapotranspiration change": 0.02466
+        },
+        "grounded_features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 3.0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": -20.0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "qualitative_changes": [],
+        "interpretation": "The scenario suggests that a 3°C temperature increase and a 20% decrease in precipitation would lead to a significant increase in ecosystem risk, with a risk increase of 0.70. The primary drivers of this risk are temperature change (0.20) and precipitation change (0.02), indicating that these factors are most strongly associated with the increase in ecosystem risk. The secondary ecosystem responses reveal that species richness, grassland presence, and tree cover density are most strongly associated with the scenario, suggesting that these components are likely to be impacted by the changes in temperature and precipitation. The ecological mechanisms connecting the primary drivers and secondary responses may involve changes in vegetation productivity and evapotranspiration, which could alter the availability of resources and habitat for species, ultimately affecting species richness and ecosystem functioning. This scenario highlights the need for further research on the specific impacts of climate change on the Massaciuccoli Lake basin, particularly on the relationships between temperature, precipitation, and ecosystem components."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0698,
+        "parsing": 0.0005,
+        "task_execution": 8.6555
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 56,
+      "question": "What is the ecosystem risk if temperature decreases by 1°C but precipitation decreases by 15%?",
+      "source_intent": "Variation",
+      "expected_task": "assessment",
+      "predicted_task": "assessment",
+      "route": {
+        "type": "assessment",
+        "scores": {
+          "assessment": 1.0000001192092896,
+          "importance": 0.8168975710868835,
+          "delta": 0.9453868269920349,
+          "dependency": 0.8704116940498352,
+          "comparison": 0.949020504951477,
+          "data": 0.7519338726997375,
+          "drivers": 0.7321988344192505,
+          "enm": 0.8037890195846558,
+          "importance_compare": 0.9086432456970215,
+          "chat": 0.0
+        }
+      },
+      "parsed": {
+        "features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": -1.0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": -15.0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "scenario_detected": true,
+        "modified_features": [
+          "Cumulative change in precipitation compared to a recent past",
+          "Change in average temperature compared to a recent past"
+        ],
+        "num_modified_features": 2,
+        "range_detected": false,
+        "range_feature": null,
+        "range_start": null,
+        "range_end": null,
+        "qualitative_changes": [],
+        "modifications": [
+          {
+            "variable": "Change in average temperature compared to a recent past",
+            "type": "absolute_delta",
+            "value": -1.0
+          },
+          {
+            "variable": "Cumulative change in precipitation compared to a recent past",
+            "type": "percentage_change",
+            "value": -15.0
+          }
+        ]
+      },
+      "features": {
+        "Density change in land imperviousness": 0,
+        "Density of tree cover": 50,
+        "Index of total productivity by plant phenology": 200,
+        "Change in average temperature compared to a recent past": -1.0,
+        "Relative change in the potential evapotranspiration compared to a recent past": 0,
+        "Cumulative change in precipitation compared to a recent past": -15.0,
+        "Number of species potentially living in the cell": 200,
+        "Presence of grassland": 1
+      },
+      "range_info": null,
+      "result": {
+        "summary": "Scenario-based ecosystem risk assessment",
+        "baseline_risk": 0.182,
+        "scenario_risk": 0.5224,
+        "risk_delta": 0.3404,
+        "data": {
+          "temperature change": -0.04077,
+          "precipitation change": -0.0061,
+          "species richness": 0.19132,
+          "tree cover density": 0.11738,
+          "vegetation productivity": 0.1076,
+          "Change in grassland presence  in the past decade gain": 0.05026,
+          "evapotranspiration change": 0.02379
+        },
+        "drivers": [
+          "temperature change",
+          "precipitation change",
+          "species richness",
+          "tree cover density",
+          "vegetation productivity",
+          "Change in grassland presence  in the past decade gain",
+          "evapotranspiration change"
+        ],
+        "primary_drivers": {
+          "temperature change": -0.04077,
+          "precipitation change": -0.0061
+        },
+        "secondary_drivers": {
+          "species richness": 0.19132,
+          "tree cover density": 0.11738,
+          "vegetation productivity": 0.1076,
+          "Change in grassland presence  in the past decade gain": 0.05026,
+          "evapotranspiration change": 0.02379
+        },
+        "grounded_features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": -1.0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": -15.0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "qualitative_changes": [],
+        "interpretation": "A decrease in temperature by 1°C accompanied by a 15% decrease in precipitation would likely exacerbate ecosystem risk, with temperature change being the primary driver (0.04) and precipitation change contributing minimally (0.01). The secondary ecosystem responses suggest that species richness, tree cover density, and vegetation productivity would be negatively impacted, while grassland presence and evapotranspiration would be affected. These changes are likely linked to altered hydrological dynamics and water quality, as well as increased vulnerability to drought and heat stress. The decrease in precipitation would lead to reduced water availability, exacerbating the effects of temperature change on vegetation and potentially altering the composition of species. This scenario highlights the interconnectedness of climate, hydrology, and ecosystem functioning, emphasizing the need for a holistic approach to understanding and managing ecosystem responses to climate change."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.2272,
+        "parsing": 0.0003,
+        "task_execution": 3.3706
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 74,
+      "question": "Assess ecosystem risk under a scenario with increased temperature and reduced tree cover",
+      "source_intent": "Variation",
+      "expected_task": "assessment",
+      "predicted_task": "assessment",
+      "route": {
+        "type": "assessment",
+        "scores": {
+          "assessment": 1.0,
+          "importance": 0.8231738209724426,
+          "delta": 0.8944166302680969,
+          "dependency": 0.883266270160675,
+          "comparison": 0.9781854152679443,
+          "data": 0.7642880082130432,
+          "drivers": 0.7721856236457825,
+          "enm": 0.7689200639724731,
+          "importance_compare": 0.9527990818023682,
+          "chat": 0.0
+        }
+      },
+      "parsed": {
+        "features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "scenario_detected": false,
+        "modified_features": [],
+        "num_modified_features": 0,
+        "range_detected": false,
+        "range_feature": null,
+        "range_start": null,
+        "range_end": null,
+        "qualitative_changes": [],
+        "modifications": []
+      },
+      "features": {
+        "Density change in land imperviousness": 0,
+        "Density of tree cover": 50,
+        "Index of total productivity by plant phenology": 200,
+        "Change in average temperature compared to a recent past": 0,
+        "Relative change in the potential evapotranspiration compared to a recent past": 0,
+        "Cumulative change in precipitation compared to a recent past": 0,
+        "Number of species potentially living in the cell": 200,
+        "Presence of grassland": 1
+      },
+      "range_info": null,
+      "result": {
+        "summary": "Scenario-based ecosystem risk assessment",
+        "baseline_risk": 0.182,
+        "scenario_risk": 0.5224,
+        "risk_delta": 0.3404,
+        "data": {
+          "species richness": 0.19132,
+          "tree cover density": 0.11738,
+          "vegetation productivity": 0.1076,
+          "Change in grassland presence  in the past decade gain": 0.05026,
+          "temperature change": -0.04077
+        },
+        "drivers": [
+          "species richness",
+          "tree cover density",
+          "vegetation productivity",
+          "Change in grassland presence  in the past decade gain",
+          "temperature change"
+        ],
+        "primary_drivers": {},
+        "secondary_drivers": {
+          "species richness": 0.19132,
+          "tree cover density": 0.11738,
+          "vegetation productivity": 0.1076,
+          "Change in grassland presence  in the past decade gain": 0.05026,
+          "temperature change": -0.04077
+        },
+        "grounded_features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "qualitative_changes": [],
+        "interpretation": "The scenario with increased temperature and reduced tree cover is expected to exacerbate ecosystem risk, with a 0.34 increase in risk assessed. The primary drivers of this increase are identified as species richness, tree cover density, vegetation productivity, and temperature change, with the latter being the weakest but still significant contributor. The secondary ecosystem responses reveal that these drivers are associated with changes in species richness, tree cover density, and vegetation productivity, as well as a gain in grassland presence and a decrease in temperature change. These associations are likely due to the warming-induced shifts in species distribution and abundance, leading to changes in ecosystem functioning and resilience. The loss of tree cover and vegetation productivity may also contribute to increased grassland presence, as these ecosystems often coexist and compete for resources. Overall, the scenario highlights the interconnectedness of ecological processes and the need for a comprehensive understanding of ecosystem responses to climate change."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0861,
+        "parsing": 0.0009,
+        "task_execution": 2.4884
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 75,
+      "question": "What is the ecosystem risk if temperature increases by 3°C but tree cover also increases significantly?",
+      "source_intent": "Variation",
+      "expected_task": "assessment",
+      "predicted_task": "assessment",
+      "route": {
+        "type": "assessment",
+        "scores": {
+          "assessment": 1.0000001192092896,
+          "importance": 0.8264032006263733,
+          "delta": 0.9300257563591003,
+          "dependency": 0.8946479558944702,
+          "comparison": 0.9473791718482971,
+          "data": 0.7700936198234558,
+          "drivers": 0.7869052886962891,
+          "enm": 0.7971768975257874,
+          "importance_compare": 0.9393144249916077,
+          "chat": 0.0
+        }
+      },
+      "parsed": {
+        "features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 3.0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "scenario_detected": true,
+        "modified_features": [
+          "Density of tree cover",
+          "Change in average temperature compared to a recent past"
+        ],
+        "num_modified_features": 2,
+        "range_detected": false,
+        "range_feature": null,
+        "range_start": null,
+        "range_end": null,
+        "qualitative_changes": [
+          {
+            "feature": "Density of tree cover",
+            "direction": "increases",
+            "magnitude": "significantly"
+          }
+        ],
+        "modifications": [
+          {
+            "variable": "Change in average temperature compared to a recent past",
+            "type": "absolute_delta",
+            "value": 3.0
+          }
+        ]
+      },
+      "features": {
+        "Density change in land imperviousness": 0,
+        "Density of tree cover": 50,
+        "Index of total productivity by plant phenology": 200,
+        "Change in average temperature compared to a recent past": 3.0,
+        "Relative change in the potential evapotranspiration compared to a recent past": 0,
+        "Cumulative change in precipitation compared to a recent past": 0,
+        "Number of species potentially living in the cell": 200,
+        "Presence of grassland": 1
+      },
+      "range_info": null,
+      "result": {
+        "summary": "Scenario-based ecosystem risk assessment",
+        "baseline_risk": 0.182,
+        "scenario_risk": 0.8832,
+        "risk_delta": 0.7011,
+        "data": {
+          "tree cover density": 0.15719,
+          "temperature change": 0.07941,
+          "species richness": 0.30795,
+          "grassland presence": 0.12532,
+          "vegetation productivity": 0.11279,
+          "evapotranspiration change": 0.02861,
+          "Change in grassland presence  in the past decade unchanged": 0.00357
+        },
+        "drivers": [
+          "tree cover density",
+          "temperature change",
+          "species richness",
+          "grassland presence",
+          "vegetation productivity",
+          "evapotranspiration change",
+          "Change in grassland presence  in the past decade unchanged"
+        ],
+        "primary_drivers": {
+          "tree cover density": 0.15719,
+          "temperature change": 0.07941
+        },
+        "secondary_drivers": {
+          "species richness": 0.30795,
+          "grassland presence": 0.12532,
+          "vegetation productivity": 0.11279,
+          "evapotranspiration change": 0.02861,
+          "Change in grassland presence  in the past decade unchanged": 0.00357
+        },
+        "grounded_features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 101.3521837386648,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 3.0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "qualitative_changes": [
+          {
+            "feature": "Density of tree cover",
+            "direction": "increases",
+            "magnitude": "significantly"
+          }
+        ],
+        "interpretation": "The scenario presents a complex interplay between temperature increase and tree cover density, with a significant risk increase of 0.70 in the ecosystem. The primary drivers of this risk increase are temperature change (0.08) and tree cover density (0.16), indicating that these factors are most strongly associated with the ecosystem's vulnerability. The secondary ecosystem responses, including species richness, grassland presence, and vegetation productivity, suggest that these components are also strongly connected to the scenario. The ecological mechanisms underlying this connection may involve the warming-induced shifts in species distribution and abundance, leading to changes in vegetation structure and composition, which in turn affect ecosystem functioning and biodiversity. Furthermore, the increased tree cover density may contribute to enhanced evapotranspiration, altering hydrological dynamics and water quality, and potentially exacerbating the risk increase."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0805,
+        "parsing": 0.0005,
+        "task_execution": 2.0146
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 76,
+      "question": "What is the ecosystem risk if temperature increases by 2°C, precipitation decreases by 10%, and tree cover declines by 20%?",
+      "source_intent": "Variation",
+      "expected_task": "assessment",
+      "predicted_task": "assessment",
+      "route": {
+        "type": "assessment",
+        "scores": {
+          "assessment": 1.0000001192092896,
+          "importance": 0.8361075520515442,
+          "delta": 0.921129047870636,
+          "dependency": 0.8975263237953186,
+          "comparison": 0.9403243064880371,
+          "data": 0.7791734337806702,
+          "drivers": 0.7262829542160034,
+          "enm": 0.7776871919631958,
+          "importance_compare": 0.8986395597457886,
+          "chat": 0.0
+        }
+      },
+      "parsed": {
+        "features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 30.0,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 2.0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": -10.0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "scenario_detected": true,
+        "modified_features": [
+          "Cumulative change in precipitation compared to a recent past",
+          "Density of tree cover",
+          "Change in average temperature compared to a recent past"
+        ],
+        "num_modified_features": 3,
+        "range_detected": false,
+        "range_feature": null,
+        "range_start": null,
+        "range_end": null,
+        "qualitative_changes": [],
+        "modifications": [
+          {
+            "variable": "Change in average temperature compared to a recent past",
+            "type": "absolute_delta",
+            "value": 2.0
+          },
+          {
+            "variable": "Cumulative change in precipitation compared to a recent past",
+            "type": "percentage_change",
+            "value": -10.0
+          },
+          {
+            "variable": "Density of tree cover",
+            "type": "percentage_change",
+            "value": -20.0
+          }
+        ]
+      },
+      "features": {
+        "Density change in land imperviousness": 0,
+        "Density of tree cover": 30.0,
+        "Index of total productivity by plant phenology": 200,
+        "Change in average temperature compared to a recent past": 2.0,
+        "Relative change in the potential evapotranspiration compared to a recent past": 0,
+        "Cumulative change in precipitation compared to a recent past": -10.0,
+        "Number of species potentially living in the cell": 200,
+        "Presence of grassland": 1
+      },
+      "range_info": null,
+      "result": {
+        "summary": "Scenario-based ecosystem risk assessment",
+        "baseline_risk": 0.182,
+        "scenario_risk": 0.8856,
+        "risk_delta": 0.7035,
+        "data": {
+          "temperature change": 0.27504,
+          "tree cover density": -0.02981,
+          "precipitation change": 0.00111,
+          "grassland presence": 0.32637,
+          "species richness": 0.28412,
+          "vegetation productivity": -0.06737,
+          "evapotranspiration change": 0.03042,
+          "land imperviousness": 0.00614
+        },
+        "drivers": [
+          "temperature change",
+          "tree cover density",
+          "precipitation change",
+          "grassland presence",
+          "species richness",
+          "vegetation productivity",
+          "evapotranspiration change",
+          "land imperviousness"
+        ],
+        "primary_drivers": {
+          "temperature change": 0.27504,
+          "tree cover density": -0.02981,
+          "precipitation change": 0.00111
+        },
+        "secondary_drivers": {
+          "grassland presence": 0.32637,
+          "species richness": 0.28412,
+          "vegetation productivity": -0.06737,
+          "evapotranspiration change": 0.03042,
+          "land imperviousness": 0.00614
+        },
+        "grounded_features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 30.0,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 2.0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": -10.0,
+          "Number of species potentially living in the cell": 200,
+          "Presence of grassland": 1
+        },
+        "qualitative_changes": [],
+        "interpretation": "The scenario presents a complex interplay of environmental factors, with a 2°C temperature increase, 10% decrease in precipitation, and 20% decline in tree cover density, leading to a 0.70 increase in ecosystem risk. The primary drivers of this risk are temperature change (0.28) and tree cover density (0.03), while precipitation change has a negligible impact. The secondary ecosystem responses reveal associations with grassland presence, species richness, and vegetation productivity, suggesting that these changes may lead to shifts in ecosystem composition and function. The ecological mechanisms underlying these associations may involve changes in evapotranspiration, land imperviousness, and nutrient cycling, which can have cascading effects on ecosystem resilience and biodiversity. These changes may also impact the distribution and abundance of terrestrial and aquatic organisms, highlighting the need for careful consideration of the potential consequences of these environmental shifts."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0632,
+        "parsing": 0.0004,
+        "task_execution": 2.5568
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 77,
+      "question": "What is the ecosystem risk if biodiversity declines by 20% and grassland cover is reduced by half?",
+      "source_intent": "Variation",
+      "expected_task": "assessment",
+      "predicted_task": "assessment",
+      "route": {
+        "type": "assessment",
+        "scores": {
+          "assessment": 0.9999999403953552,
+          "importance": 0.7792358994483948,
+          "delta": 0.9367831349372864,
+          "dependency": 0.822857141494751,
+          "comparison": 0.8749564290046692,
+          "data": 0.7555285096168518,
+          "drivers": 0.6937915682792664,
+          "enm": 0.7880037426948547,
+          "importance_compare": 0.8607824444770813,
+          "chat": 0.0
+        }
+      },
+      "parsed": {
+        "features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 180.0,
+          "Presence of grassland": 0.0
+        },
+        "scenario_detected": true,
+        "modified_features": [
+          "Presence of grassland",
+          "Number of species potentially living in the cell"
+        ],
+        "num_modified_features": 2,
+        "range_detected": false,
+        "range_feature": null,
+        "range_start": null,
+        "range_end": null,
+        "qualitative_changes": [],
+        "modifications": [
+          {
+            "variable": "Number of species potentially living in the cell",
+            "type": "percentage_change",
+            "value": -20.0
+          }
+        ]
+      },
+      "features": {
+        "Density change in land imperviousness": 0,
+        "Density of tree cover": 50,
+        "Index of total productivity by plant phenology": 200,
+        "Change in average temperature compared to a recent past": 0,
+        "Relative change in the potential evapotranspiration compared to a recent past": 0,
+        "Cumulative change in precipitation compared to a recent past": 0,
+        "Number of species potentially living in the cell": 180.0,
+        "Presence of grassland": 0.0
+      },
+      "range_info": null,
+      "result": {
+        "summary": "Scenario-based ecosystem risk assessment",
+        "baseline_risk": 0.182,
+        "scenario_risk": 0.7533,
+        "risk_delta": 0.5713,
+        "data": {
+          "species richness": 0.21838,
+          "grassland presence": 0.01074,
+          "vegetation productivity": 0.23979,
+          "tree cover density": 0.17138,
+          "temperature change": 0.05617,
+          "precipitation change": -0.02576,
+          "tree cover change": -0.00283
+        },
+        "drivers": [
+          "species richness",
+          "grassland presence",
+          "vegetation productivity",
+          "tree cover density",
+          "temperature change",
+          "precipitation change",
+          "tree cover change"
+        ],
+        "primary_drivers": {
+          "species richness": 0.21838,
+          "grassland presence": 0.01074
+        },
+        "secondary_drivers": {
+          "vegetation productivity": 0.23979,
+          "tree cover density": 0.17138,
+          "temperature change": 0.05617,
+          "precipitation change": -0.02576,
+          "tree cover change": -0.00283
+        },
+        "grounded_features": {
+          "Density change in land imperviousness": 0,
+          "Density of tree cover": 50,
+          "Index of total productivity by plant phenology": 200,
+          "Change in average temperature compared to a recent past": 0,
+          "Relative change in the potential evapotranspiration compared to a recent past": 0,
+          "Cumulative change in precipitation compared to a recent past": 0,
+          "Number of species potentially living in the cell": 180.0,
+          "Presence of grassland": 0.0
+        },
+        "qualitative_changes": [],
+        "interpretation": "The scenario suggests that a 20% decline in biodiversity and a 50% reduction in grassland cover would lead to a significant increase in ecosystem risk, with a risk multiplier of 0.57. The primary drivers of this risk increase are species richness and grassland presence, indicating that the loss of species diversity and the degradation of grassland habitats are key factors contributing to the ecosystem's vulnerability. The secondary ecosystem responses, including changes in vegetation productivity, tree cover density, and temperature, suggest that these changes are likely to have cascading effects on ecosystem functioning and resilience. The ecological mechanisms underlying these associations may involve the disruption of nutrient cycles, altered hydrological dynamics, and changes in species interactions, ultimately leading to a decline in ecosystem services and biodiversity. These findings highlight the need for conservation efforts to protect grassland habitats and promote biodiversity, as well as the importance of considering the complex interactions between ecosystem components in managing ecosystem risk."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.1001,
+        "parsing": 0.0003,
+        "task_execution": 2.571
+      },
+      "routing_correct": true
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+services:
+
+  massaciuccoli_app:
+
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+
+    container_name: massaciuccoli_app
+
+    stdin_open: true
+#    tty: true
+
+    volumes:
+      - ./app:/app
+
+    env_file:
+      - LLM.env
+
+    depends_on:
+      - ollama
+
+    command: python -m versions.v6_1_orchestrator
+
+
+  ollama:
+
+    image: ollama/ollama
+
+    container_name: ollama
+
+    ports:
+      - "11434:11434"
+
+    volumes:
+      - ollama_data:/root/.ollama
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    restart: unless-stopped
+
+    healthcheck:
+      disable: true
+
+
+volumes:
+  ollama_data:

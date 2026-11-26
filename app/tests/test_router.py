@@ -1,0 +1,191 @@
+# -*- coding: utf-8 -*-
+"""
+Router Test Suite — Massaciuccoli Digital Twin
+Run all routing tests automatically
+"""
+import io
+import contextlib
+from versions.v6_1_main import route_question
+
+# ======================================================
+# CONFIG
+# ======================================================
+
+SHOW_ONLY_ERRORS = True
+
+# ======================================================
+# TEST SET
+# ======================================================
+
+TESTS = [
+
+    # ======================
+    # 🆕 DATA
+    # ======================
+    ("Get temperature data", "data"),
+    ("Retrieve precipitation values", "data"),
+    ("Show biodiversity data", "data"),
+    ("What are the latest temperature measurements?", "data"),
+    ("Give me the current precipitation values", "data"),
+    ("Show ecosystem productivity data", "data"),
+    ("Retrieve evapotranspiration time series", "data"),
+    ("Get the latest biodiversity numbers", "data"),
+
+    # 🔥 NEW DATA
+    ("Retrieve the latest average temperature data.", "data"),
+    ("What is the latest precipitation change?", "data"),
+    ("Show the latest environmental conditions of the system.", "data"),
+
+    # ======================
+    # ASSESSMENT
+    # ======================
+    ("What is the ecosystem risk with temperature increase of 2°C and precipitation decrease of 20%?", "assessment"),
+    ("Estimate ecosystem risk given evapotranspiration increase of 15% and biodiversity equal to 180 species.", "assessment"),
+    ("What is the current state of the ecosystem?", "assessment"),
+    ("Given the following environmental conditions, estimate the ecosystem risk level and explain which variables drive the result: temperature change = +2.5°C, precipitation change = -20%, evapotranspiration = +10%, tree cover = 70%, species richness = 250.", "assessment"),
+    ("If temperature increases by +3°C but tree cover also increases significantly, how do these combined effects influence ecosystem risk?", "assessment"),
+    ("what is the ecosystem risk with temperature +2°C", "delta"),
+    ("estimate risk with precipitation -20%", "delta"),
+    ("What is the ecosystem risk under a scenario with increased land use and reduced tree cover?", "assessment"),
+    ("describe the current state of the ecosystem", "assessment"),
+    ("If the climate becomes  significantly warmer and drier, how does ecosystem risk change?", "assessment"),
+
+    # 🔥 MOVED FROM DELTA
+    ("What happens if temperature increases by 1 for the ecosystem risk?", "delta"),
+    ("What happens if precipitation decreases by 10% for the ecosystem risk?", "delta"),
+
+    # ======================
+    # DEPENDENCY
+    # ======================
+    ("How does temperature affect biodiversity?", "dependency"),
+    ("How does grassland presence affect tree cover?", "dependency"),
+    ("What is the effect of precipitation on biodiversity?", "dependency"),
+    ("If temperature increases, how does tree cover change?", "dependency"),
+    ("How does evapotranspiration influence grassland presence?", "dependency"),
+    ("If precipitation decreases by 10, how does biodiversity change?", "dependency"),
+    ("Does precipitation change affect ecosystem productivity?", "dependency"),
+    ("How does biodiversity change if temperature increases by 2°C?", "dependency"),
+    ("What is the effect of increasing evapotranspiration?", "dependency"),
+
+    # 🔥 NEW DEPENDENCY
+    ("How does temperature affect precipitation in the lake basin?", "dependency"),
+    ("What is the effect of evapotranspiration on water availability?", "dependency"),
+
+    # ======================
+    # DELTA
+    # ======================
+    ("How does ecosystem risk change from 0°C to 20°C temperature increase?", "delta"),
+    ("What is the effect on ecosystem risk when precipitation goes from -20% to +30%?", "delta"),
+    ("how does risk change from 0 to 20 temperature", "delta"),
+    ("what happens from -10 to +30 precipitation in ecosystem risk?", "delta"),
+    ("change in risk from 5 to 15 evapotranspiration", "delta"),
+    ("What is the expected change in ecosystem risk if tree cover density decreases from 60% to 30%, while all other environmental variables remain constant?", "delta"),
+    ("How does the ecosystem risk change if precipitation decreases from -10% to -40%, keeping all other variables constant?", "delta"),
+
+    # 🔥 NEW DELTA (CRITICAL)
+    ("How does a decrease in precipitation influence ecosystem risk?", "dependency"),
+
+    # ======================
+    # COMPARISON
+    # ======================
+    ("which scenario is riskier: high vs low biodiversity", "comparison"),
+    ("Compare two scenarios: temperature +1°C and precipitation -10% versus temperature +3°C and precipitation -30%. Which leads to higher ecosystem risk?", "comparison"),
+    ("Which scenario is riskier: temperature increase of 1°C or temperature increase of 4°C?", "comparison"),
+
+    # 🔥 NEW COMPARISON
+    ("Compare ecosystem risk when temperature increases by 2°C versus when precipitation decreases by 10%.", "comparison"),
+    ("Which scenario is worse: temperature +3°C or precipitation −20%?", "comparison"),
+    ("Compare two scenarios: one with increased tree cover (70%) and one with reduced biodiversity (−30%).", "comparison"),
+
+    # ======================
+    # IMPORTANCE
+    # ======================
+    ("What are the main factors driving the ecosystem risk in this scenario.", "importance"),
+    ("Explain the main factors driving the ecosystem risk in this scenario. List the top 3 most influential variables.", "importance"),
+    ("What are the top 3 most influential variables affecting ecosystem risk under baseline conditions?", "importance"),
+    ("What are the 3 environmental variables that most influence ecosystem risk?", "importance"),
+
+    # 🔥 REMOVED (SEMANTICALLY AMBIGUOUS)
+    # ("What are the main drivers if temperature increases by 2?", "importance"),
+    # ("Which variables are most influential if precipitation decreases by 20%?", "importance"),
+
+    ("Which variables reduce ecosystem risk the most?", "importance"),
+    ("Which factors increase ecosystem risk the most?", "importance"),
+    ("What drives ecosystem risk the most?", "importance"),
+    ("What variables are most important for ecosystem risk?", "importance"),
+    ("Which factors increase ecosystem risk?", "importance"),
+
+    # 🔥 NEW IMPORTANCE
+    ("Which environmental variables are most influential in increasing ecosystem risk?", "importance"),
+
+    # ======================
+    # DRIVERS
+    # ======================
+    ("Which are the factors whose change may drive a temperature increase?", "drivers"),
+    ("Top 3 drivers of biodiversity", "drivers"),
+    ("Which factors drive biodiversity loss?", "drivers"),
+    ("What drives precipitation change?", "drivers"),
+
+    # 🔥 NEW DRIVERS
+    ("What environmental factors are associated with reduced precipitation in the lake ecosystem?", "drivers"),
+
+    # ======================
+    # ENM
+    # ======================
+    ("Cyprinus carpio habitat suitability", "enm"),
+    ("What is the predicted habitat suitability of Cyprinus carpio in the study area?", "enm"),
+    ("What is the habitat suitability of fish species in the area given temperature increase of 2°C?", "enm"),
+]
+
+
+# ======================================================
+# RUN TESTS
+# ======================================================
+
+def run_tests():
+
+    correct = 0
+    total = len(TESTS)
+
+    print("\n================ ROUTER BENCHMARK TESTS ================\n")
+
+    for i, (question, expected) in enumerate(TESTS, 1):
+
+        if SHOW_ONLY_ERRORS:
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                result = route_question(question)
+
+        else:
+
+            result = route_question(question)
+
+        predicted = result["type"]
+
+        ok = predicted == expected
+
+        if ok:
+            correct += 1
+            status = "✅"
+        else:
+            status = "❌"
+
+        if SHOW_ONLY_ERRORS and ok:
+            continue
+
+        print(f"{status} [{i}]")
+        print(f"Q: {question}")
+        print(f"EXPECTED:  {expected}")
+        print(f"PREDICTED: {predicted}")
+        print("-------------------------------------------")
+
+    accuracy = correct / total * 100
+
+    print("\n============================================")
+    print(f"RESULT: {correct}/{total} correct")
+    print(f"ACCURACY: {accuracy:.2f}%")
+    print("============================================\n")
+
+
+if __name__ == "__main__":
+    run_tests()

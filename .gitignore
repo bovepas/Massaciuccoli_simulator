@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local environment and secrets
+.env
+*.env
+LLM.env
+
+# Chroma database
+chroma_db/
+
+# SQLite
+*.sqlite3
+
+# ENM generated output and caches
+app/enm/output/
+**/maxent.cache/
+enm/output/
+
+# Router cache
+app/router/embedding_cache.pkl
+
+# Local models
+ollama_models/
+
+# Node
+node_modules/
+
+# Windows and macOS temporary files
+.DS_Store
+Thumbs.db
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# Accidental empty file
+app/knowledge/curl

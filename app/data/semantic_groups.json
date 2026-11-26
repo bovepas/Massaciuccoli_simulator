@@ -1,0 +1,372 @@
+{
+  "version": "2.0",
+  "description": "Semantic concept-to-feature mappings for the Massaciuccoli Digital Twin data task. Benchmark resolutions and specialist groups are query-resolution mappings, not causal claims or a literal reconstruction of any paper classification.",
+  "feature_catalog": {
+    "density_change_in_land_imperviousness": "Density change in land imperviousness",
+    "density_of_tree_cover": "Density of tree cover",
+    "change_in_tree_cover_density_past_decade": "Change in tree cover density in past decade",
+    "presence_of_grassland": "Presence of grassland",
+    "change_in_grassland_presence": "Change in grassland presence",
+    "land_use_and_cover": "Land use and cover",
+    "index_of_total_productivity_by_plant_phenology": "Index of total productivity by plant phenology",
+    "change_in_average_temperature": "Change in average temperature",
+    "relative_change_in_potential_evapotranspiration": "Relative change in potential evapotranspiration",
+    "cumulative_change_in_precipitation": "Cumulative change in precipitation",
+    "number_of_species_potentially_living_in_the_cell": "Number of species potentially living in the cell",
+    "change_in_land_use_and_cover": "Change in land use and cover"
+  },
+  "groups": [
+    {
+      "id": "climate_environmental_stress",
+      "label": "Climate and environmental stress",
+      "group_type": "primary",
+      "aliases": [
+        "climatic stress",
+        "environmental stress",
+        "climate-related stress",
+        "hydroclimatic stress",
+        "climate pressures",
+        "drought-related conditions",
+        "aridity"
+      ],
+      "features": [
+        "change_in_average_temperature",
+        "relative_change_in_potential_evapotranspiration",
+        "cumulative_change_in_precipitation"
+      ],
+      "description": "Climate-related indicators represented in the dataset.",
+      "limitations": "These proxies do not directly measure water availability, drought severity, lake water level, or the full hydrological regime."
+    },
+    {
+      "id": "ecological_fragility",
+      "label": "Ecological fragility",
+      "group_type": "benchmark_resolution",
+      "aliases": [
+        "ecological fragility",
+        "ecosystem fragility",
+        "ecological vulnerability",
+        "ecosystem vulnerability",
+        "fragile ecological conditions",
+        "ecological sensitivity"
+      ],
+      "features": [
+        "density_change_in_land_imperviousness",
+        "density_of_tree_cover",
+        "change_in_tree_cover_density_past_decade",
+        "presence_of_grassland",
+        "change_in_grassland_presence",
+        "land_use_and_cover",
+        "index_of_total_productivity_by_plant_phenology",
+        "number_of_species_potentially_living_in_the_cell"
+      ],
+      "description": "Cross-cutting proxies for aspects of ecological fragility or vulnerability.",
+      "limitations": "Fragility is not directly measured; these are contextual proxies and do not establish a universal direction or fragility score."
+    },
+    {
+      "id": "biodiversity_species_richness",
+      "label": "Biodiversity and species richness",
+      "group_type": "primary",
+      "aliases": [
+        "biodiversity",
+        "biodiversity conditions",
+        "biodiversity indicators",
+        "biodiversity loss",
+        "species richness",
+        "biological richness",
+        "species diversity",
+        "ecological diversity"
+      ],
+      "features": [
+        "number_of_species_potentially_living_in_the_cell"
+      ],
+      "description": "Potential number of species living in a grid cell.",
+      "limitations": "Represents potential species richness, not abundance, composition, genetic diversity, or complete biodiversity."
+    },
+    {
+      "id": "forest_tree_cover",
+      "label": "Forest and tree cover",
+      "group_type": "primary",
+      "aliases": [
+        "forest conditions",
+        "forest cover",
+        "woodland",
+        "tree cover",
+        "forest habitat",
+        "forest degradation",
+        "forest decline",
+        "tree cover change",
+        "forest dynamics"
+      ],
+      "features": [
+        "density_of_tree_cover",
+        "change_in_tree_cover_density_past_decade"
+      ],
+      "description": "Tree-cover structure and its change over the past decade."
+    },
+    {
+      "id": "grassland_meadow",
+      "label": "Grassland and meadow habitat",
+      "group_type": "primary",
+      "aliases": [
+        "grassland conditions",
+        "grassland habitat",
+        "meadow",
+        "grass cover",
+        "grassland degradation",
+        "grassland loss",
+        "grassland decline",
+        "herbaceous habitat"
+      ],
+      "features": [
+        "presence_of_grassland",
+        "change_in_grassland_presence"
+      ],
+      "description": "Grassland presence and changes in grassland presence."
+    },
+    {
+      "id": "vegetation_dynamics",
+      "label": "Vegetation and vegetation dynamics",
+      "group_type": "cross_cutting",
+      "aliases": [
+        "vegetation",
+        "vegetation conditions",
+        "vegetation dynamics",
+        "plant cover",
+        "vegetation degradation",
+        "vegetation structure",
+        "vegetation change"
+      ],
+      "features": [
+        "density_of_tree_cover",
+        "change_in_tree_cover_density_past_decade",
+        "presence_of_grassland",
+        "change_in_grassland_presence",
+        "index_of_total_productivity_by_plant_phenology"
+      ],
+      "description": "Structural and functional vegetation indicators represented by the simulator."
+    },
+    {
+      "id": "ecosystem_functioning",
+      "label": "Ecosystem functioning",
+      "group_type": "benchmark_resolution",
+      "aliases": [
+        "ecosystem functioning",
+        "ecological functioning",
+        "ecosystem functions",
+        "ecosystem function",
+        "ecosystem productivity"
+      ],
+      "features": [
+        "density_of_tree_cover",
+        "change_in_tree_cover_density_past_decade",
+        "presence_of_grassland",
+        "change_in_grassland_presence",
+        "land_use_and_cover",
+        "index_of_total_productivity_by_plant_phenology",
+        "number_of_species_potentially_living_in_the_cell"
+      ],
+      "description": "Vegetation, habitat structure, productivity, and potential species-richness proxies relevant to ecosystem functioning.",
+      "limitations": "The dataset represents selected components and proxies; it does not measure ecosystem functioning comprehensively."
+    },
+    {
+      "id": "anthropogenic_pressures",
+      "label": "Anthropogenic and human pressures",
+      "group_type": "primary",
+      "aliases": [
+        "anthropogenic pressures",
+        "human pressures",
+        "human impacts",
+        "anthropisation",
+        "human activities",
+        "human-driven pressures",
+        "urbanisation",
+        "urbanization",
+        "land conversion"
+      ],
+      "features": [
+        "density_change_in_land_imperviousness",
+        "land_use_and_cover",
+        "change_in_land_use_and_cover"
+      ],
+      "description": "Land-use-related indicators and imperviousness change as proxies for human pressure.",
+      "limitations": "Does not directly represent pollution, pesticides, fertilizers, traffic, connectivity, or pressure types absent from the dataset."
+    },
+    {
+      "id": "land_use_land_cover_landscape",
+      "label": "Land use, land cover and landscape composition",
+      "group_type": "primary",
+      "aliases": [
+        "land use",
+        "land cover",
+        "LULC",
+        "landscape composition",
+        "landscape patterns",
+        "land-use changes",
+        "land conversion",
+        "landscape transformation"
+      ],
+      "features": [
+        "land_use_and_cover",
+        "change_in_land_use_and_cover",
+        "density_change_in_land_imperviousness"
+      ],
+      "description": "Land-use/cover indicators and imperviousness change as a complementary landscape indicator."
+    },
+    {
+      "id": "habitat_degradation_alteration",
+      "label": "Habitat degradation and alteration",
+      "group_type": "cross_cutting",
+      "aliases": [
+        "habitat degradation",
+        "habitat alteration",
+        "habitat loss",
+        "habitat deterioration",
+        "habitat change",
+        "habitat conditions",
+        "habitat quality",
+        "ecosystem degradation",
+        "ecological degradation"
+      ],
+      "features": [
+        "density_of_tree_cover",
+        "change_in_tree_cover_density_past_decade",
+        "presence_of_grassland",
+        "change_in_grassland_presence",
+        "land_use_and_cover",
+        "change_in_land_use_and_cover",
+        "index_of_total_productivity_by_plant_phenology"
+      ],
+      "description": "Structural, land-use and functional proxies relevant to habitat condition and alteration.",
+      "limitations": "Habitat quality/degradation is not directly measured as a single feature; this combines related indicators."
+    },
+    {
+      "id": "ecosystem_ecological_risk",
+      "label": "All ecological and environmental assessment variables",
+      "group_type": "cross_cutting",
+      "aliases": [
+        "ecosystem risk",
+        "ecological risk",
+        "environmental risk",
+        "risk assessment variables",
+        "variables used in risk assessment",
+        "risk assessment indicators",
+        "ecological variables",
+        "ecological variable",
+        "ecosystem assessment",
+        "variables for ecosystem assessment",
+        "environmental and ecological variables",
+        "all ecological variables",
+        "all environmental variables"
+      ],
+      "features": [
+        "density_change_in_land_imperviousness",
+        "density_of_tree_cover",
+        "change_in_tree_cover_density_past_decade",
+        "presence_of_grassland",
+        "change_in_grassland_presence",
+        "land_use_and_cover",
+        "index_of_total_productivity_by_plant_phenology",
+        "change_in_average_temperature",
+        "relative_change_in_potential_evapotranspiration",
+        "cumulative_change_in_precipitation",
+        "number_of_species_potentially_living_in_the_cell",
+        "change_in_land_use_and_cover"
+      ],
+      "description": "Canonical full-dataset feature mapping, also used for broad ecological-variable and ecosystem-assessment requests.",
+      "limitations": "This mapping returns all 12 simulator features; it is not a claim that every feature directly measures ecological risk or ecosystem condition."
+    },
+    {
+      "id": "environmental_stressors",
+      "label": "Environmental stressors",
+      "group_type": "benchmark_resolution",
+      "aliases": [
+        "environmental stressors",
+        "environmental pressures",
+        "environmental stress",
+        "environmental stressor",
+        "environmental pressures on the ecosystem"
+      ],
+      "features": [
+        "density_change_in_land_imperviousness",
+        "change_in_land_use_and_cover",
+        "change_in_average_temperature",
+        "relative_change_in_potential_evapotranspiration",
+        "cumulative_change_in_precipitation"
+      ],
+      "description": "Environmental and anthropogenic pressure indicators selected as environmental stressors.",
+      "limitations": "Operational semantic grouping; does not directly measure all stressors such as pollution, nutrient loading, water levels, or hydrological stress."
+    },
+    {
+      "id": "stressful_conditions",
+      "label": "Stressful environmental conditions",
+      "group_type": "benchmark_resolution",
+      "aliases": [
+        "stressful conditions",
+        "environmental stressful conditions",
+        "unfavourable environmental conditions",
+        "unfavorable environmental conditions",
+        "conditions potentially stressing the ecosystem"
+      ],
+      "features": [
+        "density_change_in_land_imperviousness",
+        "change_in_land_use_and_cover",
+        "change_in_average_temperature",
+        "relative_change_in_potential_evapotranspiration",
+        "cumulative_change_in_precipitation",
+        "change_in_tree_cover_density_past_decade",
+        "change_in_grassland_presence",
+        "density_of_tree_cover",
+        "presence_of_grassland",
+        "land_use_and_cover"
+      ],
+      "description": "Environmental pressures and environmental/ecological state indicators that can help characterize potentially stressful conditions.",
+      "limitations": "Variables are relevant to potentially stressful conditions; the group itself does not assert that any feature value is intrinsically harmful."
+    },
+    {
+      "id": "ecological_dynamics",
+      "label": "Ecological dynamics",
+      "group_type": "benchmark_resolution",
+      "aliases": [
+        "ecological dynamics",
+        "ecosystem dynamics",
+        "environmental dynamics",
+        "ecological changes",
+        "environmental changes"
+      ],
+      "features": [
+        "density_change_in_land_imperviousness",
+        "change_in_tree_cover_density_past_decade",
+        "change_in_grassland_presence",
+        "index_of_total_productivity_by_plant_phenology",
+        "change_in_average_temperature",
+        "relative_change_in_potential_evapotranspiration",
+        "cumulative_change_in_precipitation",
+        "change_in_land_use_and_cover"
+      ],
+      "description": "Indicators representing changes, evolution, or dynamic processes across ecological and environmental components.",
+      "limitations": "The grouping includes change indicators and the plant productivity/phenology index as a dynamic-process proxy; it is not a uniform time-series dataset."
+    }
+  ],
+  "resolution_notes": {
+    "suggested_precedence": [
+      "individual_feature",
+      "semantic_group",
+      "explicit_all_dataset_request"
+    ],
+    "multiple_groups": "Union matched feature IDs and deduplicate.",
+    "aliases": "Resolve semantic aliases to their canonical group ID; do not maintain duplicate feature lists for identical mappings.",
+    "unknown_concept": "Do not silently return all features; fallback behavior remains to be defined.",
+    "explicit_all_dataset_request": "Return the canonical full-feature group (ecosystem_ecological_risk).",
+    "percent_change_interpretation": "For biodiversity/species-richness percentage changes in scenario questions, interpret them as relative changes to the baseline proxy, not absolute values."
+  },
+  "semantic_aliases": {
+    "ecological_variables": {
+      "canonical_group_id": "ecosystem_ecological_risk",
+      "description": "Alias to the canonical full 12-feature mapping."
+    },
+    "ecosystem_assessment": {
+      "canonical_group_id": "ecosystem_ecological_risk",
+      "description": "Alias to the canonical full 12-feature mapping."
+    }
+  }
+}

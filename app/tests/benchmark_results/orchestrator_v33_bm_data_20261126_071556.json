@@ -1,0 +1,572 @@
+{
+  "benchmark": "Massaciuccoli benchmark 2 - v33 orchestrator",
+  "created_at": "2026-11-26T07:15:56",
+  "task_filter": "data",
+  "questions_selected": 7,
+  "routing_correct": 7,
+  "routing_accuracy_percent": 100.0,
+  "execution_errors": 0,
+  "elapsed_seconds": 0.702,
+  "results": [
+    {
+      "benchmark_index": 1,
+      "question": "Which environmental variables are available in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6314718127250671,
+          "importance": 0.7703709602355957,
+          "delta": 0.6430376172065735,
+          "dependency": 0.6495354771614075,
+          "comparison": 0.6395274996757507,
+          "data": 1.0,
+          "drivers": 0.8322749733924866,
+          "enm": 0.7696467041969299,
+          "importance_compare": 0.7188495993614197,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Dataset environmental variables snapshot",
+        "data": {
+          "Land imperviousness change": {
+            "value": 179.7
+          },
+          "Tree cover density": {
+            "value": 20.91
+          },
+          "Ecosystem productivity index": {
+            "value": 101.77
+          },
+          "Average temperature change": {
+            "value": 1.5
+          },
+          "Evapotranspiration change": {
+            "value": -0.94
+          },
+          "Precipitation change": {
+            "value": 12.52
+          },
+          "Biodiversity (species richness)": {
+            "value": 141.03
+          },
+          "Tree cover change (decade)": {
+            "value": "0.0",
+            "interpretation": "Unchanged condition, according to code 0."
+          },
+          "Grassland presence": {
+            "value": "0",
+            "interpretation": "Grassland is absent (code 0)."
+          },
+          "Grassland change (decade)": {
+            "value": "0",
+            "interpretation": "Grassland cover is unchanged (code 0)."
+          },
+          "Land use and cover": {
+            "value": "2110.0",
+            "interpretation": "Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas."
+          },
+          "Land use change (decade)": {
+            "value": "1.0",
+            "interpretation": "Territory modelled as artificial (code 1)."
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Numeric variables are reported as dataset snapshot values; no synthetic latest values or trends are calculated.\n- Average temperature change: dataset snapshot value = 1.5.\n- Precipitation change: dataset snapshot value = 12.52.\n- Evapotranspiration change: dataset snapshot value = -0.94.\n- Biodiversity (species richness): dataset snapshot value = 141.03.\n- Tree cover density: dataset snapshot value = 20.91.\n- Ecosystem productivity index: dataset snapshot value = 101.77.\n- Land imperviousness change: dataset snapshot value = 179.7.\n- Categorical variables are reported using their dataset codes and documented interpretations.\n- Tree cover change (decade): code/value = 0.0; Unchanged condition, according to code 0.\n- Grassland presence: code/value = 0; Grassland is absent (code 0).\n- Grassland change (decade): code/value = 0; Grassland cover is unchanged (code 0).\n- Land use and cover: code/value = 2110.0; Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas.\n- Land use change (decade): code/value = 1.0; Territory modelled as artificial (code 1)."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.3371,
+        "task_execution": 0.0079
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 2,
+      "question": "Which environmental variables are explicitly included in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6043042540550232,
+          "importance": 0.7517470121383667,
+          "delta": 0.6041861772537231,
+          "dependency": 0.6252337098121643,
+          "comparison": 0.6146242618560791,
+          "data": 1.0,
+          "drivers": 0.8085246086120605,
+          "enm": 0.7308142781257629,
+          "importance_compare": 0.707159161567688,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Dataset environmental variables snapshot",
+        "data": {
+          "Land imperviousness change": {
+            "value": 179.7
+          },
+          "Tree cover density": {
+            "value": 20.91
+          },
+          "Ecosystem productivity index": {
+            "value": 101.77
+          },
+          "Average temperature change": {
+            "value": 1.5
+          },
+          "Evapotranspiration change": {
+            "value": -0.94
+          },
+          "Precipitation change": {
+            "value": 12.52
+          },
+          "Biodiversity (species richness)": {
+            "value": 141.03
+          },
+          "Tree cover change (decade)": {
+            "value": "0.0",
+            "interpretation": "Unchanged condition, according to code 0."
+          },
+          "Grassland presence": {
+            "value": "0",
+            "interpretation": "Grassland is absent (code 0)."
+          },
+          "Grassland change (decade)": {
+            "value": "0",
+            "interpretation": "Grassland cover is unchanged (code 0)."
+          },
+          "Land use and cover": {
+            "value": "2110.0",
+            "interpretation": "Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas."
+          },
+          "Land use change (decade)": {
+            "value": "1.0",
+            "interpretation": "Territory modelled as artificial (code 1)."
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Numeric variables are reported as dataset snapshot values; no synthetic latest values or trends are calculated.\n- Average temperature change: dataset snapshot value = 1.5.\n- Precipitation change: dataset snapshot value = 12.52.\n- Evapotranspiration change: dataset snapshot value = -0.94.\n- Biodiversity (species richness): dataset snapshot value = 141.03.\n- Tree cover density: dataset snapshot value = 20.91.\n- Ecosystem productivity index: dataset snapshot value = 101.77.\n- Land imperviousness change: dataset snapshot value = 179.7.\n- Categorical variables are reported using their dataset codes and documented interpretations.\n- Tree cover change (decade): code/value = 0.0; Unchanged condition, according to code 0.\n- Grassland presence: code/value = 0; Grassland is absent (code 0).\n- Grassland change (decade): code/value = 0; Grassland cover is unchanged (code 0).\n- Land use and cover: code/value = 2110.0; Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas.\n- Land use change (decade): code/value = 1.0; Territory modelled as artificial (code 1)."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.1293,
+        "task_execution": 0.0037
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 3,
+      "question": "Which environmental stressors are explicitly measured in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6866868734359741,
+          "importance": 0.864995539188385,
+          "delta": 0.6137372851371765,
+          "dependency": 0.6077302098274231,
+          "comparison": 0.5935836434364319,
+          "data": 1.0,
+          "drivers": 0.744314432144165,
+          "enm": 0.6525795459747314,
+          "importance_compare": 0.6727088689804077,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Dataset environmental variables snapshot",
+        "data": {
+          "Land imperviousness change": {
+            "value": 179.7
+          },
+          "Tree cover density": {
+            "value": 20.91
+          },
+          "Ecosystem productivity index": {
+            "value": 101.77
+          },
+          "Average temperature change": {
+            "value": 1.5
+          },
+          "Evapotranspiration change": {
+            "value": -0.94
+          },
+          "Precipitation change": {
+            "value": 12.52
+          },
+          "Biodiversity (species richness)": {
+            "value": 141.03
+          },
+          "Tree cover change (decade)": {
+            "value": "0.0",
+            "interpretation": "Unchanged condition, according to code 0."
+          },
+          "Grassland presence": {
+            "value": "0",
+            "interpretation": "Grassland is absent (code 0)."
+          },
+          "Grassland change (decade)": {
+            "value": "0",
+            "interpretation": "Grassland cover is unchanged (code 0)."
+          },
+          "Land use and cover": {
+            "value": "2110.0",
+            "interpretation": "Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas."
+          },
+          "Land use change (decade)": {
+            "value": "1.0",
+            "interpretation": "Territory modelled as artificial (code 1)."
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Numeric variables are reported as dataset snapshot values; no synthetic latest values or trends are calculated.\n- Average temperature change: dataset snapshot value = 1.5.\n- Precipitation change: dataset snapshot value = 12.52.\n- Evapotranspiration change: dataset snapshot value = -0.94.\n- Biodiversity (species richness): dataset snapshot value = 141.03.\n- Tree cover density: dataset snapshot value = 20.91.\n- Ecosystem productivity index: dataset snapshot value = 101.77.\n- Land imperviousness change: dataset snapshot value = 179.7.\n- Categorical variables are reported using their dataset codes and documented interpretations.\n- Tree cover change (decade): code/value = 0.0; Unchanged condition, according to code 0.\n- Grassland presence: code/value = 0; Grassland is absent (code 0).\n- Grassland change (decade): code/value = 0; Grassland cover is unchanged (code 0).\n- Land use and cover: code/value = 2110.0; Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas.\n- Land use change (decade): code/value = 1.0; Territory modelled as artificial (code 1)."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0403,
+        "task_execution": 0.0037
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 4,
+      "question": "Which variables in the dataset capture the main ecological dynamics of the basin?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6177110075950623,
+          "importance": 0.8071818947792053,
+          "delta": 0.6346419453620911,
+          "dependency": 0.7303255200386047,
+          "comparison": 0.6672647595405579,
+          "data": 1.0,
+          "drivers": 0.8136069774627686,
+          "enm": 0.7069941163063049,
+          "importance_compare": 0.6515371203422546,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Dataset environmental variables snapshot",
+        "data": {
+          "Land imperviousness change": {
+            "value": 179.7
+          },
+          "Tree cover density": {
+            "value": 20.91
+          },
+          "Ecosystem productivity index": {
+            "value": 101.77
+          },
+          "Average temperature change": {
+            "value": 1.5
+          },
+          "Evapotranspiration change": {
+            "value": -0.94
+          },
+          "Precipitation change": {
+            "value": 12.52
+          },
+          "Biodiversity (species richness)": {
+            "value": 141.03
+          },
+          "Tree cover change (decade)": {
+            "value": "0.0",
+            "interpretation": "Unchanged condition, according to code 0."
+          },
+          "Grassland presence": {
+            "value": "0",
+            "interpretation": "Grassland is absent (code 0)."
+          },
+          "Grassland change (decade)": {
+            "value": "0",
+            "interpretation": "Grassland cover is unchanged (code 0)."
+          },
+          "Land use and cover": {
+            "value": "2110.0",
+            "interpretation": "Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas."
+          },
+          "Land use change (decade)": {
+            "value": "1.0",
+            "interpretation": "Territory modelled as artificial (code 1)."
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Numeric variables are reported as dataset snapshot values; no synthetic latest values or trends are calculated.\n- Average temperature change: dataset snapshot value = 1.5.\n- Precipitation change: dataset snapshot value = 12.52.\n- Evapotranspiration change: dataset snapshot value = -0.94.\n- Biodiversity (species richness): dataset snapshot value = 141.03.\n- Tree cover density: dataset snapshot value = 20.91.\n- Ecosystem productivity index: dataset snapshot value = 101.77.\n- Land imperviousness change: dataset snapshot value = 179.7.\n- Categorical variables are reported using their dataset codes and documented interpretations.\n- Tree cover change (decade): code/value = 0.0; Unchanged condition, according to code 0.\n- Grassland presence: code/value = 0; Grassland is absent (code 0).\n- Grassland change (decade): code/value = 0; Grassland cover is unchanged (code 0).\n- Land use and cover: code/value = 2110.0; Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas.\n- Land use change (decade): code/value = 1.0; Territory modelled as artificial (code 1)."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0412,
+        "task_execution": 0.0032
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 5,
+      "question": "Which aspects of ecosystem functioning are represented in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6712338328361511,
+          "importance": 0.8069939613342285,
+          "delta": 0.6474480628967285,
+          "dependency": 0.719974160194397,
+          "comparison": 0.6616267561912537,
+          "data": 1.0,
+          "drivers": 0.7311338186264038,
+          "enm": 0.729180097579956,
+          "importance_compare": 0.6610517501831055,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Dataset environmental variables snapshot",
+        "data": {
+          "Land imperviousness change": {
+            "value": 179.7
+          },
+          "Tree cover density": {
+            "value": 20.91
+          },
+          "Ecosystem productivity index": {
+            "value": 101.77
+          },
+          "Average temperature change": {
+            "value": 1.5
+          },
+          "Evapotranspiration change": {
+            "value": -0.94
+          },
+          "Precipitation change": {
+            "value": 12.52
+          },
+          "Biodiversity (species richness)": {
+            "value": 141.03
+          },
+          "Tree cover change (decade)": {
+            "value": "0.0",
+            "interpretation": "Unchanged condition, according to code 0."
+          },
+          "Grassland presence": {
+            "value": "0",
+            "interpretation": "Grassland is absent (code 0)."
+          },
+          "Grassland change (decade)": {
+            "value": "0",
+            "interpretation": "Grassland cover is unchanged (code 0)."
+          },
+          "Land use and cover": {
+            "value": "2110.0",
+            "interpretation": "Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas."
+          },
+          "Land use change (decade)": {
+            "value": "1.0",
+            "interpretation": "Territory modelled as artificial (code 1)."
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Numeric variables are reported as dataset snapshot values; no synthetic latest values or trends are calculated.\n- Average temperature change: dataset snapshot value = 1.5.\n- Precipitation change: dataset snapshot value = 12.52.\n- Evapotranspiration change: dataset snapshot value = -0.94.\n- Biodiversity (species richness): dataset snapshot value = 141.03.\n- Tree cover density: dataset snapshot value = 20.91.\n- Ecosystem productivity index: dataset snapshot value = 101.77.\n- Land imperviousness change: dataset snapshot value = 179.7.\n- Categorical variables are reported using their dataset codes and documented interpretations.\n- Tree cover change (decade): code/value = 0.0; Unchanged condition, according to code 0.\n- Grassland presence: code/value = 0; Grassland is absent (code 0).\n- Grassland change (decade): code/value = 0; Grassland cover is unchanged (code 0).\n- Land use and cover: code/value = 2110.0; Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas.\n- Land use change (decade): code/value = 1.0; Territory modelled as artificial (code 1)."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0397,
+        "task_execution": 0.0034
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 6,
+      "question": "Which ecological variables are represented in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6280653476715088,
+          "importance": 0.7867845892906189,
+          "delta": 0.6056575179100037,
+          "dependency": 0.6560986042022705,
+          "comparison": 0.6315566301345825,
+          "data": 0.9999999403953552,
+          "drivers": 0.8048256039619446,
+          "enm": 0.749129056930542,
+          "importance_compare": 0.6886606216430664,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Dataset environmental variables snapshot",
+        "data": {
+          "Land imperviousness change": {
+            "value": 179.7
+          },
+          "Tree cover density": {
+            "value": 20.91
+          },
+          "Ecosystem productivity index": {
+            "value": 101.77
+          },
+          "Average temperature change": {
+            "value": 1.5
+          },
+          "Evapotranspiration change": {
+            "value": -0.94
+          },
+          "Precipitation change": {
+            "value": 12.52
+          },
+          "Biodiversity (species richness)": {
+            "value": 141.03
+          },
+          "Tree cover change (decade)": {
+            "value": "0.0",
+            "interpretation": "Unchanged condition, according to code 0."
+          },
+          "Grassland presence": {
+            "value": "0",
+            "interpretation": "Grassland is absent (code 0)."
+          },
+          "Grassland change (decade)": {
+            "value": "0",
+            "interpretation": "Grassland cover is unchanged (code 0)."
+          },
+          "Land use and cover": {
+            "value": "2110.0",
+            "interpretation": "Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas."
+          },
+          "Land use change (decade)": {
+            "value": "1.0",
+            "interpretation": "Territory modelled as artificial (code 1)."
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Numeric variables are reported as dataset snapshot values; no synthetic latest values or trends are calculated.\n- Average temperature change: dataset snapshot value = 1.5.\n- Precipitation change: dataset snapshot value = 12.52.\n- Evapotranspiration change: dataset snapshot value = -0.94.\n- Biodiversity (species richness): dataset snapshot value = 141.03.\n- Tree cover density: dataset snapshot value = 20.91.\n- Ecosystem productivity index: dataset snapshot value = 101.77.\n- Land imperviousness change: dataset snapshot value = 179.7.\n- Categorical variables are reported using their dataset codes and documented interpretations.\n- Tree cover change (decade): code/value = 0.0; Unchanged condition, according to code 0.\n- Grassland presence: code/value = 0; Grassland is absent (code 0).\n- Grassland change (decade): code/value = 0; Grassland cover is unchanged (code 0).\n- Land use and cover: code/value = 2110.0; Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas.\n- Land use change (decade): code/value = 1.0; Territory modelled as artificial (code 1)."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0419,
+        "task_execution": 0.0038
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 7,
+      "question": "Which ecological variables are available in the dataset for ecosystem assessment?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6926118731498718,
+          "importance": 0.8467726111412048,
+          "delta": 0.6611987352371216,
+          "dependency": 0.7120097279548645,
+          "comparison": 0.6899054050445557,
+          "data": 1.0,
+          "drivers": 0.7839862108230591,
+          "enm": 0.7441120147705078,
+          "importance_compare": 0.7192579507827759,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Dataset environmental variables snapshot",
+        "data": {
+          "Land imperviousness change": {
+            "value": 179.7
+          },
+          "Tree cover density": {
+            "value": 20.91
+          },
+          "Ecosystem productivity index": {
+            "value": 101.77
+          },
+          "Average temperature change": {
+            "value": 1.5
+          },
+          "Evapotranspiration change": {
+            "value": -0.94
+          },
+          "Precipitation change": {
+            "value": 12.52
+          },
+          "Biodiversity (species richness)": {
+            "value": 141.03
+          },
+          "Tree cover change (decade)": {
+            "value": "0.0",
+            "interpretation": "Unchanged condition, according to code 0."
+          },
+          "Grassland presence": {
+            "value": "0",
+            "interpretation": "Grassland is absent (code 0)."
+          },
+          "Grassland change (decade)": {
+            "value": "0",
+            "interpretation": "Grassland cover is unchanged (code 0)."
+          },
+          "Land use and cover": {
+            "value": "2110.0",
+            "interpretation": "Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas."
+          },
+          "Land use change (decade)": {
+            "value": "1.0",
+            "interpretation": "Territory modelled as artificial (code 1)."
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Numeric variables are reported as dataset snapshot values; no synthetic latest values or trends are calculated.\n- Average temperature change: dataset snapshot value = 1.5.\n- Precipitation change: dataset snapshot value = 12.52.\n- Evapotranspiration change: dataset snapshot value = -0.94.\n- Biodiversity (species richness): dataset snapshot value = 141.03.\n- Tree cover density: dataset snapshot value = 20.91.\n- Ecosystem productivity index: dataset snapshot value = 101.77.\n- Land imperviousness change: dataset snapshot value = 179.7.\n- Categorical variables are reported using their dataset codes and documented interpretations.\n- Tree cover change (decade): code/value = 0.0; Unchanged condition, according to code 0.\n- Grassland presence: code/value = 0; Grassland is absent (code 0).\n- Grassland change (decade): code/value = 0; Grassland cover is unchanged (code 0).\n- Land use and cover: code/value = 2110.0; Land-use/cover code 2110. The dataset description classifies other codes as rural or naturalistic areas.\n- Land use change (decade): code/value = 1.0; Territory modelled as artificial (code 1)."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0417,
+        "task_execution": 0.0038
+      },
+      "routing_correct": true
+    }
+  ]
+}

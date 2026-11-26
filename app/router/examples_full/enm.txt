@@ -1,0 +1,124 @@
+Is suitable habitat for kingfisher fragmented or well connected?
+Is habitat suitability for common carp controlled by one dominant environmental driver or multiple drivers?
+Are the suitable habitat patches for great reed warbler isolated from each other?
+Does the model predict widespread suitability for purple heron?
+Can the model identify core habitat patches for European otter?
+Are the predicted habitats for marsh harrier large enough to suggest stable core areas?
+Would a decline in biodiversity affect habitat suitability for Species X?
+How would a change in biodiversity affect habitat suitability for Species X?
+Would reduced biodiversity alter the predicted suitability for Species X?
+How would biodiversity change affect the suitability of habitat for Species X?
+Is habitat suitability for water vole mostly climate-driven?
+Are climate and land-cover variables both important for pond turtle?
+How would an increase in temperature affect habitat suitability for Species X?
+How would a decrease in precipitation affect habitat suitability for Species X?
+How would increased evapotranspiration affect habitat suitability for Species X?
+How would increased tree cover affect habitat suitability for Species X?
+How would reduced precipitation affect the predicted habitat suitability for Species X?
+Would warmer conditions change habitat suitability for Species X?
+Would increased tree cover change habitat suitability for Species X?
+Would reduced precipitation alter habitat suitability for Species X?
+Which environmental factor most strongly influences habitat suitability for Species X?
+Which environmental factor is most limiting for the habitat suitability of Species X?
+Which environmental factor most favors suitable habitat for Species X?
+Which environmental variable has the strongest influence on habitat suitability for Species X?
+Which climate-related variable has the strongest effect on habitat suitability for Species X?
+Which environmental factor contributes most to the suitability of Species X?
+What environmental factor is most associated with habitat suitability for Species X?
+Does the model for northern pike separate suitable and unsuitable conditions well?
+Is suitable habitat for Alcedo atthis fragmented or well connected?
+What environmental conditions are associated with suitable habitat for Species X?
+Which environmental conditions favor suitable habitat for Species X?
+Under what environmental conditions is Species X most likely to have suitable habitat?
+What environmental conditions characterize suitable habitat for Species X?
+Which environmental conditions are most suitable for Species X?
+How is habitat connectivity structured for Alcedo atthis?
+Is suitable habitat for Cyprinus carpio fragmented or well connected?
+How is habitat connectivity structured for Cyprinus carpio?
+How reliable is the habitat suitability model for Alcedo atthis?
+What does the AUC value indicate about model performance for Alcedo atthis?
+Can the habitat suitability predictions for Alcedo atthis be considered reliable?
+How reliable is the habitat suitability model for Cyprinus carpio?
+What does the AUC value indicate about model performance for Cyprinus carpio?
+Can the habitat suitability predictions for Cyprinus carpio be considered reliable?
+How widespread is suitable habitat for Alcedo atthis across the basin?
+Does Alcedo atthis occupy a few core habitat areas or many distributed habitats?
+How widespread is suitable habitat for Cyprinus carpio across the basin?
+Does Cyprinus carpio occupy a few core habitat areas or many distributed habitats?
+Is habitat suitability for Alcedo atthis controlled by one dominant environmental driver or multiple drivers?
+Does a single environmental factor dominate habitat suitability for Alcedo atthis?
+Are multiple environmental drivers equally important for Alcedo atthis?
+Is habitat suitability for Cyprinus carpio controlled by one dominant environmental driver or multiple drivers?
+Does a single environmental factor dominate habitat suitability for Cyprinus carpio?
+Are multiple environmental drivers equally important for Cyprinus carpio?
+What does the MaxEnt model predict for suitable habitat for Alcedo atthis?
+What does the MaxEnt model predict for suitable habitat for Cyprinus carpio?
+Where are the areas of highest habitat suitability for Alcedo atthis?
+Where are the areas of highest habitat suitability for Cyprinus carpio?
+Where are the areas of lowest habitat suitability for Alcedo atthis?
+Where are the areas of lowest habitat suitability for Cyprinus carpio?
+How is habitat suitability distributed for Alcedo atthis across the basin?
+How is habitat suitability distributed for Cyprinus carpio across the basin?
+Which areas of the basin are predicted to be most suitable for Alcedo atthis?
+Which areas of the basin are predicted to be most suitable for Cyprinus carpio?
+Which environmental variables contribute most to the MaxEnt prediction for Alcedo atthis?
+Which environmental variables contribute most to the MaxEnt prediction for Cyprinus carpio?
+Which environmental variable is the strongest predictor of habitat suitability for Alcedo atthis?
+Which environmental variable is the strongest predictor of habitat suitability for Cyprinus carpio?
+How important are the different environmental predictors in the MaxEnt model for Alcedo atthis?
+How important are the different environmental predictors in the MaxEnt model for Cyprinus carpio?
+How does the MaxEnt model describe the relationship between environmental variables and habitat suitability for Alcedo atthis?
+How does the MaxEnt model describe the relationship between environmental variables and habitat suitability for Cyprinus carpio?
+What does the response curve show for Alcedo atthis in the MaxEnt model?
+What does the response curve show for Cyprinus carpio in the MaxEnt model?
+How well does the MaxEnt model distinguish suitable from unsuitable habitat for Alcedo atthis?
+How well does the MaxEnt model distinguish suitable from unsuitable habitat for Cyprinus carpio?
+What does the MaxEnt model indicate about the potential distribution of Alcedo atthis?
+What does the MaxEnt model indicate about the potential distribution of Cyprinus carpio?
+How extensive is the predicted suitable habitat for Alcedo atthis?
+How extensive is the predicted suitable habitat for Cyprinus carpio?
+Are there clear hotspots of habitat suitability for Alcedo atthis?
+Are there clear hotspots of habitat suitability for Cyprinus carpio?
+Does the MaxEnt model identify concentrated or widespread suitable habitat for Alcedo atthis?
+Does the MaxEnt model identify concentrated or widespread suitable habitat for Cyprinus carpio?
+What does the AUC value indicate about model performance for common frog?
+Where are the main suitable habitat areas for great crested newt located?
+Is the largest suitable habitat patch for reed bunting dominant compared with the others?
+Does the binary habitat map for bittern indicate strong fragmentation?
+Are predicted suitable areas for moorhen arranged in corridors or isolated patches?
+Does the predicted habitat network for grey heron appear robust?
+Does precipitation dominate habitat suitability for dragonfly?
+Should the habitat suitability model for water rail be interpreted cautiously?
+What are the main limitations of the habitat suitability model for beaver?
+Does freshwater mussel occupy a few core habitat areas or many distributed habitats?
+How fragmented are the predicted suitable areas for mallard?
+Is suitable habitat for loggerhead turtle rare or broadly distributed?
+What does the habitat suitability model suggest for bottlenose dolphin?
+How does patch size influence habitat suitability interpretation for seagrass?
+What are the main environmental drivers of habitat suitability for European seabass?
+Do human-pressure variables affect habitat suitability for Atlantic cod?
+Can the training AUC for blue mussel be used as evidence of model reliability?
+How reliable is the habitat suitability model for common octopus?
+Are multiple environmental drivers equally important for harbor seal?
+How many major habitat cores are predicted for green sea turtle?
+Are suitable habitats for humpback whale mainly localised or broadly spread?
+Does the model suggest that clownfish depends on connected habitat corridors?
+Are there enough connected suitable cells to support coral grouper?
+Does temperature dominate habitat suitability for kelp?
+Does the AUC value suggest good discrimination for sea otter?
+How confident can we be in the habitat suitability predictions for Atlantic puffin?
+How widespread is suitable habitat for manta ray across the study area?
+Does anchovy show a clustered or dispersed habitat-suitability pattern?
+How much of the landscape is suitable for sardine?
+How should I interpret the suitability map for oyster?
+Does brown pelican show habitat suitability along waterways or in isolated patches?
+Which environmental variables contribute most to habitat suitability for red fox?
+Does water availability strongly influence habitat suitability for roe deer?
+Does the model for wild boar need independent validation?
+How is habitat connectivity structured for brown bear?
+Does a single environmental factor dominate habitat suitability for grey wolf?
+Does lynx have a continuous band of suitable habitat or separated patches?
+Is habitat suitability for red squirrel restricted to a small part of the area?
+Can the predicted suitable areas for European badger support habitat connectivity?
+Does the suitability model for barn owl indicate many small patches?
+Is habitat suitability for golden eagle mostly land-cover-driven?

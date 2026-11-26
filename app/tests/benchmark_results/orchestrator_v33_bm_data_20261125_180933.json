@@ -1,0 +1,565 @@
+{
+  "benchmark": "Massaciuccoli benchmark 2 - v33 orchestrator",
+  "created_at": "2026-11-25T18:09:33",
+  "task_filter": "data",
+  "questions_selected": 7,
+  "routing_correct": 7,
+  "routing_accuracy_percent": 100.0,
+  "execution_errors": 0,
+  "elapsed_seconds": 0.431,
+  "results": [
+    {
+      "benchmark_index": 1,
+      "question": "Which environmental variables are available in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6314718127250671,
+          "importance": 0.7703709602355957,
+          "delta": 0.6430376172065735,
+          "dependency": 0.6495354771614075,
+          "comparison": 0.6395274996757507,
+          "data": 1.0,
+          "drivers": 0.8322749733924866,
+          "enm": 0.7696467041969299,
+          "importance_compare": 0.7188495993614197,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Latest environmental conditions",
+        "data": {
+          "Land imperviousness": {
+            "baseline": 179.7,
+            "latest": 183.3
+          },
+          "Tree cover density": {
+            "baseline": 20.91,
+            "latest": 21.33
+          },
+          "Ecosystem productivity index": {
+            "baseline": 101.77,
+            "latest": 103.8
+          },
+          "Average temperature change": {
+            "baseline": 1.5,
+            "latest": 1.53
+          },
+          "Evapotranspiration change": {
+            "baseline": -0.94,
+            "latest": -0.96
+          },
+          "Precipitation change": {
+            "baseline": 12.52,
+            "latest": 12.77
+          },
+          "Biodiversity (species richness)": {
+            "baseline": 141.03,
+            "latest": 143.85
+          },
+          "Tree cover change (decade)": {
+            "baseline": 0.0,
+            "latest": 0.0
+          },
+          "Land use and cover": {
+            "baseline": 2110.0,
+            "latest": 2152.2
+          },
+          "Land use change (decade)": {
+            "baseline": 1.0,
+            "latest": 1.02
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Average temperature change: The baseline value is 1.5, while the most recent estimate is 1.53, indicating an increasing trend.\n- Precipitation change: The baseline value is 12.52, while the most recent estimate is 12.77, indicating an increasing trend.\n- Evapotranspiration change: The baseline value is -0.94, while the most recent estimate is -0.96, indicating a decreasing trend.\n- Biodiversity (species richness): The baseline value is 141.03, while the most recent estimate is 143.85, indicating an increasing trend.\n- Tree cover density: The baseline value is 20.91, while the most recent estimate is 21.33, indicating an increasing trend.\n- Tree cover change (decade): The baseline value is 0.0, while the most recent estimate is 0.0, indicating a stable trend.\n- Ecosystem productivity index: The baseline value is 101.77, while the most recent estimate is 103.8, indicating an increasing trend.\n- Land use and cover: The baseline value is 2110.0, while the most recent estimate is 2152.2, indicating an increasing trend.\n- Land use change (decade): The baseline value is 1.0, while the most recent estimate is 1.02, indicating an increasing trend.\n- Land imperviousness: The baseline value is 179.7, while the most recent estimate is 183.3, indicating an increasing trend.\n\nOverall, the system shows an overall increasing trend, with 8 increasing variables, 1 decreasing, and 1 stable."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.049,
+        "task_execution": 0.0061
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 2,
+      "question": "Which environmental variables are explicitly included in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6043042540550232,
+          "importance": 0.7517470121383667,
+          "delta": 0.6041861772537231,
+          "dependency": 0.6252337098121643,
+          "comparison": 0.6146242618560791,
+          "data": 1.0,
+          "drivers": 0.8085246086120605,
+          "enm": 0.7308142781257629,
+          "importance_compare": 0.707159161567688,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Latest environmental conditions",
+        "data": {
+          "Land imperviousness": {
+            "baseline": 179.7,
+            "latest": 183.3
+          },
+          "Tree cover density": {
+            "baseline": 20.91,
+            "latest": 21.33
+          },
+          "Ecosystem productivity index": {
+            "baseline": 101.77,
+            "latest": 103.8
+          },
+          "Average temperature change": {
+            "baseline": 1.5,
+            "latest": 1.53
+          },
+          "Evapotranspiration change": {
+            "baseline": -0.94,
+            "latest": -0.96
+          },
+          "Precipitation change": {
+            "baseline": 12.52,
+            "latest": 12.77
+          },
+          "Biodiversity (species richness)": {
+            "baseline": 141.03,
+            "latest": 143.85
+          },
+          "Tree cover change (decade)": {
+            "baseline": 0.0,
+            "latest": 0.0
+          },
+          "Land use and cover": {
+            "baseline": 2110.0,
+            "latest": 2152.2
+          },
+          "Land use change (decade)": {
+            "baseline": 1.0,
+            "latest": 1.02
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Average temperature change: The baseline value is 1.5, while the most recent estimate is 1.53, indicating an increasing trend.\n- Precipitation change: The baseline value is 12.52, while the most recent estimate is 12.77, indicating an increasing trend.\n- Evapotranspiration change: The baseline value is -0.94, while the most recent estimate is -0.96, indicating a decreasing trend.\n- Biodiversity (species richness): The baseline value is 141.03, while the most recent estimate is 143.85, indicating an increasing trend.\n- Tree cover density: The baseline value is 20.91, while the most recent estimate is 21.33, indicating an increasing trend.\n- Tree cover change (decade): The baseline value is 0.0, while the most recent estimate is 0.0, indicating a stable trend.\n- Ecosystem productivity index: The baseline value is 101.77, while the most recent estimate is 103.8, indicating an increasing trend.\n- Land use and cover: The baseline value is 2110.0, while the most recent estimate is 2152.2, indicating an increasing trend.\n- Land use change (decade): The baseline value is 1.0, while the most recent estimate is 1.02, indicating an increasing trend.\n- Land imperviousness: The baseline value is 179.7, while the most recent estimate is 183.3, indicating an increasing trend.\n\nOverall, the system shows an overall increasing trend, with 8 increasing variables, 1 decreasing, and 1 stable."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0511,
+        "task_execution": 0.0043
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 3,
+      "question": "Which environmental stressors are explicitly measured in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6866868734359741,
+          "importance": 0.864995539188385,
+          "delta": 0.6137372851371765,
+          "dependency": 0.6077302098274231,
+          "comparison": 0.5935836434364319,
+          "data": 1.0,
+          "drivers": 0.744314432144165,
+          "enm": 0.6525795459747314,
+          "importance_compare": 0.6727088689804077,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Latest environmental conditions",
+        "data": {
+          "Land imperviousness": {
+            "baseline": 179.7,
+            "latest": 183.3
+          },
+          "Tree cover density": {
+            "baseline": 20.91,
+            "latest": 21.33
+          },
+          "Ecosystem productivity index": {
+            "baseline": 101.77,
+            "latest": 103.8
+          },
+          "Average temperature change": {
+            "baseline": 1.5,
+            "latest": 1.53
+          },
+          "Evapotranspiration change": {
+            "baseline": -0.94,
+            "latest": -0.96
+          },
+          "Precipitation change": {
+            "baseline": 12.52,
+            "latest": 12.77
+          },
+          "Biodiversity (species richness)": {
+            "baseline": 141.03,
+            "latest": 143.85
+          },
+          "Tree cover change (decade)": {
+            "baseline": 0.0,
+            "latest": 0.0
+          },
+          "Land use and cover": {
+            "baseline": 2110.0,
+            "latest": 2152.2
+          },
+          "Land use change (decade)": {
+            "baseline": 1.0,
+            "latest": 1.02
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Average temperature change: The baseline value is 1.5, while the most recent estimate is 1.53, indicating an increasing trend.\n- Precipitation change: The baseline value is 12.52, while the most recent estimate is 12.77, indicating an increasing trend.\n- Evapotranspiration change: The baseline value is -0.94, while the most recent estimate is -0.96, indicating a decreasing trend.\n- Biodiversity (species richness): The baseline value is 141.03, while the most recent estimate is 143.85, indicating an increasing trend.\n- Tree cover density: The baseline value is 20.91, while the most recent estimate is 21.33, indicating an increasing trend.\n- Tree cover change (decade): The baseline value is 0.0, while the most recent estimate is 0.0, indicating a stable trend.\n- Ecosystem productivity index: The baseline value is 101.77, while the most recent estimate is 103.8, indicating an increasing trend.\n- Land use and cover: The baseline value is 2110.0, while the most recent estimate is 2152.2, indicating an increasing trend.\n- Land use change (decade): The baseline value is 1.0, while the most recent estimate is 1.02, indicating an increasing trend.\n- Land imperviousness: The baseline value is 179.7, while the most recent estimate is 183.3, indicating an increasing trend.\n\nOverall, the system shows an overall increasing trend, with 8 increasing variables, 1 decreasing, and 1 stable."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0406,
+        "task_execution": 0.0043
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 4,
+      "question": "Which variables in the dataset capture the main ecological dynamics of the basin?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6177110075950623,
+          "importance": 0.8071818947792053,
+          "delta": 0.6346419453620911,
+          "dependency": 0.7303255200386047,
+          "comparison": 0.6672647595405579,
+          "data": 1.0,
+          "drivers": 0.8136069774627686,
+          "enm": 0.7069941163063049,
+          "importance_compare": 0.6515371203422546,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Latest environmental conditions",
+        "data": {
+          "Land imperviousness": {
+            "baseline": 179.7,
+            "latest": 183.3
+          },
+          "Tree cover density": {
+            "baseline": 20.91,
+            "latest": 21.33
+          },
+          "Ecosystem productivity index": {
+            "baseline": 101.77,
+            "latest": 103.8
+          },
+          "Average temperature change": {
+            "baseline": 1.5,
+            "latest": 1.53
+          },
+          "Evapotranspiration change": {
+            "baseline": -0.94,
+            "latest": -0.96
+          },
+          "Precipitation change": {
+            "baseline": 12.52,
+            "latest": 12.77
+          },
+          "Biodiversity (species richness)": {
+            "baseline": 141.03,
+            "latest": 143.85
+          },
+          "Tree cover change (decade)": {
+            "baseline": 0.0,
+            "latest": 0.0
+          },
+          "Land use and cover": {
+            "baseline": 2110.0,
+            "latest": 2152.2
+          },
+          "Land use change (decade)": {
+            "baseline": 1.0,
+            "latest": 1.02
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Average temperature change: The baseline value is 1.5, while the most recent estimate is 1.53, indicating an increasing trend.\n- Precipitation change: The baseline value is 12.52, while the most recent estimate is 12.77, indicating an increasing trend.\n- Evapotranspiration change: The baseline value is -0.94, while the most recent estimate is -0.96, indicating a decreasing trend.\n- Biodiversity (species richness): The baseline value is 141.03, while the most recent estimate is 143.85, indicating an increasing trend.\n- Tree cover density: The baseline value is 20.91, while the most recent estimate is 21.33, indicating an increasing trend.\n- Tree cover change (decade): The baseline value is 0.0, while the most recent estimate is 0.0, indicating a stable trend.\n- Ecosystem productivity index: The baseline value is 101.77, while the most recent estimate is 103.8, indicating an increasing trend.\n- Land use and cover: The baseline value is 2110.0, while the most recent estimate is 2152.2, indicating an increasing trend.\n- Land use change (decade): The baseline value is 1.0, while the most recent estimate is 1.02, indicating an increasing trend.\n- Land imperviousness: The baseline value is 179.7, while the most recent estimate is 183.3, indicating an increasing trend.\n\nOverall, the system shows an overall increasing trend, with 8 increasing variables, 1 decreasing, and 1 stable."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.1172,
+        "task_execution": 0.0046
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 5,
+      "question": "Which aspects of ecosystem functioning are represented in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6712338328361511,
+          "importance": 0.8069939613342285,
+          "delta": 0.6474480628967285,
+          "dependency": 0.719974160194397,
+          "comparison": 0.6616267561912537,
+          "data": 1.0,
+          "drivers": 0.7311338186264038,
+          "enm": 0.729180097579956,
+          "importance_compare": 0.6610517501831055,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Latest environmental conditions",
+        "data": {
+          "Land imperviousness": {
+            "baseline": 179.7,
+            "latest": 183.3
+          },
+          "Tree cover density": {
+            "baseline": 20.91,
+            "latest": 21.33
+          },
+          "Ecosystem productivity index": {
+            "baseline": 101.77,
+            "latest": 103.8
+          },
+          "Average temperature change": {
+            "baseline": 1.5,
+            "latest": 1.53
+          },
+          "Evapotranspiration change": {
+            "baseline": -0.94,
+            "latest": -0.96
+          },
+          "Precipitation change": {
+            "baseline": 12.52,
+            "latest": 12.77
+          },
+          "Biodiversity (species richness)": {
+            "baseline": 141.03,
+            "latest": 143.85
+          },
+          "Tree cover change (decade)": {
+            "baseline": 0.0,
+            "latest": 0.0
+          },
+          "Land use and cover": {
+            "baseline": 2110.0,
+            "latest": 2152.2
+          },
+          "Land use change (decade)": {
+            "baseline": 1.0,
+            "latest": 1.02
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Average temperature change: The baseline value is 1.5, while the most recent estimate is 1.53, indicating an increasing trend.\n- Precipitation change: The baseline value is 12.52, while the most recent estimate is 12.77, indicating an increasing trend.\n- Evapotranspiration change: The baseline value is -0.94, while the most recent estimate is -0.96, indicating a decreasing trend.\n- Biodiversity (species richness): The baseline value is 141.03, while the most recent estimate is 143.85, indicating an increasing trend.\n- Tree cover density: The baseline value is 20.91, while the most recent estimate is 21.33, indicating an increasing trend.\n- Tree cover change (decade): The baseline value is 0.0, while the most recent estimate is 0.0, indicating a stable trend.\n- Ecosystem productivity index: The baseline value is 101.77, while the most recent estimate is 103.8, indicating an increasing trend.\n- Land use and cover: The baseline value is 2110.0, while the most recent estimate is 2152.2, indicating an increasing trend.\n- Land use change (decade): The baseline value is 1.0, while the most recent estimate is 1.02, indicating an increasing trend.\n- Land imperviousness: The baseline value is 179.7, while the most recent estimate is 183.3, indicating an increasing trend.\n\nOverall, the system shows an overall increasing trend, with 8 increasing variables, 1 decreasing, and 1 stable."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0479,
+        "task_execution": 0.0042
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 6,
+      "question": "Which ecological variables are represented in the dataset?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6280653476715088,
+          "importance": 0.7867845892906189,
+          "delta": 0.6056575179100037,
+          "dependency": 0.6560986042022705,
+          "comparison": 0.6315566301345825,
+          "data": 0.9999999403953552,
+          "drivers": 0.8048256039619446,
+          "enm": 0.749129056930542,
+          "importance_compare": 0.6886606216430664,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Latest environmental conditions",
+        "data": {
+          "Land imperviousness": {
+            "baseline": 179.7,
+            "latest": 183.3
+          },
+          "Tree cover density": {
+            "baseline": 20.91,
+            "latest": 21.33
+          },
+          "Ecosystem productivity index": {
+            "baseline": 101.77,
+            "latest": 103.8
+          },
+          "Average temperature change": {
+            "baseline": 1.5,
+            "latest": 1.53
+          },
+          "Evapotranspiration change": {
+            "baseline": -0.94,
+            "latest": -0.96
+          },
+          "Precipitation change": {
+            "baseline": 12.52,
+            "latest": 12.77
+          },
+          "Biodiversity (species richness)": {
+            "baseline": 141.03,
+            "latest": 143.85
+          },
+          "Tree cover change (decade)": {
+            "baseline": 0.0,
+            "latest": 0.0
+          },
+          "Land use and cover": {
+            "baseline": 2110.0,
+            "latest": 2152.2
+          },
+          "Land use change (decade)": {
+            "baseline": 1.0,
+            "latest": 1.02
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Average temperature change: The baseline value is 1.5, while the most recent estimate is 1.53, indicating an increasing trend.\n- Precipitation change: The baseline value is 12.52, while the most recent estimate is 12.77, indicating an increasing trend.\n- Evapotranspiration change: The baseline value is -0.94, while the most recent estimate is -0.96, indicating a decreasing trend.\n- Biodiversity (species richness): The baseline value is 141.03, while the most recent estimate is 143.85, indicating an increasing trend.\n- Tree cover density: The baseline value is 20.91, while the most recent estimate is 21.33, indicating an increasing trend.\n- Tree cover change (decade): The baseline value is 0.0, while the most recent estimate is 0.0, indicating a stable trend.\n- Ecosystem productivity index: The baseline value is 101.77, while the most recent estimate is 103.8, indicating an increasing trend.\n- Land use and cover: The baseline value is 2110.0, while the most recent estimate is 2152.2, indicating an increasing trend.\n- Land use change (decade): The baseline value is 1.0, while the most recent estimate is 1.02, indicating an increasing trend.\n- Land imperviousness: The baseline value is 179.7, while the most recent estimate is 183.3, indicating an increasing trend.\n\nOverall, the system shows an overall increasing trend, with 8 increasing variables, 1 decreasing, and 1 stable."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0515,
+        "task_execution": 0.0045
+      },
+      "routing_correct": true
+    },
+    {
+      "benchmark_index": 7,
+      "question": "Which ecological variables are available in the dataset for ecosystem assessment?",
+      "source_intent": "Data",
+      "expected_task": "data",
+      "predicted_task": "data",
+      "route": {
+        "type": "data",
+        "scores": {
+          "assessment": 0.6926118731498718,
+          "importance": 0.8467726111412048,
+          "delta": 0.6611987352371216,
+          "dependency": 0.7120097279548645,
+          "comparison": 0.6899054050445557,
+          "data": 1.0,
+          "drivers": 0.7839862108230591,
+          "enm": 0.7441120147705078,
+          "importance_compare": 0.7192579507827759,
+          "chat": 0.0
+        }
+      },
+      "parsed": null,
+      "features": null,
+      "range_info": null,
+      "result": {
+        "summary": "Latest environmental conditions",
+        "data": {
+          "Land imperviousness": {
+            "baseline": 179.7,
+            "latest": 183.3
+          },
+          "Tree cover density": {
+            "baseline": 20.91,
+            "latest": 21.33
+          },
+          "Ecosystem productivity index": {
+            "baseline": 101.77,
+            "latest": 103.8
+          },
+          "Average temperature change": {
+            "baseline": 1.5,
+            "latest": 1.53
+          },
+          "Evapotranspiration change": {
+            "baseline": -0.94,
+            "latest": -0.96
+          },
+          "Precipitation change": {
+            "baseline": 12.52,
+            "latest": 12.77
+          },
+          "Biodiversity (species richness)": {
+            "baseline": 141.03,
+            "latest": 143.85
+          },
+          "Tree cover change (decade)": {
+            "baseline": 0.0,
+            "latest": 0.0
+          },
+          "Land use and cover": {
+            "baseline": 2110.0,
+            "latest": 2152.2
+          },
+          "Land use change (decade)": {
+            "baseline": 1.0,
+            "latest": 1.02
+          }
+        },
+        "drivers": [],
+        "interpretation": "\n- Average temperature change: The baseline value is 1.5, while the most recent estimate is 1.53, indicating an increasing trend.\n- Precipitation change: The baseline value is 12.52, while the most recent estimate is 12.77, indicating an increasing trend.\n- Evapotranspiration change: The baseline value is -0.94, while the most recent estimate is -0.96, indicating a decreasing trend.\n- Biodiversity (species richness): The baseline value is 141.03, while the most recent estimate is 143.85, indicating an increasing trend.\n- Tree cover density: The baseline value is 20.91, while the most recent estimate is 21.33, indicating an increasing trend.\n- Tree cover change (decade): The baseline value is 0.0, while the most recent estimate is 0.0, indicating a stable trend.\n- Ecosystem productivity index: The baseline value is 101.77, while the most recent estimate is 103.8, indicating an increasing trend.\n- Land use and cover: The baseline value is 2110.0, while the most recent estimate is 2152.2, indicating an increasing trend.\n- Land use change (decade): The baseline value is 1.0, while the most recent estimate is 1.02, indicating an increasing trend.\n- Land imperviousness: The baseline value is 179.7, while the most recent estimate is 183.3, indicating an increasing trend.\n\nOverall, the system shows an overall increasing trend, with 8 increasing variables, 1 decreasing, and 1 stable."
+      },
+      "error_stage": null,
+      "error": null,
+      "timing_seconds": {
+        "routing": 0.0411,
+        "task_execution": 0.0041
+      },
+      "routing_correct": true
+    }
+  ]
+}
